@@ -207,6 +207,62 @@ App.teamSelection = {
     if (App.updateTimerVisuals) {
       App.updateTimerVisuals();
     }
+    
+    // Event-Listener für Navigation-Buttons neu setzen (Fix für das Button-Problem)
+    setTimeout(() => {
+      // "Spieler wählen" Button Event-Listener neu setzen
+      const selectPlayersBtn = document.getElementById("selectPlayersBtn");
+      if (selectPlayersBtn) {
+        selectPlayersBtn.onclick = () => App.showPage("selection");
+      }
+      
+      // Alle anderen Navigation-Buttons neu setzen
+      const torbildBtn = document.getElementById("torbildBtn");
+      if (torbildBtn) {
+        torbildBtn.onclick = () => App.showPage("torbild");
+      }
+      
+      const goalValueBtn = document.getElementById("goalValueBtn");
+      if (goalValueBtn) {
+        goalValueBtn.onclick = () => App.showPage("goalValue");
+      }
+      
+      const seasonBtn = document.getElementById("seasonBtn");
+      if (seasonBtn) {
+        seasonBtn.onclick = () => App.showPage("season");
+      }
+      
+      const seasonMapBtn = document.getElementById("seasonMapBtn");
+      if (seasonMapBtn) {
+        seasonMapBtn.onclick = () => App.showPage("seasonMap");
+      }
+      
+      // Auch Back-Buttons neu setzen
+      const backToTeamSelectionBtn = document.getElementById("backToTeamSelectionBtn");
+      if (backToTeamSelectionBtn) {
+        backToTeamSelectionBtn.onclick = () => App.showPage("teamSelection");
+      }
+      
+      const backToStatsBtn = document.getElementById("backToStatsBtn");
+      if (backToStatsBtn) {
+        backToStatsBtn.onclick = () => App.showPage("stats");
+      }
+      
+      const backToStatsFromSeasonBtn = document.getElementById("backToStatsFromSeasonBtn");
+      if (backToStatsFromSeasonBtn) {
+        backToStatsFromSeasonBtn.onclick = () => App.showPage("stats");
+      }
+      
+      const backToStatsFromSeasonMapBtn = document.getElementById("backToStatsFromSeasonMapBtn");
+      if (backToStatsFromSeasonMapBtn) {
+        backToStatsFromSeasonMapBtn.onclick = () => App.showPage("stats");
+      }
+      
+      const backFromGoalValueBtn = document.getElementById("backFromGoalValueBtn");
+      if (backFromGoalValueBtn) {
+        backFromGoalValueBtn.onclick = () => App.showPage("stats");
+      }
+    }, 100);
   },
   
   initTeamFromStorage() {
