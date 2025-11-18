@@ -54,7 +54,8 @@ App.playerSelection = {
       !App.data.players.some(bp => bp.name === sp.name)
     );
     
-    for (let i = 0; i < 5; i++) {
+    // Add 30 custom player slots (changed from 5)
+    for (let i = 0; i < 30; i++) {
       const pre = customSelected[i];
       const li = document.createElement("li");
       const chkId = `custom-chk-${i}`;

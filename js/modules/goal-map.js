@@ -143,13 +143,29 @@ App.goalMap = {
       });
       
       // Touch Events
+      let touchStartPos = null;
+      let touchMoved = false;
+      
       img.addEventListener("touchstart", (ev) => {
         isLong = false;
+        touchMoved = false;
+        touchStartPos = getPosFromEvent(ev.touches[0]);
+        
         if (mouseHoldTimer) clearTimeout(mouseHoldTimer);
         mouseHoldTimer = setTimeout(() => {
           isLong = true;
-          placeMarker(getPosFromEvent(ev.touches[0]), true);
+          if (!touchMoved) {
+            placeMarker(touchStartPos, true);
+          }
         }, App.markerHandler.LONG_MARK_MS);
+      }, { passive: true });
+      
+      img.addEventListener("touchmove", (ev) => {
+        touchMoved = true;
+        if (mouseHoldTimer) {
+          clearTimeout(mouseHoldTimer);
+          mouseHoldTimer = null;
+        }
       }, { passive: true });
       
       img.addEventListener("touchend", (ev) => {
@@ -157,6 +173,13 @@ App.goalMap = {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
         }
+        
+        // Ignore if touch moved (was a swipe)
+        if (touchMoved) {
+          isLong = false;
+          return;
+        }
+        
         const now = Date.now();
         const pos = getPosFromEvent(ev.changedTouches[0]);
         
@@ -176,6 +199,7 @@ App.goalMap = {
           mouseHoldTimer = null;
         }
         isLong = false;
+        touchMoved = false;
       }, { passive: true });
     });
   },
@@ -195,8 +219,8 @@ App.goalMap = {
         btn.textContent = stored;
         
         let lastTap = 0;
-        let clickTimeout = null;
-        let touchStart = 0;
+        let tapTimeout = null;
+        let touchHandled = false;
         
         const updateValue = (delta) => {
           const current = Number(btn.textContent) || 0;
@@ -207,46 +231,57 @@ App.goalMap = {
           localStorage.setItem("timeData", JSON.stringify(timeData));
         };
         
-        btn.addEventListener("click", () => {
+        // Handle both touch and click events with proper debouncing
+        btn.addEventListener("touchstart", (e) => {
+          e.preventDefault(); // Prevent click event from firing
+          touchHandled = true;
+          
           const now = Date.now();
           const diff = now - lastTap;
-          if (diff < 300) {
-            if (clickTimeout) {
-              clearTimeout(clickTimeout);
-              clickTimeout = null;
-            }
+          
+          if (diff < 300 && tapTimeout) {
+            // Double tap - decrement
+            clearTimeout(tapTimeout);
+            tapTimeout = null;
             updateValue(-1);
             lastTap = 0;
           } else {
-            clickTimeout = setTimeout(() => {
-              updateValue(+1);
-              clickTimeout = null;
-            }, 300);
+            // Single tap - schedule increment
             lastTap = now;
+            tapTimeout = setTimeout(() => {
+              updateValue(+1);
+              tapTimeout = null;
+            }, 300);
+          }
+          
+          // Reset touch handled flag after a short delay
+          setTimeout(() => {
+            touchHandled = false;
+          }, 50);
+        }, { passive: false });
+        
+        btn.addEventListener("click", () => {
+          // Skip if touch was just handled
+          if (touchHandled) return;
+          
+          const now = Date.now();
+          const diff = now - lastTap;
+          
+          if (diff < 300 && tapTimeout) {
+            // Double click - decrement
+            clearTimeout(tapTimeout);
+            tapTimeout = null;
+            updateValue(-1);
+            lastTap = 0;
+          } else {
+            // Single click - schedule increment
+            lastTap = now;
+            tapTimeout = setTimeout(() => {
+              updateValue(+1);
+              tapTimeout = null;
+            }, 300);
           }
         });
-        
-        btn.addEventListener("touchstart", (e) => {
-          const now = Date.now();
-          const diff = now - touchStart;
-          if (diff < 300) {
-            e.preventDefault();
-            if (clickTimeout) {
-              clearTimeout(clickTimeout);
-              clickTimeout = null;
-            }
-            updateValue(-1);
-            touchStart = 0;
-          } else {
-            touchStart = now;
-            setTimeout(() => {
-              if (touchStart !== 0) {
-                updateValue(+1);
-                touchStart = 0;
-              }
-            }, 300);
-          }
-        }, { passive: true });
       });
     });
   },
