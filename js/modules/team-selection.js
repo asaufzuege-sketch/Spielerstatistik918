@@ -5,7 +5,17 @@ App.teamSelection = {
   
   init() {
     this.container = document.getElementById("teamSelectionContainer");
-    this.createTeamButtons();
+    
+    // Attach event listeners to existing team buttons
+    for (let i = 1; i <= 3; i++) {
+      const teamBtn = document.getElementById(`teamBtn${i}`);
+      if (teamBtn) {
+        teamBtn.addEventListener("click", () => {
+          this.switchTeam(i);
+        });
+      }
+    }
+    
     this.initTeamFromStorage();
     this.initTeamNameModal();
   },
