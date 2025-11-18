@@ -7,6 +7,115 @@ App.teamSelection = {
     this.container = document.getElementById("teamSelectionContainer");
     this.createTeamButtons();
     this.initTeamFromStorage();
+    this.initTeamNameModal();
+  },
+  
+  // Initialize team name edit modal
+  initTeamNameModal() {
+    const modal = document.getElementById("teamEditModal");
+    const teamNameInput = document.getElementById("teamNameInput");
+    const saveBtn = document.getElementById("saveTeamNameBtn");
+    const cancelBtn = document.getElementById("cancelTeamEditBtn");
+    
+    // Edit buttons for each team
+    for (let i = 1; i <= 3; i++) {
+      const editBtn = document.getElementById(`editBtn${i}`);
+      if (editBtn) {
+        editBtn.addEventListener("click", () => {
+          this.openTeamNameModal(i);
+        });
+      }
+    }
+    
+    // Save button
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => {
+        this.saveTeamName();
+      });
+    }
+    
+    // Cancel button
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", () => {
+        this.closeTeamNameModal();
+      });
+    }
+    
+    // Close on outside click
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          this.closeTeamNameModal();
+        }
+      });
+    }
+    
+    // Enter key to save
+    if (teamNameInput) {
+      teamNameInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          this.saveTeamName();
+        }
+      });
+    }
+  },
+  
+  openTeamNameModal(teamNumber) {
+    const modal = document.getElementById("teamEditModal");
+    const input = document.getElementById("teamNameInput");
+    
+    if (!modal || !input) return;
+    
+    // Load current team name
+    const savedName = localStorage.getItem(`teamName_${teamNumber}`);
+    input.value = savedName || `Team ${teamNumber}`;
+    input.dataset.teamNumber = teamNumber;
+    
+    modal.style.display = "flex";
+    input.focus();
+    input.select();
+  },
+  
+  closeTeamNameModal() {
+    const modal = document.getElementById("teamEditModal");
+    if (modal) {
+      modal.style.display = "none";
+    }
+  },
+  
+  saveTeamName() {
+    const input = document.getElementById("teamNameInput");
+    if (!input) return;
+    
+    const teamNumber = parseInt(input.dataset.teamNumber);
+    const newName = input.value.trim();
+    
+    if (!newName) {
+      alert("Bitte einen Teamnamen eingeben.");
+      return;
+    }
+    
+    // Save team name
+    localStorage.setItem(`teamName_${teamNumber}`, newName);
+    
+    // Update display
+    const teamNameSpan = document.getElementById(`teamName${teamNumber}`);
+    if (teamNameSpan) {
+      teamNameSpan.textContent = newName;
+    }
+    
+    // Update current displays if this is the active team
+    if (teamNumber === this.currentTeam) {
+      this.updateTeamDisplays();
+    }
+    
+    this.closeTeamNameModal();
+  },
+  
+  // Get team name from storage or default
+  getTeamName(teamNumber) {
+    const savedName = localStorage.getItem(`teamName_${teamNumber}`);
+    return savedName || `Team ${teamNumber}`;
   },
   
   createTeamButtons() {
@@ -244,6 +353,9 @@ App.teamSelection = {
       App.updateTimerVisuals();
     }
     
+    // Update team display elements
+    this.updateTeamDisplays();
+    
     // Event-Listener für Navigation-Buttons neu setzen (Fix für das Button-Problem)
     setTimeout(() => {
       // "Spieler wählen" Button Event-Listener neu setzen
@@ -301,6 +413,22 @@ App.teamSelection = {
     }, 100);
   },
   
+  // Update team name displays
+  updateTeamDisplays() {
+    const teamInfo = this.getCurrentTeamInfo();
+    const teamName = teamInfo.name;
+    
+    const currentTeamDisplay = document.getElementById("currentTeamDisplay");
+    if (currentTeamDisplay) {
+      currentTeamDisplay.textContent = teamName;
+    }
+    
+    const statsTeamDisplay = document.getElementById("statsTeamDisplay");
+    if (statsTeamDisplay) {
+      statsTeamDisplay.textContent = teamName;
+    }
+  },
+  
   initTeamFromStorage() {
     const savedTeam = localStorage.getItem("currentTeam");
     if (savedTeam) {
@@ -319,6 +447,15 @@ App.teamSelection = {
     }
     
     this.updateButtonStates();
+    this.updateTeamDisplays();
+    
+    // Load and display custom team names
+    for (let i = 1; i <= 3; i++) {
+      const teamNameSpan = document.getElementById(`teamName${i}`);
+      if (teamNameSpan) {
+        teamNameSpan.textContent = this.getTeamName(i);
+      }
+    }
   },
   
   resetCurrentTeam() {
@@ -367,7 +504,7 @@ App.teamSelection = {
     return {
       number: this.currentTeam,
       id: `team${this.currentTeam}`,
-      name: `Team ${this.currentTeam}`,
+      name: this.getTeamName(this.currentTeam),
       playerCount: App.data.selectedPlayers.length,
       hasData: Object.keys(App.data.statsData).length > 0
     };
