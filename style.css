@@ -16,6 +16,11 @@
   --sticky-header-height: 56px;
   --ice-top: #00c06f;
   --ice-bottom: #ff4c4c;
+  --field-box-bg: #ffffff;
+  --time-tracking-box-bg: #ffffff;
+  --table-header-bg: #e8e8e8;
+  --table-header-text: #000000;
+  --team-selection-box-bg: #e8e8e8;
 }
 
 [data-theme="dark"] {
@@ -28,6 +33,11 @@
   --cell-neg-color: #ff4c4c;
   --cell-zero-color: #ffffff;
   --timer-left-bg: #3b3b3b;
+  --field-box-bg: #1e1e1e;
+  --time-tracking-box-bg: #1a1a1a;
+  --table-header-bg: #1E1E1E;
+  --table-header-text: #ffffff;
+  --team-selection-box-bg: #1a1a1a;
 }
 
 body {
@@ -236,7 +246,8 @@ h1 {
 table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 
 thead th {
-  background: var(--header-bg);
+  background: var(--table-header-bg);
+  color: var(--table-header-text);
   position: sticky;
   top: 0;
   z-index: 40;
@@ -274,7 +285,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 .field-column { flex: 1; display: flex; justify-content: center; }
 .field-box, .img-box {
-  background: #1e1e1e;
+  background: var(--field-box-bg);
   border: 2px solid #333;
   border-radius: 10px;
   padding: 5px;
@@ -302,7 +313,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: #1a1a1a;
+  background: var(--time-tracking-box-bg);
   border: 2px solid #333;
   border-radius: 10px;
   padding: 10px 14px;
@@ -758,7 +769,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .team-slot {
-  background: #1a1a1a;
+  background: var(--team-selection-box-bg);
   border: 2px solid #333;
   border-radius: 12px;
   padding: 20px;
@@ -967,6 +978,36 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* ==================== */
 /* DRAG & DROP STYLES */
 /* ==================== */
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #44bb91;
+  border: 2px solid #333;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.theme-toggle-btn:hover {
+  background: #36a67d;
+  transform: scale(1.1);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
 
 /* Drag Handle Styles */
 .drag-handle {

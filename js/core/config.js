@@ -41,10 +41,35 @@ const App = {
   
   // Theme Setup
   initTheme() {
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+    // Check localStorage first, then system preference
+    const savedTheme = localStorage.getItem('theme');
+    let theme;
+    
+    if (savedTheme) {
+      theme = savedTheme;
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      theme = 'dark';
     } else {
-      document.documentElement.setAttribute('data-theme', 'light');
+      theme = 'light';
+    }
+    
+    document.documentElement.setAttribute('data-theme', theme);
+    this.updateThemeToggleIcon(theme);
+  },
+  
+  toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    this.updateThemeToggleIcon(newTheme);
+  },
+  
+  updateThemeToggleIcon(theme) {
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
   },
   

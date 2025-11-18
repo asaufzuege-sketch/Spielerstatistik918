@@ -151,6 +151,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   
+  // 11. Theme Toggle Button
+  document.getElementById("themeToggleBtn")?.addEventListener("click", () => {
+    App.toggleTheme();
+  });
+  
   console.log("✅ App erfolgreich geladen!");
 });
 
