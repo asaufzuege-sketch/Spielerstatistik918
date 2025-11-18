@@ -102,7 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }, true);
   
   // 7. Initiale Seite anzeigen
-  const currentTeam = App.teamSelection.getCurrentTeam();
+  // ALT (fehlerhaft): const currentTeam = App.teamSelection.getCurrentTeam();
+  // NEU: an getCurrentTeamInfo() angepasst
+  const teamInfo = App.teamSelection.getCurrentTeamInfo();
+  const currentTeam = teamInfo?.id; // z.B. "team1"
   const lastPage = App.storage.getCurrentPage();
   
   // Wenn kein Team ausgewählt ist, zur Teamauswahl
@@ -124,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("beforeunload", () => {
     try {
       App.storage.saveAll();
-      App.teamSelection.saveTeams();
+      App.teamSelection.saveTeams?.(); // falls vorhanden
       App.saveActiveTimersState(); // Timer State speichern
       localStorage.setItem("timerSeconds", String(App.timer.seconds));
       if (App.goalValue) {
