@@ -76,11 +76,45 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("selection");
   });
   
+  // Team selection button handlers
+  document.getElementById("teamBtn1")?.addEventListener("click", () => {
+    if (App.teamSelection && App.teamSelection.switchTeam) {
+      App.teamSelection.switchTeam(1);
+    }
+    App.showPage("selection");
+  });
+  
+  document.getElementById("teamBtn2")?.addEventListener("click", () => {
+    if (App.teamSelection && App.teamSelection.switchTeam) {
+      App.teamSelection.switchTeam(2);
+    }
+    App.showPage("selection");
+  });
+  
+  document.getElementById("teamBtn3")?.addEventListener("click", () => {
+    if (App.teamSelection && App.teamSelection.switchTeam) {
+      App.teamSelection.switchTeam(3);
+    }
+    App.showPage("selection");
+  });
+  
   // 6. Delegierte Button Handler (alle Navigation-Buttons)
   document.addEventListener("click", (e) => {
     try {
       const btn = e.target.closest("button");
       if (!btn || !btn.id) return;
+      
+      // Handle team selection buttons separately
+      if (btn.id === "teamBtn1" || btn.id === "teamBtn2" || btn.id === "teamBtn3") {
+        const teamNumber = parseInt(btn.id.replace("teamBtn", ""));
+        if (App.teamSelection && App.teamSelection.switchTeam) {
+          App.teamSelection.switchTeam(teamNumber);
+        }
+        App.showPage("selection");
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
       
       // Navigation buttons mapping
       const navigationMap = {
