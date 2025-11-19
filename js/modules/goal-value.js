@@ -76,17 +76,29 @@ App.goalValue = {
   ensureDataForSeason() {
     const opponents = this.getOpponents();
     const all = this.getData();
+    let changed = false;
     
     Object.keys(App.data.seasonData).forEach(name => {
       if (!all[name] || !Array.isArray(all[name])) {
         all[name] = opponents.map(() => 0);
+        changed = true;
       } else {
-        while (all[name].length < opponents.length) all[name].push(0);
-        if (all[name].length > opponents.length) all[name] = all[name].slice(0, opponents.length);
+        const origLen = all[name].length;
+        while (all[name].length < opponents.length) {
+          all[name].push(0);
+          changed = true;
+        }
+        if (all[name].length > opponents.length) {
+          all[name] = all[name].slice(0, opponents.length);
+          changed = true;
+        }
       }
     });
     
-    this.setData(all, true); // Skip notification to prevent infinite loop
+    // Only save if data actually changed
+    if (changed) {
+      this.setData(all, true); // Skip notification to prevent infinite loop
+    }
   },
   
   render() {
@@ -107,7 +119,8 @@ App.goalValue = {
     table.className = "goalvalue-table gv-no-patch";
     table.style.width = "auto";
     table.style.margin = "0";
-    table.style.borderCollapse = "collapse";
+    table.style.borderCollapse = "separate";
+    table.style.borderSpacing = "0";
     table.style.borderRadius = "8px";
     table.style.overflow = "hidden";
     table.style.tableLayout = "auto";
