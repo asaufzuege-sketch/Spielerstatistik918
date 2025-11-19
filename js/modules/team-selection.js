@@ -63,8 +63,16 @@ App.teamSelection = (function() {
             const teamTitle = document.createElement('h3');
             teamTitle.textContent = teamData.name;
             
-            // Count only players that have names
-            const playersWithNames = teamData.players ? teamData.players.filter(p => p.name && p.name.trim() !== '').length : 0;
+            // For Team 1, show count of available players from App.data.players
+            // For Team 2 & 3, show count of players in team data
+            let playersWithNames = 0;
+            if (teamDef.id === 'team1') {
+                // Count players with names from App.data.players
+                playersWithNames = App.data.players ? App.data.players.filter(p => p.name && p.name.trim() !== '').length : 0;
+            } else {
+                // Count players in team data for Team 2 & 3
+                playersWithNames = teamData.players ? teamData.players.filter(p => p.name && p.name.trim() !== '').length : 0;
+            }
             const teamInfo = document.createElement('p');
             teamInfo.className = 'team-name';
             teamInfo.textContent = `${playersWithNames} Spieler`;
