@@ -130,16 +130,13 @@ App.goalValue = {
     const headerRow = document.createElement("tr");
     
     const thPlayer = document.createElement("th");
+    thPlayer.className = "gv-name-header";
     thPlayer.textContent = "Spieler";
     thPlayer.style.textAlign = "center";
     thPlayer.style.padding = "8px 6px";
     thPlayer.style.borderBottom = "2px solid #333";
     thPlayer.style.minWidth = "160px";
     thPlayer.style.whiteSpace = "nowrap";
-    thPlayer.style.position = "sticky";
-    thPlayer.style.left = "0";
-    thPlayer.style.zIndex = "10";
-    thPlayer.style.backgroundColor = "var(--header-bg, #f0f0f0)";
     headerRow.appendChild(thPlayer);
     
     opponents.forEach((op, idx) => {
@@ -186,6 +183,7 @@ App.goalValue = {
       row.style.borderBottom = "1px solid #333";
       
       const tdName = document.createElement("td");
+      tdName.className = "gv-name-cell";
       tdName.textContent = name;
       tdName.style.textAlign = "left";
       tdName.style.padding = "6px";
@@ -194,10 +192,6 @@ App.goalValue = {
       tdName.style.whiteSpace = "nowrap";
       tdName.style.overflow = "visible";
       tdName.style.textOverflow = "clip";
-      tdName.style.position = "sticky";
-      tdName.style.left = "0";
-      tdName.style.zIndex = "5";
-      tdName.style.backgroundColor = (rowIdx % 2 === 0 ? "var(--row-even, #ffffff)" : "var(--row-odd, #f6f7f9)");
       row.appendChild(tdName);
       
       const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
@@ -283,14 +277,11 @@ App.goalValue = {
     bottomRow.style.background = "rgba(0,0,0,0.03)";
     
     const labelTd = document.createElement("td");
+    labelTd.className = "gv-name-cell";
     labelTd.textContent = "";
     labelTd.style.padding = "6px";
     labelTd.style.fontWeight = "700";
     labelTd.style.textAlign = "center";
-    labelTd.style.position = "sticky";
-    labelTd.style.left = "0";
-    labelTd.style.zIndex = "5";
-    labelTd.style.backgroundColor = (playersList.length % 2 === 0 ? "var(--row-even, #ffffff)" : "var(--row-odd, #f6f7f9)");
     bottomRow.appendChild(labelTd);
     
     const scaleOptions = [];
