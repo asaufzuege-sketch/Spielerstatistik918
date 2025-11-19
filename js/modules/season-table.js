@@ -18,6 +18,14 @@ App.seasonTable = {
     document.getElementById("resetSeasonBtn")?.addEventListener("click", () => {
       this.reset();
     });
+
+    // Listen for Goal Value changes and auto-update
+    window.addEventListener('goalValueChanged', () => {
+      // Only re-render if we're currently on the season page
+      if (this.container && this.container.offsetParent !== null) {
+        this.render();
+      }
+    });
   },
 
   render() {

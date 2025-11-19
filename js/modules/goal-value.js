@@ -33,6 +33,8 @@ App.goalValue = {
   
   setData(obj) {
     localStorage.setItem("goalValueData", JSON.stringify(obj));
+    // Dispatch event to notify season table of data change
+    window.dispatchEvent(new CustomEvent('goalValueChanged'));
   },
   
   getBottom() {
