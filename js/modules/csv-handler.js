@@ -67,58 +67,176 @@ App.csvHandler = {
     return `${key}_${this.getCurrentTeamId()}`;
   },
   
-  // Verbesserte Export-Funktion mit korrekter Tabellenformatierung
+  // Verbesserte Export-Funktion mit Season-Format
   exportStats() {
     const data = [];
     
-    // Header exakt wie in der Season-Tabelle
-    const headers = ["#", "Spieler", ...App.data.categories, "Time"];
+    // Header wie Season-Tabelle mit allen Spalten
+    const headers = [
+      "Nr", "Spieler", "Games",
+      "Goals", "Assists", "Points", "+/-", "Ø +/-",
+      "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
+      "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", "Time",
+      "MVP", "MVP Points"
+    ];
     data.push(headers);
     
-    // Spieler Daten - exakte Formatierung wie in der Tabelle
+    // Jeder Spieler: Verwende 1 Game (aktuelles Spiel)
     App.data.selectedPlayers.forEach(player => {
+      const stats = App.data.statsData[player.name] || {};
+      const games = 1; // Aktuelles Spiel
+      const goals = Number(stats["Goals"] || 0);
+      const assists = Number(stats["Assist"] || 0);
+      const points = goals + assists;
+      const plusMinus = Number(stats["+/-"] || 0);
+      const shots = Number(stats["Shot"] || 0);
+      const penalty = Number(stats["Penaltys"] || 0);
+      const faceOffs = Number(stats["FaceOffs"] || 0);
+      const faceOffsWon = Number(stats["FaceOffs Won"] || 0);
+      const faceOffPercent = faceOffs ? Math.round((faceOffsWon / faceOffs) * 100) : 0;
+      const timeSeconds = App.data.playerTimes[player.name] || 0;
+      
+      const avgPlusMinus = plusMinus; // Bei 1 Game = Wert selbst
+      const shotsPerGame = shots;
+      const goalsPerGame = goals;
+      const pointsPerGame = points;
+      const shotsPercent = shots ? Math.round((goals / shots) * 100) : 0;
+      
+      // Goal Value
+      let goalValue = 0;
+      try {
+        if (App.goalValue && typeof App.goalValue.computeValueForPlayer === "function") {
+          goalValue = Number(App.goalValue.computeValueForPlayer(player.name) || 0);
+        }
+      } catch (e) {
+        goalValue = 0;
+      }
+      
+      // MVP Points Berechnung
+      const assistsPerGame = assists;
+      const penaltyPerGame = penalty;
+      const gvNum = Number(goalValue || 0);
+      const mvpPointsNum = (
+        (assistsPerGame * 8) +
+        (avgPlusMinus * 0.5) +
+        (shotsPerGame * 0.5) +
+        (goalsPerGame + (games ? (gvNum / games) * 10 : 0)) -
+        (penaltyPerGame * 1.2)
+      );
+      const mvpPointsRounded = Number(mvpPointsNum.toFixed(1));
+      
       const row = [
         player.num || "",
         player.name,
-        ...App.data.categories.map(cat => {
-          const value = App.data.statsData[player.name]?.[cat] || 0;
-          return value;
-        }),
-        App.helpers.formatTimeMMSS(App.data.playerTimes[player.name] || 0)
+        games,
+        goals,
+        assists,
+        points,
+        plusMinus,
+        Number(avgPlusMinus.toFixed(1)),
+        shots,
+        Number(shotsPerGame.toFixed(1)),
+        String(shotsPercent) + "%",
+        Number(goalsPerGame.toFixed(1)),
+        Number(pointsPerGame.toFixed(1)),
+        penalty,
+        goalValue,
+        faceOffs,
+        faceOffsWon,
+        String(faceOffPercent) + "%",
+        App.helpers.formatTimeMMSS(timeSeconds),
+        "", // MVP Rank - wird nachträglich berechnet
+        mvpPointsRounded
       ];
       data.push(row);
     });
     
-    // Totals Row - exakt wie in der Tabelle berechnet
-    const totals = ["", `Total (${App.data.selectedPlayers.length})`];
+    // MVP Ranks berechnen
+    const playerRows = data.slice(1); // Ohne Header
+    const mvpPointsIndex = headers.length - 1;
+    const mvpRankIndex = headers.length - 2;
     
-    App.data.categories.forEach(cat => {
-      if (cat === "+/-") {
-        // Durchschnitt berechnen
-        const vals = App.data.selectedPlayers.map(p => Number(App.data.statsData[p.name]?.[cat] || 0));
-        const avg = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
-        totals.push(`Ø ${avg}`);
-      } else if (cat === "FaceOffs Won") {
-        // FaceOff Prozentsatz
-        const totalFace = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["FaceOffs"] || 0), 0);
-        const totalWon = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["FaceOffs Won"] || 0), 0);
-        const pct = totalFace ? Math.round((totalWon / totalFace) * 100) : 0;
-        totals.push(`${totalWon} (${pct}%)`);
-      } else if (cat === "Shot") {
-        // Shot vs Opponent
-        const own = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["Shot"] || 0), 0);
-        const opp = this.getOpponentShots();
-        totals.push(`${own} vs ${opp}`);
-      } else {
-        // Standard Summe
-        const total = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.[cat] || 0), 0);
-        totals.push(total);
-      }
+    // Sortiere nach MVP Points
+    const sortedByMvp = playerRows.slice().sort((a, b) => {
+      return (Number(b[mvpPointsIndex]) || 0) - (Number(a[mvpPointsIndex]) || 0);
     });
+    
+    // Erstelle Rank-Mapping
+    const uniqueScores = [...new Set(sortedByMvp.map(r => Number(r[mvpPointsIndex])))];
+    const scoreToRank = {};
+    uniqueScores.forEach((s, idx) => { scoreToRank[s] = idx + 1; });
+    
+    // Setze Ranks
+    playerRows.forEach(row => {
+      row[mvpRankIndex] = scoreToRank[Number(row[mvpPointsIndex])] || "";
+    });
+    
+    // Totals Row berechnen
+    const totalPlayers = playerRows.length;
+    const totals = ["", `Total (${totalPlayers})`];
+    
+    // Games: Summe
+    totals.push(totalPlayers); // Jeder Spieler = 1 Game
+    
+    // Goals, Assists, Points, +/-, Shots, Penalty, FaceOffs: Summen
+    const goalTotal = playerRows.reduce((sum, r) => sum + Number(r[3]), 0);
+    const assistTotal = playerRows.reduce((sum, r) => sum + Number(r[4]), 0);
+    const pointsTotal = playerRows.reduce((sum, r) => sum + Number(r[5]), 0);
+    const plusMinusTotal = playerRows.reduce((sum, r) => sum + Number(r[6]), 0);
+    
+    totals.push(goalTotal);
+    totals.push(assistTotal);
+    totals.push(pointsTotal);
+    totals.push(plusMinusTotal);
+    
+    // Ø +/-: Durchschnitt
+    const avgPlusMinus = totalPlayers ? (plusMinusTotal / totalPlayers) : 0;
+    totals.push(`Ø ${Number(avgPlusMinus.toFixed(1))}`);
+    
+    // Shots: Summe
+    const shotTotal = playerRows.reduce((sum, r) => sum + Number(r[8]), 0);
+    totals.push(shotTotal);
+    
+    // Shots/Game: Durchschnitt
+    const avgShotsPerGame = totalPlayers ? (shotTotal / totalPlayers) : 0;
+    totals.push(Number(avgShotsPerGame.toFixed(1)));
+    
+    // Shots %: Gesamt-Prozentsatz
+    const totalShotsPercent = shotTotal ? Math.round((goalTotal / shotTotal) * 100) : 0;
+    totals.push(String(totalShotsPercent) + "%");
+    
+    // Goals/Game, Points/Game: Durchschnitt
+    const avgGoalsPerGame = totalPlayers ? (goalTotal / totalPlayers) : 0;
+    const avgPointsPerGame = totalPlayers ? (pointsTotal / totalPlayers) : 0;
+    totals.push(Number(avgGoalsPerGame.toFixed(1)));
+    totals.push(Number(avgPointsPerGame.toFixed(1)));
+    
+    // Penalty: Summe
+    const penaltyTotal = playerRows.reduce((sum, r) => sum + Number(r[13]), 0);
+    totals.push(penaltyTotal);
+    
+    // Goal Value: Summe
+    const gvTotal = playerRows.reduce((sum, r) => sum + Number(r[14]), 0);
+    totals.push(gvTotal);
+    
+    // FaceOffs: Summe
+    const faceOffsTotal = playerRows.reduce((sum, r) => sum + Number(r[15]), 0);
+    const faceOffsWonTotal = playerRows.reduce((sum, r) => sum + Number(r[16]), 0);
+    totals.push(faceOffsTotal);
+    totals.push(faceOffsWonTotal);
+    
+    // FaceOffs %: Gesamt-Prozentsatz
+    const totalFaceOffPercent = faceOffsTotal ? Math.round((faceOffsWonTotal / faceOffsTotal) * 100) : 0;
+    totals.push(String(totalFaceOffPercent) + "%");
     
     // Time Total
     const totalTime = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.playerTimes[p.name] || 0), 0);
     totals.push(App.helpers.formatTimeMMSS(totalTime));
+    
+    // MVP: leer, MVP Points: Summe
+    totals.push("");
+    const mvpPointsTotal = playerRows.reduce((sum, r) => sum + Number(r[mvpPointsIndex]), 0);
+    totals.push(Number(mvpPointsTotal.toFixed(1)));
     
     data.push(totals);
     
