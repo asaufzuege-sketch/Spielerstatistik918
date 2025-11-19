@@ -1,354 +1,281 @@
-// Team Selection Module mit vollständig separater Datenspeicherung
-App.teamSelection = {
-  container: null,
-  currentTeam: 1,
-  
-  init() {
-    this.container = document.getElementById("teamSelectionContainer");
-    this.createTeamButtons();
-    this.initTeamFromStorage();
-  },
-  
-  createTeamButtons() {
-    if (!this.container) return;
+// Team Selection Module
+(function() {
+    console.log('Team Selection Module loading...');
     
-    // Clear container
-    this.container.innerHTML = "";
+    let currentTeam = 1;
+    const maxPlayers = 16;
     
-    // Create team buttons wrapper
-    const wrapper = document.createElement("div");
-    wrapper.className = "team-buttons-wrapper";
-    wrapper.style.cssText = `
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 10px 0;
-      flex-wrap: wrap;
-    `;
-    
-    // Create 3 team buttons
-    for (let i = 1; i <= 3; i++) {
-      const button = document.createElement("button");
-      button.className = "team-btn";
-      button.textContent = `Team ${i}`;
-      button.dataset.team = i;
-      button.style.cssText = `
-        padding: 8px 16px;
-        border: 2px solid #44bb91;
-        background-color: transparent;
-        color: #44bb91;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        min-width: 80px;
-      `;
-      
-      // Event listener for team switch
-      button.addEventListener("click", () => {
-        this.switchTeam(i);
-      });
-      
-      // Hover effects
-      button.addEventListener("mouseenter", () => {
-        if (!button.classList.contains('active')) {
-          button.style.backgroundColor = "rgba(68, 187, 145, 0.2)";
-        }
-      });
-      
-      button.addEventListener("mouseleave", () => {
-        if (!button.classList.contains('active')) {
-          button.style.backgroundColor = "transparent";
-        }
-      });
-      
-      wrapper.appendChild(button);
-    }
-    
-    this.container.appendChild(wrapper);
-    
-    // Set initial active state
-    this.updateButtonStates();
-  },
-  
-  switchTeam(teamNumber) {
-    if (teamNumber === this.currentTeam) return; // Already on this team
-    
-    console.log(`Switching from team ${this.currentTeam} to team ${teamNumber}`);
-    
-    // Save current team data before switching
-    this.saveCurrentTeamData();
-    
-    // Stop all active timers for current team
-    this.stopAllTimers();
-    
-    // Switch team
-    const previousTeam = this.currentTeam;
-    this.currentTeam = teamNumber;
-    App.data.currentTeam = `team${teamNumber}`;
-    
-    // Save team selection
-    localStorage.setItem("currentTeam", App.data.currentTeam);
-    
-    // Load new team data
-    this.loadTeamData(teamNumber);
-    
-    // Update UI
-    this.updateButtonStates();
-    this.refreshAllTables();
-    
-    console.log(`Successfully switched from team ${previousTeam} to team ${teamNumber}`);
-  },
-  
-  saveCurrentTeamData() {
-    if (!this.currentTeam) return;
-    
-    const teamId = `team${this.currentTeam}`;
-    
-    // Save all current data with team prefix
-    localStorage.setItem(`selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers || []));
-    localStorage.setItem(`statsData_${teamId}`, JSON.stringify(App.data.statsData || {}));
-    localStorage.setItem(`playerTimes_${teamId}`, JSON.stringify(App.data.playerTimes || {}));
-    localStorage.setItem(`seasonData_${teamId}`, JSON.stringify(App.data.seasonData || {}));
-    
-    // Save opponent shots
-    const shotCell = document.querySelector('.total-cell[data-cat="Shot"]');
-    if (shotCell && shotCell.dataset.opp) {
-      localStorage.setItem(`opponentShots_${teamId}`, shotCell.dataset.opp);
-    }
-    
-    // Save active timer players
-    const activeTimerPlayers = Object.keys(App.data.activeTimers || {});
-    localStorage.setItem(`activeTimerPlayers_${teamId}`, JSON.stringify(activeTimerPlayers));
-    
-    console.log(`Saved data for ${teamId}`);
-  },
-  
-  loadTeamData(teamNumber) {
-    const teamId = `team${teamNumber}`;
-    
-    // Load team-specific data or use defaults
-    const savedPlayers = localStorage.getItem(`selectedPlayers_${teamId}`);
-    const savedStats = localStorage.getItem(`statsData_${teamId}`);
-    const savedTimes = localStorage.getItem(`playerTimes_${teamId}`);
-    const savedSeason = localStorage.getItem(`seasonData_${teamId}`);
-    const savedOppShots = localStorage.getItem(`opponentShots_${teamId}`);
-    const savedActiveTimers = localStorage.getItem(`activeTimerPlayers_${teamId}`);
-    
-    // Reset App data
-    App.data.selectedPlayers = savedPlayers ? JSON.parse(savedPlayers) : [];
-    App.data.statsData = savedStats ? JSON.parse(savedStats) : {};
-    App.data.playerTimes = savedTimes ? JSON.parse(savedTimes) : {};
-    App.data.seasonData = savedSeason ? JSON.parse(savedSeason) : {};
-    App.data.activeTimers = {};
-    
-    // Restore active timers if any
-    if (savedActiveTimers) {
-      const timerPlayers = JSON.parse(savedActiveTimers);
-      timerPlayers.forEach(playerName => {
-        if (App.data.selectedPlayers.some(p => p.name === playerName)) {
-          App.startPlayerTimer(playerName);
-        }
-      });
-    }
-    
-    // Restore opponent shots (will be applied when table renders)
-    if (savedOppShots) {
-      setTimeout(() => {
-        const shotCell = document.querySelector('.total-cell[data-cat="Shot"]');
-        if (shotCell) {
-          shotCell.dataset.opp = savedOppShots;
-          App.statsTable.updateTotals();
-        }
-      }, 100);
-    }
-    
-    console.log(`Loaded data for ${teamId}`, {
-      players: App.data.selectedPlayers.length,
-      hasStats: Object.keys(App.data.statsData).length > 0,
-      hasTimers: Object.keys(App.data.activeTimers).length > 0
-    });
-  },
-  
-  stopAllTimers() {
-    Object.values(App.data.activeTimers || {}).forEach(timer => {
-      if (timer) clearInterval(timer);
-    });
-    App.data.activeTimers = {};
-  },
-  
-  updateButtonStates() {
-    document.querySelectorAll('.team-btn').forEach((btn, index) => {
-      const teamNum = index + 1;
-      if (teamNum === this.currentTeam) {
-        btn.classList.add('active');
-        btn.style.backgroundColor = '#44bb91';
-        btn.style.color = 'white';
-      } else {
-        btn.classList.remove('active');
-        btn.style.backgroundColor = 'transparent';
-        btn.style.color = '#44bb91';
-      }
-    });
-  },
-  
-  refreshAllTables() {
-    // Refresh stats table
-    if (App.statsTable && App.statsTable.render) {
-      App.statsTable.render();
-    }
-    
-    // Refresh season table
-    if (App.seasonTable && App.seasonTable.render) {
-      App.seasonTable.render();
-    }
-    
-    // Update timer visuals
-    if (App.updateTimerVisuals) {
-      App.updateTimerVisuals();
-    }
-    
-    // Event-Listener für Navigation-Buttons neu setzen (Fix für das Button-Problem)
-    setTimeout(() => {
-      // "Spieler wählen" Button Event-Listener neu setzen
-      const selectPlayersBtn = document.getElementById("selectPlayersBtn");
-      if (selectPlayersBtn) {
-        selectPlayersBtn.onclick = () => App.showPage("selection");
-      }
-      
-      // Alle anderen Navigation-Buttons neu setzen
-      const torbildBtn = document.getElementById("torbildBtn");
-      if (torbildBtn) {
-        torbildBtn.onclick = () => App.showPage("torbild");
-      }
-      
-      const goalValueBtn = document.getElementById("goalValueBtn");
-      if (goalValueBtn) {
-        goalValueBtn.onclick = () => App.showPage("goalValue");
-      }
-      
-      const seasonBtn = document.getElementById("seasonBtn");
-      if (seasonBtn) {
-        seasonBtn.onclick = () => App.showPage("season");
-      }
-      
-      const seasonMapBtn = document.getElementById("seasonMapBtn");
-      if (seasonMapBtn) {
-        seasonMapBtn.onclick = () => App.showPage("seasonMap");
-      }
-      
-      // Auch Back-Buttons neu setzen
-      const backToTeamSelectionBtn = document.getElementById("backToTeamSelectionBtn");
-      if (backToTeamSelectionBtn) {
-        backToTeamSelectionBtn.onclick = () => App.showPage("teamSelection");
-      }
-      
-      const backToStatsBtn = document.getElementById("backToStatsBtn");
-      if (backToStatsBtn) {
-        backToStatsBtn.onclick = () => App.showPage("stats");
-      }
-      
-      const backToStatsFromSeasonBtn = document.getElementById("backToStatsFromSeasonBtn");
-      if (backToStatsFromSeasonBtn) {
-        backToStatsFromSeasonBtn.onclick = () => App.showPage("stats");
-      }
-      
-      const backToStatsFromSeasonMapBtn = document.getElementById("backToStatsFromSeasonMapBtn");
-      if (backToStatsFromSeasonMapBtn) {
-        backToStatsFromSeasonMapBtn.onclick = () => App.showPage("stats");
-      }
-      
-      const backFromGoalValueBtn = document.getElementById("backFromGoalValueBtn");
-      if (backFromGoalValueBtn) {
-        backFromGoalValueBtn.onclick = () => App.showPage("stats");
-      }
-    }, 100);
-  },
-  
-  initTeamFromStorage() {
-    const savedTeam = localStorage.getItem("currentTeam");
-    if (savedTeam) {
-      const teamNumber = parseInt(savedTeam.replace('team', ''));
-      if (teamNumber >= 1 && teamNumber <= 3) {
-        this.currentTeam = teamNumber;
-        App.data.currentTeam = savedTeam;
-        this.loadTeamData(teamNumber);
-      } else {
-        // Invalid team number, default to team 1
-        this.switchTeam(1);
-      }
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-      // No saved team, default to team 1
-      this.switchTeam(1);
+        init();
     }
     
-    this.updateButtonStates();
-  },
-  
-  resetCurrentTeam() {
-    const teamId = `team${this.currentTeam}`;
-    const teamName = `Team ${this.currentTeam}`;
-    
-    if (!confirm(`${teamName} Daten vollständig zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.`)) {
-      return false;
+    function init() {
+        console.log('Initializing Team Selection');
+        
+        // Load saved team
+        const savedTeam = localStorage.getItem('currentTeam');
+        if (savedTeam) {
+            currentTeam = parseInt(savedTeam);
+        }
+        
+        // Setup team tabs
+        setupTeamTabs();
+        
+        // Load current team data
+        loadTeamData(currentTeam);
+        
+        // Setup event listeners mit Event Delegation
+        setupEventListeners();
+        
+        // Initial render
+        renderPlayerList();
     }
     
-    // Stop all timers
-    this.stopAllTimers();
+    function setupTeamTabs() {
+        const tabsContainer = document.querySelector('.team-tabs');
+        if (!tabsContainer) {
+            console.error('Team tabs container not found');
+            return;
+        }
+        
+        // Clear and create tabs
+        tabsContainer.innerHTML = '';
+        for (let i = 1; i <= 3; i++) {
+            const tab = document.createElement('button');
+            tab.className = `team-tab ${i === currentTeam ? 'active' : ''}`;
+            tab.dataset.team = i;
+            tab.textContent = `Team ${i}`;
+            tabsContainer.appendChild(tab);
+        }
+    }
     
-    // Remove team-specific data from localStorage
-    const keysToRemove = [
-      `selectedPlayers_${teamId}`,
-      `statsData_${teamId}`,
-      `playerTimes_${teamId}`,
-      `seasonData_${teamId}`,
-      `opponentShots_${teamId}`,
-      `activeTimerPlayers_${teamId}`
-    ];
+    function setupEventListeners() {
+        // Team tabs - Event Delegation
+        const tabsContainer = document.querySelector('.team-tabs');
+        if (tabsContainer) {
+            tabsContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('team-tab')) {
+                    const newTeam = parseInt(e.target.dataset.team);
+                    if (newTeam !== currentTeam) {
+                        switchTeam(newTeam);
+                    }
+                }
+            });
+        }
+        
+        // Player list - Event Delegation für dynamische Inhalte
+        const playerList = document.querySelector('.player-list');
+        if (playerList) {
+            playerList.addEventListener('click', function(e) {
+                // Edit button
+                if (e.target.classList.contains('edit-btn')) {
+                    const playerCard = e.target.closest('.player-card');
+                    if (playerCard) {
+                        const index = parseInt(playerCard.dataset.index);
+                        editPlayer(index);
+                    }
+                }
+                
+                // Delete button
+                if (e.target.classList.contains('delete-btn')) {
+                    const playerCard = e.target.closest('.player-card');
+                    if (playerCard) {
+                        const index = parseInt(playerCard.dataset.index);
+                        deletePlayer(index);
+                    }
+                }
+            });
+        }
+        
+        // Add player button
+        const addBtn = document.querySelector('.add-player-btn');
+        if (addBtn) {
+            addBtn.addEventListener('click', addNewPlayer);
+        }
+        
+        // Continue button
+        const continueBtn = document.querySelector('.continue-btn');
+        if (continueBtn) {
+            continueBtn.addEventListener('click', function() {
+                if (getTeamData().players.length > 0) {
+                    window.location.href = 'game-setup.html';
+                } else {
+                    alert('Bitte fügen Sie mindestens einen Spieler hinzu');
+                }
+            });
+        }
+    }
     
-    keysToRemove.forEach(key => {
-      localStorage.removeItem(key);
-    });
+    function switchTeam(newTeam) {
+        console.log(`Switching from team ${currentTeam} to team ${newTeam}`);
+        
+        // Save current team data
+        saveTeamData(currentTeam);
+        
+        // Update current team
+        currentTeam = newTeam;
+        localStorage.setItem('currentTeam', currentTeam);
+        
+        // Update UI
+        document.querySelectorAll('.team-tab').forEach(tab => {
+            tab.classList.toggle('active', parseInt(tab.dataset.team) === currentTeam);
+        });
+        
+        // Load new team data
+        loadTeamData(newTeam);
+        
+        // Render player list
+        renderPlayerList();
+        
+        console.log(`Successfully switched from team ${currentTeam} to team ${newTeam}`);
+    }
     
-    // Reset app data
-    App.data.selectedPlayers = [];
-    App.data.statsData = {};
-    App.data.playerTimes = {};
-    App.data.seasonData = {};
-    App.data.activeTimers = {};
+    function saveTeamData(teamNumber) {
+        const data = {
+            players: getTeamData().players,
+            hasStats: true,
+            hasTimers: false
+        };
+        localStorage.setItem(`team${teamNumber}Data`, JSON.stringify(data));
+        console.log(`Saved data for team${teamNumber}`);
+    }
     
-    // Refresh UI
-    this.refreshAllTables();
+    function loadTeamData(teamNumber) {
+        const savedData = localStorage.getItem(`team${teamNumber}Data`);
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                // Ensure players is an array
+                if (!Array.isArray(data.players)) {
+                    data.players = [];
+                }
+                setTeamData(data);
+                console.log(`Loaded data for team${teamNumber}`, {
+                    players: data.players.length,
+                    hasStats: data.hasStats || true,
+                    hasTimers: data.hasTimers || false
+                });
+            } catch (e) {
+                console.error('Error loading team data:', e);
+                setTeamData({ players: [], hasStats: true, hasTimers: false });
+            }
+        } else {
+            setTeamData({ players: [], hasStats: true, hasTimers: false });
+        }
+    }
     
-    console.log(`Reset completed for ${teamName}`);
-    alert(`${teamName} wurde zurückgesetzt. Andere Teams sind unberührt.`);
+    function getTeamData() {
+        const key = `team${currentTeam}Data`;
+        const data = window[key] || { players: [], hasStats: true, hasTimers: false };
+        if (!Array.isArray(data.players)) {
+            data.players = [];
+        }
+        return data;
+    }
     
-    return true;
-  },
-  
-  // Get current team info
-  getCurrentTeamInfo() {
-    return {
-      number: this.currentTeam,
-      id: `team${this.currentTeam}`,
-      name: `Team ${this.currentTeam}`,
-      playerCount: App.data.selectedPlayers.length,
-      hasData: Object.keys(App.data.statsData).length > 0
+    function setTeamData(data) {
+        const key = `team${currentTeam}Data`;
+        window[key] = data;
+    }
+    
+    function renderPlayerList() {
+        const playerList = document.querySelector('.player-list');
+        if (!playerList) return;
+        
+        const teamData = getTeamData();
+        const players = teamData.players || [];
+        
+        playerList.innerHTML = '';
+        
+        players.forEach((player, index) => {
+            const playerCard = document.createElement('div');
+            playerCard.className = 'player-card';
+            playerCard.dataset.index = index;
+            
+            playerCard.innerHTML = `
+                <div class="player-info">
+                    <span class="player-number">#${player.number}</span>
+                    <span class="player-name">${player.name}</span>
+                </div>
+                <div class="player-actions">
+                    <button class="edit-btn">✏️</button>
+                    <button class="delete-btn">🗑️</button>
+                </div>
+            `;
+            
+            playerList.appendChild(playerCard);
+        });
+        
+        // Update counter
+        updatePlayerCounter();
+    }
+    
+    function updatePlayerCounter() {
+        const counter = document.querySelector('.player-counter');
+        if (counter) {
+            const count = getTeamData().players.length;
+            counter.textContent = `${count}/${maxPlayers} Spieler`;
+        }
+    }
+    
+    function addNewPlayer() {
+        const teamData = getTeamData();
+        if (teamData.players.length >= maxPlayers) {
+            alert(`Maximum ${maxPlayers} Spieler pro Team`);
+            return;
+        }
+        
+        const name = prompt('Spielername:');
+        if (!name) return;
+        
+        const number = prompt('Rückennummer:');
+        if (!number) return;
+        
+        teamData.players.push({
+            name: name.trim(),
+            number: parseInt(number),
+            position: ''
+        });
+        
+        saveTeamData(currentTeam);
+        renderPlayerList();
+    }
+    
+    function editPlayer(index) {
+        const teamData = getTeamData();
+        const player = teamData.players[index];
+        if (!player) return;
+        
+        const newName = prompt('Spielername:', player.name);
+        if (newName === null) return;
+        
+        const newNumber = prompt('Rückennummer:', player.number);
+        if (newNumber === null) return;
+        
+        player.name = newName.trim();
+        player.number = parseInt(newNumber);
+        
+        saveTeamData(currentTeam);
+        renderPlayerList();
+    }
+    
+    function deletePlayer(index) {
+        if (confirm('Spieler wirklich löschen?')) {
+            const teamData = getTeamData();
+            teamData.players.splice(index, 1);
+            saveTeamData(currentTeam);
+            renderPlayerList();
+        }
+    }
+    
+    // Public API
+    window.TeamSelection = {
+        getCurrentTeam: () => currentTeam,
+        getTeamData: getTeamData,
+        refresh: renderPlayerList
     };
-  },
-  
-  // Export current team data
-  exportCurrentTeam() {
-    if (App.csvHandler && App.csvHandler.exportStats) {
-      App.csvHandler.exportStats();
-    }
-  },
-  
-  // Import data for current team
-  importToCurrentTeam() {
-    if (App.csvHandler && App.csvHandler.fileInput) {
-      App.csvHandler.fileInput.dataset.target = "stats";
-      App.csvHandler.fileInput.click();
-    }
-  }
-};
+    
+})();
