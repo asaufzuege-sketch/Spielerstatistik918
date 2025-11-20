@@ -2,6 +2,7 @@
 App.seasonTable = {
   container: null,
   sortState: { index: null, asc: true },
+  isRendering: false, // NEU: Flag um Rekursion zu verhindern
 
   init() {
     this.container = document.getElementById("seasonContainer");
@@ -22,11 +23,18 @@ App.seasonTable = {
 
   render() {
     if (!this.container) return;
+    
+    // WICHTIG: Verhindere rekursive render() Aufrufe
+    if (this.isRendering) {
+      console.warn("[Season Table] Render already in progress, skipping...");
+      return;
+    }
+    
+    this.isRendering = true;
 
-    // Container komplett leeren und sicherstellen, dass keine Duplikate entstehen
+    // Container komplett leeren
     this.container.innerHTML = "";
     
-    // Debug-Log um zu prüfen, ob render() mehrfach aufgerufen wird
     console.log("[Season Table] Rendering started at:", new Date().toISOString());
 
     const headerCols = [
@@ -37,10 +45,10 @@ App.seasonTable = {
       "MVP", "MVP Points"
     ];
 
-    // Tabelle direkt in den Container (kein zusätzlicher Wrapper)
+    // Tabelle direkt in den Container
     const table = document.createElement("table");
     table.className = "season-table";
-    table.setAttribute("data-table-id", "season-main-table"); // NEU: Eindeutige ID für Debugging
+    table.setAttribute("data-table-id", "season-main-table");
 
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
@@ -65,10 +73,9 @@ App.seasonTable = {
 
     const tbody = document.createElement("tbody");
 
-    // Sicherstellen, dass GoalValue-Daten da sind (falls verwendet)
-    if (App.goalValue && typeof App.goalValue.ensureDataForSeason === "function") {
-      App.goalValue.ensureDataForSeason();
-    }
+    // WICHTIG: Goal Value Daten OHNE Trigger zu ensureDataForSeason
+    // Wir rufen es NICHT auf, um die Rekursion zu verhindern
+    // ensureDataForSeason wird nur beim ersten Laden oder explizit aufgerufen
 
     const rows = Object.keys(App.data.seasonData).map(name => {
       const d = App.data.seasonData[name];
@@ -258,26 +265,16 @@ App.seasonTable = {
 
     table.appendChild(tbody);
 
-    // WICHTIG: Prüfen ob bereits eine Tabelle im Container ist (sollte nicht sein)
-    const existingTables = this.container.querySelectorAll('table');
-    if (existingTables.length > 0) {
-      console.warn("[Season Table] Found existing tables, removing them:", existingTables.length);
-      existingTables.forEach(t => t.remove());
-    }
-
-    // Tabelle direkt in den Container (nur EINE Tabelle)
+    // Tabelle direkt in den Container
     this.container.appendChild(table);
 
-    // Debug: Zählen wie viele Tabellen jetzt im Container sind
-    const tablesAfter = this.container.querySelectorAll('table');
-    console.log("[Season Table] Tables in container after render:", tablesAfter.length);
+    console.log("[Season Table] Tables in container:", this.container.querySelectorAll('table').length);
 
     // Sort UI
     this.updateSortUI(table);
     
-    // Event Listener für Sortierung - EINMAL pro Header hinzufügen
+    // Event Listener für Sortierung
     table.querySelectorAll("th.sortable").forEach(th => {
-      // Prüfen ob bereits Listener existiert
       const hasListener = th.hasAttribute('data-listener-attached');
       if (!hasListener) {
         th.setAttribute('data-listener-attached', 'true');
@@ -295,6 +292,9 @@ App.seasonTable = {
     });
     
     console.log("[Season Table] Rendering completed");
+    
+    // WICHTIG: Flag zurücksetzen
+    this.isRendering = false;
   },
 
   updateSortUI(table) {
@@ -365,6 +365,11 @@ App.seasonTable = {
     });
 
     App.storage.saveSeasonData();
+    
+    // WICHTIG: ensureDataForSeason NUR HIER aufrufen, nicht beim Rendering
+    if (App.goalValue && typeof App.goalValue.ensureDataForSeason === "function") {
+      App.goalValue.ensureDataForSeason();
+    }
 
     const keep = confirm("Spiel wurde in Season exportiert. Daten in Game beibehalten? (OK = Ja)");
     if (!keep) {
