@@ -31,19 +31,8 @@ App.goalValue = {
     return {};
   },
   
-  setData(obj, skipNotify = false) {
+  setData(obj) {
     localStorage.setItem("goalValueData", JSON.stringify(obj));
-    // Auto-sync: Notify Season page to update (unless explicitly skipped)
-    if (!skipNotify) {
-      this.notifyDataChange();
-    }
-  },
-  
-  notifyDataChange() {
-    // Trigger Season table re-render if it exists
-    if (App.seasonTable && typeof App.seasonTable.render === "function") {
-      App.seasonTable.render();
-    }
   },
   
   getBottom() {
@@ -54,12 +43,8 @@ App.goalValue = {
     return this.getOpponents().map(() => 0);
   },
   
-  setBottom(arr, skipNotify = false) {
+  setBottom(arr) {
     localStorage.setItem("goalValueBottom", JSON.stringify(arr));
-    // Auto-sync: Notify Season page to update (unless explicitly skipped)
-    if (!skipNotify) {
-      this.notifyDataChange();
-    }
   },
   
   computeValueForPlayer(name) {
@@ -76,29 +61,17 @@ App.goalValue = {
   ensureDataForSeason() {
     const opponents = this.getOpponents();
     const all = this.getData();
-    let changed = false;
     
     Object.keys(App.data.seasonData).forEach(name => {
       if (!all[name] || !Array.isArray(all[name])) {
         all[name] = opponents.map(() => 0);
-        changed = true;
       } else {
-        const origLen = all[name].length;
-        while (all[name].length < opponents.length) {
-          all[name].push(0);
-          changed = true;
-        }
-        if (all[name].length > opponents.length) {
-          all[name] = all[name].slice(0, opponents.length);
-          changed = true;
-        }
+        while (all[name].length < opponents.length) all[name].push(0);
+        if (all[name].length > opponents.length) all[name] = all[name].slice(0, opponents.length);
       }
     });
     
-    // Only save if data actually changed
-    if (changed) {
-      this.setData(all, true); // Skip notification to prevent infinite loop
-    }
+    this.setData(all);
   },
   
   render() {
@@ -119,8 +92,7 @@ App.goalValue = {
     table.className = "goalvalue-table gv-no-patch";
     table.style.width = "auto";
     table.style.margin = "0";
-    table.style.borderCollapse = "separate";
-    table.style.borderSpacing = "0";
+    table.style.borderCollapse = "collapse";
     table.style.borderRadius = "8px";
     table.style.overflow = "hidden";
     table.style.tableLayout = "auto";
@@ -130,7 +102,6 @@ App.goalValue = {
     const headerRow = document.createElement("tr");
     
     const thPlayer = document.createElement("th");
-    thPlayer.className = "gv-name-header";
     thPlayer.textContent = "Spieler";
     thPlayer.style.textAlign = "center";
     thPlayer.style.padding = "8px 6px";
@@ -183,7 +154,6 @@ App.goalValue = {
       row.style.borderBottom = "1px solid #333";
       
       const tdName = document.createElement("td");
-      tdName.className = "gv-name-cell";
       tdName.textContent = name;
       tdName.style.textAlign = "left";
       tdName.style.padding = "6px";
@@ -277,7 +247,6 @@ App.goalValue = {
     bottomRow.style.background = "rgba(0,0,0,0.03)";
     
     const labelTd = document.createElement("td");
-    labelTd.className = "gv-name-cell";
     labelTd.textContent = "";
     labelTd.style.padding = "6px";
     labelTd.style.fontWeight = "700";
@@ -290,7 +259,7 @@ App.goalValue = {
     const storedBottom = this.getBottom();
     while (storedBottom.length < opponents.length) storedBottom.push(0);
     if (storedBottom.length > opponents.length) storedBottom.length = opponents.length;
-    this.setBottom(storedBottom, true); // Skip notification during render
+    this.setBottom(storedBottom);
     
     opponents.forEach((_, i) => {
       const td = document.createElement("td");
