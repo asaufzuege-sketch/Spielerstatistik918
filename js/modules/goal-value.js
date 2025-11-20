@@ -121,7 +121,6 @@ App.goalValue = {
     
     const thPlayer = document.createElement("th");
     thPlayer.textContent = "Spieler";
-    thPlayer.classList.add("gv-name-header"); // NEU: sticky Header-Klasse
     thPlayer.style.textAlign = "center";
     thPlayer.style.padding = "8px 6px";
     thPlayer.style.borderBottom = "2px solid #333";
@@ -173,7 +172,6 @@ App.goalValue = {
       
       const tdName = document.createElement("td");
       tdName.textContent = name;
-      tdName.classList.add("gv-name-cell"); // NEU: sticky Zellen-Klasse
       tdName.style.textAlign = "left";
       tdName.style.padding = "6px";
       tdName.style.fontWeight = "700";
