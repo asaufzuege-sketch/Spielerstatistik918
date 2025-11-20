@@ -267,10 +267,37 @@
     }
     
     // Public API
-    window.TeamSelection = {
+    const api = {
+        init() {
+            // Already initialized in IIFE, but provide no-op for compatibility
+            console.log('Team Selection already initialized');
+        },
         getCurrentTeam: () => currentTeam,
+        getCurrentTeamInfo() {
+            return {
+                id: `team${currentTeam}`,
+                number: currentTeam,
+                name: `Team ${currentTeam}` 
+            };
+        },
         getTeamData: getTeamData,
-        refresh: renderPlayerList
+        refresh: renderPlayerList,
+        saveTeams: () => saveTeamData(currentTeam),
+        resetCurrentTeam() {
+            const confirmed = confirm("Spieldaten zurücksetzen?");
+            if (confirmed) {
+                setTeamData({ players: [], hasStats: true, hasTimers: false });
+                saveTeamData(currentTeam);
+                renderPlayerList();
+            }
+            return confirmed;
+        },
+        updateButtonStates() {
+            // No-op for compatibility
+        }
     };
+    
+    window.TeamSelection = api;
+    App.teamSelection = api;
     
 })();
