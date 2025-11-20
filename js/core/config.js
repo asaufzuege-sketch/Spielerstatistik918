@@ -58,7 +58,7 @@ const App = {
     style.textContent = `
       #seasonContainer, #goalValueContainer {
         display: flex !important;
-        justify-content: flex-start !important;
+        justify-content: center !important;        /* zentriert statt links */
         align-items: flex-start !important;
         padding-left: 0 !important;
         margin-left: 0 !important;
@@ -74,7 +74,7 @@ const App = {
       }
       #seasonContainer table, #goalValueContainer table {
         white-space: nowrap !important;
-        margin-left: 0 !important;
+        margin-left: auto !important;         /* zentriert */
         margin-right: auto !important;
         width: auto !important;
         max-width: none !important;
@@ -101,11 +101,10 @@ const App = {
         #seasonContainer, #goalValueContainer {
           width: 100vw !important;
         }
-        /* Season should scroll horizontally to show sticky columns */
+        /* Season und GoalValue dürfen horizontal scrollen, Sticky-Spalten bleiben */
         #seasonContainer {
           overflow-x: auto !important;
         }
-        /* Goal Value can also scroll */
         #goalValueContainer {
           overflow-x: auto !important;
         }
