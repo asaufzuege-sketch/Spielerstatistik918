@@ -96,7 +96,7 @@ App.goalValue = {
   ensureDataForSeason() {
     // Verhindere rekursive Aufrufe
     if (this.isUpdatingData) {
-      console.warn("[Goal Value] ensureDataForSeason blocked during update to prevent recursion");
+      console.warn("[Goal Value] ensureDataForSeason blocked to prevent recursion");
       return;
     }
     
