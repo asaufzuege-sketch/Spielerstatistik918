@@ -34,9 +34,15 @@ App.seasonTable = {
       "MVP", "MVP Points"
     ];
 
-    // Tabelle direkt in den Container (kein zusätzlicher Wrapper) – wie Goal Value
+    // Tabelle mit proper width constraints
     const table = document.createElement("table");
     table.className = "season-table"; // eigener Klassenname für gezieltes CSS
+    table.style.width = "auto";
+    table.style.margin = "0";
+    table.style.borderCollapse = "collapse";
+    table.style.borderRadius = "8px";
+    table.style.overflow = "hidden";
+    table.style.tableLayout = "auto";
 
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
@@ -254,8 +260,18 @@ App.seasonTable = {
 
     table.appendChild(tbody);
 
-    // Wichtig: Tabelle direkt in den Container (nur EIN Scroll-Container)
-    this.container.appendChild(table);
+    // Wrap table in scroll wrapper for proper width constraints
+    const wrapper = document.createElement('div');
+    wrapper.className = 'table-scroll';
+    wrapper.style.width = '100%';
+    wrapper.style.boxSizing = 'border-box';
+    wrapper.style.overflowX = 'auto';
+    wrapper.style.overflowY = 'hidden';
+    wrapper.style.WebkitOverflowScrolling = 'touch';
+    wrapper.appendChild(table);
+
+    // Wichtig: Wrapper in den Container (für kontrollierten Scroll)
+    this.container.appendChild(wrapper);
 
     // Sort UI
     this.updateSortUI(table);
