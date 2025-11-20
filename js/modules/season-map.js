@@ -63,9 +63,17 @@ App.seasonMap = {
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
-        // For now, show all markers since we don't have player association yet
-        // This will be enhanced when we load seasonMapMarkers with player data
-        marker.style.display = '';
+        if (this.playerFilter) {
+          // Show only markers for selected player
+          if (marker.dataset.player === this.playerFilter) {
+            marker.style.display = '';
+          } else {
+            marker.style.display = 'none';
+          }
+        } else {
+          // Show all markers
+          marker.style.display = '';
+        }
       });
     });
     

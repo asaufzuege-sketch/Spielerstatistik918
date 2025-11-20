@@ -93,7 +93,7 @@ App.markerHandler = {
     }
   },
   
-  createMarkerPercent(xPct, yPct, color, container, interactive = true) {
+  createMarkerPercent(xPct, yPct, color, container, interactive = true, playerName = null) {
     xPct = this.clampPct(xPct);
     yPct = this.clampPct(yPct);
     
@@ -108,6 +108,11 @@ App.markerHandler = {
     dot.style.borderRadius = "50%";
     dot.style.transform = "translate(-50%,-50%)";
     
+    // Add player data attribute if provided
+    if (playerName) {
+      dot.dataset.player = playerName;
+    }
+    
     if (interactive) {
       dot.addEventListener("click", (ev) => {
         ev.stopPropagation();
@@ -117,6 +122,8 @@ App.markerHandler = {
     
     container.style.position = container.style.position || "relative";
     container.appendChild(dot);
+    
+    return dot;
   },
   
   computeRenderedImageRect(imgEl) {

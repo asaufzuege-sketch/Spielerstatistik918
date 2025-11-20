@@ -71,22 +71,24 @@ App.goalMap = {
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
-        // For now, show all markers since we don't have player association yet
-        // This will be enhanced when we load goalMapData
-        marker.style.display = '';
+        if (this.playerFilter) {
+          // Show only markers for selected player
+          if (marker.dataset.player === this.playerFilter) {
+            marker.style.display = '';
+          } else {
+            marker.style.display = 'none';
+          }
+        } else {
+          // Show all markers
+          marker.style.display = '';
+        }
       });
     });
     
-    // Filter time tracking data
-    this.filterTimeTracking();
+    // Filter time tracking data (hide/show buttons based on player)
+    // Note: Time buttons don't have player association yet, so this is a placeholder
     
     console.log(`Player filter applied: ${this.playerFilter || 'All players'}`);
-  },
-  
-  filterTimeTracking() {
-    // For time tracking, we would need to associate each button click with a player
-    // This is a placeholder for future enhancement
-    console.log("Time tracking filter not yet implemented");
   },
   
   updateWorkflowIndicator() {
@@ -172,46 +174,61 @@ App.goalMap = {
           const sampler = App.markerHandler.createImageSampler(img);
           pointType = 'field';
           
-          if (long || forceGrey) {
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true);
-            color = "#444";
-            placed = true;
-          } else if (sampler && sampler.valid) {
-            const isGreen = sampler.isGreenAt(pos.xPctImage, pos.yPctImage, 110, 30);
-            const isRed = sampler.isRedAt(pos.xPctImage, pos.yPctImage, 95, 22);
-            
-            if (isGreen) {
-              App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#00ff66", box, true);
+          // Check if in workflow mode
+          if (App.goalMapWorkflow.active) {
+            // Gray for goal events, green for shot events
+            if (App.goalMapWorkflow.eventType === 'goal') {
+              color = "#888888";
+            } else {
               color = "#00ff66";
+            }
+            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, color, box, true, App.goalMapWorkflow.playerName);
+            placed = true;
+          } else {
+            // Original behavior for manual placement
+            if (long || forceGrey) {
+              App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true);
+              color = "#444";
               placed = true;
-            } else if (isRed) {
-              App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#ff0000", box, true);
-              color = "#ff0000";
+            } else if (sampler && sampler.valid) {
+              const isGreen = sampler.isGreenAt(pos.xPctImage, pos.yPctImage, 110, 30);
+              const isRed = sampler.isRedAt(pos.xPctImage, pos.yPctImage, 95, 22);
+              
+              if (isGreen) {
+                App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#00ff66", box, true);
+                color = "#00ff66";
+                placed = true;
+              } else if (isRed) {
+                App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#ff0000", box, true);
+                color = "#ff0000";
+                placed = true;
+              }
+            } else {
+              color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
+              App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, color, box, true);
               placed = true;
             }
-          } else {
-            color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, color, box, true);
-            placed = true;
           }
         } else if (box.classList.contains("goal-img-box") || box.id === "goalGreenBox" || box.id === "goalRedBox") {
           const sampler = App.markerHandler.createImageSampler(img);
           if (!sampler || !sampler.valid) return;
           pointType = 'goal';
           
+          const playerName = App.goalMapWorkflow.active ? App.goalMapWorkflow.playerName : null;
+          
           if (box.id === "goalGreenBox") {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true);
+            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true, playerName);
             color = "#444";
             placed = true;
           } else if (box.id === "goalRedBox") {
             if (!sampler.isNeutralWhiteAt(pos.xPctContainer, pos.yPctContainer, 235, 12)) return;
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true);
+            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true, playerName);
             color = "#444";
             placed = true;
           } else {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true);
+            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true, playerName);
             color = "#444";
             placed = true;
           }
