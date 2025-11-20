@@ -58,7 +58,7 @@ const App = {
     style.textContent = `
       #seasonContainer, #goalValueContainer {
         display: flex !important;
-        justify-content: center !important;        /* zentriert statt links */
+        justify-content: flex-start !important;
         align-items: flex-start !important;
         padding-left: 0 !important;
         margin-left: 0 !important;
@@ -66,7 +66,7 @@ const App = {
         width: 100% !important;
       }
       #seasonContainer .table-scroll, #goalValueContainer .table-scroll {
-        overflow-x: auto !important;          /* horizontal scroll ermöglichen */
+        overflow-x: auto !important;          /* WICHTIG: horizontal scroll ermöglichen */
         overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
         width: 100% !important;
@@ -74,7 +74,7 @@ const App = {
       }
       #seasonContainer table, #goalValueContainer table {
         white-space: nowrap !important;
-        margin-left: auto !important;         /* zentriert */
+        margin-left: 0 !important;
         margin-right: auto !important;
         width: auto !important;
         max-width: none !important;
@@ -100,12 +100,14 @@ const App = {
       @media (min-width: 1200px) {
         #seasonContainer, #goalValueContainer {
           width: 100vw !important;
+          overflow: visible !important;
         }
-        /* Season & GoalValue dürfen horizontal scrollen, damit Sticky-Spalten funktionieren */
-        #seasonContainer {
-          overflow-x: auto !important;
+        /* Season soll auf sehr breiten Screens nicht mehr horizontal scrollen */
+        #seasonContainer .table-scroll {
+          overflow-x: hidden !important;
         }
-        #goalValueContainer {
+        /* Goal Value DARF weiterhin scrollen -> KEIN overflow-x: hidden! */
+        #goalValueContainer .table-scroll {
           overflow-x: auto !important;
         }
         #seasonContainer table {
@@ -176,8 +178,15 @@ const App = {
       };
       document.title = titles[page] || "Spielerstatistik";
       
-      // Render bei Seitenwechsel verzögert
-      setTimeout(() => {
+      // Render bei Seitenwechsel verzögert - NUR EINMAL
+      // Verhindert mehrfache render() Aufrufe
+      if (this._renderTimeout) {
+        clearTimeout(this._renderTimeout);
+      }
+      
+      this._renderTimeout = setTimeout(() => {
+        console.log("[Config] Rendering page:", page); // Debug-Log
+        
         if (page === "stats" && this.statsTable && typeof this.statsTable.render === 'function') {
           this.statsTable.render();
         }
@@ -193,9 +202,8 @@ const App = {
         if (page === "teamSelection" && this.teamSelection && typeof this.teamSelection.updateButtonStates === 'function') {
           this.teamSelection.updateButtonStates();
         }
-        if (page === "selection" && this.playerSelection && typeof this.playerSelection.render === 'function') {
-          this.playerSelection.render();
-        }
+        
+        this._renderTimeout = null;
       }, 60);
       
     } catch (err) {
