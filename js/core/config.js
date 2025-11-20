@@ -66,7 +66,7 @@ const App = {
         width: 100% !important;
       }
       #seasonContainer .table-scroll, #goalValueContainer .table-scroll {
-        overflow-x: auto !important;          /* WICHTIG: horizontal scroll ermöglichen */
+        overflow-x: auto !important;          /* horizontal scroll ermöglichen */
         overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
         width: 100% !important;
@@ -101,7 +101,7 @@ const App = {
         #seasonContainer, #goalValueContainer {
           width: 100vw !important;
         }
-        /* Season und GoalValue dürfen horizontal scrollen, Sticky-Spalten bleiben */
+        /* Season & GoalValue dürfen horizontal scrollen, damit Sticky-Spalten funktionieren */
         #seasonContainer {
           overflow-x: auto !important;
         }
