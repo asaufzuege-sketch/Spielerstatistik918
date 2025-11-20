@@ -5,13 +5,6 @@
     let currentTeam = 1;
     const maxPlayers = 16;
     
-    // Initialize on DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-    
     function init() {
         console.log('Initializing Team Selection');
         
@@ -266,11 +259,27 @@
         }
     }
     
-    // Public API
-    window.TeamSelection = {
+    // Get current team info (returns object with id and number)
+    function getCurrentTeamInfo() {
+        return {
+            id: `team${currentTeam}`,
+            number: currentTeam
+        };
+    }
+    
+    // Public API - Register on App.teamSelection
+    App.teamSelection = {
+        init: init,
         getCurrentTeam: () => currentTeam,
+        getCurrentTeamInfo: getCurrentTeamInfo,
         getTeamData: getTeamData,
+        setTeamData: setTeamData,
+        saveTeamData: saveTeamData,
+        loadTeamData: loadTeamData,
+        switchTeam: switchTeam,
         refresh: renderPlayerList
     };
+    
+    console.log('✅ Team Selection module registered on App.teamSelection');
     
 })();
