@@ -92,7 +92,8 @@ App.goalValue = {
     table.className = "goalvalue-table gv-no-patch";
     table.style.width = "auto";
     table.style.margin = "0";
-    table.style.borderCollapse = "collapse";
+    table.style.borderCollapse = "separate";
+    table.style.borderSpacing = "0";
     table.style.borderRadius = "8px";
     table.style.overflow = "hidden";
     table.style.tableLayout = "auto";
@@ -102,6 +103,7 @@ App.goalValue = {
     const headerRow = document.createElement("tr");
     
     const thPlayer = document.createElement("th");
+    thPlayer.className = "gv-name-header";
     thPlayer.textContent = "Spieler";
     thPlayer.style.textAlign = "center";
     thPlayer.style.padding = "8px 6px";
@@ -154,6 +156,7 @@ App.goalValue = {
       row.style.borderBottom = "1px solid #333";
       
       const tdName = document.createElement("td");
+      tdName.className = "gv-name-cell";
       tdName.textContent = name;
       tdName.style.textAlign = "left";
       tdName.style.padding = "6px";
@@ -247,6 +250,7 @@ App.goalValue = {
     bottomRow.style.background = "rgba(0,0,0,0.03)";
     
     const labelTd = document.createElement("td");
+    labelTd.className = "gv-name-cell";
     labelTd.textContent = "";
     labelTd.style.padding = "6px";
     labelTd.style.fontWeight = "700";
