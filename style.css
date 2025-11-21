@@ -373,6 +373,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding-bottom: 20px !important;
   box-sizing: border-box !important;
   position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
 }
 
 #seasonContainer::-webkit-scrollbar {

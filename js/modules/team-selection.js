@@ -333,21 +333,45 @@
         const buttonsDiv = document.createElement('div');
         buttonsDiv.style.cssText = 'display: flex; flex-direction: column; gap: 20px; max-width: 500px; margin: 40px auto; padding: 20px;';
         
-        // Continue with current team button
-        const continueBtn = document.createElement('button');
-        continueBtn.textContent = `Mit Team ${currentTeam} fortfahren`;
-        continueBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; background: #44bb91; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;';
-        continueBtn.addEventListener('click', () => {
-            App.showPage('selection');
-        });
-        continueBtn.addEventListener('mouseenter', () => {
-            continueBtn.style.background = '#3aa57d';
-        });
-        continueBtn.addEventListener('mouseleave', () => {
-            continueBtn.style.background = '#44bb91';
-        });
+        // Create buttons for Team 1, Team 2, and Team 3
+        for (let i = 1; i <= 3; i++) {
+            const teamBtn = document.createElement('button');
+            teamBtn.textContent = `Team ${i}`;
+            teamBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; background: #44bb91; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;';
+            
+            // Highlight current team
+            if (i === currentTeam) {
+                teamBtn.style.background = '#3aa57d';
+                teamBtn.style.boxShadow = '0 0 0 3px rgba(68, 187, 145, 0.3)';
+            }
+            
+            teamBtn.addEventListener('click', () => {
+                if (i !== currentTeam) {
+                    switchTeam(i);
+                }
+                App.showPage('selection');
+            });
+            
+            teamBtn.addEventListener('mouseenter', () => {
+                if (i === currentTeam) {
+                    teamBtn.style.background = '#338869';
+                } else {
+                    teamBtn.style.background = '#3aa57d';
+                }
+            });
+            
+            teamBtn.addEventListener('mouseleave', () => {
+                if (i === currentTeam) {
+                    teamBtn.style.background = '#3aa57d';
+                    teamBtn.style.boxShadow = '0 0 0 3px rgba(68, 187, 145, 0.3)';
+                } else {
+                    teamBtn.style.background = '#44bb91';
+                }
+            });
+            
+            buttonsDiv.appendChild(teamBtn);
+        }
         
-        buttonsDiv.appendChild(continueBtn);
         container.appendChild(buttonsDiv);
     }
     
