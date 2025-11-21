@@ -222,6 +222,9 @@ const App = {
         if (page === "teamSelection" && this.teamSelection && typeof this.teamSelection.updateButtonStates === 'function') {
           this.teamSelection.updateButtonStates();
         }
+        if (page === "selection" && this.playerSelection && typeof this.playerSelection.render === 'function') {
+          this.playerSelection.render();
+        }
         
         this._renderTimeout = null;
       }, 60);
