@@ -215,6 +215,36 @@ h1 {
 .danger-btn:hover { background: #a30000; }
 .reset-btn { font-weight: 700; }
 
+/* Player Filter Button Style */
+.player-filter-btn {
+  background: #6b6b6b !important;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-width: 140px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.player-filter-btn:hover {
+  background: #7b7b7b !important;
+}
+.player-filter-btn option {
+  background: #2b2b2b;
+  color: #fff;
+}
+
 .confirm-btn {
   background: #44bb91;
   color: #fff;

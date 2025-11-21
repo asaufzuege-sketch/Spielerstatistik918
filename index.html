@@ -78,18 +78,15 @@
       <div class="top-bar">
         <button id="backToStatsBtn" class="top-btn back-btn">← Zurück</button>
         <button id="exportSeasonMapBtn" class="top-btn export-season">Export Season Map</button>
+        <select id="goalMapPlayerFilter" class="top-btn player-filter-btn">
+          <option value="">Alle Spieler</option>
+        </select>
         <button id="resetTorbildBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
     </div>
     <h1>GOAL MAP</h1>
     <div id="workflowStatusIndicator" class="workflow-indicator" style="display: none;">
       <span id="workflowStatusText"></span>
-    </div>
-    <div class="player-filter-container">
-      <label for="goalMapPlayerFilter">Spieler Filter:</label>
-      <select id="goalMapPlayerFilter" class="player-filter">
-        <option value="">Alle Spieler</option>
-      </select>
     </div>
     <div class="torbild-layout">
       <div class="field-column">
@@ -175,17 +172,14 @@
       <div class="top-bar">
         <button id="backToStatsFromSeasonMapBtn" class="top-btn back-btn">← Zurück</button>
         <button id="exportSeasonMapPageBtn" class="top-btn export-csv">Export</button>
+        <select id="seasonMapPlayerFilter" class="top-btn player-filter-btn">
+          <option value="">Alle Spieler</option>
+        </select>
         <button id="resetSeasonMapBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
     </div>
     <div style="margin-top:18px; padding:10px;">
       <h1>SEASON MAP</h1>
-      <div class="player-filter-container">
-        <label for="seasonMapPlayerFilter">Spieler Filter:</label>
-        <select id="seasonMapPlayerFilter" class="player-filter">
-          <option value="">Alle Spieler</option>
-        </select>
-      </div>
     </div>
     <div class="torbild-layout">
       <div class="field-column">
