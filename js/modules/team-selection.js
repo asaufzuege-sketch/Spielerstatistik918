@@ -329,50 +329,135 @@
         // Clear existing content
         container.innerHTML = '';
         
-        // Create team buttons container
-        const buttonsDiv = document.createElement('div');
-        buttonsDiv.style.cssText = 'display: flex; flex-direction: column; gap: 20px; max-width: 500px; margin: 40px auto; padding: 20px;';
+        // Create team tabs
+        const tabsDiv = document.createElement('div');
+        tabsDiv.className = 'team-tabs';
+        tabsDiv.style.cssText = 'display: flex; gap: 10px; justify-content: center; margin-bottom: 30px;';
         
-        // Create buttons for Team 1, Team 2, and Team 3
         for (let i = 1; i <= 3; i++) {
-            const teamBtn = document.createElement('button');
-            teamBtn.textContent = `Team ${i}`;
-            teamBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; background: #44bb91; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;';
+            const tab = document.createElement('button');
+            tab.className = 'team-tab';
+            tab.textContent = `Team ${i}`;
+            tab.dataset.team = i;
+            tab.style.cssText = `padding: 15px 40px; font-size: 1.1rem; border: 2px solid #44bb91; background: ${i === currentTeam ? '#44bb91' : 'transparent'}; color: ${i === currentTeam ? 'white' : '#44bb91'}; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;`;
             
-            // Highlight current team
-            if (i === currentTeam) {
-                teamBtn.style.background = '#3aa57d';
-                teamBtn.style.boxShadow = '0 0 0 3px rgba(68, 187, 145, 0.3)';
-            }
-            
-            teamBtn.addEventListener('click', () => {
+            tab.addEventListener('click', () => {
                 if (i !== currentTeam) {
                     switchTeam(i);
-                }
-                App.showPage('selection');
-            });
-            
-            teamBtn.addEventListener('mouseenter', () => {
-                if (i === currentTeam) {
-                    teamBtn.style.background = '#338869';
-                } else {
-                    teamBtn.style.background = '#3aa57d';
+                    renderTeamSelectionButtons(); // Re-render to show new team
                 }
             });
             
-            teamBtn.addEventListener('mouseleave', () => {
-                if (i === currentTeam) {
-                    teamBtn.style.background = '#3aa57d';
-                    teamBtn.style.boxShadow = '0 0 0 3px rgba(68, 187, 145, 0.3)';
-                } else {
-                    teamBtn.style.background = '#44bb91';
+            tab.addEventListener('mouseenter', () => {
+                if (i !== currentTeam) {
+                    tab.style.background = 'rgba(68, 187, 145, 0.1)';
                 }
             });
             
-            buttonsDiv.appendChild(teamBtn);
+            tab.addEventListener('mouseleave', () => {
+                if (i !== currentTeam) {
+                    tab.style.background = 'transparent';
+                }
+            });
+            
+            tabsDiv.appendChild(tab);
         }
         
-        container.appendChild(buttonsDiv);
+        container.appendChild(tabsDiv);
+        
+        // Create roster container
+        const rosterDiv = document.createElement('div');
+        rosterDiv.style.cssText = 'max-width: 800px; margin: 0 auto; padding: 20px;';
+        
+        const teamData = getTeamData();
+        
+        // Team 1: Show predefined players
+        if (currentTeam === 1) {
+            const predefinedPlayers = App.data.players || [];
+            
+            predefinedPlayers.forEach((player, index) => {
+                const playerRow = document.createElement('div');
+                playerRow.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 12px; background: rgba(255, 255, 255, 0.05); margin-bottom: 8px; border-radius: 6px;';
+                
+                const numberInput = document.createElement('input');
+                numberInput.type = 'text';
+                numberInput.value = player.num || '';
+                numberInput.placeholder = 'Nr.';
+                numberInput.style.cssText = 'width: 60px; padding: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; color: white; text-align: center;';
+                numberInput.addEventListener('input', (e) => {
+                    player.num = e.target.value;
+                    saveTeamData(currentTeam);
+                });
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.value = player.name || '';
+                nameInput.placeholder = 'Spielername';
+                nameInput.style.cssText = 'flex: 1; padding: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; color: white;';
+                nameInput.addEventListener('input', (e) => {
+                    player.name = e.target.value;
+                    saveTeamData(currentTeam);
+                });
+                
+                playerRow.appendChild(numberInput);
+                playerRow.appendChild(nameInput);
+                rosterDiv.appendChild(playerRow);
+            });
+        } else {
+            // Teams 2 & 3: Show 30 empty slots
+            for (let i = 0; i < 30; i++) {
+                const playerRow = document.createElement('div');
+                playerRow.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 12px; background: rgba(255, 255, 255, 0.05); margin-bottom: 8px; border-radius: 6px;';
+                
+                // Get or create player data
+                if (!teamData.players) teamData.players = [];
+                if (!teamData.players[i]) {
+                    teamData.players[i] = { num: '', name: '' };
+                }
+                
+                const numberInput = document.createElement('input');
+                numberInput.type = 'text';
+                numberInput.value = teamData.players[i].num || '';
+                numberInput.placeholder = 'Nr.';
+                numberInput.style.cssText = 'width: 60px; padding: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; color: white; text-align: center;';
+                numberInput.addEventListener('input', (e) => {
+                    teamData.players[i].num = e.target.value;
+                    saveTeamData(currentTeam);
+                });
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.value = teamData.players[i].name || '';
+                nameInput.placeholder = 'Spielername';
+                nameInput.style.cssText = 'flex: 1; padding: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; color: white;';
+                nameInput.addEventListener('input', (e) => {
+                    teamData.players[i].name = e.target.value;
+                    saveTeamData(currentTeam);
+                });
+                
+                playerRow.appendChild(numberInput);
+                playerRow.appendChild(nameInput);
+                rosterDiv.appendChild(playerRow);
+            }
+        }
+        
+        container.appendChild(rosterDiv);
+        
+        // Add continue button
+        const continueBtn = document.createElement('button');
+        continueBtn.textContent = 'Weiter zur Spielerauswahl';
+        continueBtn.style.cssText = 'display: block; margin: 30px auto; padding: 15px 40px; font-size: 1.1rem; background: #44bb91; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;';
+        continueBtn.addEventListener('click', () => {
+            App.showPage('selection');
+        });
+        continueBtn.addEventListener('mouseenter', () => {
+            continueBtn.style.background = '#3aa57d';
+        });
+        continueBtn.addEventListener('mouseleave', () => {
+            continueBtn.style.background = '#44bb91';
+        });
+        
+        container.appendChild(continueBtn);
     }
     
     window.TeamSelection = api;
