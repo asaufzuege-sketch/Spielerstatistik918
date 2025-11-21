@@ -121,6 +121,7 @@ App.goalValue = {
     
     const thPlayer = document.createElement("th");
     thPlayer.textContent = "Spieler";
+    thPlayer.className = "gv-name-header";
     thPlayer.style.textAlign = "center";
     thPlayer.style.padding = "8px 6px";
     thPlayer.style.borderBottom = "2px solid #333";
@@ -172,6 +173,7 @@ App.goalValue = {
       
       const tdName = document.createElement("td");
       tdName.textContent = name;
+      tdName.className = "gv-name-cell";
       tdName.style.textAlign = "left";
       tdName.style.padding = "6px";
       tdName.style.fontWeight = "700";
@@ -265,6 +267,7 @@ App.goalValue = {
     
     const labelTd = document.createElement("td");
     labelTd.textContent = "";
+    labelTd.className = "gv-name-cell";
     labelTd.style.padding = "6px";
     labelTd.style.fontWeight = "700";
     labelTd.style.textAlign = "center";
@@ -294,8 +297,10 @@ App.goalValue = {
         select.appendChild(option);
       });
       
+      // Set value after all options are appended
       const b = this.getBottom();
-      if (b && typeof b[i] !== "undefined") select.value = String(b[i]);
+      const currentValue = b && typeof b[i] !== "undefined" ? b[i] : 0;
+      select.value = String(currentValue);
       
       select.addEventListener("change", () => {
         const arr = this.getBottom();
