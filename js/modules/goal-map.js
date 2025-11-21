@@ -85,10 +85,40 @@ App.goalMap = {
       });
     });
     
-    // Filter time tracking data (hide/show buttons based on player)
-    // Note: Time buttons don't have player association yet, so this is a placeholder
+    // Filter time tracking buttons based on player
+    this.applyTimeTrackingFilter();
     
     console.log(`Player filter applied: ${this.playerFilter || 'All players'}`);
+  },
+  
+  applyTimeTrackingFilter() {
+    if (!this.timeTrackingBox) return;
+    
+    // Get time tracking data with player associations
+    const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
+    
+    this.timeTrackingBox.querySelectorAll(".period").forEach(period => {
+      const periodNum = period.dataset.period || Math.random().toString(36).slice(2, 6);
+      const buttons = period.querySelectorAll(".time-btn");
+      
+      buttons.forEach((btn, idx) => {
+        const key = `${periodNum}_${idx}`;
+        const playerData = timeDataWithPlayers[key] || {};
+        
+        if (this.playerFilter) {
+          // Show count for selected player only
+          const count = playerData[this.playerFilter] || 0;
+          btn.textContent = count;
+        } else {
+          // Show total count for all players
+          let total = 0;
+          Object.values(playerData).forEach(count => {
+            total += count;
+          });
+          btn.textContent = total;
+        }
+      });
+    });
   },
   
   updateWorkflowIndicator() {
@@ -187,8 +217,8 @@ App.goalMap = {
           } else {
             // Original behavior for manual placement
             if (long || forceGrey) {
-              App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true);
-              color = "#444";
+              App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#888888", box, true);
+              color = "#888888";
               placed = true;
             } else if (sampler && sampler.valid) {
               const isGreen = sampler.isGreenAt(pos.xPctImage, pos.yPctImage, 110, 30);
@@ -218,18 +248,18 @@ App.goalMap = {
           
           if (box.id === "goalGreenBox") {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true, playerName);
-            color = "#444";
+            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#888888", box, true, playerName);
+            color = "#888888";
             placed = true;
           } else if (box.id === "goalRedBox") {
             if (!sampler.isNeutralWhiteAt(pos.xPctContainer, pos.yPctContainer, 235, 12)) return;
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true, playerName);
-            color = "#444";
+            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#888888", box, true, playerName);
+            color = "#888888";
             placed = true;
           } else {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
-            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#444", box, true, playerName);
-            color = "#444";
+            App.markerHandler.createMarkerPercent(pos.xPctContainer, pos.yPctContainer, "#888888", box, true, playerName);
+            color = "#888888";
             placed = true;
           }
         }
@@ -317,28 +347,49 @@ App.goalMap = {
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
-    let timeData = JSON.parse(localStorage.getItem("timeData")) || {};
+    // Load time data with player associations
+    let timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
     
     this.timeTrackingBox.querySelectorAll(".period").forEach(period => {
       const periodNum = period.dataset.period || Math.random().toString(36).slice(2, 6);
       const buttons = period.querySelectorAll(".time-btn");
       
       buttons.forEach((btn, idx) => {
-        const hasStored = (timeData[periodNum] && typeof timeData[periodNum][idx] !== "undefined");
-        const stored = hasStored ? Number(timeData[periodNum][idx]) : Number(btn.textContent) || 0;
-        btn.textContent = stored;
+        const key = `${periodNum}_${idx}`;
+        
+        // Calculate total from all players
+        const playerData = timeDataWithPlayers[key] || {};
+        let total = 0;
+        Object.values(playerData).forEach(count => {
+          total += count;
+        });
+        btn.textContent = total;
         
         let lastTap = 0;
         let clickTimeout = null;
         let touchStart = 0;
         
         const updateValue = (delta) => {
-          const current = Number(btn.textContent) || 0;
-          const newVal = Math.max(0, current + delta);
-          btn.textContent = newVal;
-          if (!timeData[periodNum]) timeData[periodNum] = {};
-          timeData[periodNum][idx] = newVal;
-          localStorage.setItem("timeData", JSON.stringify(timeData));
+          // If in workflow mode, associate with current player
+          const playerName = App.goalMapWorkflow.active ? App.goalMapWorkflow.playerName : '_anonymous';
+          
+          if (!timeDataWithPlayers[key]) {
+            timeDataWithPlayers[key] = {};
+          }
+          if (!timeDataWithPlayers[key][playerName]) {
+            timeDataWithPlayers[key][playerName] = 0;
+          }
+          
+          timeDataWithPlayers[key][playerName] = Math.max(0, timeDataWithPlayers[key][playerName] + delta);
+          
+          // Recalculate total
+          let newTotal = 0;
+          Object.values(timeDataWithPlayers[key]).forEach(count => {
+            newTotal += count;
+          });
+          
+          btn.textContent = newTotal;
+          localStorage.setItem("timeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
           
           // Add to workflow if active and value was incremented
           if (delta > 0 && App.goalMapWorkflow.active) {
@@ -349,7 +400,7 @@ App.goalMap = {
             const xPct = ((btnRect.left + btnRect.width / 2 - boxRect.left) / boxRect.width) * 100;
             const yPct = ((btnRect.top + btnRect.height / 2 - boxRect.top) / boxRect.height) * 100;
             
-            App.addGoalMapPoint('time', xPct, yPct, '#444', 'timeTrackingBox');
+            App.addGoalMapPoint('time', xPct, yPct, '#888888', 'timeTrackingBox');
           }
         };
         
@@ -403,6 +454,7 @@ App.goalMap = {
     document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
     document.querySelectorAll("#torbildPage .time-btn").forEach(b => b.textContent = "0");
     localStorage.removeItem("timeData");
+    localStorage.removeItem("timeDataWithPlayers");
     
     alert("Goal Map zurückgesetzt.");
   }

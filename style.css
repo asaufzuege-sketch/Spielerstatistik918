@@ -236,6 +236,8 @@ h1 {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  text-align: center;
+  text-align-last: center;
 }
 .player-filter-btn:hover {
   background: #7b7b7b !important;
