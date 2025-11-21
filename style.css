@@ -319,6 +319,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
+/* Season Map - Goal images fill their boxes completely */
+#seasonMapPage .img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
 .marker-dot {
   position: absolute;
   width: 14px;

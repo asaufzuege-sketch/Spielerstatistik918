@@ -524,28 +524,36 @@ App.statsTable = {
   
   // Reset nur für aktuelles Team
   reset() {
-    if (!App.teamSelection || !App.teamSelection.resetCurrentTeam()) {
-      // Fallback für direkten Reset
-      if (!confirm("Spieldaten zurücksetzen?")) return;
-      
-      App.data.statsData = {};
-      App.data.playerTimes = {};
-      
-      // Timer stoppen und aus LocalStorage entfernen
-      Object.values(App.data.activeTimers).forEach(timer => {
-        if (timer) clearInterval(timer);
-      });
-      App.data.activeTimers = {};
-      
-      // Teamspezifisch löschen
-      const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo().id : 'team1';
-      localStorage.removeItem(`statsData_${teamId}`);
-      localStorage.removeItem(`playerTimes_${teamId}`);
-      localStorage.removeItem(`activeTimerPlayers_${teamId}`);
-      localStorage.removeItem(`opponentShots_${teamId}`);
-      
-      this.render();
-      alert("Spieldaten zurückgesetzt.");
+    // Try using teamSelection's reset if available
+    if (App.teamSelection && typeof App.teamSelection.resetCurrentTeam === 'function') {
+      const handled = App.teamSelection.resetCurrentTeam();
+      if (handled) {
+        // teamSelection handled the reset
+        this.render();
+        return;
+      }
     }
+    
+    // Fallback für direkten Reset
+    if (!confirm("Spieldaten zurücksetzen?")) return;
+    
+    App.data.statsData = {};
+    App.data.playerTimes = {};
+    
+    // Timer stoppen und aus LocalStorage entfernen
+    Object.values(App.data.activeTimers).forEach(timer => {
+      if (timer) clearInterval(timer);
+    });
+    App.data.activeTimers = {};
+    
+    // Teamspezifisch löschen
+    const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo().id : 'team1';
+    localStorage.removeItem(`statsData_${teamId}`);
+    localStorage.removeItem(`playerTimes_${teamId}`);
+    localStorage.removeItem(`activeTimerPlayers_${teamId}`);
+    localStorage.removeItem(`opponentShots_${teamId}`);
+    
+    this.render();
+    alert("Spieldaten zurückgesetzt.");
   }
 };

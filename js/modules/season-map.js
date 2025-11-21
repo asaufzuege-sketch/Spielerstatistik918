@@ -186,6 +186,10 @@ App.seasonMap = {
     const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
     localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
     
+    // Also export flat time data for momentum graph
+    const timeData = this.readTimeTrackingFromBox();
+    localStorage.setItem("seasonMapTimeData", JSON.stringify(timeData));
+    
     const keep = confirm("Spiel wurde in Season Map exportiert. Daten in Goal Map beibehalten? (OK = Ja)");
     if (!keep) {
       document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
