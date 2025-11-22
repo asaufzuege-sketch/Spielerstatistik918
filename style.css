@@ -827,14 +827,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .team-selection-container {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 12 auto;
   padding: 20px;
 }
 
 .team-slots {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 100px;
 }
 
 .team-slot {
