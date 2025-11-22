@@ -274,6 +274,9 @@ App.goalValue = {
     labelTd.style.fontWeight = "700";
     labelTd.style.textAlign = "center";
     labelTd.style.background = "rgba(0,0,0,0.03)";
+    labelTd.style.position = "sticky";
+    labelTd.style.left = "0";
+    labelTd.style.zIndex = "20";
     bottomRow.appendChild(labelTd);
     
     const scaleOptions = [];
@@ -293,21 +296,22 @@ App.goalValue = {
       select.className = "gv-scale-dropdown";
       select.style.width = "80px";
       
+      const b = this.getBottom();
+      const currentValue = b && typeof b[i] !== "undefined" ? b[i] : 0;
+      const currentValueStr = Number(currentValue).toFixed(1);
+      
       scaleOptions.forEach(opt => {
         const option = document.createElement('option');
         option.value = opt;
         option.textContent = opt;
+        // Set selected attribute during creation for immediate restoration
+        if (opt === currentValueStr) {
+          option.selected = true;
+        }
         select.appendChild(option);
       });
       
-      const b = this.getBottom();
-      const currentValue = b && typeof b[i] !== "undefined" ? b[i] : 0;
-      
-      // FIX: setTimeout um sicherzustellen, dass value NACH DOM-Einfügung gesetzt wird
       td.appendChild(select);
-      setTimeout(() => {
-        select.value = String(currentValue);
-      }, 0);
       
       select.addEventListener("change", () => {
         const arr = this.getBottom();

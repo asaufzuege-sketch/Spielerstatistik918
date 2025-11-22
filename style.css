@@ -577,8 +577,30 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-/* REMOVED: Sticky positioning for first column (Spieler) */
-/* All sticky styles for .goalvalue-table th:first-child and td:first-child have been removed */
+/* Sticky positioning for first column (Spieler) - RESTORED */
+.goalvalue-table th:first-child,
+.goalvalue-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+}
+
+.goalvalue-table thead th:first-child {
+  background: var(--header-bg) !important;
+  z-index: 30;
+}
+
+.goalvalue-table tbody td:first-child {
+  background: inherit;
+}
+
+.goalvalue-table tbody tr:nth-child(odd) td:first-child {
+  background: var(--row-odd);
+}
+
+.goalvalue-table tbody tr:nth-child(even) td:first-child {
+  background: var(--row-even);
+}
 
 /* Name Zellen */
 .gv-name-cell {
