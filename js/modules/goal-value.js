@@ -32,9 +32,9 @@ App.goalValue = {
     return {};
   },
   
-  setData(obj) {
-    // WICHTIG: Verhindere rekursive Aufrufe
-    if (this.isUpdatingData) {
+  setData(obj, forceWrite = false) {
+    // WICHTIG: Verhindere rekursive Aufrufe (außer bei forceWrite)
+    if (this.isUpdatingData && !forceWrite) {
       console.warn("[Goal Value] setData blocked during update to prevent recursion");
       return;
     }
@@ -61,7 +61,7 @@ App.goalValue = {
   },
   
   formatValueNumber(v) {
-    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v.toFixed(1)));
+    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v.toFixed(1))); 
   },
   
   ensureDataForSeason() {
@@ -127,7 +127,7 @@ App.goalValue = {
     thPlayer.style.borderBottom = "2px solid #333";
     thPlayer.style.minWidth = "160px";
     thPlayer.style.whiteSpace = "nowrap";
-    thPlayer.style.background = "#1e1e1e";
+    // REMOVED: thPlayer.style.background = "#1e1e1e"; - Let CSS handle it for sticky
     headerRow.appendChild(thPlayer);
     
     opponents.forEach((op, idx) => {
@@ -183,7 +183,7 @@ App.goalValue = {
       tdName.style.whiteSpace = "nowrap";
       tdName.style.overflow = "visible";
       tdName.style.textOverflow = "clip";
-      tdName.style.background = "inherit";
+      // REMOVED: tdName.style.background = "inherit"; - Let CSS handle it for sticky
       row.appendChild(tdName);
       
       const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
@@ -218,7 +218,7 @@ App.goalValue = {
             const d = this.getData();
             if (!d[playerName]) d[playerName] = opponents.map(() => 0);
             d[playerName][oppIdx] = Math.max(0, Number(d[playerName][oppIdx] || 0) - 1);
-            this.setData(d);
+            this.setData(d, true); // FORCE WRITE to persist click changes
             
             const nv = d[playerName][oppIdx];
             td.textContent = String(nv);
@@ -235,7 +235,7 @@ App.goalValue = {
               const d = this.getData();
               if (!d[playerName]) d[playerName] = opponents.map(() => 0);
               d[playerName][oppIdx] = Number(d[playerName][oppIdx] || 0) + 1;
-              this.setData(d);
+              this.setData(d, true); // FORCE WRITE to persist click changes
               
               const nv = d[playerName][oppIdx];
               td.textContent = String(nv);
@@ -373,9 +373,6 @@ App.goalValue = {
     this.setBottom(opponents.map(() => 0));
     
     // Gegnernamen löschen (alle Einträge leer)
-    this.setOpponents(opponents.map(() => ""));
-    
-    // Add line to clear the opponent names
     this.setOpponents(opponents.map(() => ""));
     
     this.render();
