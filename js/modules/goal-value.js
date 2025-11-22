@@ -112,7 +112,6 @@ App.goalValue = {
     table.style.margin = "0";
     table.style.borderCollapse = "collapse";
     table.style.borderRadius = "8px";
-    table.style.overflow = "hidden";
     table.style.tableLayout = "auto";
     
     // Header
@@ -331,19 +330,10 @@ App.goalValue = {
     tbody.appendChild(bottomRow);
     table.appendChild(tbody);
     
-    // KRITISCH: Wrap table in scroll wrapper (aus Repo 909)
-    const wrapper = document.createElement('div');
-    wrapper.className = 'table-scroll';
-    wrapper.style.width = '100%';
-    wrapper.style.boxSizing = 'border-box';
-    wrapper.style.overflowX = 'auto';
-    wrapper.style.overflowY = 'hidden';
-    wrapper.style.WebkitOverflowScrolling = 'touch';
-    wrapper.appendChild(table);
+    // Append table directly to container (no wrapper needed - container has overflow)
+    this.container.appendChild(table);
     
-    this.container.appendChild(wrapper);
-    
-    console.log('Goal Value Table rendered with scroll wrapper');
+    console.log('Goal Value Table rendered');
   },
   
   updateValueCell(playerName, valueCellMap) {
