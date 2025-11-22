@@ -521,7 +521,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding-bottom: 20px !important;
   box-sizing: border-box !important;
   position: relative !important;
-  display: block !important;
 }
 
 #goalValueContainer::-webkit-scrollbar {
@@ -578,69 +577,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-/* Sticky positioning for first column (Spieler) - RESTORED */
-.goalvalue-table th:first-child,
-.goalvalue-table td:first-child {
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 20 !important;
-  min-width: 160px !important;
-}
-
-.goalvalue-table thead th:first-child {
-  background: var(--header-bg) !important;
-  z-index: 30 !important;
-}
-
-.goalvalue-table tbody tr:nth-child(odd) td:first-child {
-  background: var(--row-odd) !important;
-}
-
-.goalvalue-table tbody tr:nth-child(even) td:first-child {
-  background: var(--row-even) !important;
-}
-
-/* Bottom row label cell - also sticky */
-.gv-bottom-label-cell {
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 20 !important;
-  background: rgba(0,0,0,0.03) !important;
-}
-
-/* Goal Value Container - add overflow for horizontal scrolling */
-#goalValueContainer {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding-right: 20px !important;
-  padding-bottom: 20px !important;
-  box-sizing: border-box !important;
-  position: relative !important;
-  display: block !important;
-}
-
-#goalValueContainer::-webkit-scrollbar {
-  height: 18px !important;
-  background: rgba(0, 0, 0, 0.2) !important;
-}
-
-#goalValueContainer::-webkit-scrollbar-thumb {
-  background: #44bb91 !important;
-  border-radius: 10px !important;
-  border: 3px solid rgba(0, 0, 0, 0.1) !important;
-}
-
-#goalValueContainer::-webkit-scrollbar-thumb:hover {
-  background: #3a9d7a !important;
-}
-
-#goalValueContainer {
-  scrollbar-width: auto !important;
-  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) !important;
-}
+/* REMOVED: Sticky positioning for first column (Spieler) */
+/* All sticky styles for .goalvalue-table th:first-child and td:first-child have been removed */
 
 /* Name Zellen */
 .gv-name-cell {
@@ -1083,11 +1021,4 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .delete-team-btn:hover {
   background: #a30000;
-}
-
-/* CRITICAL FIX: Override any conflicting rules for goalValueContainer */
-div#goalValueContainer {
-  display: block !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
 }

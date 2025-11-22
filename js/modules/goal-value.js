@@ -112,6 +112,7 @@ App.goalValue = {
     table.style.margin = "0";
     table.style.borderCollapse = "collapse";
     table.style.borderRadius = "8px";
+    table.style.overflow = "hidden";
     table.style.tableLayout = "auto";
     
     // Header
@@ -269,7 +270,6 @@ App.goalValue = {
     
     const labelTd = document.createElement("td");
     labelTd.textContent = "";
-    labelTd.className = "gv-bottom-label-cell";
     labelTd.style.padding = "6px";
     labelTd.style.fontWeight = "700";
     labelTd.style.textAlign = "center";
@@ -293,21 +293,21 @@ App.goalValue = {
       select.className = "gv-scale-dropdown";
       select.style.width = "80px";
       
-      const currentValue = storedBottom && typeof storedBottom[i] !== "undefined" ? storedBottom[i] : 0;
-      const currentValueStr = Number(currentValue).toFixed(1);
-      
       scaleOptions.forEach(opt => {
         const option = document.createElement('option');
         option.value = opt;
         option.textContent = opt;
-        // Set selected attribute during creation for immediate restoration
-        if (opt === currentValueStr) {
-          option.selected = true;
-        }
         select.appendChild(option);
       });
       
+      const b = this.getBottom();
+      const currentValue = b && typeof b[i] !== "undefined" ? b[i] : 0;
+      
+      // FIX: setTimeout um sicherzustellen, dass value NACH DOM-Einfügung gesetzt wird
       td.appendChild(select);
+      setTimeout(() => {
+        select.value = String(currentValue);
+      }, 0);
       
       select.addEventListener("change", () => {
         const arr = this.getBottom();
@@ -330,10 +330,19 @@ App.goalValue = {
     tbody.appendChild(bottomRow);
     table.appendChild(tbody);
     
-    // Append table directly to container (no wrapper needed - container has overflow)
-    this.container.appendChild(table);
+    // KRITISCH: Wrap table in scroll wrapper (aus Repo 909)
+    const wrapper = document.createElement('div');
+    wrapper.className = 'table-scroll';
+    wrapper.style.width = '100%';
+    wrapper.style.boxSizing = 'border-box';
+    wrapper.style.overflowX = 'auto';
+    wrapper.style.overflowY = 'hidden';
+    wrapper.style.WebkitOverflowScrolling = 'touch';
+    wrapper.appendChild(table);
     
-    console.log('Goal Value Table rendered');
+    this.container.appendChild(wrapper);
+    
+    console.log('Goal Value Table rendered with scroll wrapper');
   },
   
   updateValueCell(playerName, valueCellMap) {
