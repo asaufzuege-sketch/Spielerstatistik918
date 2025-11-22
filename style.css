@@ -591,10 +591,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   z-index: 30 !important;
 }
 
-.goalvalue-table tbody td:first-child {
-  background: inherit !important;
-}
-
 .goalvalue-table tbody tr:nth-child(odd) td:first-child {
   background: var(--row-odd) !important;
 }

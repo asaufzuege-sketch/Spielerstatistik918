@@ -285,9 +285,6 @@ App.goalValue = {
     if (storedBottom.length > opponents.length) storedBottom.length = opponents.length;
     this.setBottom(storedBottom);
     
-    // Get bottom values once outside the loop for efficiency
-    const bottomValues = this.getBottom();
-    
     opponents.forEach((_, i) => {
       const td = document.createElement("td");
       td.style.padding = "6px";
@@ -297,7 +294,7 @@ App.goalValue = {
       select.className = "gv-scale-dropdown";
       select.style.width = "80px";
       
-      const currentValue = bottomValues && typeof bottomValues[i] !== "undefined" ? bottomValues[i] : 0;
+      const currentValue = storedBottom && typeof storedBottom[i] !== "undefined" ? storedBottom[i] : 0;
       const currentValueStr = Number(currentValue).toFixed(1);
       
       scaleOptions.forEach(opt => {
