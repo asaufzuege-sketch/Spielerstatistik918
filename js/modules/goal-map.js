@@ -368,8 +368,13 @@ App.goalMap = {
         let lastTap = 0;
         let clickTimeout = null;
         let touchStart = 0;
+        let isProcessing = false; // NEU: Verhindert mehrfache gleichzeitige Klicks
         
         const updateValue = (delta) => {
+          // Verhindere mehrfache gleichzeitige Updates
+          if (isProcessing) return;
+          isProcessing = true;
+          
           // If in workflow mode, associate with current player
           const playerName = App.goalMapWorkflow.active ? App.goalMapWorkflow.playerName : '_anonymous';
           
@@ -402,12 +407,21 @@ App.goalMap = {
             
             App.addGoalMapPoint('time', xPct, yPct, '#888888', 'timeTrackingBox');
           }
+          
+          // Reset processing flag nach kurzer Verzögerung
+          setTimeout(() => {
+            isProcessing = false;
+          }, 100);
         };
         
         btn.addEventListener("click", () => {
+          // Verhindere mehrfache Klicks während Verarbeitung
+          if (isProcessing) return;
+          
           const now = Date.now();
           const diff = now - lastTap;
           if (diff < 300) {
+            // Doppelklick erkannt
             if (clickTimeout) {
               clearTimeout(clickTimeout);
               clickTimeout = null;
@@ -415,6 +429,10 @@ App.goalMap = {
             updateValue(-1);
             lastTap = 0;
           } else {
+            // Einzelklick - warte auf möglichen Doppelklick
+            if (clickTimeout) {
+              clearTimeout(clickTimeout);
+            }
             clickTimeout = setTimeout(() => {
               updateValue(+1);
               clickTimeout = null;
@@ -424,6 +442,9 @@ App.goalMap = {
         });
         
         btn.addEventListener("touchstart", (e) => {
+          // Verhindere mehrfache Touches während Verarbeitung
+          if (isProcessing) return;
+          
           const now = Date.now();
           const diff = now - touchStart;
           if (diff < 300) {
@@ -436,14 +457,18 @@ App.goalMap = {
             touchStart = 0;
           } else {
             touchStart = now;
-            setTimeout(() => {
+            if (clickTimeout) {
+              clearTimeout(clickTimeout);
+            }
+            clickTimeout = setTimeout(() => {
               if (touchStart !== 0) {
                 updateValue(+1);
                 touchStart = 0;
               }
+              clickTimeout = null;
             }, 300);
           }
-        }, { passive: true });
+        }, { passive: false });
       });
     });
   },
