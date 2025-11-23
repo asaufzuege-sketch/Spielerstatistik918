@@ -507,7 +507,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonPage .total-row td {
   background: var(--header-bg) !important;
-  color: #ffffff !important; /* FIX: Schriftfarbe in Season-Totalzeile immer weiß */
+  color: #ffffff !important; /* FIX: Schriftfarbe in Totalzeile immer weiß */
   font-weight: 700 !important;
   border-top: 2px solid #333;
 }
@@ -737,13 +737,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   box-sizing: border-box;
   padding-right: 20px;
   padding-bottom: 16px;
   position: relative;
+  height: auto;
+  min-height: 0;
+  max-height: calc(100vh - 200px);
 }
 
 /* Entferne ggf. .table-scroll Padding-Anpassung, wenn nicht mehr genutzt */
@@ -752,10 +755,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table {
   width: auto;
   min-width: max-content;
+  max-width: none;
   border-collapse: collapse;
   font-size: 0.95rem;
   margin: 6px 0 10px 0;
   table-layout: auto;
+  display: table;
 }
 
 .season-table thead th {
@@ -835,7 +840,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .season-table .total-row td {
   background: var(--header-bg);
-  color: #ffffff; /* FIX: Schriftfarbe in Season-Tabelle Totalzeile immer weiß */
+  color: #ffffff; /* FIX: Schriftfarbe in Season-Totalzeile immer weiß */
   font-weight: 700;
   border-top: 2px solid #333;
   padding: 8px 6px;
