@@ -431,21 +431,15 @@ App.goalMap = {
           }, 300);
         };
         
-        const handleClick = (e) => {
-          // Prevent default to avoid touch+click double firing
-          e.preventDefault();
-          updateValue();
-        };
-        
-        const handleTouch = (e) => {
-          // Prevent click event from firing after touch
+        const handleInteraction = (e) => {
+          // Prevent default to avoid touch+click double firing on mobile
           e.preventDefault();
           updateValue();
         };
         
         // Add event listeners
-        btn.addEventListener("click", handleClick);
-        btn.addEventListener("touchend", handleTouch, { passive: false });
+        btn.addEventListener("click", handleInteraction);
+        btn.addEventListener("touchend", handleInteraction);
       });
     });
     
