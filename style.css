@@ -288,6 +288,7 @@ table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 
 thead th {
   background: var(--header-bg);
+  color: #ffffff; /* FIX: Schriftfarbe in Headern immer weiß */
   position: sticky;
   top: 0;
   z-index: 40;
@@ -506,7 +507,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonPage .total-row td {
   background: var(--header-bg) !important;
-  color: var(--text-color) !important;
+  color: #ffffff !important; /* FIX: Schriftfarbe in Season-Totalzeile immer weiß */
   font-weight: 700 !important;
   border-top: 2px solid #333;
 }
@@ -719,7 +720,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #statsPage .total-row td {
   background: var(--header-bg) !important;
-  color: var(--text-color) !important;
+  color: #ffffff !important; /* FIX: Schriftfarbe in Totalzeile immer weiß */
   font-weight: 700 !important;
   border-top: 2px solid #333;
 }
@@ -834,7 +835,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .season-table .total-row td {
   background: var(--header-bg);
-  color: var(--text-color);
+  color: #ffffff; /* FIX: Schriftfarbe in Season-Tabelle Totalzeile immer weiß */
   font-weight: 700;
   border-top: 2px solid #333;
   padding: 8px 6px;
@@ -998,25 +999,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .modal-buttons button {
   flex: 1;
   padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#saveTeamNameBtn {
-  background: #44bb91;
-  color: white;
-}
-
-#saveTeamNameBtn:hover {
-  background: #36a67d;
 }
 
 /*** Fixed name column for Goal Value table */
