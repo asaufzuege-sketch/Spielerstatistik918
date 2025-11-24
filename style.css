@@ -378,6 +378,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
   border: 2px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
+  background-color: #808080 !important; /* GRAU für alle Punkte */
+}
+
+/* Long press visual feedback */
+.field-box:active, #field:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 .time-tracking-box {
@@ -591,12 +598,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   overflow-x: auto !important;
   overflow-y: hidden !important;
   -webkit-overflow-scrolling: touch !important;
+  position: relative !important;
 }
 
 .goalvalue-table {
   width: auto !important;
   min-width: max-content !important;
-  border-collapse: collapse;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 13px;
   margin-top: 6px;
@@ -604,6 +613,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   table-layout: fixed;
   display: table !important;
 }
+
 .goalvalue-table tbody tr:nth-child(odd) { background: var(--row-odd); }
 .goalvalue-table tbody tr:nth-child(even) { background: var(--row-even); }
 .goalvalue-table tbody tr:hover { background: inherit !important; }
@@ -623,8 +633,88 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-/* REMOVED: Sticky positioning for first column (Spieler) */
-/* All sticky styles for .goalvalue-table th:first-child and td:first-child have been removed */
+/* ======================================= */
+/* STICKY COLUMNS FOR GOAL VALUE TABLE */
+/* ======================================= */
+
+/* WICHTIG: Sticky column styling für Goal Value table */
+.goalvalue-table .sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 25 !important;
+  background: var(--header-bg) !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Header sticky styling */
+.goalvalue-table thead th.sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  background: var(--header-bg) !important;
+  color: #fff !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Body cells sticky styling mit korrekten Hintergrundfarben */
+.goalvalue-table tbody td.sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 20 !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Gerade Zeilen (even) */
+.goalvalue-table tbody tr:nth-child(even) td.sticky-col {
+  background: var(--row-even) !important;
+}
+
+/* Ungerade Zeilen (odd) */
+.goalvalue-table tbody tr:nth-child(odd) td.sticky-col {
+  background: var(--row-odd) !important;
+}
+
+/* Bottom row (letzte Zeile mit Dropdowns) */
+.goalvalue-table tbody tr:last-child td.sticky-col {
+  background: rgba(0,0,0,0.03) !important;
+  border-top: 2px solid #333 !important;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .goalvalue-table .sticky-col {
+  box-shadow: 2px 0 4px rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .goalvalue-table thead th.sticky-col {
+  box-shadow: 2px 0 4px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Zusätzliche Sicherheit für Spielernamen-Zellen */
+.gv-name-cell.sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 20 !important;
+  text-align: left !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-weight: 700 !important;
+  min-width: 160px !important;
+  max-width: 200px !important;
+}
+
+.gv-name-header.sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  text-align: center !important;
+  background: var(--header-bg) !important;
+  color: #fff !important;
+  min-width: 160px !important;
+  max-width: 200px !important;
+}
 
 /* Name Zellen */
 .gv-name-cell {
@@ -997,86 +1087,4 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin: 0 0 20px 0;
   color: #44bb91;
   text-align: center;
-}
-
-#teamNameInput {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #333;
-  border-radius: 8px;
-  background: #2a2a2a;
-  color: white;
-  font-size: 1rem;
-  margin-bottom: 20px;
-  box-sizing: border-box;
-}
-
-#teamNameInput:focus {
-  outline: none;
-  border-color: #44bb91;
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: stretch; /* Wichtig für gleiche Höhe */
-  width: 100%;
-}
-
-.modal-buttons button {
-  flex: 1;
-  padding: 12px 24px;
-}
-
-/*** Fixed name column for Goal Value table */
-.goalvalue-table .gv-name-cell {
-  position: sticky !important;
-  left: 0 !important;
-  background-color: var(--row-even) !important;
-  z-index: 5 !important;
-  border-right: 2px solid #333 !important;
-}
-
-.goalvalue-table .gv-name-header {
-  position: sticky !important;
-  left: 0 !important;
-  background-color: var(--header-bg) !important;
-  z-index: 15 !important;
-  border-right: 2px solid #333 !important;
-}
-
-.goalvalue-table tbody tr:nth-child(odd) .gv-name-cell {
-  background-color: var(--row-odd) !important;
-}
-
-.goalvalue-table tbody tr:nth-child(even) .gv-name-cell {
-  background-color: var(--row-even) !important;
-}
-
-/* Fix Season table width constraints - KORRIGIERT */
-#seasonContainer {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: auto !important;  /* GEÄNDERT: von hidden zu auto */
-  -webkit-overflow-scrolling: touch !important;
-  padding-right: 20px !important;
-  padding-bottom: 20px !important;
-  box-sizing: border-box !important;
-  position: relative !important;
-  height: auto !important;
-  min-height: 0 !important;  /* NEU HINZUGEFÜGT */
-  max-height: calc(100vh - 200px) !important;  /* GEÄNDERT: von 80vh zu calc */
-}
-
-.season-table {
-  width: auto !important;
-  min-width: max-content !important;
-  max-width: none !important;
-  border-collapse: collapse !important;
-  font-size: 0.95rem !important;
-  margin: 6px 0 10px 0 !important;
-  table-layout: auto !important;
-  display: table !important;  /* NEU HINZUGEFÜGT */
 }
