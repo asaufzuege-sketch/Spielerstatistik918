@@ -276,7 +276,7 @@ App.goalMap = {
     });
   },
   
-  // Time Tracking mit Spielerzuordnung (unverändert, nur Graufarbe bei Time-Punkt #444444)
+  // Time Tracking mit Spielerzuordnung (Graupunkt bei Time = #444444)
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
