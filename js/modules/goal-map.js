@@ -1,4 +1,5 @@
 // Goal Map Modul – Verhalten wie in Repo 912, erweitert um Goal/Shot-Workflow + Spieler-Filter
+// Ziel: Feldpunkte wie bisher (grün/rot), alle Torpunkte (Workflow + manuell) identisch dunkelgrau & scharf
 App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
@@ -16,7 +17,7 @@ App.goalMap = {
       this.reset();
     });
     
-    // Marker Handler für Goal Map Boxen – Logik wie in 912, aber mit Workflow & Player-Tagging
+    // Marker Handler für Goal Map Boxen
     this.attachMarkerHandlers();
     
     // Time Tracking initialisieren (916‑Logik mit Spielerzuordnung)
@@ -75,14 +76,13 @@ App.goalMap = {
       };
       
       /**
-       * Marker setzen – Logik wie 912, erweitert um:
-       * - playerName (Filter oder aktiver Workflow-Spieler)
-       * - Goal/Shot Workflow (addGoalMapPoint)
-       *
-       * Regeln:
-       * - Shot-Workflow: Feldpunkte grün/rot (Eisfarbe)
-       * - Goal-Workflow: Feld- UND Torpunkte grau
-       * - Longpress/Doppelklick immer grau (neutral)
+       * Marker setzen – Logik:
+       * - Feld-Box:
+       *   • Shot-Workflow oder frei: grün/rot (Eisfarbe) + Fallback
+       *   • Goal-Workflow: immer grau
+       *   • Longpress/Doppelklick: grau
+       * - Tor-Box:
+       *   • IMMER grau (neutralGrey), egal ob Workflow oder manuell, egal ob Long/Short
        */
       const placeMarker = (pos, long, forceGrey = false) => {
         const workflowActive = App.goalMapWorkflow?.active;
@@ -94,33 +94,77 @@ App.goalMap = {
           this.playerFilter ||
           (workflowActive ? App.goalMapWorkflow.playerName : null);
         
-        // Feld-Box (Spielfeld)
-        if (box.classList.contains("field-box")) {
-          if (!pos.insideImage) return;
+        const isGoalBox =
+          box.classList.contains("goal-img-box") ||
+          box.id === "goalGreenBox" ||
+          box.id === "goalRedBox";
+        
+        if (!pos.insideImage) return;
+        
+        // -------------------------------
+        // TOR-BOXEN: immer graue Punkte
+        // -------------------------------
+        if (isGoalBox) {
+          const sampler = App.markerHandler.createImageSampler(img);
+          if (!sampler || !sampler.valid) return;
           
+          // Klickbereich wie bisher einschränken (weiß / neutralweiß),
+          // aber Farbwert IMMER neutralGrey
+          if (box.id === "goalGreenBox") {
+            if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
+          } else if (box.id === "goalRedBox") {
+            if (!sampler.isNeutralWhiteAt(pos.xPctContainer, pos.yPctContainer, 235, 12)) return;
+          } else {
+            if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
+          }
+          
+          const color = neutralGrey;
+          
+          // EINZIGER Ort für Tor-Marker-Erzeugung:
+          App.markerHandler.createMarkerPercent(
+            pos.xPctContainer,
+            pos.yPctContainer,
+            color,
+            box,
+            true,
+            pointPlayer
+          );
+          
+          if (workflowActive) {
+            App.addGoalMapPoint(
+              "goal",
+              pos.xPctContainer,
+              pos.yPctContainer,
+              color,
+              box.id
+            );
+          }
+          
+          return;
+        }
+        
+        // -------------------------------
+        // FELD-BOXEN: grün/rot oder grau je nach Kontext
+        // -------------------------------
+        if (box.classList.contains("field-box")) {
           const sampler = App.markerHandler.createImageSampler(img);
           let color = null;
           
           if (isGoalWorkflow) {
-            // IM GOAL-WORKFLOW: Feldpunkte immer grau, nicht grün/rot
+            // Feld im Goal-Workflow: immer grau
             color = neutralGrey;
           } else if (long || forceGrey) {
-            // Longpress / Doppelklick: ebenfalls grau
+            // Longpress / Doppelklick im Feld: grau
             color = neutralGrey;
           } else if (sampler && sampler.valid) {
-            // Shot-Workflow oder freies Klicken: grün/rot vom Eis, mit Fallback
+            // Standard: grün/rot aus dem Eis
             const isGreen = sampler.isGreenAt(pos.xPctImage, pos.yPctImage, 80, 15);
             const isRed   = sampler.isRedAt  (pos.xPctImage, pos.yPctImage, 80, 15);
             
-            if (isGreen) {
-              color = "#00ff66";
-            } else if (isRed) {
-              color = "#ff0000";
-            } else {
-              color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
-            }
+            if (isGreen)      color = "#00ff66";
+            else if (isRed)   color = "#ff0000";
+            else              color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
           } else {
-            // Sampler ungültig: Fallback grün/rot
             color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
           }
           
@@ -145,47 +189,6 @@ App.goalMap = {
           
           return;
         }
-        
-        // Tor-Boxen (goal-img-box / goalGreenBox / goalRedBox)
-        if (
-          box.classList.contains("goal-img-box") ||
-          box.id === "goalGreenBox" ||
-          box.id === "goalRedBox"
-        ) {
-          const sampler = App.markerHandler.createImageSampler(img);
-          if (!sampler || !sampler.valid) return;
-          
-          // Immer dasselbe Grau wie Feld-Grau
-          const color = neutralGrey;
-          
-          // Klickbereiche beschränken (weiß / neutralweiß), Optik aber gleich
-          if (box.id === "goalGreenBox") {
-            if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
-          } else if (box.id === "goalRedBox") {
-            if (!sampler.isNeutralWhiteAt(pos.xPctContainer, pos.yPctContainer, 235, 12)) return;
-          } else {
-            if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
-          }
-          
-          App.markerHandler.createMarkerPercent(
-            pos.xPctContainer,
-            pos.yPctContainer,
-            color,
-            box,
-            true,
-            pointPlayer
-          );
-          
-          if (workflowActive) {
-            App.addGoalMapPoint(
-              "goal",
-              pos.xPctContainer,
-              pos.yPctContainer,
-              color,
-              box.id
-            );
-          }
-        }
       };
       
       // ----------------
@@ -209,6 +212,7 @@ App.goalMap = {
         const now = Date.now();
         const pos = getPosFromEvent(ev);
         
+        // Schneller Doppelklick => long+forceGrey (grau im Feld)
         if (now - lastMouseUp < 300) {
           placeMarker(pos, true, true);
           lastMouseUp = 0;
@@ -272,7 +276,7 @@ App.goalMap = {
     });
   },
   
-  // Time Tracking mit Spielerzuordnung
+  // Time Tracking mit Spielerzuordnung (unverändert, nur Graufarbe bei Time-Punkt #444444)
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
@@ -397,6 +401,7 @@ App.goalMap = {
       localStorage.removeItem("goalMapPlayerFilter");
     }
     
+    // Marker filtern
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
@@ -409,6 +414,7 @@ App.goalMap = {
       });
     });
     
+    // Timeboxen an Filter anpassen
     this.applyTimeTrackingFilter();
   },
   
@@ -442,7 +448,7 @@ App.goalMap = {
     });
   },
   
-  // Workflow-Indikator – IDs aus index.html verwenden
+  // Workflow-Indikator (HTML-IDs workflowStatusIndicator/workflowStatusText)
   updateWorkflowIndicator() {
     const indicator = document.getElementById("workflowStatusIndicator");
     const textEl = document.getElementById("workflowStatusText");
@@ -467,6 +473,7 @@ App.goalMap = {
   },
   
   exportGoalMap() {
+    // Marker exportieren (inkl. Spielername)
     const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
     const allMarkers = boxes.map(box => {
       const markers = [];
@@ -484,6 +491,7 @@ App.goalMap = {
     
     localStorage.setItem("goalMapMarkers", JSON.stringify(allMarkers));
     
+    // Time Data (Aggregiert) exportieren
     const timeData = this.readTimeTrackingFromBox();
     localStorage.setItem("timeData", JSON.stringify(timeData));
     
