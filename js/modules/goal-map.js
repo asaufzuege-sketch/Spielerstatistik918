@@ -29,50 +29,107 @@ App.goalMap = {
     const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
     
     boxes.forEach((box) => {
-      // KEIN Long-Press-Reset mehr – nur normaler Klick / Tap setzt Marker
-      const handleInteraction = (e) => {
-        const rect = App.markerHandler.computeRenderedImageRect(box.querySelector('img'));
-        if (!rect) return;
-        
-        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-        
-        const x = clientX - rect.x;
-        const y = clientY - rect.y;
-        const xPct = App.markerHandler.clampPct((x / rect.width) * 100);
-        const yPct = App.markerHandler.clampPct((y / rect.height) * 100);
-        
-        const img = box.querySelector('img');
-        if (!img) return;
-        
-        const sampler = App.markerHandler.createImageSampler(img);
-        let color = "#444444";
-        
-        if (sampler?.isGreenAt(xPct, yPct)) {
-          color = "#00ff00";
-        } else if (sampler?.isRedAt(xPct, yPct)) {
-          color = "#ff0000";
-        } else if (sampler?.isNeutralWhiteAt(xPct, yPct)) {
-          color = "#ffffff";
+      let pressTimer = null;
+      let isLongPress = false;
+      let startPos = { x: 0, y: 0 };
+      
+      // Helper um Koordinaten zu normalisieren (Touch vs Mouse)
+      const getCoords = (e) => {
+        if (e.type.includes('touch') && e.touches && e.touches[0]) {
+          return { x: e.touches[0].clientX, y: e.touches[0].clientY };
         }
+        return { x: e.clientX, y: e.clientY };
+      };
+
+      // 1. Start Interaction (MouseDown / TouchStart)
+      const handleStart = (e) => {
+        isLongPress = false;
+        const coords = getCoords(e);
+        startPos = coords;
         
-        const playerName = App.goalMapWorkflow.active ? App.goalMapWorkflow.playerName : null;
-        App.markerHandler.createMarkerPercent(xPct, yPct, color, box, true, playerName);
+        // Timer für Long Press starten (Grauer Punkt)
+        pressTimer = setTimeout(() => {
+          isLongPress = true;
+          
+          // Punkt direkt setzen (Grau)
+          this.placeMarker(box, startPos.x, startPos.y, '#808080');
+          
+          // Haptic Feedback falls verfügbar
+          if (navigator.vibrate) navigator.vibrate(50);
+        }, 600); // 600ms für Long Press
+      };
+
+      // 2. Move Interaction (Abbruch bei Bewegung/Scrollen)
+      const handleMove = (e) => {
+        if (!pressTimer) return;
         
-        // Add workflow point if workflow is active
-        if (App.goalMapWorkflow.active) {
-          App.addGoalMapPoint('field', xPct, yPct, color, box.id);
+        const coords = getCoords(e);
+        // Wenn man sich mehr als 10px bewegt, ist es wohl Scrollen -> Timer abbrechen
+        if (Math.abs(coords.x - startPos.x) > 10 || Math.abs(coords.y - startPos.y) > 10) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
         }
       };
+
+      // 3. End Interaction (MouseUp / TouchEnd)
+      const handleEnd = () => {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      };
+
+      // 4. Click Event (für kurzen Klick -> Grüner Punkt)
+      const handleClick = (e) => {
+        // Wenn es bereits als Long Press erkannt wurde, Klick ignorieren
+        if (isLongPress) {
+          e.preventDefault();
+          e.stopPropagation();
+          isLongPress = false;
+          return;
+        }
+        
+        // Kurzer Klick -> Grüner Punkt
+        this.placeMarker(box, e.clientX, e.clientY, '#00ff00');
+      };
       
-      // Mouse events
-      box.addEventListener("click", handleInteraction);
+      // Event Listeners registrieren
+      box.addEventListener("mousedown", handleStart);
+      box.addEventListener("touchstart", handleStart, { passive: true });
       
-      // Touch events
-      box.addEventListener("touchend", (e) => {
-        handleInteraction(e);
-      }, { passive: true });
+      box.addEventListener("mousemove", handleMove);
+      box.addEventListener("touchmove", handleMove, { passive: true });
+      
+      box.addEventListener("mouseup", handleEnd);
+      box.addEventListener("touchend", handleEnd, { passive: true });
+
+      box.addEventListener("click", handleClick);
     });
+  },
+
+  // Helper Funktion um Marker zu platzieren
+  placeMarker(box, clientX, clientY, color) {
+    const img = box.querySelector('img');
+    if (!img) return;
+    
+    const rect = App.markerHandler.computeRenderedImageRect(img);
+    if (!rect) return;
+    
+    // Relativ zum gerenderten Bild berechnen
+    const x = clientX - rect.x;
+    const y = clientY - rect.y;
+    const xPct = App.markerHandler.clampPct((x / rect.width) * 100);
+    const yPct = App.markerHandler.clampPct((y / rect.height) * 100);
+    
+    const playerName = App.goalMapWorkflow.active ? App.goalMapWorkflow.playerName : null;
+    
+    // Marker erstellen
+    App.markerHandler.createMarkerPercent(xPct, yPct, color, box, true, playerName);
+    
+    // Workflow Point hinzufügen, falls aktiv
+    if (App.goalMapWorkflow.active) {
+      App.addGoalMapPoint('field', xPct, yPct, color, box.id);
+    }
   },
   
   initTimeTracking() {
@@ -110,8 +167,6 @@ App.goalMap = {
       const periodNum = period.dataset.period || `p${pIdx}`;
       const buttons = period.querySelectorAll(".time-btn");
       
-      console.log(`[Goal Map] Processing period ${periodNum} with ${buttons.length} buttons`);
-      
       if (!buttons.length) {
         console.warn(`[Goal Map] No .time-btn found in period ${periodNum}`);
       }
@@ -130,11 +185,8 @@ App.goalMap = {
         Object.values(playerData).forEach(count => total += Number(count) || 0);
         btn.textContent = total;
         
-        console.log(`[Goal Map] Button ${key} initial value: ${total}`);
-        
         // 3. EVENT LISTENER NUR EINMAL HINZUFÜGEN
         if (btn._goalMapClickBound) {
-          console.log(`[Goal Map] Button ${key} already has click handler, skipping`);
           return;
         }
         btn._goalMapClickBound = true;
@@ -143,8 +195,6 @@ App.goalMap = {
         // Gemeinsame Logik für +1 / -1
         const handleIncrement = (delta = 1) => {
           try {
-            console.log(`[Goal Map] Button ${key} clicked, delta=${delta}`);
-            
             // Daten IMMER frisch laden
             let currentData = {};
             try {
@@ -152,21 +202,16 @@ App.goalMap = {
               if (stored) {
                 currentData = JSON.parse(stored);
                 if (typeof currentData !== "object" || currentData === null) {
-                  console.warn("[Goal Map] current timeDataWithPlayers invalid, resetting");
                   currentData = {};
                 }
               }
             } catch (e2) {
-              console.warn("[Goal Map] Failed to parse timeDataWithPlayers on click, resetting:", e2);
               currentData = {};
             }
             
             if (!currentData[key]) currentData[key] = {};
             
             // SPIELER-LOGIK:
-            // 1. Wenn Filter aktiv → Klick zählt für gefilterten Spieler
-            // 2. sonst, wenn Workflow aktiv → Spieler aus Workflow
-            // 3. sonst '_anonymous'
             const playerName =
               this.playerFilter || (App.goalMapWorkflow.active ? App.goalMapWorkflow.playerName : '_anonymous');
             
@@ -174,10 +219,8 @@ App.goalMap = {
             
             const oldValue = Number(currentData[key][playerName]) || 0;
             const newValue = oldValue + delta;
-            // Untergrenze 0, damit nicht ins Negative läuft
+            // Untergrenze 0
             currentData[key][playerName] = newValue < 0 ? 0 : newValue;
-            
-            console.log(`[Goal Map] Updated ${playerName} for ${key}: ${oldValue} -> ${currentData[key][playerName]}`);
             
             // Speichern
             try {
@@ -191,15 +234,12 @@ App.goalMap = {
             let displayVal = 0;
             
             if (this.playerFilter) {
-              // Nur der aktuell gefilterte Spieler
               displayVal = Number(currentPlayerMap[this.playerFilter]) || 0;
             } else {
-              // Summe über alle Spieler (inkl. _anonymous)
               displayVal = Object.values(currentPlayerMap).reduce((a, b) => a + (Number(b) || 0), 0);
             }
             
             btn.textContent = displayVal;
-            console.log(`[Goal Map] Display value updated to: ${displayVal}`);
             
             // Workflow Point nur bei +1 und aktivem Workflow
             if (delta > 0 && App.goalMapWorkflow && App.goalMapWorkflow.active) {
@@ -210,7 +250,6 @@ App.goalMap = {
                 const yPct = ((btnRect.top + btnRect.height / 2 - boxRect.top) / boxRect.height) * 100;
                 
                 App.addGoalMapPoint('time', xPct, yPct, '#888888', 'timeTrackingBox');
-                console.log(`[Goal Map] Workflow point added at ${xPct.toFixed(1)}%, ${yPct.toFixed(1)}%`);
               } catch (e4) {
                 console.warn("[Goal Map] Failed to add workflow point:", e4);
               }
@@ -246,8 +285,6 @@ App.goalMap = {
           }
           handleIncrement(-1);
         });
-        
-        console.log(`[Goal Map] Click/dblclick listener attached to button ${key}`);
       });
     });
     
@@ -255,8 +292,6 @@ App.goalMap = {
     if (this.playerFilter) {
       this.applyTimeTrackingFilter();
     }
-    
-    console.log("[Goal Map] Time tracking initialization complete");
   },
   
   initPlayerFilter() {
@@ -417,7 +452,7 @@ App.goalMap = {
     document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
     document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
     
-    // Nur Goal-Map-Keys löschen, Season-Map-Keys bleiben unberührt
+    // Nur Goal-Map-Keys löschen
     localStorage.removeItem("timeData");
     localStorage.removeItem("timeDataWithPlayers");
     localStorage.removeItem("goalMapMarkers");
