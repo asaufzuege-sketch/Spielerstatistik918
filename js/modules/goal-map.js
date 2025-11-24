@@ -88,7 +88,7 @@ App.goalMap = {
         const workflowActive = App.goalMapWorkflow?.active;
         const eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
         const isGoalWorkflow = workflowActive && eventType === 'goal';
-        const neutralGrey = "#444444"; // einheitliches dunkles Grau für Feld & Tor
+        const neutralGrey = "#444444"; // einheitliches dunkles Grau
         
         const pointPlayer =
           this.playerFilter ||
@@ -155,9 +155,10 @@ App.goalMap = {
           const sampler = App.markerHandler.createImageSampler(img);
           if (!sampler || !sampler.valid) return;
           
-          // Immer dasselbe Grau wie für Feld-Grau
+          // Immer dasselbe Grau wie Feld-Grau
           const color = neutralGrey;
           
+          // Klickbereiche beschränken (weiß / neutralweiß), Optik aber gleich
           if (box.id === "goalGreenBox") {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
           } else if (box.id === "goalRedBox") {
@@ -333,7 +334,7 @@ App.goalMap = {
             const xPct = ((btnRect.left + btnRect.width / 2 - boxRect.left) / boxRect.width) * 100;
             const yPct = ((btnRect.top + btnRect.height / 2 - boxRect.top) / boxRect.height) * 100;
             
-            App.addGoalMapPoint('time', xPct, yPct, '#888888', 'timeTrackingBox');
+            App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
           }
         };
         
