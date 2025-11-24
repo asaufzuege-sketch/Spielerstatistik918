@@ -121,13 +121,12 @@ App.goalValue = {
     
     const thPlayer = document.createElement("th");
     thPlayer.textContent = "Spieler";
-    thPlayer.className = "gv-name-header";
+    thPlayer.className = "gv-name-header sticky-col";
     thPlayer.style.textAlign = "center";
     thPlayer.style.padding = "8px 6px";
     thPlayer.style.borderBottom = "2px solid #333";
     thPlayer.style.minWidth = "160px";
     thPlayer.style.whiteSpace = "nowrap";
-    // REMOVED: thPlayer.style.background = "#1e1e1e"; - Let CSS handle it for sticky
     headerRow.appendChild(thPlayer);
     
     opponents.forEach((op, idx) => {
@@ -175,7 +174,7 @@ App.goalValue = {
       
       const tdName = document.createElement("td");
       tdName.textContent = name;
-      tdName.className = "gv-name-cell";
+      tdName.className = "gv-name-cell sticky-col";
       tdName.style.textAlign = "left";
       tdName.style.padding = "6px";
       tdName.style.fontWeight = "700";
@@ -183,7 +182,6 @@ App.goalValue = {
       tdName.style.whiteSpace = "nowrap";
       tdName.style.overflow = "visible";
       tdName.style.textOverflow = "clip";
-      // REMOVED: tdName.style.background = "inherit"; - Let CSS handle it for sticky
       row.appendChild(tdName);
       
       const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
@@ -270,6 +268,7 @@ App.goalValue = {
     
     const labelTd = document.createElement("td");
     labelTd.textContent = "";
+    labelTd.className = "sticky-col";
     labelTd.style.padding = "6px";
     labelTd.style.fontWeight = "700";
     labelTd.style.textAlign = "center";
@@ -342,7 +341,7 @@ App.goalValue = {
     
     this.container.appendChild(wrapper);
     
-    console.log('Goal Value Table rendered with scroll wrapper');
+    console.log('Goal Value Table rendered with scroll wrapper and sticky columns');
   },
   
   updateValueCell(playerName, valueCellMap) {
