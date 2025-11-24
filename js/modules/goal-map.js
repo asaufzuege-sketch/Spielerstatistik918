@@ -88,7 +88,7 @@ App.goalMap = {
         const workflowActive = App.goalMapWorkflow?.active;
         const eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
         const isGoalWorkflow = workflowActive && eventType === 'goal';
-        const neutralGrey = "#666666"; // einheitliches Grau für Feld & Tor
+        const neutralGrey = "#444444"; // einheitliches dunkles Grau für Feld & Tor
         
         const pointPlayer =
           this.playerFilter ||
@@ -105,7 +105,7 @@ App.goalMap = {
             // IM GOAL-WORKFLOW: Feldpunkte immer grau, nicht grün/rot
             color = neutralGrey;
           } else if (long || forceGrey) {
-            // Longpress / Doppelklick: auch grau
+            // Longpress / Doppelklick: ebenfalls grau
             color = neutralGrey;
           } else if (sampler && sampler.valid) {
             // Shot-Workflow oder freies Klicken: grün/rot vom Eis, mit Fallback
@@ -155,7 +155,7 @@ App.goalMap = {
           const sampler = App.markerHandler.createImageSampler(img);
           if (!sampler || !sampler.valid) return;
           
-          // immer dasselbe Grau wie Feld-Grau im Goal-Workflow / Longpress
+          // Immer dasselbe Grau wie für Feld-Grau
           const color = neutralGrey;
           
           if (box.id === "goalGreenBox") {
