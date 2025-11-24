@@ -59,6 +59,9 @@ App.markerHandler = {
       };
       
       // STRENGER: Weiß-Erkennung, damit mehr Bereiche grau bleiben
+      // threshold=250: Only very bright pixels (250-255) are considered white
+      // maxChannelDiff=5: RGB channels must be very close to each other (true neutral color)
+      // This stricter detection results in more gray markers instead of white on goal images
       sampler.isNeutralWhiteAt = (xPct, yPct, threshold = 250, maxChannelDiff = 5) => {
         const p = getPixel(xPct, yPct);
         if (!p || p.a === 0) return false;
