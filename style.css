@@ -369,13 +369,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 8px;
 }
 
-/* Marker: dunkelgrau, scharfer Rand, gleiche Optik für Feld & Tor */
+/* Marker: ALLE dunkelgrau, scharfer Rand, gleiche Optik für Feld & Tor */
 .marker-dot {
   position: absolute;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.6);
   cursor: pointer;
