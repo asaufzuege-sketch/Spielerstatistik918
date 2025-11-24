@@ -378,7 +378,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
   border: 2px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  background-color: #808080 !important; /* GRAU für alle Punkte */
+  /* Wichtig: KEIN !important – JS setzt die Farbe (grün/rot/grau) */
+  background-color: #808080;
 }
 
 /* Long press visual feedback */
@@ -500,12 +501,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 6px 4px !important;
   border-bottom: 2px solid #333;
   background: var(--header-bg);
-  color: #ffffff; /* FIX: Schriftfarbe in Headern immer weiß */
+  color: #ffffff; /* FIX */
   position: sticky;
   top: 0;
   z-index: 40;
-  padding: 8px 6px;
-  border-bottom: 2px solid #333;
   text-align: center;
 }
 
@@ -540,7 +539,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonPage .total-row td {
   background: var(--header-bg) !important;
-  color: #ffffff !important; /* FIX: Schriftfarbe in Totalzeile immer weiß */
+  color: #ffffff !important;
   font-weight: 700 !important;
   border-top: 2px solid #333;
 }
@@ -556,7 +555,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .table-scroll { padding-bottom: 2px; }
 
 /* ============ */
-/* GOAL VALUE PAGE (Referenz) */
+/* GOAL VALUE PAGE */
 /* ============ */
 
 #goalValuePage {
@@ -633,11 +632,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-/* ======================================= */
 /* STICKY COLUMNS FOR GOAL VALUE TABLE */
-/* ======================================= */
-
-/* WICHTIG: Sticky column styling für Goal Value table */
 .goalvalue-table .sticky-col {
   position: sticky !important;
   left: 0 !important;
@@ -646,7 +641,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Header sticky styling */
 .goalvalue-table thead th.sticky-col {
   position: sticky !important;
   left: 0 !important;
@@ -656,7 +650,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Body cells sticky styling mit korrekten Hintergrundfarben */
 .goalvalue-table tbody td.sticky-col {
   position: sticky !important;
   left: 0 !important;
@@ -687,33 +680,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 [data-theme="dark"] .goalvalue-table thead th.sticky-col {
   box-shadow: 2px 0 4px rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Zusätzliche Sicherheit für Spielernamen-Zellen */
-.gv-name-cell.sticky-col {
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 20 !important;
-  text-align: left !important;
-  padding-left: 12px !important;
-  padding-right: 12px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  font-weight: 700 !important;
-  min-width: 160px !important;
-  max-width: 200px !important;
-}
-
-.gv-name-header.sticky-col {
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 35 !important;
-  text-align: center !important;
-  background: var(--header-bg) !important;
-  color: #fff !important;
-  min-width: 160px !important;
-  max-width: 200px !important;
 }
 
 /* Name Zellen */
@@ -836,7 +802,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #statsPage .total-row td {
   background: var(--header-bg) !important;
-  color: #ffffff !important; /* FIX: Schriftfarbe in Totalzeile immer weiß */
+  color: #ffffff !important;
   font-weight: 700 !important;
   border-top: 2px solid #333;
 }
@@ -953,7 +919,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .season-table .total-row td {
   background: var(--header-bg);
-  color: #ffffff; /* FIX: Schriftfarbe in Season-Tabelle Totalzeile immer weiß */
+  color: #ffffff;
   font-weight: 700;
   border-top: 2px solid #333;
   padding: 8px 6px;
@@ -984,7 +950,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   align-items: center;
   justify-content: space-between;
   transition: border-color 0.3s ease;
-  /* NEU: Abstand nach unten, damit sich die Boxen nicht berühren */
   margin-bottom: 16px;
 }
 
@@ -1005,16 +970,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 600;
 }
 
-/* Button group with fixed width to center buttons regardless of team name length */
-.team-button-group {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-shrink: 0;
-  min-width: 180px;
-  justify-content: flex-end;
-}
-
 .team-btn {
   background: #44bb91;
   color: white;
@@ -1025,6 +980,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 10px;
 }
 
 .team-btn:hover {
@@ -1035,7 +991,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: #2a2a2a;
   border: 2px solid #44bb91;
   color: #44bb91;
-  padding: 10px 22px; /* Angepasst wegen Border */
+  padding: 10px 22px;
 }
 
 .team-btn.active-team:hover {
@@ -1053,14 +1009,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   cursor: pointer;
   font-size: 1rem;
   transition: background 0.3s ease;
-  filter: none; /* Ensure emoji renders in default color */
 }
 
 .edit-team-btn:hover {
   background: #36a67d;
 }
 
-/* Modal Styles - Korrigiert für gleiche Höhe */
+/* Modal Styles */
 .modal {
   position: fixed;
   top: 0;
@@ -1087,4 +1042,141 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin: 0 0 20px 0;
   color: #44bb91;
   text-align: center;
+}
+
+#teamNameInput {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  background: #2a2a2a;
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+#teamNameInput:focus {
+  outline: none;
+  border-color: #44bb91;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  line-height: 1;
+  vertical-align: top;
+}
+
+#saveTeamNameBtn {
+  background: #44bb91;
+  color: white;
+}
+
+#saveTeamNameBtn:hover {
+  background: #36a67d;
+}
+
+#cancelTeamEditBtn {
+  background: #666;
+  color: white;
+}
+
+#cancelTeamEditBtn:hover {
+  background: #777;
+}
+
+/* Überschreibt eventuelle confirm-btn Styles für Modal */
+.modal-buttons .confirm-btn {
+  background: #44bb91 !important;
+  color: white !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 44px !important;
+  flex: 1 !important;
+}
+
+.modal-buttons .confirm-btn:hover {
+  background: #36a67d !important;
+}
+
+.modal-buttons .cancel-btn {
+  background: #666 !important;
+  color: white !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 44px !important;
+  flex: 1 !important;
+}
+
+.modal-buttons .cancel-btn:hover {
+  background: #777 !important;
+}
+
+/* Current Team Info */
+.current-team-info {
+  text-align: center;
+  margin: 10px 0 20px 0;
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+.current-team-info strong {
+  color: #44bb91;
+}
+
+/* DRAG & DROP STYLES */
+
+.drag-handle {
+  display: inline-block;
+  font-weight: bold;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  font-size: 16px;
+  line-height: 1;
+  vertical-align: middle;
+  cursor: grab;
+}
+
+.drag-handle:hover {
+  color: #36a67d !important;
+  transform: scale(1.1);
+}
+
+.drag-handle:active {
+  cursor: grabbing !important;
+}
+
+.stats-table tbody tr {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.stats-table tbody tr:not(.total-row) td:first-child + td {
+  position: relative;
 }
