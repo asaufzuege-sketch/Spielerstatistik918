@@ -104,7 +104,7 @@ App.goalValue = {
       ? Object.keys(App.data.seasonData).sort() 
       : App.data.selectedPlayers.map(p => p.name);
     
-    // Wrapper für horizontales Scrollen
+    // Wrapper für horizontales Scrollen (Scroll-Logik wie bei Season)
     const wrapper = document.createElement('div');
     wrapper.className = 'table-scroll';
     wrapper.style.width = '100%';
