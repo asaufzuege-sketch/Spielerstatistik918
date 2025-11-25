@@ -1000,11 +1000,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-color: #36a67d;
 }
 
-/* … (hier können noch weitere Styles folgen, falls deine Datei unten abgeschnitten war) */
-
 /* ----------------------------------------------------- */
-/* WICHTIG: Alte Momentum-/Legacy-Marker ausblenden      */
-/* damit nicht zwei Marker-Typen übereinander liegen     */
+/* Legacy-/Momentum-Marker ausblenden                    */
 /* ----------------------------------------------------- */
 .goal-marker {
   display: none !important;
