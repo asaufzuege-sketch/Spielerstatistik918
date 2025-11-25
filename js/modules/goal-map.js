@@ -169,32 +169,42 @@ App.goalMap = {
         }
       };
       
-      // Mouse Events
+      // Mouse Events - FIX: Timer wird korrekt gestoppt
       img.addEventListener("mousedown", (ev) => {
         isLong = false;
         if (mouseHoldTimer) clearTimeout(mouseHoldTimer);
+        
+        const startPos = getPosFromEvent(ev);
+        
         mouseHoldTimer = setTimeout(() => {
           isLong = true;
-          const pos = getPosFromEvent(ev);
-          placeMarker(pos, true);
+          placeMarker(startPos, true);
+          mouseHoldTimer = null; // Timer wurde ausgeführt
         }, App.markerHandler.LONG_MARK_MS);
       });
       
       img.addEventListener("mouseup", (ev) => {
+        const now = Date.now();
+        const pos = getPosFromEvent(ev);
+        
+        // WICHTIG: Timer sofort stoppen, bevor weitere Logik ausgeführt wird
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
         }
-        const now = Date.now();
-        const pos = getPosFromEvent(ev);
         
+        // Doppelklick Erkennung
         if (now - lastMouseUp < 300) {
           placeMarker(pos, true, true);
           lastMouseUp = 0;
         } else {
-          if (!isLong) placeMarker(pos, false);
+          // Nur Marker setzen wenn es KEIN Long-Press war
+          if (!isLong) {
+            placeMarker(pos, false);
+          }
           lastMouseUp = now;
         }
+        
         isLong = false;
       });
       
@@ -206,35 +216,45 @@ App.goalMap = {
         isLong = false;
       });
       
-      // Touch Events
+      // Touch Events - FIX: Timer wird korrekt gestoppt
       img.addEventListener("touchstart", (ev) => {
         isLong = false;
         if (mouseHoldTimer) clearTimeout(mouseHoldTimer);
+        
+        const touch = ev.touches[0];
+        const startPos = getPosFromEvent(touch);
+        
         mouseHoldTimer = setTimeout(() => {
           isLong = true;
-          const touch = ev.touches[0];
-          const pos = getPosFromEvent(touch);
-          placeMarker(pos, true);
+          placeMarker(startPos, true);
           if (navigator.vibrate) navigator.vibrate(50);
+          mouseHoldTimer = null; // Timer wurde ausgeführt
         }, App.markerHandler.LONG_MARK_MS);
       }, { passive: true });
       
       img.addEventListener("touchend", (ev) => {
-        if (mouseHoldTimer) {
-          clearTimeout(mouseHoldTimer);
-          mouseHoldTimer = null;
-        }
         const now = Date.now();
         const touch = ev.changedTouches[0];
         const pos = getPosFromEvent(touch);
         
+        // WICHTIG: Timer sofort stoppen, bevor weitere Logik ausgeführt wird
+        if (mouseHoldTimer) {
+          clearTimeout(mouseHoldTimer);
+          mouseHoldTimer = null;
+        }
+        
+        // Doppelklick Erkennung
         if (now - lastTouchEnd < 300) {
           placeMarker(pos, true, true);
           lastTouchEnd = 0;
         } else {
-          if (!isLong) placeMarker(pos, false);
+          // Nur Marker setzen wenn es KEIN Long-Press war
+          if (!isLong) {
+            placeMarker(pos, false);
+          }
           lastTouchEnd = now;
         }
+        
         isLong = false;
       }, { passive: true });
       
