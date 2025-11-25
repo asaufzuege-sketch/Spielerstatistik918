@@ -94,6 +94,7 @@ App.goalValue = {
   render() {
     if (!this.container) return;
     
+    // Container leer, Scroll liegt auf #goalValueContainer (wie bei Season)
     this.container.innerHTML = "";
     
     const opponents = this.getOpponents();
@@ -104,14 +105,11 @@ App.goalValue = {
       ? Object.keys(App.data.seasonData).sort() 
       : App.data.selectedPlayers.map(p => p.name);
     
-    // Wrapper für horizontales Scrollen (Scroll-Logik wie bei Season)
+    // Wrapper ohne eigenen overflow (nur fürs Layout)
     const wrapper = document.createElement('div');
     wrapper.className = 'table-scroll';
     wrapper.style.width = '100%';
     wrapper.style.boxSizing = 'border-box';
-    wrapper.style.overflowX = 'auto';
-    wrapper.style.overflowY = 'hidden';
-    wrapper.style.WebkitOverflowScrolling = 'touch';
     wrapper.style.position = 'relative';
     
     const table = document.createElement("table");
@@ -131,33 +129,15 @@ App.goalValue = {
     const thPlayer = document.createElement("th");
     thPlayer.textContent = "Spieler";
     thPlayer.className = "gv-name-header sticky-col";
-    thPlayer.style.textAlign = "left";
-    thPlayer.style.padding = "8px 12px";
-    thPlayer.style.borderBottom = "2px solid #333";
-    thPlayer.style.borderRight = "1px solid #444";
-    thPlayer.style.minWidth = "160px";
-    thPlayer.style.maxWidth = "200px";
-    thPlayer.style.whiteSpace = "nowrap";
-    thPlayer.style.position = "sticky";
-    thPlayer.style.left = "0";
-    thPlayer.style.zIndex = "35";
-    thPlayer.style.backgroundColor = "var(--header-bg)";
-    thPlayer.style.boxShadow = "2px 0 4px rgba(0, 0, 0, 0.15)";
     headerRow.appendChild(thPlayer);
     
     opponents.forEach((op, idx) => {
       const th = document.createElement("th");
-      th.style.padding = "6px";
-      th.style.borderBottom = "2px solid #333";
-      th.style.textAlign = "center";
       const input = document.createElement("input");
       input.type = "text";
       input.value = op || "";
       input.placeholder = `Gegner ${idx+1}`;
       input.className = "goalvalue-title-input";
-      input.style.width = "100%";
-      input.style.boxSizing = "border-box";
-      input.style.textAlign = "center";
       input.addEventListener("change", () => {
         const arr = this.getOpponents();
         arr[idx] = input.value || "";
@@ -170,9 +150,6 @@ App.goalValue = {
     
     const thValue = document.createElement("th");
     thValue.textContent = "Value";
-    thValue.style.padding = "6px";
-    thValue.style.borderBottom = "2px solid #333";
-    thValue.style.textAlign = "center";
     headerRow.appendChild(thValue);
     
     thead.appendChild(headerRow);
@@ -191,27 +168,6 @@ App.goalValue = {
       const tdName = document.createElement("td");
       tdName.textContent = name;
       tdName.className = "gv-name-cell sticky-col";
-      tdName.style.textAlign = "left";
-      tdName.style.padding = "6px 12px";
-      tdName.style.fontWeight = "700";
-      tdName.style.minWidth = "160px";
-      tdName.style.maxWidth = "200px";
-      tdName.style.whiteSpace = "nowrap";
-      tdName.style.overflow = "hidden";
-      tdName.style.textOverflow = "ellipsis";
-      tdName.style.borderRight = "1px solid #444";
-      tdName.style.position = "sticky";
-      tdName.style.left = "0";
-      tdName.style.zIndex = "20";
-      tdName.style.boxShadow = "2px 0 4px rgba(0, 0, 0, 0.1)";
-      
-      // Hintergrund basierend auf Zeile setzen
-      if (rowIdx % 2 === 0) {
-        tdName.style.backgroundColor = "var(--row-even)";
-      } else {
-        tdName.style.backgroundColor = "var(--row-odd)";
-      }
-      
       row.appendChild(tdName);
       
       const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
@@ -219,9 +175,6 @@ App.goalValue = {
       
       opponents.forEach((_, i) => {
         const td = document.createElement("td");
-        td.style.padding = "6px";
-        td.style.textAlign = "center";
-        td.style.cursor = "pointer";
         td.dataset.player = name;
         td.dataset.oppIdx = String(i);
         td.className = "gv-data-cell";
@@ -279,10 +232,9 @@ App.goalValue = {
       });
       
       const valueTd = document.createElement("td");
-      valueTd.style.padding = "6px";
-      valueTd.style.textAlign = "center";
       const val = this.computeValueForPlayer(name);
       valueTd.textContent = this.formatValueNumber(val);
+      valueTd.className = "gv-value-cell";
       valueTd.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
       valueTd.style.fontWeight = val !== 0 ? "700" : "400";
       row.appendChild(valueTd);
@@ -299,16 +251,6 @@ App.goalValue = {
     const labelTd = document.createElement("td");
     labelTd.textContent = "";
     labelTd.className = "sticky-col";
-    labelTd.style.padding = "6px 12px";
-    labelTd.style.fontWeight = "700";
-    labelTd.style.textAlign = "center";
-    labelTd.style.background = "rgba(0,0,0,0.03)";
-    labelTd.style.borderRight = "1px solid #444";
-    labelTd.style.borderTop = "2px solid #333";
-    labelTd.style.position = "sticky";
-    labelTd.style.left = "0";
-    labelTd.style.zIndex = "20";
-    labelTd.style.boxShadow = "2px 0 4px rgba(0, 0, 0, 0.1)";
     bottomRow.appendChild(labelTd);
     
     const scaleOptions = [];
@@ -321,13 +263,8 @@ App.goalValue = {
     
     opponents.forEach((_, i) => {
       const td = document.createElement("td");
-      td.style.padding = "6px";
-      td.style.textAlign = "center";
-      td.style.borderTop = "2px solid #333";
-      
       const select = document.createElement("select");
       select.className = "gv-scale-dropdown";
-      select.style.width = "80px";
       
       scaleOptions.forEach(opt => {
         const option = document.createElement('option');
@@ -338,8 +275,6 @@ App.goalValue = {
       
       const b = this.getBottom();
       const currentValue = b && typeof b[i] !== "undefined" ? b[i] : 0;
-      
-      td.appendChild(select);
       setTimeout(() => {
         select.value = String(currentValue);
       }, 0);
@@ -354,19 +289,17 @@ App.goalValue = {
         });
       });
       
+      td.appendChild(select);
       bottomRow.appendChild(td);
     });
     
     const emptyTd = document.createElement("td");
     emptyTd.textContent = "";
-    emptyTd.style.padding = "6px";
-    emptyTd.style.borderTop = "2px solid #333";
     bottomRow.appendChild(emptyTd);
     
     tbody.appendChild(bottomRow);
     table.appendChild(tbody);
     
-    // Tabelle in Wrapper einfügen
     wrapper.appendChild(table);
     this.container.appendChild(wrapper);
     
