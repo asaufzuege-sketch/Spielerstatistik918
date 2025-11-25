@@ -137,21 +137,18 @@ App.goalMap = {
         
         // FELD-BOX: grün/rot oder grau je nach Kontext
         if (box.classList.contains("field-box")) {
-          const sampler = App.markerHandler.createImageSampler(img);
           let color = null;
-          
+
+          // Im Goal-Workflow ist der Feldpunkt immer grau (neutral)
           if (isGoalWorkflow) {
             color = neutralGrey;
-          } else if (long || forceGrey) {
+          }
+          // Longpress oder erzwungen grau (z.B. Doppelklick)
+          else if (long || forceGrey) {
             color = neutralGrey;
-          } else if (sampler && sampler.valid) {
-            const isGreen = sampler.isGreenAt(pos.xPctImage, pos.yPctImage, 80, 15);
-            const isRed   = sampler.isRedAt  (pos.xPctImage, pos.yPctImage, 80, 15);
-            
-            if (isGreen)      color = "#00ff66";
-            else if (isRed)   color = "#ff0000";
-            else              color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
-          } else {
+          }
+          // Normaler manueller Klick: oben grün, unten rot
+          else {
             color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
           }
           
