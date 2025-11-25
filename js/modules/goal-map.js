@@ -3,7 +3,6 @@
 App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
-  handlersAttached: false, // NEU: Flag um mehrfaches Anhängen zu verhindern
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -18,11 +17,8 @@ App.goalMap = {
       this.reset();
     });
     
-    // Marker Handler für Goal Map Boxen - NUR EINMAL anhängen
-    if (!this.handlersAttached) {
-      this.attachMarkerHandlers();
-      this.handlersAttached = true;
-    }
+    // Marker Handler für Goal Map Boxen
+    this.attachMarkerHandlers();
     
     // Time Tracking initialisieren (916‑Logik mit Spielerzuordnung)
     this.initTimeTracking();
@@ -35,12 +31,12 @@ App.goalMap = {
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     
     boxes.forEach(box => {
-      // WICHTIG: Prüfen ob bereits initialisiert
+      // KRITISCH: Prüfen ob Event-Listener bereits angehängt wurden
       if (box.dataset.handlersAttached === 'true') {
         console.log('[Goal Map] Handlers already attached to', box.id);
-        return;
+        return; // Überspringe diese Box
       }
-      box.dataset.handlersAttached = 'true';
+      box.dataset.handlersAttached = 'true'; // Markiere als initialisiert
       
       const img = box.querySelector("img");
       if (!img) return;
@@ -88,7 +84,7 @@ App.goalMap = {
       
       const placeMarker = (pos, long, forceGrey = false) => {
         const workflowActive = App.goalMapWorkflow?.active;
-        const eventType = App.goalMapWorkflow?.eventType;
+        const eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
         const isGoalWorkflow = workflowActive && eventType === 'goal';
         const neutralGrey = "#444444";
         
@@ -259,7 +255,7 @@ App.goalMap = {
     });
   },
   
-  // Rest des Codes bleibt unverändert...
+  // Time Tracking mit Spielerzuordnung
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
@@ -351,6 +347,7 @@ App.goalMap = {
     }
   },
   
+  // Player Filter Dropdown
   initPlayerFilter() {
     const filterSelect = document.getElementById("goalMapPlayerFilter");
     if (!filterSelect) return;
