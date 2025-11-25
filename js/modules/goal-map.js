@@ -29,7 +29,7 @@ App.goalMap = {
   },
   
   attachMarkerHandlers() {
-    // Verhindere mehrfache Initialisierung auf Modul-Ebene
+    // Verhindert mehrfache Initialisierung auf Modul-Ebene
     if (this._handlersInitialized) {
       console.log('[Goal Map] Handlers already initialized globally');
       return;
@@ -39,7 +39,7 @@ App.goalMap = {
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     
     boxes.forEach(box => {
-      // KRITISCH: Prüfen ob Event-Listener bereits angehängt wurden (zusätzliche Sicherheit)
+      // Prüfen ob Event-Listener bereits angehängt wurden (zusätzliche Sicherheit für dynamische DOM-Elemente)
       if (box.dataset.handlersAttached === 'true') {
         console.log('[Goal Map] Handlers already attached to', box.id);
         return; // Überspringe diese Box
@@ -48,13 +48,6 @@ App.goalMap = {
       
       const img = box.querySelector("img");
       if (!img) return;
-      
-      // Markiere auch das img Element als initialisiert
-      if (img.dataset.handlersAttached === 'true') {
-        console.log('[Goal Map] Handlers already attached to img in', box.id);
-        return;
-      }
-      img.dataset.handlersAttached = 'true';
       
       box.style.position = box.style.position || "relative";
       App.markerHandler.createImageSampler(img);
