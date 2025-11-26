@@ -122,7 +122,7 @@ h1 {
   height: 18px;
   accent-color: #e3fba7;
 }
-.player-list .num {
+.player-list . num {
   width: 48px;
   text-align: center;
   font-weight: 700;
@@ -157,7 +157,7 @@ h1 {
 }
 
 /* Basis Top-Bar (für alle Seiten) */
-.top-bar {
+. top-bar {
   display: flex;
   flex-wrap: nowrap;
   gap: 8px;
@@ -170,10 +170,10 @@ h1 {
 }
 
 /* SPEZIFISCH: GAME DATA */
-#statsPage .top-bar {
+#statsPage . top-bar {
   max-width: 100% !important;
   width: 100% !important;
-  display: flex !important;
+  display: flex ! important;
   flex-wrap: nowrap !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -186,7 +186,7 @@ h1 {
   flex: 1 1 0 !important;
   min-width: 0 !important;
   white-space: nowrap !important;
-  font-size: clamp(0.80rem, 1.0vw, 0.95rem) !important;
+  font-size: clamp(0.80rem, 1. 0vw, 0.95rem) !important;
   padding: clamp(6px, 0.9vw, 8px) clamp(8px, 1.4vw, 14px) !important;
   min-height: 40px !important;
 }
@@ -201,7 +201,7 @@ h1 {
   -webkit-overflow-scrolling: touch;
 }
 
-.top-btn,
+. top-btn,
 .import-csv-btn {
   background: #2b2b2b;
   color: #fff;
@@ -223,7 +223,7 @@ h1 {
 .top-btn:hover,
 .import-csv-btn:hover { background: #3b3b3b; }
 
-.top-btn.timer-left { background: var(--timer-left-bg); }
+. top-btn. timer-left { background: var(--timer-left-bg); }
 .timer {
   font-size: 1.25rem;
   font-weight: 700;
@@ -234,31 +234,31 @@ h1 {
   align-items: center;
   justify-content: center;
 }
-.timer.running { background: var(--cell-pos-color); }
-.timer.stopped { background: #b00020; }
+.timer. running { background: var(--cell-pos-color); }
+. timer.stopped { background: #b00020; }
 .timer.reset { background: var(--timer-left-bg); }
 
-.top-btn.export-csv { background: #46798e; color: #fff; }
+. top-btn.export-csv { background: #46798e; color: #fff; }
 .top-btn.export-csv:hover { filter: brightness(0.95); }
 
-.top-btn.season-highlight { background: #44bb91; color: #fff; }
+. top-btn.season-highlight { background: #44bb91; color: #fff; }
 .top-btn.season-highlight:hover { filter: brightness(0.95); }
 
-.top-btn.export-season { background: #e3fba7; color: #000; }
+. top-btn.export-season { background: #e3fba7; color: #000; }
 .top-btn.export-season:hover { filter: brightness(0.95); }
 
-.top-btn.back-btn { background: #3a3a3a; color: #fff; }
+. top-btn.back-btn { background: #3a3a3a; color: #fff; }
 .top-btn.back-btn:hover { filter: brightness(1.1); }
 
-.import-csv-btn { background: #010741; color: #fff; }
+. import-csv-btn { background: #010741; color: #fff; }
 
-.danger-btn { background: #8b0000; color: #fff; }
+. danger-btn { background: #8b0000; color: #fff; }
 .danger-btn:hover { background: #a30000; }
 .reset-btn { font-weight: 700; }
 
 /* Player Filter Button Style */
 .player-filter-btn {
-  background: #6b6b6b !important;
+  background: #6b6b6b ! important;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -281,7 +281,7 @@ h1 {
   text-align-last: center;
 }
 .player-filter-btn:hover {
-  background: #7b7b7b !important;
+  background: #7b7b7b ! important;
 }
 .player-filter-btn option {
   background: #2b2b2b;
@@ -295,7 +295,7 @@ h1 {
   border-radius: 8px;
   padding: 12px 24px;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1. 1rem;
   font-weight: 700;
   transition: background 0.2s;
   display: block;
@@ -310,7 +310,7 @@ table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 
 thead th {
   background: var(--header-bg);
-  color: #ffffff; /* FIX: Schriftfarbe in Headern immer weiß */
+  color: #ffffff;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -327,16 +327,16 @@ th, td {
   color: var(--text-color);
 }
 
-.even-row { background-color: var(--row-even); }
+. even-row { background-color: var(--row-even); }
 .odd-row  { background-color: var(--row-odd); }
 
 td[data-player] { cursor: pointer; transition: transform 0.08s, background 0.08s; }
 td[data-player]:active { transform: scale(1.12); background: #222; }
 
-.time-btn[disabled], .time-btn.disabled-readonly { opacity: 0.7; cursor: default; pointer-events: none; filter: brightness(0.95); }
+. time-btn[disabled], .time-btn. disabled-readonly { opacity: 0.7; cursor: default; pointer-events: none; filter: brightness(0.95); }
 
 th.sortable { user-select: none; }
-th .sort-arrow { font-size: 0.7rem; color: #ddd }
+th . sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .torbild-layout {
   display: flex;
@@ -389,15 +389,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   transition: none;
 }
 
-.time-tracking-box {
+. time-tracking-box {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: var(--time-box-bg); /* NEU: Variable für Hintergrund */
+  background: var(--time-box-bg);
   border: 2px solid #333;
   border-radius: 10px;
   padding: 10px 14px;
-  color: var(--time-box-text); /* NEU: Variable für Schriftfarbe */
+  color: var(--time-box-text);
   font-size: 0.95rem;
   height: 100%;
   gap: 10px;
@@ -405,22 +405,22 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto minmax(1.4em, auto) auto;
+  grid-template-rows: auto minmax(1. 4em, auto) auto;
   align-items: center;
   justify-items: center;
   row-gap: 2px;
   column-gap: 12px;
   padding: 6px 10px;
-  background: var(--period-bg); /* NEU: Variable für Perioden-Hintergrund */
+  background: var(--period-bg);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 8px;
-  color: var(--period-text); /* NEU: Schriftfarbe weiß erzwingen */
+  color: var(--period-text);
 }
 .period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
-.period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
+.period-buttons. top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
 .period-numbers span { color: #ccc; font-size: 0.8rem; line-height:1; }
 
-.time-btn {
+. time-btn {
   width: 100%;
   height: 20px;
   border: none;
@@ -430,11 +430,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
 }
-.period-buttons.top-row .time-btn { background: var(--btn-top-bg); }
+.period-buttons. top-row . time-btn { background: var(--btn-top-bg); }
 .period-buttons.bottom-row .time-btn { background: var(--btn-bottom-bg); }
-.period-buttons.top-row .time-btn:hover { background-color: #b2f0b2; }
+. period-buttons.top-row . time-btn:hover { background-color: #b2f0b2; }
 .period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
-.time-btn:active { transform: scale(1.05); }
+.time-btn:active { transform: scale(1. 05); }
 
 /* ====================== */
 /* SEASON PAGE (Scroll wie Goal Value) */
@@ -451,17 +451,17 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 #seasonPage .page-top {
-  align-items: center;
+  align-items:center;
   margin: 0 auto;
 }
 
 #seasonContainer {
   width: 100% !important;
   max-width: 100% !important;
-  overflow-x: auto !important;
+  overflow-x: auto ! important;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch !important;
-  padding-right: 20px !important;
+  -webkit-overflow-scrolling: touch ! important;
+  padding-right: 20px ! important;
   padding-bottom: 20px !important;
   box-sizing: border-box !important;
   position: relative !important;
@@ -471,12 +471,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 #seasonContainer::-webkit-scrollbar {
-  height: 18px !important;
+  height: 18px ! important;
   background: rgba(0, 0, 0, 0.2) !important;
 }
 #seasonContainer::-webkit-scrollbar-thumb {
   background: #44bb91 !important;
-  border-radius: 10px !important;
+  border-radius: 10px ! important;
   border: 3px solid rgba(0, 0, 0, 0.1) !important;
 }
 #seasonContainer::-webkit-scrollbar-thumb:hover {
@@ -491,7 +491,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: auto !important;
   min-width: max-content !important;
   border-collapse: collapse !important;
-  font-size: 0.95rem !important;
+  font-size: 0. 95rem !important;
   margin: 0 !important;
   margin-top: 6px !important;
   margin-bottom: 10px !important;
@@ -502,7 +502,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 6px 4px !important;
   border-bottom: 2px solid #333;
   background: var(--header-bg);
-  color: #ffffff; /* FIX */
+  color: #ffffff;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -538,22 +538,18 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonPage tbody tr:nth-child(odd) { background-color: var(--row-odd); }
 #seasonPage tbody tr:nth-child(even) { background-color: var(--row-even); }
 
-#seasonPage .total-row td {
+#seasonPage . total-row td {
   background: var(--header-bg) !important;
   color: #ffffff !important;
   font-weight: 700 !important;
   border-top: 2px solid #333;
 }
 
-/* OPTION A: Genug Platz für letzte Spalte (MVP Points) */
-#seasonPage thead th:last-child,
-#seasonPage tbody td:last-child {
-  min-width: 80px;
-  padding-right: 12px;
-}
-
 /* leichte Entkopplung vom Scrollbalken */
-.table-scroll { padding-bottom: 2px; }
+. table-scroll { 
+  width: 100% !important;
+  position: relative !important;
+}
 
 /* ============ */
 /* GOAL VALUE PAGE */
@@ -564,11 +560,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-width: none;
 }
 
+/* WICHTIG: Container ist der Scroll-Kontext für sticky */
 #goalValueContainer {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: auto !important;
-  overflow-y: hidden !important;
+  overflow-y: hidden ! important;
   -webkit-overflow-scrolling: touch !important;
   padding-right: 20px !important;
   padding-bottom: 20px !important;
@@ -593,15 +590,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) !important;
 }
 
-.table-scroll {
+/* WICHTIG: Wrapper darf KEIN overflow oder position:relative haben!  */
+#goalValueContainer . table-scroll {
+  position: static !important;
+  overflow: visible !important;
   width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
-  position: relative !important;
+  box-sizing: border-box !important;
 }
 
-.goalvalue-table {
+. goalvalue-table {
   width: auto !important;
   min-width: max-content !important;
   border-collapse: separate !important;
@@ -610,16 +607,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-size: 13px;
   margin-top: 6px;
   margin-bottom: 10px;
-  table-layout: fixed;
+  table-layout: auto !important;
   display: table !important;
 }
 
 .goalvalue-table tbody tr:nth-child(odd) { background: var(--row-odd); }
 .goalvalue-table tbody tr:nth-child(even) { background: var(--row-even); }
-.goalvalue-table tbody tr:hover { background: inherit !important; }
+.goalvalue-table tbody tr:hover { background: inherit ! important; }
 
 .goalvalue-table th {
-  padding: 6px 4px !important;
+  padding: 6px 4px ! important;
   border-bottom: 2px solid #333;
   background: var(--header-bg) !important;
   color: #fff !important;
@@ -633,57 +630,88 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-/* STICKY COLUMNS FOR GOAL VALUE TABLE */
-.goalvalue-table .sticky-col {
+/* ========================================= */
+/* STICKY COLUMNS FOR GOAL VALUE TABLE - FIX */
+/* ========================================= */
+
+/* Basis-Sticky für alle sticky-col Elemente */
+.goalvalue-table . sticky-col {
   position: sticky !important;
   left: 0 !important;
   z-index: 25 !important;
   background: var(--header-bg) !important;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15) !important;
+  min-width: 120px !important;
 }
 
+/* Header sticky-col: höchster z-index */
 .goalvalue-table thead th.sticky-col {
   position: sticky !important;
   left: 0 !important;
-  z-index: 35 !important;
-  background: var(--header-bg) !important;
+  z-index: 50 !important;
+  background: var(--header-bg) ! important;
   color: #fff !important;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0. 2) !important;
 }
 
+/* Body sticky-col */
 .goalvalue-table tbody td.sticky-col {
   position: sticky !important;
   left: 0 !important;
   z-index: 20 !important;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Gerade Zeilen (even) */
-.goalvalue-table tbody tr:nth-child(even) td.sticky-col {
+/* Gerade Zeilen (even) - Hintergrund muss explizit gesetzt werden */
+. goalvalue-table tbody tr:nth-child(even) td. sticky-col {
   background: var(--row-even) !important;
 }
 
-/* Ungerade Zeilen (odd) */
+/* Ungerade Zeilen (odd) - Hintergrund muss explizit gesetzt werden */
 .goalvalue-table tbody tr:nth-child(odd) td.sticky-col {
   background: var(--row-odd) !important;
 }
 
 /* Bottom row (letzte Zeile mit Dropdowns) */
 .goalvalue-table tbody tr:last-child td.sticky-col {
-  background: rgba(0,0,0,0.03) !important;
+  background: var(--header-bg) !important;
   border-top: 2px solid #333 !important;
 }
 
+/* Name-Spalte Header explizit */
+.goalvalue-table thead th.gv-name-header. sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 50 ! important;
+  background: var(--header-bg) !important;
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+/* Name-Spalte Body explizit */
+.goalvalue-table tbody td.gv-name-cell.sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 40 !important;
+  text-align: left !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis ! important;
+  font-weight: 700 !important;
+}
+
 /* Dark mode adjustments */
-[data-theme="dark"] .goalvalue-table .sticky-col {
-  box-shadow: 2px 0 4px rgba(255, 255, 255, 0.05) !important;
+[data-theme="dark"] .goalvalue-table . sticky-col {
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0. 4) !important;
 }
 
 [data-theme="dark"] .goalvalue-table thead th.sticky-col {
-  box-shadow: 2px 0 4px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0. 5) !important;
 }
 
-/* Name Zellen */
+/* Name Zellen Basis-Styles */
 .gv-name-cell {
   text-align: left !important;
   padding-left: 12px !important;
@@ -695,16 +723,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-bottom: none !important;
   border-top: none !important;
   border-left: none !important;
-  border-right: none !important;
+  border-right: none ! important;
 }
-.gv-name-header {
+. gv-name-header {
   text-align: left !important;
   padding-left: 12px !important;
   background: var(--header-bg) !important;
   color: #fff !important;
 }
 
-.gv-data-cell {
+. gv-data-cell {
   cursor: pointer;
   user-select: none;
   font-weight: 600;
@@ -747,7 +775,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
   background-position: right 6px center !important;
-  background-size: 12px !important;
+  background-size: 12px ! important;
   padding-right: 26px !important;
 }
 .gv-scale-dropdown:hover {
@@ -755,16 +783,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-color: rgba(255,255,255,0.3) !important;
 }
 .gv-scale-dropdown:focus {
-  outline: 2px solid #44bb91 !important;
+  outline: 2px solid #44bb91 ! important;
   border-color: #44bb91 !important;
 }
 .gv-scale-dropdown option {
   background: #1a1a1a !important;
   color: #fff !important;
-  padding: 10px !important;
+  padding: 10px ! important;
 }
 
-.inline-editor {
+. inline-editor {
   padding: 4px 6px;
   border: 1px solid #cfcfcf;
   border-radius: 4px;
@@ -795,14 +823,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 @media (max-width: 900px) {
-  .torbild-layout { flex-direction: column; height: auto; }
+  . torbild-layout { flex-direction: column; height: auto; }
   .goalvalue-title-input { font-size: 0.85rem; }
   .top-bar { gap: 6px; }
   .top-btn, .import-csv-btn { min-width: 120px; }
 }
 
-#statsPage .total-row td {
-  background: var(--header-bg) !important;
+#statsPage . total-row td {
+  background: var(--header-bg) ! important;
   color: #ffffff !important;
   font-weight: 700 !important;
   border-top: 2px solid #333;
@@ -832,7 +860,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-height: calc(100vh - 200px);
 }
 
-.season-table {
+. season-table {
   width: auto;
   min-width: max-content;
   max-width: none;
@@ -918,7 +946,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding-right: 12px;
 }
 
-.season-table .total-row td {
+.season-table . total-row td {
   background: var(--header-bg);
   color: #ffffff;
   font-weight: 700;
@@ -930,7 +958,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* TEAMAUSWAHL STYLES */
 /* ==================== */
 
-.team-selection-container {
+. team-selection-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -954,7 +982,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin-bottom: 16px;
 }
 
-/* Green bar highlighting removed as requested */
 .team-slot:hover {
   border-color: #333;
 }
@@ -988,7 +1015,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: #36a67d;
 }
 
-.team-btn.active-team {
+.team-btn. active-team {
   background: #2a2a2a;
   border: 2px solid #44bb91;
   color: #44bb91;
@@ -997,12 +1024,162 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .team-btn.active-team:hover {
   background: #333;
-  border-color: #36a67d;
 }
 
-/* ----------------------------------------------------- */
-/* Legacy-/Momentum-Marker ausblenden                    */
-/* ----------------------------------------------------- */
-.goal-marker {
-  display: none !important;
+.edit-team-btn {
+  background: transparent;
+  border: 1px solid #555;
+  color: #aaa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.edit-team-btn:hover {
+  border-color: #44bb91;
+  color: #44bb91;
+}
+
+.team-button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Team Edit Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 30px;
+  border-radius: 12px;
+  border: 2px solid #333;
+  min-width: 300px;
+  max-width: 90%;
+}
+
+.modal-content h2 {
+  color: #44bb91;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.modal-content input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.modal-content input[type="text"]:focus {
+  outline: none;
+  border-color: #44bb91;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-buttons button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.modal-buttons . save-btn {
+  background: #44bb91;
+  color: white;
+}
+
+.modal-buttons .save-btn:hover {
+  background: #36a67d;
+}
+
+.modal-buttons .cancel-btn {
+  background: #444;
+  color: #fff;
+}
+
+.modal-buttons .cancel-btn:hover {
+  background: #555;
+}
+
+/* Workflow Status Indicator */
+#workflowStatusIndicator {
+  display: none;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #44bb91;
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin: 10px auto;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(68, 187, 145, 0.2);
+}
+
+#workflowStatusText {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+#workflowStatusText strong {
+  color: #44bb91;
+}
+
+/* Goal Area Labels für Season Map */
+.goal-area-label {
+  position: absolute;
+  pointer-events: none;
+  font-weight: 800;
+  opacity: 0.45;
+  font-size: 36px;
+  color: #000000;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.06);
+  line-height: 1;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Drag Handle Styles */
+.drag-handle {
+  color: #44bb91;
+  margin-right: 8px;
+  cursor: grab;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Dragging Row Visual */
+tr[data-player]. dragging {
+  background: rgba(68, 187, 145, 0.3) !important;
+  transform: scale(1.02);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 1000;
 }
