@@ -361,7 +361,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
-/* Season Map - Goal images fill their boxes completely */
+/* Season Map - Goal images fill their boxes komplett */
 #seasonMapPage .img-box img {
   width: 100%;
   height: 100%;
@@ -393,11 +393,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: var(--time-box-bg); /* NEU: Variable für Hintergrund */
+  background: var(--time-box-bg);
   border: 2px solid #333;
   border-radius: 10px;
   padding: 10px 14px;
-  color: var(--time-box-text); /* NEU: Variable für Schriftfarbe */
+  color: var(--time-box-text);
   font-size: 0.95rem;
   height: 100%;
   gap: 10px;
@@ -411,10 +411,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   row-gap: 2px;
   column-gap: 12px;
   padding: 6px 10px;
-  background: var(--period-bg); /* NEU: Variable für Perioden-Hintergrund */
+  background: var(--period-bg);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 8px;
-  color: var(--period-text); /* NEU: Schriftfarbe weiß erzwingen */
+  color: var(--period-text);
 }
 .period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
 .period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
@@ -437,7 +437,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .time-btn:active { transform: scale(1.05); }
 
 /* ====================== */
-/* SEASON PAGE (Scroll wie Goal Value) */
+/* SEASON PAGE */
 /* ====================== */
 
 #seasonPage {
@@ -502,7 +502,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 6px 4px !important;
   border-bottom: 2px solid #333;
   background: var(--header-bg);
-  color: #ffffff; /* FIX */
+  color: #ffffff;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -543,13 +543,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   color: #ffffff !important;
   font-weight: 700 !important;
   border-top: 2px solid #333;
-}
-
-/* OPTION A: Genug Platz für letzte Spalte (MVP Points) */
-#seasonPage thead th:last-child,
-#seasonPage tbody td:last-child {
-  min-width: 80px;
-  padding-right: 12px;
 }
 
 /* leichte Entkopplung vom Scrollbalken */
@@ -669,7 +662,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-top: 2px solid #333 !important;
 }
 
-/* Name-Spalte in Goal Value explizit wie Season-Table */
+/* Name-Spalte in Goal Value explizit */
 .goalvalue-table thead th.gv-name-header.sticky-col {
   position: sticky !important;
   left: 0 !important;
@@ -1014,4 +1007,25 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* ----------------------------------------------------- */
 .goal-marker {
   display: none !important;
+}
+
+/* HARDCODE: Goal Value Name-Spalte immer links fixiert */
+#goalValueContainer {
+  position: relative !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+/* Header-Zelle "Spieler" links kleben */
+#goalValueContainer table.goalvalue-table thead th.gv-name-header {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 100 !important;
+}
+
+/* Spieler-Zellen links kleben */
+#goalValueContainer table.goalvalue-table tbody td.gv-name-cell {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 90 !important;
 }
