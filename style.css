@@ -89,13 +89,13 @@ h1 {
 
 .center-text { text-align: center; color: #888; margin-top: 6px; }
 
-. player-list {
+.player-list {
   list-style: none;
   padding: 0;
   margin: 20px auto;
   max-width: 600px;
 }
-. player-list li {
+.player-list li {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -111,13 +111,13 @@ h1 {
   height: 18px;
   accent-color: #e3fba7;
 }
-. player-list . num {
+.player-list .num {
   width: 48px;
   text-align: center;
   font-weight: 700;
   color: #fff;
 }
-. player-list input[type="text"] {
+.player-list input[type="text"] {
   background: var(--row-even);
   color: var(--text-color);
   border: 1px solid #444;
@@ -126,7 +126,7 @@ h1 {
   flex: 1;
 }
 
-#playerSelectionPage . current-team-info {
+#playerSelectionPage .current-team-info {
   text-align: center;
   margin-top: 10px;
   margin-bottom: 8px;
@@ -144,7 +144,7 @@ h1 {
   display: inline-block;
 }
 
-. top-bar {
+.top-bar {
   display: flex;
   flex-wrap: nowrap;
   gap: 8px;
@@ -156,24 +156,24 @@ h1 {
   -webkit-overflow-scrolling: touch;
 }
 
-#statsPage . top-bar {
+#statsPage .top-bar {
   max-width: 100% !important;
-  width: 100% ! important;
+  width: 100% !important;
   display: flex !important;
   flex-wrap: nowrap !important;
   justify-content: space-between !important;
   align-items: center !important;
   gap: clamp(6px, 1vw, 10px) !important;
   overflow-x: hidden !important;
-  padding: 8px 0 ! important;
+  padding: 8px 0 !important;
 }
 #statsPage .top-btn,
-#statsPage . import-csv-btn {
+#statsPage .import-csv-btn {
   flex: 1 1 0 !important;
   min-width: 0 !important;
   white-space: nowrap !important;
-  font-size: clamp(0.80rem, 1. 0vw, 0.95rem) !important;
-  padding: clamp(6px, 0. 9vw, 8px) clamp(8px, 1. 4vw, 14px) !important;
+  font-size: clamp(0.80rem, 1.0vw, 0.95rem) !important;
+  padding: clamp(6px, 0.9vw, 8px) clamp(8px, 1.4vw, 14px) !important;
   min-height: 40px !important;
 }
 #statsPage #timerBtn { font-variant-numeric: tabular-nums; }
@@ -186,7 +186,7 @@ h1 {
   -webkit-overflow-scrolling: touch;
 }
 
-. top-btn,
+.top-btn,
 .import-csv-btn {
   background: #2b2b2b;
   color: #fff;
@@ -208,7 +208,7 @@ h1 {
 .top-btn:hover,
 .import-csv-btn:hover { background: #3b3b3b; }
 
-. top-btn. timer-left { background: var(--timer-left-bg); }
+.top-btn.timer-left { background: var(--timer-left-bg); }
 .timer {
   font-size: 1.25rem;
   font-weight: 700;
@@ -220,29 +220,29 @@ h1 {
   justify-content: center;
 }
 .timer.running { background: var(--cell-pos-color); }
-.timer. stopped { background: #b00020; }
-. timer.reset { background: var(--timer-left-bg); }
+.timer.stopped { background: #b00020; }
+.timer.reset { background: var(--timer-left-bg); }
 
-. top-btn.export-csv { background: #46798e; color: #fff; }
+.top-btn.export-csv { background: #46798e; color: #fff; }
 .top-btn.export-csv:hover { filter: brightness(0.95); }
 
-. top-btn.season-highlight { background: #44bb91; color: #fff; }
-.top-btn.season-highlight:hover { filter: brightness(0. 95); }
+.top-btn.season-highlight { background: #44bb91; color: #fff; }
+.top-btn.season-highlight:hover { filter: brightness(0.95); }
 
-. top-btn.export-season { background: #e3fba7; color: #000; }
-.top-btn.export-season:hover { filter: brightness(0. 95); }
+.top-btn.export-season { background: #e3fba7; color: #000; }
+.top-btn.export-season:hover { filter: brightness(0.95); }
 
-. top-btn.back-btn { background: #3a3a3a; color: #fff; }
+.top-btn.back-btn { background: #3a3a3a; color: #fff; }
 .top-btn.back-btn:hover { filter: brightness(1.1); }
 
 .import-csv-btn { background: #010741; color: #fff; }
 
-. danger-btn { background: #8b0000; color: #fff; }
+.danger-btn { background: #8b0000; color: #fff; }
 .danger-btn:hover { background: #a30000; }
 .reset-btn { font-weight: 700; }
 
 .player-filter-btn {
-  background: #6b6b6b ! important;
+  background: #6b6b6b !important;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -265,7 +265,7 @@ h1 {
   text-align-last: center;
 }
 .player-filter-btn:hover {
-  background: #7b7b7b ! important;
+  background: #7b7b7b !important;
 }
 .player-filter-btn option {
   background: #2b2b2b;
@@ -279,9 +279,9 @@ h1 {
   border-radius: 8px;
   padding: 12px 24px;
   cursor: pointer;
-  font-size: 1. 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  transition: background 0. 2s;
+  transition: background 0.2s;
   display: block;
   margin: 20px auto;
   min-width: 200px;
@@ -311,16 +311,16 @@ th, td {
   color: var(--text-color);
 }
 
-. even-row { background-color: var(--row-even); }
+.even-row { background-color: var(--row-even); }
 .odd-row  { background-color: var(--row-odd); }
 
 td[data-player] { cursor: pointer; transition: transform 0.08s, background 0.08s; }
 td[data-player]:active { transform: scale(1.12); background: #222; }
 
-.time-btn[disabled], .time-btn. disabled-readonly { opacity: 0.7; cursor: default; pointer-events: none; filter: brightness(0. 95); }
+.time-btn[disabled], .time-btn.disabled-readonly { opacity: 0.7; cursor: default; pointer-events: none; filter: brightness(0.95); }
 
-th. sortable { user-select: none; }
-th . sort-arrow { font-size: 0.7rem; color: #ddd }
+th.sortable { user-select: none; }
+th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .torbild-layout {
   display: flex;
@@ -343,7 +343,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   position: relative;
 }
 .field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
-. goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+.goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
 #seasonMapPage .img-box img {
   width: 100%;
@@ -362,12 +362,12 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0. 6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   cursor: pointer;
   background-color: #444444;
 }
 
-. field-box:active,
+.field-box:active,
 #field:active {
   transform: none;
   transition: none;
@@ -389,7 +389,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 .period {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto minmax(1. 4em, auto) auto;
+  grid-template-rows: auto minmax(1.4em, auto) auto;
   align-items: center;
   justify-items: center;
   row-gap: 2px;
@@ -401,7 +401,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   color: var(--period-text);
 }
 .period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
-. period-buttons. top-row, .period-buttons. bottom-row, .period-numbers { display: contents; }
+.period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
 .period-numbers span { color: #ccc; font-size: 0.8rem; line-height:1; }
 
 .time-btn {
@@ -414,10 +414,10 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
 }
-.period-buttons.top-row . time-btn { background: var(--btn-top-bg); }
+.period-buttons.top-row .time-btn { background: var(--btn-top-bg); }
 .period-buttons.bottom-row .time-btn { background: var(--btn-bottom-bg); }
 .period-buttons.top-row .time-btn:hover { background-color: #b2f0b2; }
-. period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
+.period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
 .time-btn:active { transform: scale(1.05); }
 
 /* ====================== */
@@ -434,7 +434,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   margin: 12px 0;
 }
 
-#seasonPage . page-top {
+#seasonPage .page-top {
   align-items:center;
   margin: 0 auto;
 }
@@ -442,20 +442,26 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonContainer {
   width: 100% !important;
   max-width: 100% !important;
-  overflow-x: auto ! important;
+  overflow-x: auto !important;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch ! important;
-  padding-right: 20px ! important;
-  padding-bottom: 20px ! important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-right: 20px !important;
+  padding-bottom: 20px !important;
   box-sizing: border-box !important;
   position: relative !important;
   height: auto;
   min-height: 0;
   max-height: calc(100vh - 200px);
+  display: flex;
+  justify-content: center;
+}
+
+#seasonPage .table-scroll {
+  display: inline-block;
 }
 
 #seasonContainer::-webkit-scrollbar {
-  height: 18px ! important;
+  height: 18px !important;
   background: rgba(0, 0, 0, 0.2) !important;
 }
 #seasonContainer::-webkit-scrollbar-thumb {
@@ -464,19 +470,19 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   border: 3px solid rgba(0, 0, 0, 0.1) !important;
 }
 #seasonContainer::-webkit-scrollbar-thumb:hover {
-  background: #3a9d7a ! important;
+  background: #3a9d7a !important;
 }
 #seasonContainer {
-  scrollbar-width: auto ! important;
-  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) ! important;
+  scrollbar-width: auto !important;
+  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) !important;
 }
 
 #seasonPage table {
-  width: auto ! important;
+  width: auto !important;
   min-width: max-content !important;
   border-collapse: collapse !important;
   font-size: 0.95rem !important;
-  margin: 0 ! important;
+  margin: 0 !important;
   margin-top: 6px !important;
   margin-bottom: 10px !important;
   display: table !important;
@@ -524,12 +530,12 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonPage .total-row td {
   background: var(--header-bg) !important;
-  color: #ffffff ! important;
+  color: #ffffff !important;
   font-weight: 700 !important;
   border-top: 2px solid #333;
 }
 
-. table-scroll { 
+.table-scroll { 
   width: 100% !important;
 }
 
@@ -547,7 +553,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   max-width: 100% !important;
   overflow-x: auto !important;
   overflow-y: hidden !important;
-  -webkit-overflow-scrolling: touch ! important;
+  -webkit-overflow-scrolling: touch !important;
   padding-right: 20px !important;
   padding-bottom: 20px !important;
   box-sizing: border-box !important;
@@ -555,30 +561,30 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 #goalValueContainer::-webkit-scrollbar {
-  height: 18px ! important;
+  height: 18px !important;
   background: rgba(0, 0, 0, 0.2) !important;
 }
 #goalValueContainer::-webkit-scrollbar-thumb {
-  background: #44bb91 ! important;
+  background: #44bb91 !important;
   border-radius: 10px !important;
-  border: 3px solid rgba(0, 0, 0, 0. 1) !important;
+  border: 3px solid rgba(0, 0, 0, 0.1) !important;
 }
 #goalValueContainer::-webkit-scrollbar-thumb:hover {
-  background: #3a9d7a ! important;
+  background: #3a9d7a !important;
 }
 #goalValueContainer {
   scrollbar-width: auto !important;
   scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) !important;
 }
 
-#goalValueContainer . table-scroll {
+#goalValueContainer .table-scroll {
   position: static !important;
   overflow: visible !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
-. goalvalue-table {
+.goalvalue-table {
   width: auto !important;
   min-width: max-content !important;
   border-collapse: separate !important;
@@ -591,12 +597,12 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   display: table !important;
 }
 
-. goalvalue-table tbody tr:nth-child(odd) { background: var(--row-odd); }
+.goalvalue-table tbody tr:nth-child(odd) { background: var(--row-odd); }
 .goalvalue-table tbody tr:nth-child(even) { background: var(--row-even); }
-.goalvalue-table tbody tr:hover { background: inherit ! important; }
+.goalvalue-table tbody tr:hover { background: inherit !important; }
 
-. goalvalue-table th {
-  padding: 6px 4px ! important;
+.goalvalue-table th {
+  padding: 6px 4px !important;
   border-bottom: 2px solid #333;
   background: var(--header-bg) !important;
   color: #fff !important;
@@ -614,17 +620,17 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 /* STICKY COLUMNS FOR GOAL VALUE TABLE - FIX */
 /* ========================================= */
 
-.goalvalue-table . sticky-col {
-  position: sticky ! important;
-  left: 0 ! important;
+.goalvalue-table .sticky-col {
+  position: sticky !important;
+  left: 0 !important;
   z-index: 25 !important;
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15) !important;
   min-width: 120px !important;
 }
 
-.goalvalue-table thead th. sticky-col {
-  position: sticky ! important;
-  left: 0 ! important;
+.goalvalue-table thead th.sticky-col {
+  position: sticky !important;
+  left: 0 !important;
   z-index: 50 !important;
   background-color: #1E1E1E !important;
   color: #fff !important;
@@ -639,7 +645,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* EXPLIZITE Hintergrundfarben für Light Mode */
-. goalvalue-table tbody tr:nth-child(even) td. sticky-col {
+.goalvalue-table tbody tr:nth-child(even) td.sticky-col {
   background-color: #f0f0f0 !important;
 }
 
@@ -648,8 +654,8 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* Bottom row (letzte Zeile mit Dropdowns) */
-. goalvalue-table tbody tr:last-child td.sticky-col {
-  background-color: #1E1E1E ! important;
+.goalvalue-table tbody tr:last-child td.sticky-col {
+  background-color: #1E1E1E !important;
   border-top: 2px solid #333 !important;
 }
 
@@ -666,7 +672,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   background-color: #1E1E1E !important;
 }
 
-[data-theme="dark"] .goalvalue-table . sticky-col {
+[data-theme="dark"] .goalvalue-table .sticky-col {
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -674,10 +680,10 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.5) !important;
 }
 
-. goalvalue-table thead th. gv-name-header. sticky-col {
+.goalvalue-table thead th.gv-name-header.sticky-col {
   position: sticky !important;
   left: 0 !important;
-  z-index: 50 ! important;
+  z-index: 50 !important;
   background-color: #1E1E1E !important;
   text-align: left !important;
   padding-left: 12px !important;
@@ -689,10 +695,10 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   z-index: 40 !important;
   text-align: left !important;
   padding-left: 12px !important;
-  padding-right: 12px ! important;
+  padding-right: 12px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
-  text-overflow: ellipsis ! important;
+  text-overflow: ellipsis !important;
   font-weight: 700 !important;
 }
 
@@ -700,19 +706,19 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   text-align: left !important;
   padding-left: 12px !important;
   padding-right: 12px !important;
-  white-space: nowrap ! important;
+  white-space: nowrap !important;
   overflow: hidden !important;
-  text-overflow: ellipsis ! important;
+  text-overflow: ellipsis !important;
   font-weight: 700 !important;
 }
-. gv-name-header {
-  text-align: left ! important;
+.gv-name-header {
+  text-align: left !important;
   padding-left: 12px !important;
   background: var(--header-bg) !important;
   color: #fff !important;
 }
 
-. gv-data-cell {
+.gv-data-cell {
   cursor: pointer;
   user-select: none;
   font-weight: 600;
@@ -720,13 +726,13 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 .gv-value-cell { font-weight: 700; }
 
-. goalvalue-title-input {
+.goalvalue-title-input {
   background: var(--header-bg) !important;
   border: 1px solid rgba(255,255,255,0.2) !important;
   border-radius: 6px !important;
   padding: 6px 8px !important;
   color: #fff !important;
-  text-align: center ! important;
+  text-align: center !important;
   max-width: 100px !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -735,18 +741,18 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 .goalvalue-title-input:focus {
   outline: 2px solid #44bb91 !important;
-  background: #2a2a2a ! important;
+  background: #2a2a2a !important;
 }
 
-. gv-scale-dropdown {
+.gv-scale-dropdown {
   width: 75px !important;
   padding: 8px 6px !important;
   border-radius: 6px !important;
   border: 2px solid rgba(255,255,255,0.2) !important;
   background: var(--header-bg) !important;
-  color: #fff ! important;
+  color: #fff !important;
   font-weight: 700 !important;
-  text-align: center ! important;
+  text-align: center !important;
   cursor: pointer !important;
   font-size: 0.95rem !important;
   outline: none !important;
@@ -754,8 +760,8 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   appearance: none !important;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
-  background-position: right 6px center ! important;
-  background-size: 12px ! important;
+  background-position: right 6px center !important;
+  background-size: 12px !important;
   padding-right: 26px !important;
 }
 .gv-scale-dropdown:hover {
@@ -767,9 +773,9 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   border-color: #44bb91 !important;
 }
 .gv-scale-dropdown option {
-  background: #1a1a1a ! important;
+  background: #1a1a1a !important;
   color: #fff !important;
-  padding: 10px ! important;
+  padding: 10px !important;
 }
 
 .inline-editor {
@@ -804,12 +810,12 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 
 @media (max-width: 900px) {
   .torbild-layout { flex-direction: column; height: auto; }
-  . goalvalue-title-input { font-size: 0.85rem; }
+  .goalvalue-title-input { font-size: 0.85rem; }
   .top-bar { gap: 6px; }
   .top-btn, .import-csv-btn { min-width: 120px; }
 }
 
-#statsPage . total-row td {
+#statsPage .total-row td {
   background: var(--header-bg) !important;
   color: #ffffff !important;
   font-weight: 700 !important;
@@ -840,7 +846,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   max-height: calc(100vh - 200px);
 }
 
-. season-table {
+.season-table {
   width: auto;
   min-width: max-content;
   max-width: none;
@@ -851,7 +857,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   display: table;
 }
 
-. season-table thead th {
+.season-table thead th {
   background: var(--header-bg);
   color: #fff;
   position: sticky;
@@ -864,14 +870,14 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   white-space: nowrap;
 }
 
-. season-table tbody td {
+.season-table tbody td {
   padding: 6px 6px;
   white-space: nowrap;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   text-align: center;
 }
 
-. season-table tbody tr:nth-child(odd) { background: var(--row-odd); }
+.season-table tbody tr:nth-child(odd) { background: var(--row-odd); }
 .season-table tbody tr:nth-child(even) { background: var(--row-even); }
 
 .season-table thead th:nth-child(1),
@@ -888,7 +894,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   background: inherit;
 }
 
-. season-table tbody tr:nth-child(odd) td:nth-child(1) {
+.season-table tbody tr:nth-child(odd) td:nth-child(1) {
   background: var(--row-odd);
 }
 
@@ -897,7 +903,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .season-table thead th:nth-child(2),
-. season-table tbody td:nth-child(2) {
+.season-table tbody td:nth-child(2) {
   text-align: left;
   font-weight: 700;
   padding-left: 12px;
@@ -926,7 +932,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   padding-right: 12px;
 }
 
-.season-table . total-row td {
+.season-table .total-row td {
   background: var(--header-bg);
   color: #ffffff;
   font-weight: 700;
@@ -958,7 +964,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: border-color 0. 3s ease;
+  transition: border-color 0.3s ease;
   margin-bottom: 16px;
 }
 
@@ -966,7 +972,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   border-color: #333;
 }
 
-. team-display h3 {
+.team-display h3 {
   margin: 0 0 8px 0;
   color: #44bb91;
   font-size: 1.2rem;
@@ -978,7 +984,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 600;
 }
 
-. team-btn {
+.team-btn {
   background: #44bb91;
   color: white;
   border: none;
@@ -1002,7 +1008,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 10px 22px;
 }
 
-.team-btn. active-team:hover {
+.team-btn.active-team:hover {
   background: #333;
 }
 
@@ -1014,7 +1020,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
-  transition: all 0. 2s ease;
+  transition: all 0.2s ease;
 }
 
 .edit-team-btn:hover {
@@ -1022,7 +1028,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   color: #44bb91;
 }
 
-. team-button-group {
+.team-button-group {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1089,7 +1095,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 600;
 }
 
-.modal-buttons . save-btn {
+.modal-buttons .save-btn {
   background: #44bb91;
   color: white;
 }
@@ -1098,7 +1104,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   background: #36a67d;
 }
 
-.modal-buttons . cancel-btn {
+.modal-buttons .cancel-btn {
   background: #444;
   color: #fff;
 }
@@ -1122,7 +1128,7 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #workflowStatusText {
   color: #fff;
-  font-size: 0. 95rem;
+  font-size: 0.95rem;
 }
 
 #workflowStatusText strong {
@@ -1156,9 +1162,9 @@ th . sort-arrow { font-size: 0.7rem; color: #ddd }
   cursor: grabbing;
 }
 
-tr[data-player]. dragging {
-  background: rgba(68, 187, 145, 0. 3) !important;
-  transform: scale(1. 02);
+tr[data-player].dragging {
+  background: rgba(68, 187, 145, 0.3) !important;
+  transform: scale(1.02);
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   z-index: 1000;
 }

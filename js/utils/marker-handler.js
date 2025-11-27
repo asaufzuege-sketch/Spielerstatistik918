@@ -4,12 +4,12 @@ App.markerHandler = {
   samplerCache: new WeakMap(),
   
   clampPct(v) {
-    return Math.max(0, Math. min(100, v));
+    return Math.max(0, Math.min(100, v));
   },
   
   createImageSampler(imgEl) {
     if (!imgEl) return null;
-    if (this.samplerCache.has(imgEl)) return this. samplerCache.get(imgEl);
+    if (this.samplerCache.has(imgEl)) return this.samplerCache.get(imgEl);
     
     const sampler = { valid: false, canvas: null, ctx: null };
     
@@ -21,7 +21,7 @@ App.markerHandler = {
       
       const draw = () => {
         try {
-          const w = imgEl.naturalWidth || imgEl. width || 1;
+          const w = imgEl.naturalWidth || imgEl.width || 1;
           const h = imgEl.naturalHeight || imgEl.height || 1;
           canvas.width = w;
           canvas.height = h;
@@ -35,7 +35,7 @@ App.markerHandler = {
       
       if (imgEl.complete) draw();
       else {
-        imgEl. addEventListener("load", draw);
+        imgEl.addEventListener("load", draw);
         imgEl.addEventListener("error", () => { sampler.valid = false; });
       }
       
@@ -44,7 +44,7 @@ App.markerHandler = {
         const px = Math.round((xPct / 100) * (canvas.width - 1));
         const py = Math.round((yPct / 100) * (canvas.height - 1));
         try {
-          const d = ctx.getImageData(px, py, 1, 1). data;
+          const d = ctx.getImageData(px, py, 1, 1).data;
           return { r: d[0], g: d[1], b: d[2], a: d[3] };
         } catch (e) {
           sampler.valid = false;
@@ -61,7 +61,7 @@ App.markerHandler = {
       sampler.isNeutralWhiteAt = (xPct, yPct, threshold = 245, maxChannelDiff = 8) => {
         const p = getPixel(xPct, yPct);
         if (!p || p.a === 0) return false;
-        const maxC = Math.max(p.r, p.g, p. b);
+        const maxC = Math.max(p.r, p.g, p.b);
         const minC = Math.min(p.r, p.g, p.b);
         return maxC >= threshold && (maxC - minC) <= maxChannelDiff;
       };
@@ -75,10 +75,10 @@ App.markerHandler = {
       sampler.isRedAt = (xPct, yPct, rThreshold = 95, diff = 22) => {
         const p = getPixel(xPct, yPct);
         if (!p || p.a === 0) return false;
-        return (p.r >= rThreshold) && ((p.r - p.g) >= diff) && ((p. r - p.b) >= diff);
+        return (p.r >= rThreshold) && ((p.r - p.g) >= diff) && ((p.r - p.b) >= diff);
       };
       
-      this.samplerCache. set(imgEl, sampler);
+      this.samplerCache.set(imgEl, sampler);
       return sampler;
     } catch (err) {
       const fallback = {
@@ -88,14 +88,14 @@ App.markerHandler = {
         isGreenAt: () => false,
         isRedAt: () => false
       };
-      this.samplerCache. set(imgEl, fallback);
+      this.samplerCache.set(imgEl, fallback);
       return fallback;
     }
   },
   
   /**
    * Marker mit Prozent-Koordinaten erstellen. 
-   * Alle Styles kommen aus der CSS-Klasse . marker-dot
+   * Alle Styles kommen aus der CSS-Klasse .marker-dot
    * @param {number} xPct 0–100
    * @param {number} yPct 0–100
    * @param {string} color CSS-Farbe
@@ -105,14 +105,14 @@ App.markerHandler = {
    */
   createMarkerPercent(xPct, yPct, color, container, interactive = true, playerName = null) {
     xPct = this.clampPct(xPct);
-    yPct = this. clampPct(yPct);
+    yPct = this.clampPct(yPct);
     
     const dot = document.createElement("div");
     dot.className = "marker-dot";
     
-    // Nur Position und Farbe setzen - Rest kommt aus CSS-Klasse . marker-dot
+    // Nur Position und Farbe setzen - Rest kommt aus CSS-Klasse .marker-dot
     dot.style.left = `${xPct}%`;
-    dot.style. top = `${yPct}%`;
+    dot.style.top = `${yPct}%`;
     dot.style.backgroundColor = color;
     
     if (playerName) {
@@ -121,12 +121,12 @@ App.markerHandler = {
     
     if (interactive) {
       dot.addEventListener("click", (ev) => {
-        ev. stopPropagation();
-        dot. remove();
+        ev.stopPropagation();
+        dot.remove();
       });
     }
     
-    container.style.position = container. style.position || "relative";
+    container.style.position = container.style.position || "relative";
     container.appendChild(dot);
     
     return dot;
@@ -135,12 +135,12 @@ App.markerHandler = {
   computeRenderedImageRect(imgEl) {
     try {
       const boxRect = imgEl.getBoundingClientRect();
-      const naturalW = imgEl.naturalWidth || imgEl. width || 1;
+      const naturalW = imgEl.naturalWidth || imgEl.width || 1;
       const naturalH = imgEl.naturalHeight || imgEl.height || 1;
-      const boxW = boxRect. width || 1;
+      const boxW = boxRect.width || 1;
       const boxH = boxRect.height || 1;
       const cs = getComputedStyle(imgEl);
-      const objectFit = cs?. getPropertyValue('object-fit')?.trim() || 'contain';
+      const objectFit = cs?.getPropertyValue('object-fit')?.trim() || 'contain';
       
       let scale;
       if (objectFit === 'cover') {
@@ -148,7 +148,7 @@ App.markerHandler = {
       } else if (objectFit === 'fill') {
         return {
           x: boxRect.left,
-          y: boxRect. top,
+          y: boxRect.top,
           width: naturalW * (boxW / naturalW),
           height: naturalH * (boxH / naturalH)
         };

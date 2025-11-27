@@ -87,6 +87,7 @@ App.goalMap = {
         const eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
         const isGoalWorkflow = workflowActive && eventType === 'goal';
         const neutralGrey = "#444444";
+        const currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
         
         const pointPlayer =
           this.playerFilter ||
@@ -101,6 +102,20 @@ App.goalMap = {
         
         // TOR-BOXEN: immer Graupunkt
         if (isGoalBox) {
+          // Im Goal-Workflow Schritt 1: NUR grünes Tor erlaubt
+          if (isGoalWorkflow && currentStep === 1) {
+            if (box.id !== "goalGreenBox") {
+              console.log('[Goal Workflow] Nur grünes Tor erlaubt in Schritt 2');
+              return; // Blockiere rotes Tor
+            }
+          }
+          
+          // Im Goal-Workflow: Tor nur in Schritt 1 erlaubt
+          if (isGoalWorkflow && currentStep !== 1) {
+            console.log('[Goal Workflow] Tor nur in Schritt 2 erlaubt');
+            return;
+          }
+          
           const sampler = App.markerHandler.createImageSampler(img);
           if (!sampler || !sampler.valid) return;
           
@@ -137,6 +152,12 @@ App.goalMap = {
         
         // FELD-BOX: grün/rot oder grau je nach Kontext
         if (box.classList.contains("field-box")) {
+          // Im Goal-Workflow: Nur Schritt 0 erlaubt Feldpunkt
+          if (isGoalWorkflow && currentStep !== 0) {
+            console.log('[Goal Workflow] Feld nur in Schritt 1 erlaubt');
+            return;
+          }
+          
           let color = null;
 
           // Im Goal-Workflow ist der Feldpunkt immer grau (neutral)
@@ -319,6 +340,22 @@ App.goalMap = {
         };
         
         btn.addEventListener("click", () => {
+          // Im Goal-Workflow: Nur grüne Buttons (top-row) erlauben
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
+            const isTopRow = btn.closest('.period-buttons')?.classList.contains('top-row');
+            if (!isTopRow) {
+              console.log('[Goal Workflow] Nur grüne Zeit-Buttons erlaubt');
+              return; // Blockiere rote Buttons
+            }
+            
+            // Im Goal-Workflow: Zeit-Buttons nur in Schritt 2 erlaubt
+            const currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
+            if (currentStep !== 2) {
+              console.log('[Goal Workflow] Zeit nur in Schritt 3 erlaubt');
+              return;
+            }
+          }
+          
           const now = Date.now();
           const diff = now - lastTap;
           if (diff < 300) {
