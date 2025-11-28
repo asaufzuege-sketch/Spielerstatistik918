@@ -337,12 +337,27 @@ App.seasonMap = {
   reset() {
     if (!confirm("⚠️ Season Map zurücksetzen (Marker + Timeboxen)?")) return;
     
+    // Marker entfernen
     document.querySelectorAll("#seasonMapPage .marker-dot").forEach(d => d.remove());
+    
+    // Time Buttons zurücksetzen
     document.querySelectorAll("#seasonMapPage .time-btn").forEach(btn => btn.textContent = "0");
     
+    // Momentum Container leeren
+    const momentumContainer = document.getElementById("seasonMapMomentumContainer");
+    if (momentumContainer) {
+      momentumContainer.innerHTML = "";
+    }
+    
+    // LocalStorage Daten löschen
     localStorage.removeItem("seasonMapMarkers");
     localStorage.removeItem("seasonMapTimeData");
     localStorage.removeItem("seasonMapTimeDataWithPlayers");
+    
+    // Goal Area Labels zurücksetzen (falls vorhanden)
+    document.querySelectorAll("#seasonMapPage .goal-area-label").forEach(label => {
+      label.textContent = "0";
+    });
     
     alert("Season Map zurückgesetzt.");
   }

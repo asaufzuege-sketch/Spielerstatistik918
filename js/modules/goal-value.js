@@ -276,11 +276,9 @@ App.goalValue = {
         select.appendChild(option);
       });
       
-      const b = this.getBottom();
-      const currentValue = b && typeof b[i] !== "undefined" ? b[i] : 0;
-      setTimeout(() => {
-        select.value = String(currentValue);
-      }, 0);
+      // WICHTIG: Wert SOFORT setzen, nicht mit setTimeout
+      const currentValue = storedBottom[i] !== undefined ? storedBottom[i] : 0;
+      select.value = String(Number(currentValue).toFixed(1));
       
       select.addEventListener("change", () => {
         const arr = this.getBottom();
