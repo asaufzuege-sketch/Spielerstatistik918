@@ -1296,14 +1296,14 @@ tr[data-player].dragging {
   flex-shrink: 0;
 }
 
-/* Nr. Input (Trikotnummer) */
+/* Nr. Input - ursprüngliche Breite */
 #playerSelectionPage .player-list .num-input {
-  width: 50px;
+  width: 70px;
   background: #2a2a2a;
   color: #888;
   border: 1px solid #444;
   border-radius: 8px;
-  padding: 10px 8px;
+  padding: 10px 12px;
   text-align: center;
   font-size: 0.95rem;
   flex-shrink: 0;
@@ -1328,14 +1328,14 @@ tr[data-player].dragging {
   color: #888;
 }
 
-/* Position Dropdown */
+/* Position Select - gleiche Breite wie Nr. */
 #playerSelectionPage .player-list .pos-select {
-  width: 45px;
+  width: 70px;
   background: #2a2a2a;
   color: #44bb91;
   border: 1px solid #444;
   border-radius: 8px;
-  padding: 10px 5px;
+  padding: 10px 12px;
   text-align: center;
   font-size: 0.95rem;
   font-weight: bold;
@@ -1351,9 +1351,24 @@ tr[data-player].dragging {
   border-color: #44bb91;
 }
 
+/* Placeholder Farbe wenn nichts ausgewählt */
+#playerSelectionPage .player-list .pos-select:invalid,
+#playerSelectionPage .player-list .pos-select option[value=""] {
+  color: #666;
+}
+
+/* Ausgewählte Option in grün */
+#playerSelectionPage .player-list .pos-select:valid {
+  color: #44bb91;
+}
+
 #playerSelectionPage .player-list .pos-select option {
   background: #2a2a2a;
-  color: #44bb91;
+  color: #fff;
+}
+
+#playerSelectionPage .player-list .pos-select option:disabled {
+  color: #666;
 }
 
 /* Top Bar Buttons */

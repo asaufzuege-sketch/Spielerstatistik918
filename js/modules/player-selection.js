@@ -106,10 +106,10 @@ App.playerSelection = {
                data-index="${i}" 
                data-field="name">
         <select class="pos-select" data-index="${i}" data-field="position">
-          <option value="">-</option>
-          <option value="C" ${player.position === 'C' ? 'selected' : ''}>C</option>
-          <option value="W" ${player.position === 'W' ? 'selected' : ''}>W</option>
-          <option value="D" ${player.position === 'D' ? 'selected' : ''}>D</option>
+          <option value="" disabled ${!player.position ? 'selected' : ''}>Pos.</option>
+          <option value="C" ${player.position === 'C' ? 'selected' : ''}>Center</option>
+          <option value="W" ${player.position === 'W' ? 'selected' : ''}>Wing</option>
+          <option value="D" ${player.position === 'D' ? 'selected' : ''}>Defense</option>
         </select>
       </li>
     `).join('');
