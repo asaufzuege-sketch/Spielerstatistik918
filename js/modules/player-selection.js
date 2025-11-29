@@ -1,36 +1,29 @@
 // Player Selection Modul
 App.playerSelection = {
   container: null,
-  confirmBtn: null,
   saveTimeout: null,
   
   init() {
     this.container = document.getElementById("playerList");
-    this.confirmBtn = document.getElementById("confirmSelection");
     
     if (this.container) {
       this.render();
     }
     
-    if (this.confirmBtn) {
-      this.confirmBtn.addEventListener("click", () => this.handleConfirm());
-    }
-    
-    // Event Listener für Game Data Button - navigiert zur Stats-Seite
+    // Event Listener für Game Data Button - speichert und navigiert zur Stats-Seite
     document.getElementById("gameDataBtn")?.addEventListener("click", () => {
-      this.navigateToStats();
+      this.handleConfirmAndNavigate();
     });
     
     // Event Listener für Line Up Button - navigiert zur Stats-Seite (Lineup-Seite existiert noch nicht)
     document.getElementById("lineupBtn")?.addEventListener("click", () => {
-      this.navigateToStats();
+      this.handleConfirmAndNavigate();
     });
   },
   
-  navigateToStats() {
-    if (typeof App.showPage === 'function') {
-      App.showPage("stats");
-    }
+  handleConfirmAndNavigate() {
+    // Spielerdaten speichern (wie bisher der Bestätigen-Button)
+    this.handleConfirm();
   },
   
   getPlayers() {
@@ -112,12 +105,12 @@ App.playerSelection = {
                value="${App.helpers.escapeHtml(player.name || '')}" 
                data-index="${i}" 
                data-field="name">
-        <input type="text" 
-               class="pos-input" 
-               placeholder="Pos." 
-               value="${App.helpers.escapeHtml(player.position || '')}" 
-               data-index="${i}" 
-               data-field="position">
+        <select class="pos-select" data-index="${i}" data-field="position">
+          <option value="">-</option>
+          <option value="C" ${player.position === 'C' ? 'selected' : ''}>C</option>
+          <option value="W" ${player.position === 'W' ? 'selected' : ''}>W</option>
+          <option value="D" ${player.position === 'D' ? 'selected' : ''}>D</option>
+        </select>
       </li>
     `).join('');
     
@@ -134,7 +127,7 @@ App.playerSelection = {
     });
     
     this.container.addEventListener("input", (e) => {
-      if (e.target.matches(".num-input, .name-input, .pos-input")) {
+      if (e.target.matches(".num-input, .name-input")) {
         this.debouncedSave();
       }
     });
@@ -163,12 +156,12 @@ App.playerSelection = {
       const checkbox = li.querySelector(".player-checkbox");
       const numInput = li.querySelector(".num-input");
       const nameInput = li.querySelector(".name-input");
-      const posInput = li.querySelector(".pos-input");
+      const posSelect = li.querySelector(".pos-select");
       
       players.push({
         number: numInput ? numInput.value.trim() : "",
         name: nameInput ? nameInput.value.trim() : "",
-        position: posInput ? posInput.value.trim() : "",
+        position: posSelect ? posSelect.value : "",
         active: checkbox ? checkbox.checked : false
       });
     });
