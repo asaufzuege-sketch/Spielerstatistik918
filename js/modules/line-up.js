@@ -423,7 +423,12 @@ App.lineUp = {
       return { goalsPerGame: 0, assistsPerGame: 0, plusMinusPerGame: 0, shotsPerGame: 0 };
     }
     
-    const games = seasonData.games || 1; // Prevent division by 0
+    const games = seasonData.games || 0;
+    
+    // If player has no games, return zeros
+    if (games === 0) {
+      return { goalsPerGame: 0, assistsPerGame: 0, plusMinusPerGame: 0, shotsPerGame: 0 };
+    }
     
     return {
       goalsPerGame: (seasonData.goals || 0) / games,
@@ -494,7 +499,7 @@ App.lineUp = {
     };
   },
   
-  // Format for forward line: "1.6G / +- 0.1 / 2.4 Sh"
+  // Format for forward line: "1.6G / +0.1 / 2.4 Sh" or "1.6G / -0.1 / 2.4 Sh"
   formatForwardStats(stats) {
     const g = stats.goalsPerGame.toFixed(1);
     const pm = stats.plusMinusPerGame >= 0 
@@ -504,7 +509,7 @@ App.lineUp = {
     return `${g}G / ${pm} / ${sh} Sh`;
   },
   
-  // Format for defense pair: "0.7P / +- 0.4 / 1.4 Sh"
+  // Format for defense pair: "0.7P / +0.4 / 1.4 Sh" or "0.7P / -0.4 / 1.4 Sh"
   formatDefenseStats(stats) {
     const p = stats.pointsPerGame.toFixed(1);
     const pm = stats.plusMinusPerGame >= 0 
