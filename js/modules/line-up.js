@@ -12,6 +12,7 @@ App.lineUp = {
     this.container = document.getElementById("lineUpContainer");
     this.loadData();
     this.attachEventListeners();
+    this.updateModeDisplay();
     this.render();
     this.updatePlayerOutButton();
   },
