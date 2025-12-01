@@ -273,7 +273,7 @@ App.lineUp = {
       // Render player list with "Nr. Name" format
       list.innerHTML = players.map(player => {
         const number = player.number || '';
-        const displayText = `${number} ${player.name}`.trim();
+        const displayText = number ? `${number} ${player.name}` : player.name;
         
         return `
           <div class="lineup-player-option player-out-item" data-player="${App.helpers.escapeHtml(player.name)}">
@@ -311,7 +311,7 @@ App.lineUp = {
     // Display format: "Nr. Name" (e.g., "8 Diego Warth")
     if (player) {
       const number = player.number || '';
-      return `${number} ${player.name}`.trim();
+      return number ? `${number} ${player.name}` : player.name;
     }
     
     return playerName;
