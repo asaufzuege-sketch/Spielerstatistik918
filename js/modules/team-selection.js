@@ -273,4 +273,13 @@
         refresh: renderPlayerList
     };
     
+    // Also expose as App.teamSelection for compatibility with other modules
+    App.teamSelection = {
+        getCurrentTeam: () => currentTeam,
+        getCurrentTeamInfo: () => ({ id: `team${currentTeam}`, name: `Team ${currentTeam}` }),
+        getTeamData: getTeamData,
+        refresh: renderPlayerList,
+        init: init
+    };
+    
 })();
