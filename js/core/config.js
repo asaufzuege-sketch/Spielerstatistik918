@@ -8,20 +8,20 @@ const App = {
   // Daten
   data: {
     players: [
-      { num: 4, name: "Ondrej Kastner" }, { num: 5, name: "Raphael Oehninger" },
-      { num: 6, name: "Nuno Meier" }, { num: 7, name: "Silas Teuber" },
-      { num: 8, name: "Diego Warth" }, { num: 9, name: "Mattia Crameri" },
-      { num: 10, name: "Mael Bernath" }, { num: 11, name: "Sean Nef" },
-      { num: 12, name: "Rafael Burri" }, { num: 13, name: "Lenny Schwarz" },
-      { num: 14, name: "David Lienert" }, { num: 15, name: "Neven Severini" },
-      { num: 16, name: "Nils Koubek" }, { num: 17, name: "Lio Kundert" },
-      { num: 18, name: "Livio Berner" }, { num: 19, name: "Robin Strasser" },
-      { num: 21, name: "Marlon Kreyenbühl" }, { num: 22, name: "Martin Lana" },
-      { num: 23, name: "Manuel Isler" }, { num: 24, name: "Moris Hürlimann" },
-      { num: "", name: "Levi Baumann" }, { num: "", name: "Corsin Blapp" },
-      { num: "", name: "Lenny Zimmermann" }, { num: "", name: "Luke Böhmichen" },
-      { num: "", name: "Livio Weissen" }, { num: "", name: "Raul Wütrich" },
-      { num: "", name: "Marco Senn" }
+      { num: 4, name: "Ondrej Kastner", position: "C" }, { num: 5, name: "Raphael Oehninger", position: "W" },
+      { num: 6, name: "Nuno Meier", position: "D" }, { num: 7, name: "Silas Teuber", position: "W" },
+      { num: 8, name: "Diego Warth", position: "C" }, { num: 9, name: "Mattia Crameri", position: "W" },
+      { num: 10, name: "Mael Bernath", position: "D" }, { num: 11, name: "Sean Nef", position: "C" },
+      { num: 12, name: "Rafael Burri", position: "W" }, { num: 13, name: "Lenny Schwarz", position: "D" },
+      { num: 14, name: "David Lienert", position: "W" }, { num: 15, name: "Neven Severini", position: "C" },
+      { num: 16, name: "Nils Koubek", position: "D" }, { num: 17, name: "Lio Kundert", position: "W" },
+      { num: 18, name: "Livio Berner", position: "W" }, { num: 19, name: "Robin Strasser", position: "D" },
+      { num: 21, name: "Marlon Kreyenbühl", position: "W" }, { num: 22, name: "Martin Lana", position: "D" },
+      { num: 23, name: "Manuel Isler", position: "C" }, { num: 24, name: "Moris Hürlimann", position: "W" },
+      { num: "", name: "Levi Baumann", position: "W" }, { num: "", name: "Corsin Blapp", position: "C" },
+      { num: "", name: "Lenny Zimmermann", position: "D" }, { num: "", name: "Luke Böhmichen", position: "W" },
+      { num: "", name: "Livio Weissen", position: "D" }, { num: "", name: "Raul Wütrich", position: "W" },
+      { num: "", name: "Marco Senn", position: "D" }
     ],
     
     categories: ["Shot", "Goals", "Assist", "+/-", "FaceOffs", "FaceOffs Won", "Penaltys"],
@@ -31,7 +31,8 @@ const App = {
     playerTimes: {},
     seasonData: {},
     activeTimers: {},
-    goalMapData: {}
+    goalMapData: {},
+    lineupData: {}
   },
   
   // Goal Map Workflow State
@@ -154,7 +155,8 @@ const App = {
           torbild: document.getElementById("torbildPage"),
           goalValue: document.getElementById("goalValuePage"),
           season: document.getElementById("seasonPage"),
-          seasonMap: document.getElementById("seasonMapPage")
+          seasonMap: document.getElementById("seasonMapPage"),
+          lineup: document.getElementById("lineupPage")
         };
       }
       
@@ -185,7 +187,8 @@ const App = {
         torbild: "Goal Map",
         goalValue: "Goal Value",
         season: "Season",
-        seasonMap: "Season Map"
+        seasonMap: "Season Map",
+        lineup: "LINE UP"
       };
       document.title = titles[page] || "Spielerstatistik";
       
@@ -224,6 +227,9 @@ const App = {
         }
         if (page === "selection" && this.playerSelection && typeof this.playerSelection.render === 'function') {
           this.playerSelection.render();
+        }
+        if (page === "lineup" && this.lineup && typeof this.lineup.render === 'function') {
+          this.lineup.render();
         }
         
         this._renderTimeout = null;
