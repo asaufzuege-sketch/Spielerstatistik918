@@ -49,3 +49,109 @@
   table-layout: auto !important;
   display: table !important;  /* NEU HINZUGEFÜGT */
 }
+
+/* LINE UP Styles */
+.lineup-section {
+  margin-bottom: 24px;
+}
+
+.lineup-section-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+
+.forward-line, .defense-pair {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.line-title, .unit-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.positions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.positions-grid-bp {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.positions-grid-pp {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.position-slot {
+  background: var(--input-bg);
+  border-radius: 6px;
+  padding: 8px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.position-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.position-name {
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.position-name.player-out {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.position-input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-color);
+}
+
+.line-stats {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.special-teams-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.special-team-unit {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+@media (max-width: 600px) {
+  .special-teams-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .positions-grid-pp {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+

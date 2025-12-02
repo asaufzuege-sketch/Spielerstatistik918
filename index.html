@@ -58,6 +58,7 @@
         <button id="exportSeasonFromStatsBtn" class="top-btn export-season">Export Season</button>
         <button id="seasonBtn" class="top-btn season-highlight">Season</button>
         <button id="seasonMapBtn" class="top-btn season-highlight">Season Map</button>
+        <button id="lineUpBtn" class="top-btn">LINE UP</button>
         <button id="exportBtn" class="top-btn export-csv">Export CSV</button>
         <button id="resetBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
@@ -220,6 +221,19 @@
     <div id="seasonContainer"></div>
   </div>
 
+  <!-- LINE UP SEITE -->
+  <div id="lineUpPage" class="page" style="display:none;">
+    <div class="page-top">
+      <div class="top-bar">
+        <button id="backToStatsFromLineUpBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="lineModeBtn" class="top-btn">NORMAL</button>
+        <button id="playerOutBtn" class="top-btn">Player Out</button>
+      </div>
+    </div>
+    <h1>LINE UP</h1>
+    <div id="lineUpContainer"></div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/core/config.js"></script>
   <script src="js/core/helpers.js"></script>
@@ -234,6 +248,7 @@
   <script src="js/modules/goal-map.js"></script>
   <script src="js/modules/season-map.js"></script>
   <script src="js/modules/goal-value.js"></script>
+  <script src="js/modules/line-up.js"></script>
   <script src="js/app.js"></script>
   <script src="season_table_ui_patch.js"></script>
   <script src="season_map_momentum.js"></script>
