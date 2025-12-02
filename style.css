@@ -49,3 +49,454 @@
   table-layout: auto !important;
   display: table !important;  /* NEU HINZUGEFÜGT */
 }
+#playerSelectionPage .top-btn.lineup-btn {
+  background: #5a9a9a;
+  color: #fff;
+}
+
+/* Titel */
+#playerSelectionPage h1 {
+  text-align: center;
+  color: #44bb91;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+/* Untertitel */
+#playerSelectionPage .subtitle {
+  text-align: center;
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* ==================== */
+/* LINE UP PAGE STYLES  */
+/* ==================== */
+
+#lineUpPage {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+#lineUpPage .page-top {
+  margin-bottom: 10px;
+}
+
+#lineUpPage .top-bar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow: visible !important;
+}
+
+/* Header Buttons */
+#lineUpPage .top-btn {
+  min-width: 120px;
+}
+
+/* Change Line Button (merged Team Line + Power Line) - same color as Export Season */
+.lineup-change-line-btn {
+  background: #44bb91 !important;
+  color: #fff;
+}
+
+.lineup-change-line-btn:hover {
+  background: #3a9d7a !important;
+}
+
+/* Player Out Button */
+.lineup-player-out-btn {
+  background: #b00020 !important;
+  color: #fff;
+  position: relative;
+}
+
+.lineup-player-out-btn:hover {
+  background: #9a001a !important;
+}
+
+/* Pulsier-Animation */
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(204, 51, 51, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(204, 51, 51, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(204, 51, 51, 0);
+  }
+}
+
+/* Button wenn Spieler OUT sind */
+#lineUpPage .lineup-player-out-btn.has-players-out {
+  background: #cc3333 !important;
+  animation: pulse-red 1.5s infinite;
+}
+
+.player-out-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #ff5252;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Export PDF Button - same color as Export CSV */
+.lineup-export-pdf-btn {
+  background: #5a9a9a !important;
+  color: #fff;
+}
+
+.lineup-export-pdf-btn:hover {
+  background: #4a8a8a !important;
+}
+
+/* Player Out Dropdown Container */
+#lineUpPage .player-out-container {
+  position: relative;
+  display: inline-block;
+  z-index: 100;
+}
+
+/* Player Out Dropdown List */
+#lineUpPage .player-out-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  background: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 10px;
+  min-width: 220px;
+  max-height: 350px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  margin-top: 4px;
+}
+
+#lineUpPage .player-out-dropdown.open {
+  display: block;
+}
+
+/* Player Out Item */
+#lineUpPage .player-out-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  color: #fff;
+}
+
+#lineUpPage .player-out-item:last-child {
+  border-bottom: none;
+}
+
+#lineUpPage .player-out-item:hover {
+  background: #3a3a3a;
+}
+
+/* OUT Status - RED background */
+#lineUpPage .player-out-item.is-out {
+  background: #cc3333;
+  color: #fff;
+  text-decoration: line-through;
+}
+
+#lineUpPage .player-out-item.is-out:hover {
+  background: #aa2222;
+}
+
+/* Title */
+.lineup-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #44bb91;
+  margin: 10px 0 5px 0;
+  background: linear-gradient(135deg, #44bb91 0%, #00bcd4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#lineUpPage .lineup-mode-label {
+  text-align: center;
+  color: #44bb91;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.lineup-stats {
+  text-align: center;
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* Container */
+#lineUpContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Sections */
+.lineup-section {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.lineup-section-title {
+  color: #00bcd4;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+/* Forward Lines */
+.lineup-forwards {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.lineup-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.lineup-line-row {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.lineup-line-stats {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+/* Position Buttons */
+.lineup-position {
+  background: #4a4a4a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+  height: 36px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lineup-position:hover {
+  background: #5a5a5a;
+  transform: translateY(-2px);
+}
+
+.lineup-position.assigned {
+  background: #2a5a4a;
+  border: 1px solid #44bb91;
+}
+
+.lineup-position.lineup-center {
+  background: #4a4a4a !important;
+  border: none !important;
+}
+
+.lineup-position.lineup-center:hover {
+  background: #5a5a5a !important;
+}
+
+.lineup-position.lineup-center.assigned {
+  background: #2a5a4a !important;
+  border: 1px solid #44bb91 !important;
+}
+
+/* Spieler-Name in der Zelle */
+#lineUpPage .position-slot .player-name {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Defense Section */
+.lineup-defense {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lineup-defense-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.lineup-pair-stats {
+  color: #888;
+  font-size: 0.85rem;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Special Teams */
+.lineup-special-teams {
+  display: flex;
+  gap: 20px;
+}
+
+.lineup-boxplay,
+.lineup-powerplay {
+  flex: 1;
+}
+
+.lineup-formation {
+  margin-bottom: 15px;
+}
+
+.lineup-formation-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.lineup-pp-defense {
+  justify-content: center;
+  gap: 30px;
+}
+
+/* Player Selection Modal */
+.lineup-player-modal {
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.lineup-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 15px 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.lineup-player-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lineup-player-option:hover {
+  background: #3a3a3a;
+  border-color: #44bb91;
+}
+
+.lineup-player-option.selected {
+  background: #1a5a4a;
+  border-color: #44bb91;
+}
+
+.lineup-player-option.assigned {
+  opacity: 0.6;
+}
+
+.lineup-player-number {
+  color: #888;
+  font-weight: 600;
+  min-width: 30px;
+}
+
+.lineup-player-name {
+  color: #fff;
+  flex: 1;
+}
+
+.lineup-player-assigned {
+  color: #44bb91;
+  font-size: 0.9rem;
+}
+
+/* Player Out Modal Styles */
+.player-out-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.player-out-item:hover {
+  background: #3a3a3a;
+  border-color: #b00020;
+}
+
+.player-out-item.selected {
+  background: #4a1a1a;
+  border-color: #b00020;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .lineup-special-teams {
+    flex-direction: column;
+  }
+  
+  .lineup-line-row {
+    gap: 8px;
+  }
+  
+  .lineup-position {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .lineup-defense-pair {
+    gap: 10px;
+  }
+  
+  .lineup-pair-stats {
+    min-width: 90px;
+    font-size: 0.75rem;
+  }
+}
