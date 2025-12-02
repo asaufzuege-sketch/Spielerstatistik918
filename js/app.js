@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     torbild: document.getElementById("torbildPage"),
     goalValue: document.getElementById("goalValuePage"),
     season: document.getElementById("seasonPage"),
-    seasonMap: document.getElementById("seasonMapPage")
+    seasonMap: document.getElementById("seasonMapPage"),
+    lineUp: document.getElementById("lineUpPage")
   };
   
   // 3. Daten aus LocalStorage laden
@@ -30,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   App.goalMap.init();
   App.seasonMap.init();
   App.goalValue.init();
+  App.lineUp.init();
   
   // 5. Navigation Event Listeners
   document.getElementById("selectPlayersBtn")?.addEventListener("click", () => {
@@ -70,6 +72,14 @@ document.addEventListener("DOMContentLoaded", () => {
   
   document.getElementById("seasonMapBtn")?.addEventListener("click", () => {
     App.showPage("seasonMap");
+  });
+  
+  document.getElementById("lineUpBtn")?.addEventListener("click", () => {
+    App.showPage("lineUp");
+  });
+  
+  document.getElementById("backToStatsFromLineUpBtn")?.addEventListener("click", () => {
+    App.showPage("stats");
   });
   
   // 6. Delegierte Back-Button Handler

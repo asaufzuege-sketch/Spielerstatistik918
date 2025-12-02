@@ -154,7 +154,8 @@ const App = {
           torbild: document.getElementById("torbildPage"),
           goalValue: document.getElementById("goalValuePage"),
           season: document.getElementById("seasonPage"),
-          seasonMap: document.getElementById("seasonMapPage")
+          seasonMap: document.getElementById("seasonMapPage"),
+          lineUp: document.getElementById("lineUpPage")
         };
       }
       
@@ -185,7 +186,8 @@ const App = {
         torbild: "Goal Map",
         goalValue: "Goal Value",
         season: "Season",
-        seasonMap: "Season Map"
+        seasonMap: "Season Map",
+        lineUp: "LINE UP"
       };
       document.title = titles[page] || "Spielerstatistik";
       
@@ -224,6 +226,9 @@ const App = {
         }
         if (page === "selection" && this.playerSelection && typeof this.playerSelection.render === 'function') {
           this.playerSelection.render();
+        }
+        if (page === "lineUp" && this.lineUp && typeof this.lineUp.render === 'function') {
+          this.lineUp.render();
         }
         
         this._renderTimeout = null;
