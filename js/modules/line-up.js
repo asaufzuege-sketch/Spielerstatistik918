@@ -18,8 +18,7 @@ App.lineUp = {
   },
   
   init() {
-    this.container = document.getElementById("lineUpContainer");
-    
+    // Container will be set when render is called
     // Load lineup from localStorage for current team
     this.load();
     
@@ -38,6 +37,10 @@ App.lineUp = {
   },
   
   render() {
+    // Ensure container is set
+    if (!this.container) {
+      this.container = document.getElementById("lineUpContainer");
+    }
     if (!this.container) return;
     
     this.container.innerHTML = "";
