@@ -40,7 +40,9 @@ App.lineup = {
     if (savedMode) {
       this.currentMode = savedMode;
     }
-    
+  },
+  
+  attachEventListeners() {
     // Event listeners for mode buttons
     document.getElementById("lineupModeNormal")?.addEventListener("click", () => {
       this.setMode('NORMAL');
@@ -89,22 +91,8 @@ App.lineup = {
     `;
     this.container.appendChild(modeDiv);
     
-    // Re-attach event listeners after rendering
-    document.getElementById("lineupModeNormal")?.addEventListener("click", () => {
-      this.setMode('NORMAL');
-    });
-    
-    document.getElementById("lineupModeManuell")?.addEventListener("click", () => {
-      this.setMode('MANUELL');
-    });
-    
-    document.getElementById("lineupModePower")?.addEventListener("click", () => {
-      this.setMode('POWER');
-    });
-    
-    document.getElementById("lineupResetBtn")?.addEventListener("click", () => {
-      this.reset();
-    });
+    // Attach event listeners after rendering
+    this.attachEventListeners();
     
     // Info text for POWER mode
     if (this.currentMode === 'POWER') {
@@ -235,7 +223,8 @@ App.lineup = {
   },
   
   autoFillPower() {
-    // Clear existing lineup
+    // Clear existing lineup to ensure fresh auto-fill based on current MVP rankings
+    // This is intentional: POWER mode always recalculates optimal lineup
     App.data.lineupData = {};
     
     // Get all selected players with their positions and calculate MVP
