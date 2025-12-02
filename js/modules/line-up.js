@@ -463,8 +463,8 @@ App.lineUp = {
       goalsPerGame: totalGoalsPerGame,
       // AVERAGE +/-
       plusMinusPerGame: playerCount > 0 ? totalPlusMinus / playerCount : 0,
-      // AVERAGE shots
-      shotsPerGame: playerCount > 0 ? totalShotsPerGame / playerCount : 0
+      // SUM of shots per game
+      shotsPerGame: totalShotsPerGame
     };
   },
   
@@ -494,8 +494,8 @@ App.lineUp = {
       pointsPerGame: totalPointsPerGame,
       // AVERAGE +/-
       plusMinusPerGame: playerCount > 0 ? totalPlusMinus / playerCount : 0,
-      // AVERAGE shots
-      shotsPerGame: playerCount > 0 ? totalShotsPerGame / playerCount : 0
+      // SUM of shots per game
+      shotsPerGame: totalShotsPerGame
     };
   },
   
@@ -553,7 +553,7 @@ App.lineUp = {
       btn.textContent = `Player out (${outCount})`;
       btn.classList.add('has-players-out');
     } else {
-      btn.innerHTML = 'Player out <span class="player-out-dot"></span>';
+      btn.textContent = 'Player out';
       btn.classList.remove('has-players-out');
     }
   }
