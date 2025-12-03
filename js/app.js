@@ -38,19 +38,19 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("selection");
   });
   
-  document. getElementById("backToStatsBtn")?. addEventListener("click", () => {
-    App.showPage("stats");
+  document. getElementById("backToStatsBtn")?.addEventListener("click", () => {
+    App. showPage("stats");
   });
   
-  document. getElementById("backToStatsFromSeasonBtn")?.addEventListener("click", () => {
-    App. showPage("stats");
+  document.getElementById("backToStatsFromSeasonBtn")?.addEventListener("click", () => {
+    App.showPage("stats");
   });
   
   document. getElementById("backToStatsFromSeasonMapBtn")?. addEventListener("click", () => {
     App.showPage("stats");
   });
   
-  document. getElementById("backFromGoalValueBtn")?. addEventListener("click", () => {
+  document. getElementById("backFromGoalValueBtn")?.addEventListener("click", () => {
     App.showPage("stats");
   });
   
@@ -222,16 +222,16 @@ App.startPlayerTimer = function(playerName) {
   App.updateTimerVisuals();
 };
 
-App. updateTimerVisuals = function() {
+App.updateTimerVisuals = function() {
   // Timer visuelle Updates nur wenn auf Stats Seite
   if (App.storage.getCurrentPage() !== "stats") return;
   
-  Object.keys(App.data.activeTimers).forEach(playerName => {
+  Object.keys(App.data. activeTimers).forEach(playerName => {
     const row = document.querySelector(`tr[data-player="${playerName}"]`);
-    const nameTd = row?.querySelector("td:nth-child(2)");
+    const nameTd = row?. querySelector("td:nth-child(2)");
     
     if (row && nameTd) {
-      row.style.background = "#005c2f";
+      row.style. background = "#005c2f";
       nameTd.style. background = "#005c2f";
     }
   });

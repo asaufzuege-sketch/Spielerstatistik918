@@ -154,7 +154,10 @@ const App = {
           stats: document. getElementById("statsPage"),
           torbild: document. getElementById("torbildPage"),
           goalValue: document.getElementById("goalValuePage"),
+copilot/restore-original-designs-and-features
+          season: document.getElementById("seasonPage"),
           season: document. getElementById("seasonPage"),
+            copilot/add-automatic-goal-map-navigation
           seasonMap: document.getElementById("seasonMapPage"),
           lineUp: document.getElementById("lineUpPage")
         };
@@ -230,6 +233,9 @@ const App = {
         }
         if (page === "lineUp" && this. lineUp && typeof this.lineUp.render === 'function') {
           this. lineUp.render();
+        }
+        if (page === "lineUp" && this.lineUp && typeof this.lineUp.render === 'function') {
+          this.lineUp.render();
         }
         
         this._renderTimeout = null;

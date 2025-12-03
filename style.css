@@ -1059,7 +1059,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 15px;
   background: rgba(125, 206, 182, 0.1);
   border-radius: 8px;
-  border: 1px solid rgba(125, 206, 182, 0. 3);
+  border: 1px solid rgba(125, 206, 182, 0.3);
 }
 
 .line-title,
@@ -1117,7 +1117,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   word-break: break-word;
 }
 
-.position-name. player-out {
+.position-name.player-out {
   color: #888;
   text-decoration: line-through;
 }
@@ -1164,7 +1164,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   text-align: center;
 }
 
-.lineup-mode-selector h2 {
+. lineup-mode-selector h2 {
   color: var(--text-color);
   margin-bottom: 15px;
 }
@@ -1260,7 +1260,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
     padding: 8px;
   }
   
-  . position-label {
+  .position-label {
     font-size: 0.7em;
   }
   
