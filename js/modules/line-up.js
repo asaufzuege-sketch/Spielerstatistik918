@@ -387,7 +387,7 @@ App.lineUp = {
     
     // Sort by MVP score
     wings.sort((a, b) => b.mvpScore - a.mvpScore);
-    defense.sort((a, b) => b. mvpScore - a.mvpScore);
+    defense.sort((a, b) => b.mvpScore - a.mvpScore);
     
     // Distribute forwards to centers and wings (every CENTER_POSITION_FREQUENCY player to center, others to wings)
     const forwardPool = wings.slice();
