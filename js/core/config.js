@@ -47,14 +47,14 @@ const App = {
   
   // Selektoren
   selectors: {
-    torbildBoxes: "#torbildPage .field-box, #torbildPage .goal-img-box",
+    torbildBoxes: "#torbildPage . field-box, #torbildPage . goal-img-box",
     seasonMapBoxes: "#seasonMapPage .field-box, #seasonMapPage .goal-img-box"
   },
   
   // Theme Setup
   initTheme() {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+      document. documentElement.setAttribute('data-theme', 'dark');
     } else {
       document.documentElement.setAttribute('data-theme', 'light');
     }
@@ -66,18 +66,18 @@ const App = {
     if (existing) existing.remove();
     
     const style = document.createElement('style');
-    style.id = 'season-goalvalue-left-align';
+    style. id = 'season-goalvalue-left-align';
     style.textContent = `
       #seasonContainer, #goalValueContainer {
-        display: flex !important;
+        display: flex ! important;
         justify-content: flex-start !important;
-        align-items: flex-start !important;
+        align-items: flex-start ! important;
         padding-left: 0 !important;
         margin-left: 0 !important;
         box-sizing: border-box !important;
-        width: 100% !important;
+        width: 100% ! important;
       }
-      #seasonContainer .table-scroll, #goalValueContainer .table-scroll {
+      #seasonContainer . table-scroll, #goalValueContainer .table-scroll {
         overflow-x: auto !important;          /* WICHTIG: horizontal scroll ermöglichen */
         overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
@@ -95,7 +95,7 @@ const App = {
       #seasonContainer table th, #seasonContainer table td,
       #goalValueContainer table th, #goalValueContainer table td {
         text-align: center !important;
-        padding-left: 0 !important;
+        padding-left: 0 ! important;
       }
       #seasonContainer table th:nth-child(1),
       #seasonContainer table td:nth-child(1),
@@ -118,9 +118,9 @@ const App = {
         #seasonContainer .table-scroll {
           overflow-x: hidden !important;
         }
-        /* Goal Value DARF weiterhin scrollen -> KEIN overflow-x: hidden! */
+        /* Goal Value DARF weiterhin scrollen -> KEIN overflow-x: hidden!  */
         #goalValueContainer .table-scroll {
-          overflow-x: auto !important;
+          overflow-x: auto ! important;
         }
         #seasonContainer table {
           width: auto !important;
@@ -147,27 +147,27 @@ const App = {
   showPage(page) {
     try {
       // Lazy-initialize pages wenn noch nicht geschehen
-      if (!this.pages || Object.keys(this.pages).length === 0) {
+      if (! this.pages || Object.keys(this. pages).length === 0) {
         this.pages = {
           teamSelection: document.getElementById("teamSelectionPage"),
           selection: document.getElementById("playerSelectionPage"),
-          stats: document.getElementById("statsPage"),
-          torbild: document.getElementById("torbildPage"),
+          stats: document. getElementById("statsPage"),
+          torbild: document. getElementById("torbildPage"),
           goalValue: document.getElementById("goalValuePage"),
-          season: document.getElementById("seasonPage"),
+          season: document. getElementById("seasonPage"),
           seasonMap: document.getElementById("seasonMapPage"),
-          lineup: document.getElementById("lineupPage")
+          lineUp: document.getElementById("lineUpPage")
         };
       }
       
       // Alle Seiten verstecken
-      Object.values(this.pages).forEach(p => {
-        if (p) p.style.display = "none";
+      Object.values(this.pages). forEach(p => {
+        if (p) p. style.display = "none";
       });
       
       // Target-Seite anzeigen
       if (this.pages[page]) {
-        this.pages[page].style.display = "block";
+        this. pages[page].style.display = "block";
       }
       
       // Page in LocalStorage speichern
@@ -188,7 +188,7 @@ const App = {
         goalValue: "Goal Value",
         season: "Season",
         seasonMap: "Season Map",
-        lineup: "LINE UP"
+        lineUp: "LINE UP"
       };
       document.title = titles[page] || "Spielerstatistik";
       
@@ -201,35 +201,35 @@ const App = {
       this._renderTimeout = setTimeout(() => {
         console.log("[Config] Rendering page:", page); // Debug-Log
         
-        if (page === "stats" && this.statsTable && typeof this.statsTable.render === 'function') {
+        if (page === "stats" && this.statsTable && typeof this.statsTable. render === 'function') {
           this.statsTable.render();
         }
-        if (page === "season" && this.seasonTable && typeof this.seasonTable.render === 'function') {
+        if (page === "season" && this.seasonTable && typeof this. seasonTable.render === 'function') {
           this.seasonTable.render();
         }
-        if (page === "goalValue" && this.goalValue && typeof this.goalValue.render === 'function') {
+        if (page === "goalValue" && this. goalValue && typeof this.goalValue.render === 'function') {
           this.goalValue.render();
         }
-        if (page === "seasonMap" && this.seasonMap && typeof this.seasonMap.render === 'function') {
-          this.seasonMap.render();
-          if (typeof this.seasonMap.initPlayerFilter === 'function') {
-            this.seasonMap.initPlayerFilter();
+        if (page === "seasonMap" && this. seasonMap && typeof this.seasonMap.render === 'function') {
+          this. seasonMap.render();
+          if (typeof this.seasonMap. initPlayerFilter === 'function') {
+            this. seasonMap.initPlayerFilter();
           }
         }
-        if (page === "torbild" && this.goalMap && typeof this.goalMap.updateWorkflowIndicator === 'function') {
-          this.goalMap.updateWorkflowIndicator();
-          if (typeof this.goalMap.initPlayerFilter === 'function') {
-            this.goalMap.initPlayerFilter();
+        if (page === "torbild" && this.goalMap && typeof this. goalMap.updateWorkflowIndicator === 'function') {
+          this. goalMap.updateWorkflowIndicator();
+          if (typeof this. goalMap.initPlayerFilter === 'function') {
+            this.goalMap. initPlayerFilter();
           }
         }
-        if (page === "teamSelection" && this.teamSelection && typeof this.teamSelection.updateButtonStates === 'function') {
-          this.teamSelection.updateButtonStates();
+        if (page === "teamSelection" && this. teamSelection && typeof this.teamSelection.updateButtonStates === 'function') {
+          this.teamSelection. updateButtonStates();
         }
-        if (page === "selection" && this.playerSelection && typeof this.playerSelection.render === 'function') {
-          this.playerSelection.render();
+        if (page === "selection" && this. playerSelection && typeof this.playerSelection.render === 'function') {
+          this. playerSelection.render();
         }
-        if (page === "lineup" && this.lineup && typeof this.lineup.render === 'function') {
-          this.lineup.render();
+        if (page === "lineUp" && this. lineUp && typeof this.lineUp.render === 'function') {
+          this. lineUp.render();
         }
         
         this._renderTimeout = null;
@@ -249,14 +249,14 @@ const App = {
     
     if (eventType === 'goal') {
       this.goalMapWorkflow.requiredPoints = 3;
-      this.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
+      this. goalMapWorkflow. pointTypes = ['field', 'goal', 'time'];
     } else if (eventType === 'shot') {
       this.goalMapWorkflow.requiredPoints = 1;
       this.goalMapWorkflow.pointTypes = ['field'];
     }
     
     console.log(`Starting Goal Map workflow for ${playerName} - ${eventType}`);
-    this.showPage('torbild');
+    this. showPage('torbild');
   },
   
   addGoalMapPoint(pointType, xPct, yPct, color, boxId) {
@@ -272,7 +272,7 @@ const App = {
     };
     
     this.goalMapWorkflow.collectedPoints.push(point);
-    console.log(`Point ${this.goalMapWorkflow.collectedPoints.length}/${this.goalMapWorkflow.requiredPoints} collected:`, point);
+    console. log(`Point ${this.goalMapWorkflow.collectedPoints. length}/${this. goalMapWorkflow. requiredPoints} collected:`, point);
     
     // Update workflow indicator
     if (this.goalMap && typeof this.goalMap.updateWorkflowIndicator === 'function') {
@@ -297,14 +297,14 @@ const App = {
       this.data.goalMapData = {};
     }
     
-    if (!this.data.goalMapData[playerName]) {
+    if (!this. data.goalMapData[playerName]) {
       this.data.goalMapData[playerName] = [];
     }
     
     this.data.goalMapData[playerName].push({
       eventType: eventType,
       points: points,
-      timestamp: Date.now()
+      timestamp: Date. now()
     });
     
     // Update the stats counter for Goals or Shot
@@ -312,20 +312,20 @@ const App = {
       this.data.statsData[playerName] = {};
     }
     
-    const category = eventType === 'goal' ? 'Goals' : 'Shot';
-    this.data.statsData[playerName][category] = (this.data.statsData[playerName][category] || 0) + 1;
+    const category = eventType === 'goal' ?  'Goals' : 'Shot';
+    this.data. statsData[playerName][category] = (this.data.statsData[playerName][category] || 0) + 1;
     
     // Save to localStorage
     const teamId = this.teamSelection ? this.teamSelection.getCurrentTeamInfo().id : 'team1';
-    localStorage.setItem(`goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
-    localStorage.setItem(`statsData_${teamId}`, JSON.stringify(this.data.statsData));
+    localStorage. setItem(`goalMapData_${teamId}`, JSON.stringify(this.data. goalMapData));
+    localStorage.setItem(`statsData_${teamId}`, JSON.stringify(this. data.statsData));
     
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
     // Reset workflow state
     this.goalMapWorkflow.active = false;
     this.goalMapWorkflow.playerName = null;
-    this.goalMapWorkflow.eventType = null;
+    this. goalMapWorkflow. eventType = null;
     this.goalMapWorkflow.collectedPoints = [];
     this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
@@ -335,11 +335,11 @@ const App = {
   },
   
   cancelGoalMapWorkflow() {
-    this.goalMapWorkflow.active = false;
+    this. goalMapWorkflow. active = false;
     this.goalMapWorkflow.playerName = null;
     this.goalMapWorkflow.eventType = null;
     this.goalMapWorkflow.collectedPoints = [];
-    this.goalMapWorkflow.requiredPoints = 0;
+    this. goalMapWorkflow. requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
     console.log('Goal Map workflow cancelled');
   }
