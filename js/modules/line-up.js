@@ -700,11 +700,8 @@ App.lineUp = {
     const nextIndex = (currentIndex + 1) % this.modes.length;
     this.currentMode = this.modes[nextIndex];
     
-    // Modus-Anzeige unter Titel aktualisieren
+    // Modus-Anzeige unter Titel aktualisieren (ruft auch updateModeColors() auf)
     this.updateModeDisplay();
-    
-    // Button-Farbe basierend auf Modus ändern
-    this.updateModeColors();
     
     // Auto-fill wenn in POWER Modus gewechselt wird
     if (this.currentMode === 'power') {
