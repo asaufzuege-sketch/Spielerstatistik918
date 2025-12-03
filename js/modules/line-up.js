@@ -475,6 +475,192 @@ App.lineUp = {
     return { goals, plusMinus, shots };
   },
   
+  autoFillPowerMode() {
+    // Get players with their positions and MVP points
+    const playersWithStats = this.getPlayersWithMVPPoints();
+    
+    // Filter out OUT players
+    const activePlayers = playersWithStats.filter(p => !this.playersOut.includes(p.name));
+    
+    // Group players by position
+    const centers = activePlayers.filter(p => p.position === 'C');
+    const wings = activePlayers.filter(p => p.position === 'W');
+    const defense = activePlayers.filter(p => p.position === 'D');
+    
+    // Sort by MVP points (highest first)
+    centers.sort((a, b) => b.mvpPoints - a.mvpPoints);
+    wings.sort((a, b) => b.mvpPoints - a.mvpPoints);
+    defense.sort((a, b) => b.mvpPoints - a.mvpPoints);
+    
+    // Clear existing lineup data
+    this.lineUpData = {};
+    
+    // Assign Centers
+    // Rang 1: C 1, BP-C 1, PP-C 1
+    if (centers[0]) {
+      this.lineUpData['C_line1'] = centers[0].name;
+      this.lineUpData['BP-C_form1'] = centers[0].name;
+      this.lineUpData['PP-C_form1'] = centers[0].name;
+    }
+    // Rang 2: C 2, BP-C 2, PP-C 2
+    if (centers[1]) {
+      this.lineUpData['C_line2'] = centers[1].name;
+      this.lineUpData['BP-C_form2'] = centers[1].name;
+      this.lineUpData['PP-C_form2'] = centers[1].name;
+    }
+    // Rang 3: C 3
+    if (centers[2]) {
+      this.lineUpData['C_line3'] = centers[2].name;
+    }
+    // Rang 4: C 4
+    if (centers[3]) {
+      this.lineUpData['C_line4'] = centers[3].name;
+    }
+    
+    // Assign Wings
+    // Rang 1: LW 1, BP-W 1, PP-LW 1
+    if (wings[0]) {
+      this.lineUpData['LW_line1'] = wings[0].name;
+      this.lineUpData['BP-W_form1'] = wings[0].name;
+      this.lineUpData['PP-LW_form1'] = wings[0].name;
+    }
+    // Rang 2: RW 1, BP-W 2, PP-RW 1
+    if (wings[1]) {
+      this.lineUpData['RW_line1'] = wings[1].name;
+      this.lineUpData['BP-W_form2'] = wings[1].name;
+      this.lineUpData['PP-RW_form1'] = wings[1].name;
+    }
+    // Rang 3: LW 2, PP-LW 2
+    if (wings[2]) {
+      this.lineUpData['LW_line2'] = wings[2].name;
+      this.lineUpData['PP-LW_form2'] = wings[2].name;
+    }
+    // Rang 4: RW 2, PP-RW 2
+    if (wings[3]) {
+      this.lineUpData['RW_line2'] = wings[3].name;
+      this.lineUpData['PP-RW_form2'] = wings[3].name;
+    }
+    // Rang 5: LW 3
+    if (wings[4]) {
+      this.lineUpData['LW_line3'] = wings[4].name;
+    }
+    // Rang 6: RW 3
+    if (wings[5]) {
+      this.lineUpData['RW_line3'] = wings[5].name;
+    }
+    // Rang 7: LW 4
+    if (wings[6]) {
+      this.lineUpData['LW_line4'] = wings[6].name;
+    }
+    // Rang 8: RW 4
+    if (wings[7]) {
+      this.lineUpData['RW_line4'] = wings[7].name;
+    }
+    
+    // Assign Defense
+    // Rang 1: DL 1, BP-DL 1, PP-DL 1
+    if (defense[0]) {
+      this.lineUpData['DL_pair1'] = defense[0].name;
+      this.lineUpData['BP-DL_form1'] = defense[0].name;
+      this.lineUpData['PP-DL_form1'] = defense[0].name;
+    }
+    // Rang 2: DR 1, BP-DR 1, PP-DR 1
+    if (defense[1]) {
+      this.lineUpData['DR_pair1'] = defense[1].name;
+      this.lineUpData['BP-DR_form1'] = defense[1].name;
+      this.lineUpData['PP-DR_form1'] = defense[1].name;
+    }
+    // Rang 3: DL 2, BP-DL 2, PP-DL 2
+    if (defense[2]) {
+      this.lineUpData['DL_pair2'] = defense[2].name;
+      this.lineUpData['BP-DL_form2'] = defense[2].name;
+      this.lineUpData['PP-DL_form2'] = defense[2].name;
+    }
+    // Rang 4: DR 2, BP-DR 2, PP-DR 2
+    if (defense[3]) {
+      this.lineUpData['DR_pair2'] = defense[3].name;
+      this.lineUpData['BP-DR_form2'] = defense[3].name;
+      this.lineUpData['PP-DR_form2'] = defense[3].name;
+    }
+    // Rang 5: DL 3
+    if (defense[4]) {
+      this.lineUpData['DL_pair3'] = defense[4].name;
+    }
+    // Rang 6: DR 3
+    if (defense[5]) {
+      this.lineUpData['DR_pair3'] = defense[5].name;
+    }
+    
+    // Save the updated lineup
+    this.saveData();
+  },
+  
+  getPlayersWithMVPPoints() {
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    
+    let players = [];
+    try {
+      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      players = savedPlayers.filter(p => p.active && p.name && p.name.trim() !== "" && p.position);
+    } catch (e) {
+      players = [];
+    }
+    
+    // Calculate MVP points for each player
+    const playersWithMVP = players.map(player => {
+      const seasonData = App.data.seasonData?.[player.name];
+      let mvpPoints = 0;
+      
+      if (seasonData) {
+        const games = Number(seasonData.games || 0);
+        const goals = Number(seasonData.goals || 0);
+        const assists = Number(seasonData.assists || 0);
+        const plusMinus = Number(seasonData.plusMinus || 0);
+        const shots = Number(seasonData.shots || 0);
+        const penalty = Number(seasonData.penaltys || 0);
+        
+        const avgPlusMinus = games ? (plusMinus / games) : 0;
+        const shotsPerGame = games ? (shots / games) : 0;
+        const goalsPerGame = games ? (goals / games) : 0;
+        const assistsPerGame = games ? (assists / games) : 0;
+        const penaltyPerGame = games ? (penalty / games) : 0;
+        
+        // Get goal value
+        let goalValue = 0;
+        try {
+          if (App.goalValue && typeof App.goalValue.computeValueForPlayer === "function") {
+            goalValue = App.goalValue.computeValueForPlayer(player.name) || Number(seasonData.goalValue || 0);
+          } else {
+            goalValue = Number(seasonData.goalValue || 0);
+          }
+        } catch (e) {
+          goalValue = Number(seasonData.goalValue || 0);
+        }
+        const gvNum = Number(goalValue || 0);
+        
+        // Calculate MVP points using the same formula as season-table.js
+        mvpPoints = (
+          (assistsPerGame * 8) +
+          (avgPlusMinus * 0.5) +
+          (shotsPerGame * 0.5) +
+          (goalsPerGame + (games ? (gvNum / games) * 10 : 0)) -
+          (penaltyPerGame * 1.2)
+        );
+      }
+      
+      return {
+        name: player.name,
+        number: player.number,
+        position: player.position,
+        mvpPoints: mvpPoints
+      };
+    });
+    
+    return playersWithMVP;
+  },
+  
   changeLineMode() {
     const currentIndex = this.modes.indexOf(this.currentMode);
     const nextIndex = (currentIndex + 1) % this.modes.length;
@@ -482,6 +668,11 @@ App.lineUp = {
     
     // Modus-Anzeige unter Titel aktualisieren
     this.updateModeDisplay();
+    
+    // Auto-fill wenn in POWER Modus gewechselt wird
+    if (this.currentMode === 'power') {
+      this.autoFillPowerMode();
+    }
     
     // Optional: Aufstellung basierend auf Modus anpassen
     this.render();
