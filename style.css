@@ -1,3 +1,46 @@
+/* CSS Variables */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --header-bg: #1E1E1E;
+  --row-even: #f0f0f0;
+  --row-odd: #e0e0e0;
+  --page-title-start: #7dceb6;
+  --page-title-end: #66a895;
+  --cell-pos-color: #00c06f;
+  --cell-neg-color: #ff4c4c;
+  --cell-zero-color: #000000;
+  --btn-top-bg: #c8fbc8;
+  --btn-bottom-bg: #ffe7e7;
+  --timer-active-color: #005c2f;
+  --timer-left-bg: #3b3b3b;
+  --sticky-header-height: 56px;
+  --ice-top: #00c06f;
+  --ice-bottom: #ff4c4c;
+  --img-box-bg: #ffffff;
+  --time-box-bg: #ffffff;
+  --time-box-text: #000000;
+  --period-bg: #2a2a2a;
+  --period-text: #ffffff;
+}
+
+[data-theme="dark"] {
+  --bg-color: #111111;
+  --text-color: #ffffff;
+  --header-bg: #1E1E1E;
+  --row-even: #333333;
+  --row-odd: #4a4a4a;
+  --cell-pos-color: #00ff80;
+  --cell-neg-color: #ff4c4c;
+  --cell-zero-color: #ffffff;
+  --timer-left-bg: #3b3b3b;
+  --img-box-bg: #1e1e1e;
+  --time-box-bg: #1a1a1a;
+  --time-box-text: #ffffff;
+  --period-bg: rgba(255,255,255,0.05);
+  --period-text: #ffffff;
+}
+
 /*** Fixed name column for Goal Value table */
 .goalvalue-table .gv-name-cell {
   position: sticky !important;
@@ -50,6 +93,7 @@
   display: table !important;  /* NEU HINZUGEFÜGT */
 }
 
+copilot/add-line-up-feature-again
 /* LINE UP Styling */
 #lineUpContainer {
   padding: 20px;
@@ -184,5 +228,157 @@
   .mode-btn {
     padding: 8px 15px;
     font-size: 14px;
+  }
+}
+/* ----------------------------------------------------- */
+/* LINE UP Styles                                        */
+/* ----------------------------------------------------- */
+#lineUpContainer {
+  padding: 20px 10px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.lineup-section {
+  margin-bottom: 40px;
+}
+
+.lineup-section-title {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--text-color);
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--page-title-start);
+  padding-bottom: 10px;
+}
+
+.forward-line,
+.defense-pair {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: rgba(125, 206, 182, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(125, 206, 182, 0.3);
+}
+
+.line-title,
+.unit-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.positions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.positions-grid-bp,
+.positions-grid-pp {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.positions-grid-pp {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.position-slot {
+  background: var(--bg-color);
+  border: 2px solid var(--page-title-start);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.position-label {
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--page-title-start);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.position-name {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--text-color);
+  word-break: break-word;
+}
+
+.position-name.player-out {
+  color: #888;
+  text-decoration: line-through;
+}
+
+.position-input {
+  width: 100%;
+  padding: 6px;
+  font-size: 0.9em;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  text-align: center;
+}
+
+.line-stats {
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(0, 192, 111, 0.1);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text-color);
+  border: 1px solid rgba(0, 192, 111, 0.3);
+}
+
+.special-teams-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.special-team-unit {
+  padding: 15px;
+  background: rgba(125, 206, 182, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(125, 206, 182, 0.3);
+}
+
+@media (max-width: 768px) {
+  .positions-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .special-teams-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .position-slot {
+    min-height: 60px;
+    padding: 8px;
+  }
+  
+  .position-label {
+    font-size: 0.7em;
+  }
+  
+  .position-name {
+    font-size: 0.8em;
   }
 }

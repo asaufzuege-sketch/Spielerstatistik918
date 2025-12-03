@@ -78,6 +78,11 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("lineUp");
   });
   
+copilot/add-line-up-feature-again
+  document.getElementById("backToStatsFromLineUpBtn")?.addEventListener("click", () => {
+    App.showPage("stats");
+  });
+  main
   // 6. Delegierte Back-Button Handler
   document.addEventListener("click", (e) => {
     try {
