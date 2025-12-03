@@ -1029,3 +1029,111 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   left: 0 !important;
   z-index: 90 !important;
 }
+
+/* ----------------------------------------------------- */
+/* LINE UP Styles                                        */
+/* ----------------------------------------------------- */
+.lineup-mode-selector {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.lineup-mode-selector h2 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+}
+
+.mode-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mode-btn {
+  background: #44bb91;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-btn:hover {
+  background: #36a67d;
+}
+
+.mode-btn.active {
+  background: #2a2a2a;
+  border: 2px solid #44bb91;
+  color: #44bb91;
+  padding: 8px 22px;
+}
+
+.lineup-info {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.lineup-section {
+  margin: 30px 0;
+  padding: 20px;
+  background: var(--row-even);
+  border-radius: 8px;
+}
+
+.lineup-section h3 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.lineup-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lineup-label {
+  font-weight: bold;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.lineup-select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.lineup-display {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #44bb91;
+  background: var(--header-bg);
+  color: #44bb91;
+  font-size: 0.95rem;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .lineup-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
