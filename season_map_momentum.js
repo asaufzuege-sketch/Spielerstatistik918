@@ -169,8 +169,10 @@
   function readFromLocalStorageFallback() {
     try {
       const raw = localStorage.getItem('seasonMapTimeData') || localStorage.getItem('timeData') || null;
+      console.log('[Season Map] Geladene Momentum-Daten (raw):', raw);
       if (!raw) return null;
       const obj = JSON.parse(raw);
+      console.log('[Season Map] Geladene Momentum-Daten (parsed):', obj);
       if (!obj || typeof obj !== 'object') return null;
       const keys = Object.keys(obj).sort();
       const periods = [];

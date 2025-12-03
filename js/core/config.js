@@ -8,20 +8,20 @@ const App = {
   // Daten
   data: {
     players: [
-      { num: 4, name: "Ondrej Kastner", position: "C" }, { num: 5, name: "Raphael Oehninger", position: "W" },
-      { num: 6, name: "Nuno Meier", position: "D" }, { num: 7, name: "Silas Teuber", position: "W" },
-      { num: 8, name: "Diego Warth", position: "C" }, { num: 9, name: "Mattia Crameri", position: "W" },
-      { num: 10, name: "Mael Bernath", position: "D" }, { num: 11, name: "Sean Nef", position: "C" },
-      { num: 12, name: "Rafael Burri", position: "W" }, { num: 13, name: "Lenny Schwarz", position: "D" },
-      { num: 14, name: "David Lienert", position: "W" }, { num: 15, name: "Neven Severini", position: "C" },
-      { num: 16, name: "Nils Koubek", position: "D" }, { num: 17, name: "Lio Kundert", position: "W" },
-      { num: 18, name: "Livio Berner", position: "W" }, { num: 19, name: "Robin Strasser", position: "D" },
-      { num: 21, name: "Marlon Kreyenbühl", position: "W" }, { num: 22, name: "Martin Lana", position: "D" },
-      { num: 23, name: "Manuel Isler", position: "C" }, { num: 24, name: "Moris Hürlimann", position: "W" },
-      { num: "", name: "Levi Baumann", position: "W" }, { num: "", name: "Corsin Blapp", position: "C" },
-      { num: "", name: "Lenny Zimmermann", position: "D" }, { num: "", name: "Luke Böhmichen", position: "W" },
-      { num: "", name: "Livio Weissen", position: "D" }, { num: "", name: "Raul Wütrich", position: "W" },
-      { num: "", name: "Marco Senn", position: "D" }
+      { num: 4, name: "Ondrej Kastner" }, { num: 5, name: "Raphael Oehninger" },
+      { num: 6, name: "Nuno Meier" }, { num: 7, name: "Silas Teuber" },
+      { num: 8, name: "Diego Warth" }, { num: 9, name: "Mattia Crameri" },
+      { num: 10, name: "Mael Bernath" }, { num: 11, name: "Sean Nef" },
+      { num: 12, name: "Rafael Burri" }, { num: 13, name: "Lenny Schwarz" },
+      { num: 14, name: "David Lienert" }, { num: 15, name: "Neven Severini" },
+      { num: 16, name: "Nils Koubek" }, { num: 17, name: "Lio Kundert" },
+      { num: 18, name: "Livio Berner" }, { num: 19, name: "Robin Strasser" },
+      { num: 21, name: "Marlon Kreyenbühl" }, { num: 22, name: "Martin Lana" },
+      { num: 23, name: "Manuel Isler" }, { num: 24, name: "Moris Hürlimann" },
+      { num: "", name: "Levi Baumann" }, { num: "", name: "Corsin Blapp" },
+      { num: "", name: "Lenny Zimmermann" }, { num: "", name: "Luke Böhmichen" },
+      { num: "", name: "Livio Weissen" }, { num: "", name: "Raul Wütrich" },
+      { num: "", name: "Marco Senn" }
     ],
     
     categories: ["Shot", "Goals", "Assist", "+/-", "FaceOffs", "FaceOffs Won", "Penaltys"],
@@ -31,8 +31,7 @@ const App = {
     playerTimes: {},
     seasonData: {},
     activeTimers: {},
-    goalMapData: {},
-    lineupData: {}
+    goalMapData: {}
   },
   
   // Goal Map Workflow State
@@ -47,7 +46,7 @@ const App = {
   
   // Selektoren
   selectors: {
-    torbildBoxes: "#torbildPage . field-box, #torbildPage . goal-img-box",
+    torbildBoxes: "#torbildPage .field-box, #torbildPage .goal-img-box",
     seasonMapBoxes: "#seasonMapPage .field-box, #seasonMapPage .goal-img-box"
   },
   
@@ -69,15 +68,15 @@ const App = {
     style.id = 'season-goalvalue-left-align';
     style.textContent = `
       #seasonContainer, #goalValueContainer {
-        display: flex ! important;
+        display: flex !important;
         justify-content: flex-start !important;
-        align-items: flex-start ! important;
+        align-items: flex-start !important;
         padding-left: 0 !important;
         margin-left: 0 !important;
         box-sizing: border-box !important;
-        width: 100% ! important;
+        width: 100% !important;
       }
-      #seasonContainer . table-scroll, #goalValueContainer .table-scroll {
+      #seasonContainer .table-scroll, #goalValueContainer .table-scroll {
         overflow-x: auto !important;          /* WICHTIG: horizontal scroll ermöglichen */
         overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
@@ -95,7 +94,7 @@ const App = {
       #seasonContainer table th, #seasonContainer table td,
       #goalValueContainer table th, #goalValueContainer table td {
         text-align: center !important;
-        padding-left: 0 ! important;
+        padding-left: 0 !important;
       }
       #seasonContainer table th:nth-child(1),
       #seasonContainer table td:nth-child(1),
@@ -118,9 +117,9 @@ const App = {
         #seasonContainer .table-scroll {
           overflow-x: hidden !important;
         }
-        /* Goal Value DARF weiterhin scrollen -> KEIN overflow-x: hidden!  */
+        /* Goal Value DARF weiterhin scrollen -> KEIN overflow-x: hidden! */
         #goalValueContainer .table-scroll {
-          overflow-x: auto ! important;
+          overflow-x: auto !important;
         }
         #seasonContainer table {
           width: auto !important;
@@ -188,7 +187,7 @@ const App = {
         goalValue: "Goal Value",
         season: "Season",
         seasonMap: "Season Map",
-        lineUp: "LINE UP"
+        lineUp: "Line Up"
       };
       document.title = titles[page] || "Spielerstatistik";
       
@@ -201,34 +200,35 @@ const App = {
       this._renderTimeout = setTimeout(() => {
         console.log("[Config] Rendering page:", page); // Debug-Log
         
-        if (page === "stats" && this.statsTable && typeof this.statsTable. render === 'function') {
+        if (page === "stats" && this.statsTable && typeof this.statsTable.render === 'function') {
           this.statsTable.render();
         }
-        if (page === "season" && this.seasonTable && typeof this. seasonTable.render === 'function') {
+        if (page === "season" && this.seasonTable && typeof this.seasonTable.render === 'function') {
           this.seasonTable.render();
         }
-        if (page === "goalValue" && this. goalValue && typeof this.goalValue.render === 'function') {
+        if (page === "goalValue" && this.goalValue && typeof this.goalValue.render === 'function') {
           this.goalValue.render();
         }
-        if (page === "seasonMap" && this. seasonMap && typeof this.seasonMap.render === 'function') {
-          this. seasonMap.render();
-          if (typeof this.seasonMap. initPlayerFilter === 'function') {
-            this. seasonMap.initPlayerFilter();
+        if (page === "seasonMap" && this.seasonMap && typeof this.seasonMap.render === 'function') {
+          this.seasonMap.render();
+          if (typeof this.seasonMap.initPlayerFilter === 'function') {
+            this.seasonMap.initPlayerFilter();
           }
         }
-        if (page === "torbild" && this.goalMap && typeof this. goalMap.updateWorkflowIndicator === 'function') {
-          this. goalMap.updateWorkflowIndicator();
-          if (typeof this. goalMap.initPlayerFilter === 'function') {
-            this.goalMap. initPlayerFilter();
+        if (page === "torbild" && this.goalMap && typeof this.goalMap.updateWorkflowIndicator === 'function') {
+          this.goalMap.updateWorkflowIndicator();
+          if (typeof this.goalMap.initPlayerFilter === 'function') {
+            this.goalMap.initPlayerFilter();
           }
         }
-        if (page === "teamSelection" && this. teamSelection && typeof this.teamSelection.updateButtonStates === 'function') {
-          this.teamSelection. updateButtonStates();
+        if (page === "teamSelection" && this.teamSelection && typeof this.teamSelection.updateButtonStates === 'function') {
+          this.teamSelection.updateButtonStates();
         }
-        if (page === "selection" && this. playerSelection && typeof this.playerSelection.render === 'function') {
-          this. playerSelection.render();
+        if (page === "selection" && this.playerSelection && typeof this.playerSelection.render === 'function') {
+          this.playerSelection.render();
         }
         if (page === "lineUp" && this.lineUp && typeof this.lineUp.render === 'function') {
+          this.lineUp.loadData();
           this.lineUp.render();
         }
         
@@ -317,7 +317,7 @@ const App = {
     
     // Save to localStorage
     const teamId = this.teamSelection ? this.teamSelection.getCurrentTeamInfo().id : 'team1';
-    localStorage. setItem(`goalMapData_${teamId}`, JSON.stringify(this.data. goalMapData));
+    localStorage.setItem(`goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
     localStorage.setItem(`statsData_${teamId}`, JSON.stringify(this.data.statsData));
     
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
@@ -335,11 +335,11 @@ const App = {
   },
   
   cancelGoalMapWorkflow() {
-    this. goalMapWorkflow. active = false;
+    this.goalMapWorkflow.active = false;
     this.goalMapWorkflow.playerName = null;
     this.goalMapWorkflow.eventType = null;
     this.goalMapWorkflow.collectedPoints = [];
-    this. goalMapWorkflow. requiredPoints = 0;
+    this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
     console.log('Goal Map workflow cancelled');
   }

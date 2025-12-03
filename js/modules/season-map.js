@@ -198,11 +198,30 @@ App.seasonMap = {
     
     // Player-bezogene Zeitdaten übernehmen
     const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
+    console.log('[Season Map Export] timeDataWithPlayers:', timeDataWithPlayers);
     localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
     
-    // Flache Zeitdaten für Momentum-Graph
-    const timeData = this.readTimeTrackingFromBox();
-    localStorage.setItem("seasonMapTimeData", JSON.stringify(timeData));
+    // Flache Zeitdaten für Momentum-Graph aus timeDataWithPlayers berechnen
+    // Format: { "p1": [button0, button1, ..., button7], "p2": [...], "p3": [...] }
+    const momentumData = {};
+    const periods = ['p1', 'p2', 'p3'];
+    
+    periods.forEach(periodNum => {
+      const periodValues = [];
+      // 8 Buttons pro Period (0-3 top-row/scored, 4-7 bottom-row/conceded)
+      for (let btnIdx = 0; btnIdx < 8; btnIdx++) {
+        const key = `${periodNum}_${btnIdx}`;
+        const playerData = timeDataWithPlayers[key] || {};
+        const total = Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
+        periodValues.push(total);
+      }
+      momentumData[periodNum] = periodValues;
+    });
+    
+    console.log('[Season Map Export] momentumData:', momentumData);
+    
+    // Speichere für Momentum-Graph
+    localStorage.setItem("seasonMapTimeData", JSON.stringify(momentumData));
     
     const keep = confirm("Spiel wurde in Season Map exportiert. Daten in Goal Map beibehalten? (OK = Ja)");
     if (!keep) {
@@ -337,12 +356,29 @@ App.seasonMap = {
   reset() {
     if (!confirm("⚠️ Season Map zurücksetzen (Marker + Timeboxen)?")) return;
     
+    // Marker entfernen
     document.querySelectorAll("#seasonMapPage .marker-dot").forEach(d => d.remove());
+    
+    // Time Buttons zurücksetzen
     document.querySelectorAll("#seasonMapPage .time-btn").forEach(btn => btn.textContent = "0");
     
+    // Momentum Container leeren (korrekter ID: seasonMapMomentum)
+    const momentumContainer = document.getElementById("seasonMapMomentum");
+    if (momentumContainer) {
+      momentumContainer.innerHTML = "";
+    }
+    
+    // LocalStorage Daten löschen
     localStorage.removeItem("seasonMapMarkers");
     localStorage.removeItem("seasonMapTimeData");
     localStorage.removeItem("seasonMapTimeDataWithPlayers");
+    
+    // Goal Area Labels zurücksetzen (falls vorhanden)
+    document.querySelectorAll("#seasonMapPage .goal-area-label").forEach(label => {
+      label.textContent = "0";
+    });
+    
+    console.log('[Season Map] Reset completed - Momentum container cleared');
     
     alert("Season Map zurückgesetzt.");
   }

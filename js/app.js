@@ -1,16 +1,16 @@
 // Haupt-App Initialisierung
 document.addEventListener("DOMContentLoaded", () => {
-  console.log(`Spielerstatistik App v${App.version} wird geladen... `);
+  console.log(`Spielerstatistik App v${App.version} wird geladen...`);
   
   // 1. Theme & Styles initialisieren
   App.initTheme();
   App.injectTableStyles();
   
-  // 2.  Pages registrieren
+  // 2. Pages registrieren
   App.pages = {
     teamSelection: document.getElementById("teamSelectionPage"),
     selection: document.getElementById("playerSelectionPage"),
-    stats: document. getElementById("statsPage"),
+    stats: document.getElementById("statsPage"),
     torbild: document.getElementById("torbildPage"),
     goalValue: document.getElementById("goalValuePage"),
     season: document.getElementById("seasonPage"),
@@ -74,14 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("seasonMap");
   });
   
-  document.getElementById("lineUpBtn")?.addEventListener("click", () => {
-    App.showPage("lineUp");
-  });
-  
-  document.getElementById("backToStatsFromLineUpBtn")?.addEventListener("click", () => {
-    App.showPage("stats");
-  });
-  
   // 6. Delegierte Back-Button Handler
   document.addEventListener("click", (e) => {
     try {
@@ -92,8 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "backToStatsBtn",
         "backToStatsFromSeasonBtn",
         "backToStatsFromSeasonMapBtn",
-        "backFromGoalValueBtn",
-        "backToStatsFromLineUpBtn"
+        "backFromGoalValueBtn"
       ]);
       
       if (backIds.has(btn.id)) {
@@ -130,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   App.showPage(initialPage);
   
-  // 8.  Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
+  // 8. Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
   App.restoreActiveTimers();
   
   // 9. Daten vor Seitenabschluss speichern

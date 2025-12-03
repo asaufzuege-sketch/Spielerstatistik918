@@ -95,11 +95,12 @@ App.markerHandler = {
   
   /**
    * Marker mit Prozent-Koordinaten erstellen.
+   * Alle Styles kommen aus der CSS-Klasse .marker-dot
    * @param {number} xPct 0–100
    * @param {number} yPct 0–100
    * @param {string} color CSS-Farbe
    * @param {HTMLElement} container Box (field-box/goal-img-box)
-   * @param {boolean} interactive Klick zum Entfernen?
+   * @param {boolean} interactive Klick zum Entfernen? 
    * @param {string|null} playerName optionaler Spielername
    */
   createMarkerPercent(xPct, yPct, color, container, interactive = true, playerName = null) {
@@ -108,14 +109,11 @@ App.markerHandler = {
     
     const dot = document.createElement("div");
     dot.className = "marker-dot";
-    dot.style.backgroundColor = color;
+    
+    // Nur Position und Farbe setzen - Rest kommt aus CSS-Klasse .marker-dot
     dot.style.left = `${xPct}%`;
     dot.style.top = `${yPct}%`;
-    dot.style.position = "absolute";
-    dot.style.width = "10px";
-    dot.style.height = "10px";
-    dot.style.borderRadius = "50%";
-    dot.style.transform = "translate(-50%,-50%)";
+    dot.style.backgroundColor = color;
     
     if (playerName) {
       dot.dataset.player = playerName;

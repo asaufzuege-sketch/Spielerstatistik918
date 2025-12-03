@@ -929,6 +929,86 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* ==================== */
+/* SEASON TABLE POS. COLUMN */
+/* ==================== */
+
+/* Pos. Spalte Header mit Dropdown */
+#seasonPage .pos-header {
+  min-width: 60px;
+  padding: 5px;
+}
+
+#seasonPage .pos-filter {
+  background: #2a2a2a;
+  color: #44bb91;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+#seasonPage .pos-filter:focus {
+  outline: none;
+  border-color: #44bb91;
+}
+
+#seasonPage .pos-filter option {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+/* Pos. Zelle in der Tabelle */
+#seasonPage .pos-cell {
+  text-align: center;
+  color: #44bb91;
+  font-weight: bold;
+  min-width: 40px;
+}
+
+/* Sticky Column für Pos. */
+#seasonPage .season-table thead th:nth-child(3),
+#seasonPage .season-table tbody td:nth-child(3) {
+  position: sticky;
+  left: 200px; /* Nach Name-Spalte (60px Nr + 140px Name) */
+  z-index: 19;
+}
+
+#seasonPage .season-table thead th:nth-child(3) {
+  background: var(--header-bg);
+}
+
+#seasonPage .season-table tbody tr:nth-child(odd) td:nth-child(3) {
+  background: var(--row-odd);
+}
+
+#seasonPage .season-table tbody tr:nth-child(even) td:nth-child(3) {
+  background: var(--row-even);
+}
+
+/* Explicit background colors for Light Mode */
+.season-table tbody tr:nth-child(even) td:nth-child(3) {
+  background-color: #f0f0f0 !important;
+}
+
+.season-table tbody tr:nth-child(odd) td:nth-child(3) {
+  background-color: #e0e0e0 !important;
+}
+
+/* Explicit background colors for Dark Mode */
+[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(3) {
+  background-color: #333333 !important;
+}
+
+[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(3) {
+  background-color: #4a4a4a !important;
+}
+
+/* ==================== */
 /* TEAMAUSWAHL STYLES */
 /* ==================== */
 
@@ -1029,246 +1109,819 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   left: 0 !important;
   z-index: 90 !important;
 }
-/* ----------------------------------------------------- */
-/* LINE UP Styles                                        */
-/* ----------------------------------------------------- */
-#lineUpContainer {
-  padding: 20px 10px;
-  max-width: 1100px;
-  margin: 0 auto;
+
+/* ========================================= */
+/* EXPLICIT STICKY COLUMN BACKGROUNDS        */
+/* ========================================= */
+
+/* EXPLIZITE Hintergrundfarben für Season Table Light Mode */
+.season-table tbody tr:nth-child(even) td:nth-child(1),
+.season-table tbody tr:nth-child(even) td:nth-child(2) {
+  background-color: #f0f0f0 !important;
 }
 
-.lineup-section {
-  margin-bottom: 40px;
+.season-table tbody tr:nth-child(odd) td:nth-child(1),
+.season-table tbody tr:nth-child(odd) td:nth-child(2) {
+  background-color: #e0e0e0 !important;
 }
 
-.lineup-section-title {
-  font-size: 1.5em;
-  font-weight: 700;
-  margin-bottom: 20px;
-  text-align: center;
-  color: var(--text-color);
-  text-transform: uppercase;
-  border-bottom: 2px solid var(--page-title-start);
-  padding-bottom: 10px;
+/* EXPLIZITE Hintergrundfarben für Season Table Dark Mode */
+[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(1),
+[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(2) {
+  background-color: #333333 !important;
 }
 
-.forward-line,
-.defense-pair {
-  margin-bottom: 25px;
-  padding: 15px;
-  background: rgba(125, 206, 182, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(125, 206, 182, 0.3);
+[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(1),
+[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(2) {
+  background-color: #4a4a4a !important;
 }
 
-.line-title,
-.unit-title {
-  font-size: 1.1em;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: var(--text-color);
-  text-align: center;
+/* EXPLIZITE Hintergrundfarben für Goal Value Table Light Mode */
+.goalvalue-table tbody tr:nth-child(even) td.sticky-col {
+  background-color: #f0f0f0 !important;
 }
 
-.positions-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 12px;
+.goalvalue-table tbody tr:nth-child(odd) td.sticky-col {
+  background-color: #e0e0e0 !important;
 }
 
-.positions-grid-bp,
-.positions-grid-pp {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+/* EXPLIZITE Hintergrundfarben für Goal Value Table Dark Mode */
+[data-theme="dark"] .goalvalue-table tbody tr:nth-child(even) td.sticky-col {
+  background-color: #333333 !important;
+}
+
+[data-theme="dark"] .goalvalue-table tbody tr:nth-child(odd) td.sticky-col {
+  background-color: #4a4a4a !important;
+}
+
+/* Bottom row (letzte Zeile mit Dropdowns) */
+.goalvalue-table tbody tr:last-child td.sticky-col {
+  background-color: #1E1E1E !important;
+  border-top: 2px solid #333 !important;
+}
+
+[data-theme="dark"] .goalvalue-table tbody tr:last-child td.sticky-col {
+  background-color: #1E1E1E !important;
+}
+
+/* Box shadow improvements for Dark Mode */
+[data-theme="dark"] .goalvalue-table .sticky-col {
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .goalvalue-table thead th.sticky-col {
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ==================== */
+/* EDIT TEAM BUTTON     */
+/* ==================== */
+
+.edit-team-btn {
+  background: transparent;
+  border: 1px solid #555;
+  color: #aaa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.edit-team-btn:hover {
+  border-color: #44bb91;
+  color: #44bb91;
+}
+
+.team-button-group {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
-.positions-grid-pp {
-  grid-template-columns: repeat(3, 1fr);
-}
+/* ==================== */
+/* TEAM EDIT MODAL      */
+/* ==================== */
 
-.position-slot {
-  background: var(--bg-color);
-  border: 2px solid var(--page-title-start);
-  border-radius: 6px;
-  padding: 10px;
-  text-align: center;
-  min-height: 70px;
-  display: flex;
-  flex-direction: column;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
-.position-label {
-  font-size: 0.75em;
-  font-weight: 700;
-  color: var(--page-title-start);
-  margin-bottom: 6px;
-  text-transform: uppercase;
+.modal-content {
+  background: #1e1e1e;
+  padding: 30px;
+  border-radius: 12px;
+  border: 2px solid #333;
+  min-width: 300px;
+  max-width: 90%;
 }
 
-.position-name {
-  font-size: 0.9em;
-  font-weight: 600;
-  color: var(--text-color);
-  word-break: break-word;
+.modal-content h2 {
+  color: #44bb91;
+  margin-top: 0;
+  margin-bottom: 20px;
 }
 
-.position-name.player-out {
-  color: #888;
-  text-decoration: line-through;
-}
-
-.position-input {
+.modal-content input[type="text"] {
   width: 100%;
-  padding: 6px;
-  font-size: 0.9em;
+  padding: 12px;
   border: 1px solid #444;
-  border-radius: 4px;
-  background: var(--bg-color);
-  color: var(--text-color);
-  text-align: center;
-}
-
-.line-stats {
-  margin-top: 10px;
-  padding: 8px;
-  background: rgba(0, 192, 111, 0.1);
-  border-radius: 4px;
-  text-align: center;
-  font-size: 0.85em;
-  font-weight: 600;
-  color: var(--text-color);
-  border: 1px solid rgba(0, 192, 111, 0.3);
-}
-
-.special-teams-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.special-team-unit {
-  padding: 15px;
-  background: rgba(125, 206, 182, 0.1);
   border-radius: 8px;
-  border: 1px solid rgba(125, 206, 182, 0.3);
-}
-
-/* Mode Selector Styles */
-.lineup-mode-selector {
-  margin: 20px 0;
-  text-align: center;
-}
-
-.lineup-mode-selector h2 {
-  color: var(--text-color);
-  margin-bottom: 15px;
-}
-
-.mode-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.mode-btn {
-  background: #44bb91;
+  background: #2a2a2a;
   color: #fff;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  margin-bottom: 20px;
+  box-sizing: border-box;
 }
 
-.mode-btn:hover {
+.modal-content input[type="text"]:focus {
+  outline: none;
+  border-color: #44bb91;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-buttons button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.modal-buttons .save-btn {
+  background: #44bb91;
+  color: white;
+}
+
+.modal-buttons .save-btn:hover {
   background: #36a67d;
 }
 
-.mode-btn.active {
-  background: #2a2a2a;
+.modal-buttons .cancel-btn {
+  background: #444;
+  color: #fff;
+}
+
+.modal-buttons .cancel-btn:hover {
+  background: #555;
+}
+
+/* ==================== */
+/* WORKFLOW STATUS      */
+/* ==================== */
+
+#workflowStatusIndicator {
+  display: none;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border: 2px solid #44bb91;
-  color: #44bb91;
-  padding: 8px 22px;
-}
-
-.lineup-info {
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin: 10px auto;
+  max-width: 600px;
   text-align: center;
-  margin: 10px 0;
+  box-shadow: 0 4px 15px rgba(68, 187, 145, 0.2);
 }
 
-.lineup-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+#workflowStatusText {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+#workflowStatusText strong {
+  color: #44bb91;
+}
+
+/* ==================== */
+/* GOAL AREA LABELS     */
+/* ==================== */
+
+.goal-area-label {
+  position: absolute;
+  pointer-events: none;
+  font-weight: 800;
+  opacity: 0.45;
+  font-size: 36px;
+  color: #000000;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.06);
+  line-height: 1;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ==================== */
+/* DRAG HANDLE STYLES   */
+/* ==================== */
+
+.drag-handle {
+  color: #44bb91;
+  margin-right: 8px;
+  cursor: grab;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+tr[data-player].dragging {
+  background: rgba(68, 187, 145, 0.3) !important;
+  transform: scale(1.02);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+/* ==================== */
+/* PLAYER SELECTION PAGE - Neues Layout */
+/* ==================== */
+
+#playerSelectionPage .player-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px auto;
+  max-width: 800px;
+}
+
+#playerSelectionPage .player-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin: 8px 0;
+}
+
+/* Checkbox */
+#playerSelectionPage .player-list input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #44bb91;
+  flex-shrink: 0;
+}
+
+/* Nr. Input - minimal für 2-stellige Zahlen */
+#playerSelectionPage .player-list .num-input {
+  width: 45px;
+  min-width: 45px;
+  max-width: 45px;
+  background: #2a2a2a;
+  color: #888;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+  font-size: 0.95rem;
+  flex: 0 0 45px;
+}
+
+#playerSelectionPage .player-list .num-input::placeholder {
+  color: #666;
+}
+
+/* Name Input - füllt den Rest */
+#playerSelectionPage .player-list .name-input {
+  flex: 1;
+  min-width: 0;
+  background: #3a3a3a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 0.95rem;
+}
+
+#playerSelectionPage .player-list .name-input::placeholder {
+  color: #888;
+}
+
+/* Position Select - minimal für "Defense" */
+#playerSelectionPage .player-list .pos-select {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  background: #2a2a2a;
+  color: #44bb91;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: bold;
+  flex: 0 0 80px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+#playerSelectionPage .player-list .pos-select:focus {
+  outline: none;
+  border-color: #44bb91;
+}
+
+/* Placeholder Farbe wenn nichts ausgewählt */
+#playerSelectionPage .player-list .pos-select:invalid,
+#playerSelectionPage .player-list .pos-select option[value=""] {
+  color: #666;
+}
+
+/* Ausgewählte Option in grün */
+#playerSelectionPage .player-list .pos-select:valid {
+  color: #44bb91;
+}
+
+#playerSelectionPage .player-list .pos-select option {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+#playerSelectionPage .player-list .pos-select option:disabled {
+  color: #666;
+}
+
+/* Top Bar Buttons */
+#playerSelectionPage .top-bar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#playerSelectionPage .top-btn.back-btn {
+  background: #2b2b2b;
+  color: #fff;
+}
+
+#playerSelectionPage .top-btn.game-data-btn {
+  background: #44bb91;
+  color: #fff;
+}
+
+#playerSelectionPage .top-btn.lineup-btn {
+  background: #5a9a9a;
+  color: #fff;
+}
+
+/* Titel */
+#playerSelectionPage h1 {
+  text-align: center;
+  color: #44bb91;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+/* Untertitel */
+#playerSelectionPage .subtitle {
+  text-align: center;
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* ==================== */
+/* LINE UP PAGE STYLES  */
+/* ==================== */
+
+#lineUpPage {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+#lineUpPage .page-top {
+  margin-bottom: 10px;
+}
+
+#lineUpPage .top-bar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow: visible !important;
+}
+
+/* Header Buttons */
+#lineUpPage .top-btn {
+  min-width: 120px;
+}
+
+/* Change Line Button (merged Team Line + Power Line) - same color as Export Season */
+.lineup-change-line-btn {
+  background: #44bb91 !important;
+  color: #fff;
+}
+
+.lineup-change-line-btn:hover {
+  background: #3a9d7a !important;
+}
+
+/* Player Out Button */
+.lineup-player-out-btn {
+  background: #b00020 !important;
+  color: #fff;
+  position: relative;
+}
+
+.lineup-player-out-btn:hover {
+  background: #9a001a !important;
+}
+
+/* Pulsier-Animation */
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(204, 51, 51, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(204, 51, 51, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(204, 51, 51, 0);
+  }
+}
+
+/* Button wenn Spieler OUT sind */
+#lineUpPage .lineup-player-out-btn.has-players-out {
+  background: #cc3333 !important;
+  animation: pulse-red 1.5s infinite;
+}
+
+.player-out-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #ff5252;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Export PDF Button - same color as Export CSV */
+.lineup-export-pdf-btn {
+  background: #5a9a9a !important;
+  color: #fff;
+}
+
+.lineup-export-pdf-btn:hover {
+  background: #4a8a8a !important;
+}
+
+/* Player Out Dropdown Container */
+#lineUpPage .player-out-container {
+  position: relative;
+  display: inline-block;
+  z-index: 100;
+}
+
+/* Player Out Dropdown List */
+#lineUpPage .player-out-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  background: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 10px;
+  min-width: 220px;
+  max-height: 350px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  margin-top: 4px;
+}
+
+#lineUpPage .player-out-dropdown.open {
+  display: block;
+}
+
+/* Player Out Item */
+#lineUpPage .player-out-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  color: #fff;
+}
+
+#lineUpPage .player-out-item:last-child {
+  border-bottom: none;
+}
+
+#lineUpPage .player-out-item:hover {
+  background: #3a3a3a;
+}
+
+/* OUT Status - RED background */
+#lineUpPage .player-out-item.is-out {
+  background: #cc3333;
+  color: #fff;
+  text-decoration: line-through;
+}
+
+#lineUpPage .player-out-item.is-out:hover {
+  background: #aa2222;
+}
+
+/* Title */
+.lineup-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #44bb91;
+  margin: 10px 0 5px 0;
+  background: linear-gradient(135deg, #44bb91 0%, #00bcd4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#lineUpPage .lineup-mode-label {
+  text-align: center;
+  color: #44bb91;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.lineup-stats {
+  text-align: center;
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* Container */
+#lineUpContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Sections */
+.lineup-section {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.lineup-section-title {
+  color: #00bcd4;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+/* Forward Lines */
+.lineup-forwards {
+  display: flex;
+  flex-direction: column;
   gap: 15px;
 }
 
-.lineup-slot {
+.lineup-line {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 5px;
 }
 
-.lineup-label {
-  font-weight: bold;
-  color: var(--text-color);
+.lineup-line-row {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.lineup-line-stats {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+/* Position Buttons */
+.lineup-position {
+  background: #4a4a4a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+  height: 36px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lineup-position:hover {
+  background: #5a5a5a;
+  transform: translateY(-2px);
+}
+
+.lineup-position.assigned {
+  background: #2a5a4a;
+  border: 1px solid #44bb91;
+}
+
+.lineup-position.lineup-center {
+  background: #4a4a4a !important;
+  border: none !important;
+}
+
+.lineup-position.lineup-center:hover {
+  background: #5a5a5a !important;
+}
+
+.lineup-position.lineup-center.assigned {
+  background: #2a5a4a !important;
+  border: 1px solid #44bb91 !important;
+}
+
+/* Spieler-Name in der Zelle */
+#lineUpPage .position-slot .player-name {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Defense Section */
+.lineup-defense {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lineup-defense-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.lineup-pair-stats {
+  color: #888;
+  font-size: 0.85rem;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Special Teams */
+.lineup-special-teams {
+  display: flex;
+  gap: 20px;
+}
+
+.lineup-boxplay,
+.lineup-powerplay {
+  flex: 1;
+}
+
+.lineup-formation {
+  margin-bottom: 15px;
+}
+
+.lineup-formation-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.lineup-pp-defense {
+  justify-content: center;
+  gap: 30px;
+}
+
+/* Player Selection Modal */
+.lineup-player-modal {
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.lineup-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 15px 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.lineup-player-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lineup-player-option:hover {
+  background: #3a3a3a;
+  border-color: #44bb91;
+}
+
+.lineup-player-option.selected {
+  background: #1a5a4a;
+  border-color: #44bb91;
+}
+
+.lineup-player-option.assigned {
+  opacity: 0.6;
+}
+
+.lineup-player-number {
+  color: #888;
+  font-weight: 600;
+  min-width: 30px;
+}
+
+.lineup-player-name {
+  color: #fff;
+  flex: 1;
+}
+
+.lineup-player-assigned {
+  color: #44bb91;
   font-size: 0.9rem;
 }
 
-.lineup-select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background: var(--bg-color);
-  color: var(--text-color);
-  font-size: 0.95rem;
-}
-
-.lineup-display {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #44bb91;
-  background: var(--header-bg);
-  color: #44bb91;
-  font-size: 0.95rem;
-  min-height: 36px;
+/* Player Out Modal Styles */
+.player-out-item {
   display: flex;
   align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
+.player-out-item:hover {
+  background: #3a3a3a;
+  border-color: #b00020;
+}
+
+.player-out-item.selected {
+  background: #4a1a1a;
+  border-color: #b00020;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .positions-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .lineup-special-teams {
+    flex-direction: column;
+  }
+  
+  .lineup-line-row {
     gap: 8px;
   }
   
-  .special-teams-grid {
-    grid-template-columns: 1fr;
+  .lineup-position {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
   }
   
-  .position-slot {
-    min-height: 60px;
-    padding: 8px;
+  .lineup-defense-pair {
+    gap: 10px;
   }
   
-  .position-label {
-    font-size: 0.7em;
-  }
-  
-  .position-name {
-    font-size: 0.8em;
-  }
-  
-  .lineup-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  .lineup-pair-stats {
+    min-width: 90px;
+    font-size: 0.75rem;
   }
 }
