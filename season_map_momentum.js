@@ -1,25 +1,22 @@
-// season_map_momentum.js
-// Option B (periods run from 20 down to 0 inside each period); full-width 0..60 timeline.
-// Update: first plotted bucket is exactly at 0, last at 60 (so the chart spans the full time).
-// Major ticks at 0 / 20 / 40 / 60 are longer and labels are larger & bold white under the white line.
-// Keeps localStorage-first reading, DOM fallback, reset clearing, smoothing, etc.
-
+// season_map_momentum.js - Updated mit grauer Punkte und langer Klick für Tor
 (function () {
   const SVG_W = 900;
   const SVG_H = 220;
   const MARGIN = { left: 32, right: 32, top: 20, bottom: 36 };
-  const TOP_GUIDE_Y = 28;    // white labeled line (labels will be drawn below this line)
-  const MIDLINE_Y = 120;     // baseline (momentum = 0)
+  const TOP_GUIDE_Y = 28;
+  const MIDLINE_Y = 120;
   const BOTTOM_GUIDE_Y = 196;
   const MAX_DISPLAY = 6;
-
-  // NEW: place the 12 UI buckets exactly spanning 0..60
-  // UI order per period: [19-15, 14-10, 9-5, 4-0]
-  // Map them left->right across the whole 0..60 span so first maps to 0 and last to 60
-  // 12 values -> we use these minute positions (0..60) so first peak is exactly at 0, last at 60
+  
   const BUCKET_MINUTES = [0,5,10,15, 20,25,30,35, 40,45,50,60];
-
+  
+  // Zusätzliche Variablen für Goal Map
+  let goalMarkers = [];
+  let longPressTimer = null;
+  let longPressTarget = null;
+  
   function getSeasonMapRoot() { return document.getElementById('seasonMapPage') || document.body; }
+  
   function getTimeBoxElement() {
     const candidates = ['seasonMapTimeTrackingBox','seasonTimeTrackingBox','timeTrackingBox'];
     for (const id of candidates) {
@@ -28,9 +25,147 @@
     }
     return null;
   }
+  
   function hideTimeBox() { const tb = getTimeBoxElement(); if (tb) tb.style.display = 'none'; }
+  
+  // Goal Markers Management
+  function saveGoalMarkers() {
+    localStorage.setItem('seasonMapMarkers', JSON.stringify(goalMarkers));
+  }
+  
+  function loadGoalMarkers() {
+    try {
+      const saved = localStorage.getItem('seasonMapMarkers');
+      if (saved) {
+        goalMarkers = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn('Failed to load goal markers:', e);
+      goalMarkers = [];
+    }
+  }
+  
+  function addGoalMarker(x, y, fieldId = 'field') {
+    const marker = { x, y, fieldId, id: Date.now() };
+    goalMarkers.push(marker);
+    saveGoalMarkers();
+    renderGoalMarkers();
+  }
+  
+  function removeGoalMarker(markerId) {
+    goalMarkers = goalMarkers.filter(m => m.id !== markerId);
+    saveGoalMarkers();
+    renderGoalMarkers();
+  }
+  
+  function renderGoalMarkers() {
+    // Entferne alte Marker
+    document.querySelectorAll('.goal-marker').forEach(marker => marker.remove());
+    
+    // Render neue Marker
+    goalMarkers.forEach(marker => {
+      const fieldElement = document.getElementById(marker.fieldId);
+      if (!fieldElement) return;
+      
+      const dot = document.createElement('div');
+      dot.className = 'goal-marker marker-dot';
+      dot.style.position = 'absolute';
+      dot.style.left = `${marker.x}px`;
+      dot.style.top = `${marker.y}px`;
+      dot.style.width = '14px';
+      dot.style.height = '14px';
+      dot.style.borderRadius = '50%';
+      dot.style.backgroundColor = '#808080'; // GRAU statt weiß
+      dot.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+      dot.style.transform = 'translate(-50%, -50%)';
+      dot.style.cursor = 'pointer';
+      dot.style.zIndex = '10';
+      dot.dataset.markerId = marker.id;
+      
+      // Doppelklick zum Entfernen
+      dot.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        removeGoalMarker(marker.id);
+      });
+      
+      fieldElement.appendChild(dot);
+    });
+  }
+  
+  function setupFieldClickHandlers() {
+    const fields = document.querySelectorAll('.field-box, #field');
+    
+    fields.forEach(field => {
+      let clickCount = 0;
+      let clickTimer = null;
+      
+      field.addEventListener('mousedown', (e) => {
+        // Langer Klick für Tor (graue Punkte)
+        longPressTarget = e.target;
+        longPressTimer = setTimeout(() => {
+          if (longPressTarget === e.target) {
+            const rect = field.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            addGoalMarker(x, y, field.id || 'field');
+            
+            // Vibrationseffekt falls verfügbar
+            if (navigator.vibrate) {
+              navigator.vibrate(100);
+            }
+          }
+          longPressTimer = null;
+          longPressTarget = null;
+        }, 500); // 500ms für langen Klick
+      });
+      
+      field.addEventListener('mouseup', (e) => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+          longPressTarget = null;
+        }
+      });
+      
+      field.addEventListener('mouseleave', (e) => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+          longPressTarget = null;
+        }
+      });
+      
+      // Touch Events für Mobile
+      field.addEventListener('touchstart', (e) => {
+        longPressTarget = e.target;
+        longPressTimer = setTimeout(() => {
+          if (longPressTarget === e.target) {
+            const rect = field.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            addGoalMarker(x, y, field.id || 'field');
+            
+            if (navigator.vibrate) {
+              navigator.vibrate(100);
+            }
+          }
+          longPressTimer = null;
+          longPressTarget = null;
+        }, 500);
+      });
+      
+      field.addEventListener('touchend', (e) => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+          longPressTarget = null;
+        }
+      });
+    });
+  }
 
-  // Read localStorage export fallback (supports array and object shapes)
+  // Rest der ursprünglichen Funktionen...
   function readFromLocalStorageFallback() {
     try {
       const raw = localStorage.getItem('seasonMapTimeData') || localStorage.getItem('timeData') || null;
@@ -54,7 +189,6 @@
             scored = [0,0,0,0]; conceded = [0,0,0,0];
           }
         } else if (val && typeof val === 'object') {
-          // map-like: numeric keys possibly 0..7
           const flat = [];
           for (let i = 0; i < 8; i++) flat.push(Number(val[String(i)] || 0));
           scored = flat.slice(0,4);
@@ -62,7 +196,6 @@
         } else {
           scored = [0,0,0,0]; conceded = [0,0,0,0];
         }
-        // keep UI order as read (19-15,14-10,9-5,4-0)
         periods.push({ scored: scored.slice(), conceded: conceded.slice() });
       }
       while (periods.length < 3) periods.push({ scored: [0,0,0,0], conceded: [0,0,0,0] });
@@ -73,7 +206,6 @@
     }
   }
 
-  // Read from DOM timebox (returns arrays in UI order per period: [19-15,14-10,9-5,4-0])
   function readPeriodsFromDOM() {
     const box = getTimeBoxElement();
     if (!box) return null;
@@ -110,7 +242,6 @@
     try { return periods.some(p => (p.scored.concat(p.conceded)).some(v => Number(v) !== 0)); } catch(e) { return false; }
   }
 
-  // Prefer localStorage if it contains non-zero values (export case), otherwise DOM
   function readPeriods() {
     const ls = readFromLocalStorageFallback();
     if (ls && hasNonZero(ls)) { console.debug('[momentum] using localStorage periods'); return ls; }
@@ -122,7 +253,6 @@
     return [{ scored:[0,0,0,0], conceded:[0,0,0,0] },{ scored:[0,0,0,0], conceded:[0,0,0,0] },{ scored:[0,0,0,0], conceded:[0,0,0,0] }];
   }
 
-  // Build 12 values in UI order (index 0..11 corresponds to UI bucket sequence P1: 19-15..4-0, P2..., P3...)
   function build12Values(periods) {
     const vals = [];
     for (let p = 0; p < 3; p++) {
@@ -161,6 +291,7 @@
     const m = Math.max(0, Math.min(60, minute));
     return MARGIN.left + (m/60) * usableW;
   }
+  
   function valueToY(v, maxScale) {
     const t = v / maxScale;
     const topSpace = MIDLINE_Y - TOP_GUIDE_Y;
@@ -172,7 +303,6 @@
     if (!root) return;
     hideTimeBox();
 
-    // NOTE: we create an element with id seasonMapMomentum (app.js export looks for this id)
     let container = root.querySelector('#seasonMapMomentum');
     if (!container) {
       container = document.createElement('div');
@@ -193,7 +323,6 @@
     const absMax = Math.max(1, ...values12.map(v => Math.abs(v)));
     const maxScale = Math.max(absMax, MAX_DISPLAY);
 
-    // map each UI bucket index to minute using BUCKET_MINUTES, then build chronological list
     const pts = values12.map((v,i) => {
       const minute = BUCKET_MINUTES[i];
       const x = minuteToX(minute);
@@ -201,7 +330,6 @@
       return { idx: i, minute, x, y, v };
     });
 
-    // chronological order left->right (by minute)
     const chron = pts.slice().sort((a,b) => a.minute - b.minute);
 
     const svgNS = 'http://www.w3.org/2000/svg';
@@ -211,7 +339,7 @@
     svg.setAttribute('preserveAspectRatio','xMidYMid meet');
     svg.style.display = 'block';
 
-    // top white guide-line and labels 0..60 every 5 minutes (labels UNDER the white line, centered)
+    // Top guide line und labels
     const topLineX1 = minuteToX(0);
     const topLineX2 = minuteToX(60);
     const topLine = document.createElementNS(svgNS,'line');
@@ -223,9 +351,8 @@
     topLine.setAttribute('stroke-width', '3');
     svg.appendChild(topLine);
 
-    // tick lengths
-    const majorTickLen = 18; // for 0,20,40,60 (bigger)
-    const minorTickLen = 8;  // for other 5-min ticks
+    const majorTickLen = 18;
+    const minorTickLen = 8;
     const majorSet = new Set([0,20,40,60]);
 
     for (let t=0;t<=60;t+=5) {
@@ -250,7 +377,7 @@
       svg.appendChild(txt);
     }
 
-    // baseline and bottom guide (span exact 0..60)
+    // Baselines
     const midLine = document.createElementNS(svgNS,'line');
     midLine.setAttribute('x1', minuteToX(0)); midLine.setAttribute('x2', minuteToX(60));
     midLine.setAttribute('y1', MIDLINE_Y); midLine.setAttribute('y2', MIDLINE_Y);
@@ -263,7 +390,7 @@
     bottomLine.setAttribute('stroke', '#d6d6d6'); bottomLine.setAttribute('stroke-width', '2');
     svg.appendChild(bottomLine);
 
-    // Build pos/neg arrays and area paths using chronological points
+    // Areas
     const posPts = chron.map(p => ({ x: p.x, y: p.v > 0 ? p.y : MIDLINE_Y }));
     const negPts = chron.map(p => ({ x: p.x, y: p.v < 0 ? p.y : MIDLINE_Y }));
 
@@ -291,7 +418,7 @@
       svg.appendChild(pathNeg);
     }
 
-    // Outline curve using chronological points' x,y
+    // Outline
     const outlineD = catmullRom2bezier(chron.map(p => ({ x: p.x, y: p.y })));
     const outline = document.createElementNS(svgNS,'path');
     outline.setAttribute('d', outlineD);
@@ -302,37 +429,39 @@
     outline.setAttribute('stroke-linecap', 'round');
     svg.appendChild(outline);
 
-    // Small markers for each point (visibility) - can be removed later
+    // Marker (GRAU statt Grün/Rot)
     chron.forEach(p => {
       const c = document.createElementNS(svgNS,'circle');
       c.setAttribute('cx', p.x.toFixed(2));
       c.setAttribute('cy', valueToY(p.v, maxScale).toFixed(2));
       c.setAttribute('r', '3');
-      c.setAttribute('fill', p.v >= 0 ? '#0a8f45' : '#c84b4b');
+      c.setAttribute('fill', '#808080'); // GRAU für alle Punkte
       c.setAttribute('opacity', '0.95');
       svg.appendChild(c);
     });
 
     container.appendChild(svg);
-
-    console.info('[momentum] rendered chart; mapping (UI bucket -> minute):', BUCKET_MINUTES, 'values12:', values12, 'maxScale:', maxScale);
+    console.info('[momentum] rendered chart with gray markers');
   }
 
-  // On reset: clear the seasonMapTimeData/seasonMapMarkers keys (so chart really clears),
-  // then re-render. Also listen to storage events.
   function setupAutoUpdate() {
     const clearLSOnReset = () => {
       try {
         localStorage.removeItem('seasonMapTimeData');
-        localStorage.removeItem('seasonMapMarkers');
+        localStorage.removeItem('seasonMapMarkers'); // Clear goal markers too
       } catch (e) {}
-      setTimeout(() => renderSeasonMomentumGraphic(), 140);
+      goalMarkers = []; // Clear in-memory markers
+      setTimeout(() => {
+        renderSeasonMomentumGraphic();
+        renderGoalMarkers();
+      }, 140);
     };
 
     ['resetSeasonMapBtn','resetTorbildBtn','resetBtn'].forEach(id => {
       const b = document.getElementById(id);
       if (b) b.addEventListener('click', clearLSOnReset);
     });
+    
     document.addEventListener('click', (e) => {
       const id = e?.target?.id;
       if (id === 'resetSeasonMapBtn' || id === 'resetTorbildBtn' || id === 'resetBtn') clearLSOnReset();
@@ -361,6 +490,13 @@
 
     hideTimeBox();
     renderSeasonMomentumGraphic();
+    
+    // Setup field click handlers after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      setupFieldClickHandlers();
+      loadGoalMarkers();
+      renderGoalMarkers();
+    }, 100);
 
     const mo2 = new MutationObserver((muts) => {
       let changed = false;
@@ -381,8 +517,10 @@
     }, true);
   }
 
-  // expose helpers
+  // Expose helper functions
   window.renderSeasonMomentumGraphic = renderSeasonMomentumGraphic;
+  window.addGoalMarker = addGoalMarker;
+  window.removeGoalMarker = removeGoalMarker;
   window._seasonMomentum_readPeriods = readPeriods;
   window._seasonMomentum_build12 = build12Values;
 

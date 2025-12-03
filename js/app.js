@@ -1,16 +1,16 @@
 // Haupt-App Initialisierung
 document.addEventListener("DOMContentLoaded", () => {
-  console.log(`Spielerstatistik App v${App.version} wird geladen...`);
+  console.log(`Spielerstatistik App v${App.version} wird geladen... `);
   
   // 1. Theme & Styles initialisieren
   App.initTheme();
   App.injectTableStyles();
   
-  // 2. Pages registrieren
+  // 2.  Pages registrieren
   App.pages = {
     teamSelection: document.getElementById("teamSelectionPage"),
     selection: document.getElementById("playerSelectionPage"),
-    stats: document.getElementById("statsPage"),
+    stats: document. getElementById("statsPage"),
     torbild: document.getElementById("torbildPage"),
     goalValue: document.getElementById("goalValuePage"),
     season: document.getElementById("seasonPage"),
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 3. Daten aus LocalStorage laden
   App.storage.load();
   
-  // 4. Alle Module initialisieren
+  // 4.  Alle Module initialisieren
   App.teamSelection.init();
   App.timer.init();
   App.csvHandler.init();
@@ -38,23 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("selection");
   });
   
-  document.getElementById("backToStatsBtn")?.addEventListener("click", () => {
-    App.showPage("stats");
+  document. getElementById("backToStatsBtn")?.addEventListener("click", () => {
+    App. showPage("stats");
   });
   
   document.getElementById("backToStatsFromSeasonBtn")?.addEventListener("click", () => {
+    App. showPage("stats");
+  });
+  
+  document. getElementById("backToStatsFromSeasonMapBtn")?. addEventListener("click", () => {
     App.showPage("stats");
   });
   
-  document.getElementById("backToStatsFromSeasonMapBtn")?.addEventListener("click", () => {
+  document. getElementById("backFromGoalValueBtn")?.addEventListener("click", () => {
     App.showPage("stats");
   });
   
-  document.getElementById("backFromGoalValueBtn")?.addEventListener("click", () => {
-    App.showPage("stats");
-  });
-  
-  document.getElementById("backToTeamSelectionBtn")?.addEventListener("click", () => {
+  document. getElementById("backToTeamSelectionBtn")?.addEventListener("click", () => {
     App.showPage("teamSelection");
   });
   
@@ -62,40 +62,49 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("torbild");
   });
   
-  document.getElementById("goalValueBtn")?.addEventListener("click", () => {
+  document. getElementById("goalValueBtn")?.addEventListener("click", () => {
     App.showPage("goalValue");
   });
   
   document.getElementById("seasonBtn")?.addEventListener("click", () => {
-    App.showPage("season");
+    App. showPage("season");
   });
   
   document.getElementById("seasonMapBtn")?.addEventListener("click", () => {
     App.showPage("seasonMap");
   });
   
+  document.getElementById("lineUpBtn")?.addEventListener("click", () => {
+    App. showPage("lineUp");
+  });
+  
+  document.getElementById("backToStatsFromLineUpBtn")?.addEventListener("click", () => {
+    App. showPage("stats");
+  });
+  
   // 6. Delegierte Back-Button Handler
   document.addEventListener("click", (e) => {
     try {
-      const btn = e.target.closest("button");
-      if (!btn) return;
+      const btn = e.target. closest("button");
+      if (! btn) return;
       
       const backIds = new Set([
         "backToStatsBtn",
         "backToStatsFromSeasonBtn",
         "backToStatsFromSeasonMapBtn",
-        "backFromGoalValueBtn"
+        "backFromGoalValueBtn",
+        "backToStatsFromLineUpBtn"
       ]);
       
       if (backIds.has(btn.id)) {
-        App.showPage("stats");
+        App. showPage("stats");
         e.preventDefault();
         e.stopPropagation();
       }
       
       if (btn.id === "backToTeamSelectionBtn") {
-        App.showPage("teamSelection");
-        e.preventDefault();
+        App. showPage("teamSelection");
+        e. preventDefault();
         e.stopPropagation();
       }
     } catch (err) {
@@ -103,17 +112,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, true);
   
-  // 7. Initiale Seite anzeigen
+  // 7.  Initiale Seite anzeigen
   // NEU: benutze getCurrentTeamInfo() statt getCurrentTeam()
   const teamInfo = App.teamSelection.getCurrentTeamInfo();
-  const currentTeam = teamInfo?.id; // z.B. "team1"
-  const lastPage = App.storage.getCurrentPage();
+  const currentTeam = teamInfo?. id; // z.B. "team1"
+  const lastPage = App.storage. getCurrentPage();
   
   // Wenn kein Team ausgewählt ist, zur Teamauswahl
   let initialPage;
   if (!currentTeam) {
     initialPage = "teamSelection";
-  } else if (lastPage === "selection" || !App.data.selectedPlayers.length) {
+  } else if (lastPage === "selection" || ! App.data.selectedPlayers. length) {
     initialPage = "selection";
   } else {
     initialPage = lastPage;
@@ -121,23 +130,23 @@ document.addEventListener("DOMContentLoaded", () => {
   
   App.showPage(initialPage);
   
-  // 8. Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
+  // 8.  Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
   App.restoreActiveTimers();
   
   // 9. Daten vor Seitenabschluss speichern
   window.addEventListener("beforeunload", () => {
     try {
-      App.storage.saveAll();
+      App. storage.saveAll();
       // saveTeams ist optional – nur aufrufen, wenn vorhanden
       if (App.teamSelection.saveTeams) {
-        App.teamSelection.saveTeams();
+        App. teamSelection.saveTeams();
       }
       App.saveActiveTimersState(); // Timer State speichern
-      localStorage.setItem("timerSeconds", String(App.timer.seconds));
+      localStorage.setItem("timerSeconds", String(App.timer. seconds));
       if (App.goalValue) {
-        localStorage.setItem("goalValueOpponents", JSON.stringify(App.goalValue.getOpponents()));
-        localStorage.setItem("goalValueData", JSON.stringify(App.goalValue.getData()));
-        localStorage.setItem("goalValueBottom", JSON.stringify(App.goalValue.getBottom()));
+        localStorage.setItem("goalValueOpponents", JSON. stringify(App.goalValue.getOpponents()));
+        localStorage. setItem("goalValueData", JSON.stringify(App.goalValue.getData()));
+        localStorage.setItem("goalValueBottom", JSON.stringify(App. goalValue.getBottom()));
       }
     } catch (e) {
       console.warn("Save on unload failed:", e);
@@ -145,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
   // 10. Page Visibility API - Timer bei Tab-Wechsel beibehalten
-  document.addEventListener("visibilitychange", () => {
+  document. addEventListener("visibilitychange", () => {
     if (document.hidden) {
       App.saveActiveTimersState();
     } else {
@@ -159,11 +168,11 @@ document.addEventListener("DOMContentLoaded", () => {
 // Timer Persistenz Funktionen
 App.saveActiveTimersState = function() {
   try {
-    const activeTimerNames = Object.keys(App.data.activeTimers);
-    localStorage.setItem("activeTimerPlayers", JSON.stringify(activeTimerNames));
+    const activeTimerNames = Object. keys(App.data.activeTimers);
+    localStorage.setItem("activeTimerPlayers", JSON. stringify(activeTimerNames));
     console.log("Active timers saved:", activeTimerNames);
   } catch (e) {
-    console.warn("Failed to save timer state:", e);
+    console. warn("Failed to save timer state:", e);
   }
 };
 
@@ -172,16 +181,16 @@ App.restoreActiveTimers = function() {
     const activeTimerNames = JSON.parse(localStorage.getItem("activeTimerPlayers") || "[]");
     
     // Alle bestehenden Timer stoppen
-    Object.values(App.data.activeTimers).forEach(timer => {
+    Object.values(App.data.activeTimers). forEach(timer => {
       if (timer) clearInterval(timer);
     });
-    App.data.activeTimers = {};
+    App.data. activeTimers = {};
     
     // Timer für gespeicherte Spieler wiederherstellen
-    activeTimerNames.forEach(playerName => {
+    activeTimerNames. forEach(playerName => {
       if (App.data.selectedPlayers.find(p => p.name === playerName)) {
         App.startPlayerTimer(playerName);
-        console.log("Restored timer for:", playerName);
+        console. log("Restored timer for:", playerName);
       }
     });
   } catch (e) {
@@ -196,14 +205,14 @@ App.startPlayerTimer = function(playerName) {
   
   App.data.activeTimers[playerName] = setInterval(() => {
     App.data.playerTimes[playerName] = (App.data.playerTimes[playerName] || 0) + 1;
-    App.storage.savePlayerTimes();
+    App. storage.savePlayerTimes();
     
     // Update Display wenn auf Stats Seite
     if (App.storage.getCurrentPage() === "stats") {
-      const timeTd = document.querySelector(`.ice-time-cell[data-player="${playerName}"]`);
+      const timeTd = document. querySelector(`.ice-time-cell[data-player="${playerName}"]`);
       if (timeTd) {
-        const sec = App.data.playerTimes[playerName];
-        timeTd.textContent = App.helpers.formatTimeMMSS(sec);
+        const sec = App. data.playerTimes[playerName];
+        timeTd. textContent = App. helpers.formatTimeMMSS(sec);
         App.statsTable.updateIceTimeColors();
       }
     }
@@ -217,12 +226,12 @@ App.updateTimerVisuals = function() {
   // Timer visuelle Updates nur wenn auf Stats Seite
   if (App.storage.getCurrentPage() !== "stats") return;
   
-  Object.keys(App.data.activeTimers).forEach(playerName => {
+  Object.keys(App.data. activeTimers).forEach(playerName => {
     const row = document.querySelector(`tr[data-player="${playerName}"]`);
-    const nameTd = row?.querySelector("td:nth-child(2)");
+    const nameTd = row?. querySelector("td:nth-child(2)");
     
     if (row && nameTd) {
-      row.style.background = "#005c2f";
+      row.style. background = "#005c2f";
       nameTd.style.background = "#005c2f";
     }
   });

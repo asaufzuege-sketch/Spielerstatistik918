@@ -386,6 +386,14 @@ App.statsTable = {
     const player = td.dataset.player;
     const cat = td.dataset.cat;
     
+    // Check if this is a Goal or Shot event and delta is positive
+    if (delta > 0 && (cat === "Goals" || cat === "Shot")) {
+      // Start the Goal Map workflow
+      const eventType = cat === "Goals" ? 'goal' : 'shot';
+      App.startGoalMapWorkflow(player, eventType);
+      return;
+    }
+    
     if (!App.data.statsData[player]) {
       App.data.statsData[player] = {};
     }
@@ -516,28 +524,28 @@ App.statsTable = {
   
   // Reset nur für aktuelles Team
   reset() {
-    if (!App.teamSelection || !App.teamSelection.resetCurrentTeam()) {
-      // Fallback für direkten Reset
-      if (!confirm("Spieldaten zurücksetzen?")) return;
-      
-      App.data.statsData = {};
-      App.data.playerTimes = {};
-      
-      // Timer stoppen und aus LocalStorage entfernen
-      Object.values(App.data.activeTimers).forEach(timer => {
-        if (timer) clearInterval(timer);
-      });
-      App.data.activeTimers = {};
-      
-      // Teamspezifisch löschen
-      const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo().id : 'team1';
-      localStorage.removeItem(`statsData_${teamId}`);
-      localStorage.removeItem(`playerTimes_${teamId}`);
-      localStorage.removeItem(`activeTimerPlayers_${teamId}`);
-      localStorage.removeItem(`opponentShots_${teamId}`);
-      
-      this.render();
-      alert("Spieldaten zurückgesetzt.");
-    }
+    // Show confirmation dialog
+    if (!confirm("Spieldaten zurücksetzen?")) return;
+    
+    // Clear in-memory data
+    App.data.statsData = {};
+    App.data.playerTimes = {};
+    
+    // Timer stoppen und aus LocalStorage entfernen
+    Object.values(App.data.activeTimers).forEach(timer => {
+      if (timer) clearInterval(timer);
+    });
+    App.data.activeTimers = {};
+    
+    // Teamspezifisch löschen
+    const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo().id : 'team1';
+    localStorage.removeItem(`statsData_${teamId}`);
+    localStorage.removeItem(`playerTimes_${teamId}`);
+    localStorage.removeItem(`activeTimerPlayers_${teamId}`);
+    localStorage.removeItem(`opponentShots_${teamId}`);
+    
+    // Re-render table
+    this.render();
+    alert("Spieldaten zurückgesetzt.");
   }
 };

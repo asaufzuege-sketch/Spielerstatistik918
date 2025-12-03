@@ -1,8 +1,8 @@
-// Goal Value Modul - MIT SCROLLING aus Repo 909
+// Goal Value Modul - MIT SCROLLING und STICKY COLUMN
 App.goalValue = {
   container: null,
   clickTimers: {},
-  isUpdatingData: false, // NEU: Flag um Rekursion zu verhindern
+  isUpdatingData: false,
   
   init() {
     this.container = document.getElementById("goalValueContainer");
@@ -32,9 +32,8 @@ App.goalValue = {
     return {};
   },
   
-  setData(obj) {
-    // WICHTIG: Verhindere rekursive Aufrufe
-    if (this.isUpdatingData) {
+  setData(obj, forceWrite = false) {
+    if (this.isUpdatingData && !forceWrite) {
       console.warn("[Goal Value] setData blocked during update to prevent recursion");
       return;
     }
@@ -61,11 +60,10 @@ App.goalValue = {
   },
   
   formatValueNumber(v) {
-    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v.toFixed(1)));
+    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v.toFixed(1))); 
   },
   
   ensureDataForSeason() {
-    // WICHTIG: Verhindere rekursive Aufrufe
     if (this.isUpdatingData) {
       console.warn("[Goal Value] ensureDataForSeason blocked to prevent recursion");
       return;
@@ -96,6 +94,7 @@ App.goalValue = {
   render() {
     if (!this.container) return;
     
+    // Container leer, Scroll liegt auf #goalValueContainer (wie bei Season)
     this.container.innerHTML = "";
     
     const opponents = this.getOpponents();
@@ -106,11 +105,19 @@ App.goalValue = {
       ? Object.keys(App.data.seasonData).sort() 
       : App.data.selectedPlayers.map(p => p.name);
     
+    // Wrapper ohne eigenen overflow (nur fürs Layout)
+    const wrapper = document.createElement('div');
+    wrapper.className = 'table-scroll';
+    wrapper.style.width = '100%';
+    wrapper.style.boxSizing = 'border-box';
+    wrapper.style.position = 'relative';
+    
     const table = document.createElement("table");
     table.className = "goalvalue-table gv-no-patch";
     table.style.width = "auto";
     table.style.margin = "0";
-    table.style.borderCollapse = "collapse";
+    table.style.borderCollapse = "separate";
+    table.style.borderSpacing = "0";
     table.style.borderRadius = "8px";
     table.style.overflow = "hidden";
     table.style.tableLayout = "auto";
@@ -121,28 +128,19 @@ App.goalValue = {
     
     const thPlayer = document.createElement("th");
     thPlayer.textContent = "Spieler";
-    thPlayer.style.textAlign = "center";
-    thPlayer.style.padding = "8px 6px";
-    thPlayer.style.borderBottom = "2px solid #333";
-    thPlayer.style.minWidth = "160px";
-    thPlayer.style.whiteSpace = "nowrap";
+    thPlayer.className = "gv-name-header sticky-col";
     headerRow.appendChild(thPlayer);
     
     opponents.forEach((op, idx) => {
       const th = document.createElement("th");
-      th.style.padding = "6px";
-      th.style.borderBottom = "2px solid #333";
-      th.style.textAlign = "center";
       const input = document.createElement("input");
       input.type = "text";
-      input.value = op || `Gegner ${idx+1}`;
+      input.value = op || "";
+      input.placeholder = `Gegner ${idx+1}`;
       input.className = "goalvalue-title-input";
-      input.style.width = "100%";
-      input.style.boxSizing = "border-box";
-      input.style.textAlign = "center";
       input.addEventListener("change", () => {
         const arr = this.getOpponents();
-        arr[idx] = input.value || `Gegner ${idx+1}`;
+        arr[idx] = input.value || "";
         this.setOpponents(arr);
         this.render();
       });
@@ -152,9 +150,6 @@ App.goalValue = {
     
     const thValue = document.createElement("th");
     thValue.textContent = "Value";
-    thValue.style.padding = "6px";
-    thValue.style.borderBottom = "2px solid #333";
-    thValue.style.textAlign = "center";
     headerRow.appendChild(thValue);
     
     thead.appendChild(headerRow);
@@ -172,13 +167,7 @@ App.goalValue = {
       
       const tdName = document.createElement("td");
       tdName.textContent = name;
-      tdName.style.textAlign = "left";
-      tdName.style.padding = "6px";
-      tdName.style.fontWeight = "700";
-      tdName.style.minWidth = "160px";
-      tdName.style.whiteSpace = "nowrap";
-      tdName.style.overflow = "visible";
-      tdName.style.textOverflow = "clip";
+      tdName.className = "gv-name-cell sticky-col";
       row.appendChild(tdName);
       
       const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
@@ -186,9 +175,6 @@ App.goalValue = {
       
       opponents.forEach((_, i) => {
         const td = document.createElement("td");
-        td.style.padding = "6px";
-        td.style.textAlign = "center";
-        td.style.cursor = "pointer";
         td.dataset.player = name;
         td.dataset.oppIdx = String(i);
         td.className = "gv-data-cell";
@@ -213,7 +199,7 @@ App.goalValue = {
             const d = this.getData();
             if (!d[playerName]) d[playerName] = opponents.map(() => 0);
             d[playerName][oppIdx] = Math.max(0, Number(d[playerName][oppIdx] || 0) - 1);
-            this.setData(d);
+            this.setData(d, true);
             
             const nv = d[playerName][oppIdx];
             td.textContent = String(nv);
@@ -230,7 +216,7 @@ App.goalValue = {
               const d = this.getData();
               if (!d[playerName]) d[playerName] = opponents.map(() => 0);
               d[playerName][oppIdx] = Number(d[playerName][oppIdx] || 0) + 1;
-              this.setData(d);
+              this.setData(d, true);
               
               const nv = d[playerName][oppIdx];
               td.textContent = String(nv);
@@ -246,10 +232,9 @@ App.goalValue = {
       });
       
       const valueTd = document.createElement("td");
-      valueTd.style.padding = "6px";
-      valueTd.style.textAlign = "center";
       const val = this.computeValueForPlayer(name);
       valueTd.textContent = this.formatValueNumber(val);
+      valueTd.className = "gv-value-cell";
       valueTd.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
       valueTd.style.fontWeight = val !== 0 ? "700" : "400";
       row.appendChild(valueTd);
@@ -265,9 +250,7 @@ App.goalValue = {
     
     const labelTd = document.createElement("td");
     labelTd.textContent = "";
-    labelTd.style.padding = "6px";
-    labelTd.style.fontWeight = "700";
-    labelTd.style.textAlign = "center";
+    labelTd.className = "sticky-col";
     bottomRow.appendChild(labelTd);
     
     const scaleOptions = [];
@@ -280,12 +263,8 @@ App.goalValue = {
     
     opponents.forEach((_, i) => {
       const td = document.createElement("td");
-      td.style.padding = "6px";
-      td.style.textAlign = "center";
-      
       const select = document.createElement("select");
       select.className = "gv-scale-dropdown";
-      select.style.width = "80px";
       
       scaleOptions.forEach(opt => {
         const option = document.createElement('option');
@@ -295,7 +274,10 @@ App.goalValue = {
       });
       
       const b = this.getBottom();
-      if (b && typeof b[i] !== "undefined") select.value = String(b[i]);
+      const currentValue = b && typeof b[i] !== "undefined" ? b[i] : 0;
+      setTimeout(() => {
+        select.value = String(currentValue);
+      }, 0);
       
       select.addEventListener("change", () => {
         const arr = this.getBottom();
@@ -313,25 +295,15 @@ App.goalValue = {
     
     const emptyTd = document.createElement("td");
     emptyTd.textContent = "";
-    emptyTd.style.padding = "6px";
     bottomRow.appendChild(emptyTd);
     
     tbody.appendChild(bottomRow);
     table.appendChild(tbody);
     
-    // KRITISCH: Wrap table in scroll wrapper (aus Repo 909)
-    const wrapper = document.createElement('div');
-    wrapper.className = 'table-scroll';
-    wrapper.style.width = '100%';
-    wrapper.style.boxSizing = 'border-box';
-    wrapper.style.overflowX = 'auto';
-    wrapper.style.overflowY = 'hidden';
-    wrapper.style.WebkitOverflowScrolling = 'touch';
     wrapper.appendChild(table);
-    
     this.container.appendChild(wrapper);
     
-    console.log('Goal Value Table rendered with scroll wrapper');
+    console.log('Goal Value Table rendered with scroll wrapper and WORKING sticky columns');
   },
   
   updateValueCell(playerName, valueCellMap) {
@@ -356,7 +328,9 @@ App.goalValue = {
     const newData = {};
     playersList.forEach(n => newData[n] = opponents.map(() => 0));
     this.setData(newData);
+    
     this.setBottom(opponents.map(() => 0));
+    this.setOpponents(opponents.map(() => ""));
     
     this.render();
     alert("Goal Value zurückgesetzt.");

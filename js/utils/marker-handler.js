@@ -1,4 +1,4 @@
-// Marker & Image Sampling
+// Marker & Image Sampling – Version mit Spieler-Support
 App.markerHandler = {
   LONG_MARK_MS: 600,
   samplerCache: new WeakMap(),
@@ -15,7 +15,7 @@ App.markerHandler = {
     
     try {
       const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
       sampler.canvas = canvas;
       sampler.ctx = ctx;
       
@@ -58,7 +58,7 @@ App.markerHandler = {
         return p.r >= threshold && p.g >= threshold && p.b >= threshold;
       };
       
-      sampler.isNeutralWhiteAt = (xPct, yPct, threshold = 235, maxChannelDiff = 12) => {
+      sampler.isNeutralWhiteAt = (xPct, yPct, threshold = 245, maxChannelDiff = 8) => {
         const p = getPixel(xPct, yPct);
         if (!p || p.a === 0) return false;
         const maxC = Math.max(p.r, p.g, p.b);
@@ -93,7 +93,16 @@ App.markerHandler = {
     }
   },
   
-  createMarkerPercent(xPct, yPct, color, container, interactive = true) {
+  /**
+   * Marker mit Prozent-Koordinaten erstellen.
+   * @param {number} xPct 0–100
+   * @param {number} yPct 0–100
+   * @param {string} color CSS-Farbe
+   * @param {HTMLElement} container Box (field-box/goal-img-box)
+   * @param {boolean} interactive Klick zum Entfernen?
+   * @param {string|null} playerName optionaler Spielername
+   */
+  createMarkerPercent(xPct, yPct, color, container, interactive = true, playerName = null) {
     xPct = this.clampPct(xPct);
     yPct = this.clampPct(yPct);
     
@@ -108,6 +117,10 @@ App.markerHandler = {
     dot.style.borderRadius = "50%";
     dot.style.transform = "translate(-50%,-50%)";
     
+    if (playerName) {
+      dot.dataset.player = playerName;
+    }
+    
     if (interactive) {
       dot.addEventListener("click", (ev) => {
         ev.stopPropagation();
@@ -117,6 +130,8 @@ App.markerHandler = {
     
     container.style.position = container.style.position || "relative";
     container.appendChild(dot);
+    
+    return dot;
   },
   
   computeRenderedImageRect(imgEl) {

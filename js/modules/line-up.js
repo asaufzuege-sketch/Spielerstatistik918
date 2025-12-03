@@ -1,522 +1,321 @@
-// Line Up Module
+// LINE UP Module
 App.lineUp = {
-  container: null,
-  modalOpen: false,
-  currentPosition: null,
-  lineUpData: {},
-  playersOut: [],
   currentMode: 'normal', // 'normal', 'power', 'manuell'
   modes: ['normal', 'power', 'manuell'],
+  assignments: {}, // { 'L1-LW': 'Player Name', ...  }
+  playerOutList: [], // List of players marked as "out"
   
   init() {
-    this.container = document.getElementById("lineUpContainer");
-    this.loadData();
-    this.attachEventListeners();
-    this.updateModeDisplay();
-    this.render();
-    this.updatePlayerOutButton();
-  },
-  
-  loadData() {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
-    const savedData = localStorage.getItem(`lineUpData_${currentTeamId}`);
-    const savedPlayersOut = localStorage.getItem(`playersOut_${currentTeamId}`);
+    console.log("[LINE UP] Initializing.. .");
     
-    try {
-      this.lineUpData = savedData ? JSON.parse(savedData) : {};
-    } catch (e) {
-      this.lineUpData = {};
-    }
+    // Load saved assignments from localStorage
+    this. loadAssignments();
     
-    try {
-      this.playersOut = savedPlayersOut ? JSON.parse(savedPlayersOut) : [];
-    } catch (e) {
-      this.playersOut = [];
-    }
-  },
-  
-  saveData() {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
-    localStorage.setItem(`lineUpData_${currentTeamId}`, JSON.stringify(this.lineUpData));
-  },
-  
-  savePlayersOut() {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
-    localStorage.setItem(`playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
-  },
-  
-  getAvailablePlayers() {
-    // Get players from player selection that are active
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
-    
-    let players = [];
-    try {
-      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
-      players = savedPlayers.filter(p => p.active && p.name && p.name.trim() !== "");
-    } catch (e) {
-      players = [];
-    }
-    
-    // Fallback to App.data.selectedPlayers if available
-    if (players.length === 0 && App.data.selectedPlayers && App.data.selectedPlayers.length > 0) {
-      players = App.data.selectedPlayers.map(p => ({
-        number: p.num || "",
-        name: p.name,
-        position: "",
-        active: true
-      }));
-    }
-    
-    return players;
-  },
-  
-  attachEventListeners() {
-    // Navigation buttons
-    document.getElementById("lineUpPlayerSelectionBtn")?.addEventListener("click", () => {
-      App.showPage("selection");
-    });
-    
-    document.getElementById("lineUpGameDataBtn")?.addEventListener("click", () => {
-      App.showPage("stats");
-    });
-    
-    // Change Line button (merged Power Line + Team Line)
-    document.getElementById("lineUpChangeLineBtn")?.addEventListener("click", () => {
+    // Event listeners
+    document. getElementById("lineModeBtn")?.addEventListener("click", () => {
       this.changeLineMode();
     });
     
-    // Export PDF button
-    document.getElementById("lineUpExportPdfBtn")?.addEventListener("click", () => {
-      console.log("Export PDF clicked");
+    document.getElementById("playerOutBtn")?.addEventListener("click", () => {
+      this. showPlayerOutDialog();
     });
     
-    // Player Out button - toggle dropdown
-    document.getElementById("lineUpPlayerOutBtn")?.addEventListener("click", (e) => {
-      e.stopPropagation();
-      this.togglePlayerOutDropdown();
+    document.getElementById("backToStatsFromLineUpBtn")?.addEventListener("click", () => {
+      App.showPage("stats");
     });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-      const dropdown = document.getElementById("playerOutDropdown");
-      const playerOutBtn = document.getElementById("lineUpPlayerOutBtn");
-      const container = document.querySelector(".player-out-container");
-      
-      if (dropdown && dropdown.classList.contains("open")) {
-        if (!container.contains(e.target)) {
-          dropdown.classList.remove("open");
-        }
-      }
-    });
-    
-    // Position buttons - delegate click events
-    if (this.container) {
-      this.container.addEventListener("click", (e) => {
-        const posBtn = e.target.closest(".lineup-position");
-        if (posBtn) {
-          this.openPlayerModal(posBtn);
-        }
-      });
-    }
-    
-    // Modal buttons
-    document.getElementById("lineUpCancelModalBtn")?.addEventListener("click", () => {
-      this.closePlayerModal();
-    });
-    
-    document.getElementById("lineUpClearPositionBtn")?.addEventListener("click", () => {
-      this.clearCurrentPosition();
-    });
-    
-    // Modal overlay click to close
-    const modal = document.getElementById("lineUpPlayerModal");
-    if (modal) {
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-          this.closePlayerModal();
-        }
-      });
-    }
-  },
-  
-  togglePlayerOutDropdown() {
-    const dropdown = document.getElementById("playerOutDropdown");
-    if (!dropdown) return;
-    
-    dropdown.classList.toggle("open");
-    
-    if (dropdown.classList.contains("open")) {
-      this.renderPlayerOutList();
-    }
-  },
-  
-  renderPlayerOutList() {
-    const list = document.getElementById("playerOutList");
-    if (!list) return;
-    
-    const players = this.getAvailablePlayers();
-    
-    if (players.length === 0) {
-      list.innerHTML = '<div class="player-out-item" style="cursor: default; opacity: 0.7;">Keine aktiven Spieler</div>';
-      return;
-    }
-    
-    list.innerHTML = players.map(p => {
-      const isOut = this.playersOut.includes(p.name);
-      const number = p.number || '';
-      const displayText = number ? `${number} ${p.name}` : p.name;
-      
-      return `
-        <div class="player-out-item ${isOut ? 'is-out' : ''}" 
-             data-player="${App.helpers.escapeHtml(p.name)}">
-          ${App.helpers.escapeHtml(displayText)}
-        </div>
-      `;
-    }).join('');
-    
-    // Add click handlers
-    list.querySelectorAll(".player-out-item").forEach(item => {
-      item.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const playerName = item.dataset.player;
-        if (playerName) {
-          this.togglePlayerOut(playerName);
-        }
-      });
-    });
-  },
-  
-  togglePlayerOut(playerName) {
-    const index = this.playersOut.indexOf(playerName);
-    if (index > -1) {
-      // Reactivate player
-      this.playersOut.splice(index, 1);
-    } else {
-      // Mark as OUT
-      this.playersOut.push(playerName);
-    }
-    
-    this.savePlayersOut();
-    this.renderPlayerOutList();
-    this.updatePlayerOutButton();
-    this.render(); // Re-render LINE UP to update blocked players
-  },
-  
-  generatePositionKey(posBtn) {
-    const pos = posBtn.dataset.pos;
-    const line = posBtn.dataset.line;
-    const pair = posBtn.dataset.pair;
-    const formation = posBtn.dataset.formation;
-    
-    if (line) return `${pos}_line${line}`;
-    if (pair) return `${pos}_pair${pair}`;
-    if (formation) return `${pos}_form${formation}`;
-    return pos;
-  },
-  
-  openPlayerModal(posBtn) {
-    this.currentPosition = {
-      element: posBtn,
-      key: this.generatePositionKey(posBtn),
-      pos: posBtn.dataset.pos,
-      line: posBtn.dataset.line,
-      pair: posBtn.dataset.pair,
-      formation: posBtn.dataset.formation
-    };
-    
-    const modal = document.getElementById("lineUpPlayerModal");
-    const title = document.getElementById("lineUpModalTitle");
-    const playerList = document.getElementById("lineUpPlayerList");
-    
-    if (!modal || !playerList) return;
-    
-    // Set modal title
-    const posLabel = this.getPositionLabel(this.currentPosition);
-    if (title) {
-      title.textContent = `Spieler für ${posLabel} auswählen`;
-    }
-    
-    // Get available players (excluding OUT players)
-    const allPlayers = this.getAvailablePlayers();
-    const players = allPlayers.filter(p => !this.playersOut.includes(p.name));
-    
-    // Get already assigned players
-    const assignedPlayers = Object.values(this.lineUpData);
-    
-    // Render player list
-    playerList.innerHTML = players.map(player => {
-      const isAssigned = assignedPlayers.includes(player.name);
-      const isCurrentPosition = this.lineUpData[this.currentPosition.key] === player.name;
-      
-      return `
-        <div class="lineup-player-option ${isCurrentPosition ? 'selected' : ''} ${isAssigned && !isCurrentPosition ? 'assigned' : ''}"
-             data-player="${App.helpers.escapeHtml(player.name)}">
-          <span class="lineup-player-number">${App.helpers.escapeHtml(player.number || "")}</span>
-          <span class="lineup-player-name">${App.helpers.escapeHtml(player.name)}</span>
-          ${isAssigned && !isCurrentPosition ? '<span class="lineup-player-assigned">✓</span>' : ''}
-        </div>
-      `;
-    }).join('');
-    
-    // Add click handlers to player options
-    playerList.querySelectorAll(".lineup-player-option").forEach(option => {
-      option.addEventListener("click", () => {
-        const playerName = option.dataset.player;
-        this.assignPlayer(playerName);
-      });
-    });
-    
-    modal.style.display = "flex";
-    this.modalOpen = true;
-  },
-  
-  getPositionLabel(pos) {
-    const labels = {
-      "LW": "Left Wing",
-      "C": "Center",
-      "RW": "Right Wing",
-      "DL": "Defense Left",
-      "DR": "Defense Right",
-      "BP-W": "Box Play Wing",
-      "BP-C": "Box Play Center",
-      "BP-DL": "Box Play Defense Left",
-      "BP-DR": "Box Play Defense Right",
-      "PP-LW": "Power Play Left Wing",
-      "PP-C": "Power Play Center",
-      "PP-RW": "Power Play Right Wing",
-      "PP-DL": "Power Play Defense Left",
-      "PP-DR": "Power Play Defense Right"
-    };
-    
-    let label = labels[pos.pos] || pos.pos;
-    
-    if (pos.line) label += ` (Linie ${pos.line})`;
-    if (pos.pair) label += ` (Paar ${pos.pair})`;
-    if (pos.formation) label += ` (Formation ${pos.formation})`;
-    
-    return label;
-  },
-  
-  assignPlayer(playerName) {
-    if (!this.currentPosition) return;
-    
-    // Check if player is OUT
-    if (this.playersOut.includes(playerName)) {
-      alert('Dieser Spieler ist OUT und kann nicht aufgestellt werden.');
-      return;
-    }
-    
-    // Remove player from any previous position
-    Object.keys(this.lineUpData).forEach(key => {
-      if (this.lineUpData[key] === playerName) {
-        delete this.lineUpData[key];
-      }
-    });
-    
-    // Assign player to current position
-    this.lineUpData[this.currentPosition.key] = playerName;
-    
-    this.saveData();
-    this.render();
-    this.closePlayerModal();
-  },
-  
-  clearCurrentPosition() {
-    if (!this.currentPosition) return;
-    
-    delete this.lineUpData[this.currentPosition.key];
-    
-    this.saveData();
-    this.render();
-    this.closePlayerModal();
-  },
-  
-  closePlayerModal() {
-    const modal = document.getElementById("lineUpPlayerModal");
-    if (modal) {
-      modal.style.display = "none";
-    }
-    this.modalOpen = false;
-    this.currentPosition = null;
-  },
-  
-  getPlayerDisplayName(key, defaultLabel) {
-    const playerName = this.lineUpData[key];
-    if (!playerName) return defaultLabel;
-    
-    // Try to get player number
-    const players = this.getAvailablePlayers();
-    const player = players.find(p => p.name === playerName);
-    
-    // Display format: "Nr. Name" (e.g., "8 Diego Warth")
-    if (player) {
-      const number = player.number || '';
-      return number ? `${number} ${player.name}` : player.name;
-    }
-    
-    return playerName;
   },
   
   render() {
-    if (!this.container) return;
+    const container = document.getElementById("lineUpContainer");
+    if (!container) return;
     
-    // Update all position buttons with assigned players
-    const posButtons = this.container.querySelectorAll(".lineup-position");
-    posButtons.forEach(btn => {
-      const key = this.generatePositionKey(btn);
-      const defaultLabel = btn.textContent;
-      const pos = btn.dataset.pos;
-      const line = btn.dataset.line;
-      const pair = btn.dataset.pair;
-      const formation = btn.dataset.formation;
-      
-      // Generate default label based on position data
-      let label = pos;
-      if (line) label += ` ${line}`;
-      if (pair) label += ` ${pair}`;
-      if (formation) label += ` ${formation}`;
-      
-      const displayName = this.getPlayerDisplayName(key, label);
-      btn.textContent = displayName;
-      
-      // Add/remove assigned class
-      if (this.lineUpData[key]) {
-        btn.classList.add("assigned");
-      } else {
-        btn.classList.remove("assigned");
-      }
-    });
+    console.log("[LINE UP] Rendering in mode:", this.currentMode);
     
-    // Update stats (placeholder for now)
-    this.updateStats();
+    // Update mode button text
+    const modeBtn = document.getElementById("lineModeBtn");
+    if (modeBtn) {
+      modeBtn.textContent = this.currentMode. toUpperCase();
+    }
+    
+    // If in POWER mode, auto-generate assignments
+    if (this.currentMode === 'power') {
+      this.generatePowerLineup();
+    }
+    
+    container.innerHTML = "";
+    
+    // Forward Lines Section
+    const forwardSection = this.createForwardSection();
+    container. appendChild(forwardSection);
+    
+    // Defense Pairs Section
+    const defenseSection = this.createDefenseSection();
+    container.appendChild(defenseSection);
+    
+    // Box Play Section
+    const boxPlaySection = this.createBoxPlaySection();
+    container. appendChild(boxPlaySection);
+    
+    // Power Play Section
+    const powerPlaySection = this.createPowerPlaySection();
+    container.appendChild(powerPlaySection);
   },
   
-  updateStats() {
-    // Update line stats
+  createForwardSection() {
+    const section = document.createElement("div");
+    section.className = "lineup-section";
+    
+    const title = document.createElement("h2");
+    title. textContent = "FORWARD LINES";
+    title.className = "lineup-section-title";
+    section.appendChild(title);
+    
     for (let line = 1; line <= 4; line++) {
-      const lineEl = this.container?.querySelector(`.lineup-line[data-line="${line}"] .lineup-line-stats`);
-      if (lineEl) {
-        const stats = this.calculateForwardLineStats(line);
-        lineEl.textContent = this.formatForwardStats(stats);
-      }
+      const lineDiv = document.createElement("div");
+      lineDiv.className = "forward-line";
+      
+      const lineTitle = document.createElement("div");
+      lineTitle.className = "line-title";
+      lineTitle.textContent = `Line ${line}`;
+      lineDiv.appendChild(lineTitle);
+      
+      const positions = ['LW', 'C', 'RW'];
+      const positionsGrid = document.createElement("div");
+      positionsGrid.className = "positions-grid";
+      
+      positions.forEach(pos => {
+        const slot = this.createPositionSlot(`L${line}-${pos}`, pos);
+        positionsGrid.appendChild(slot);
+      });
+      
+      lineDiv.appendChild(positionsGrid);
+      
+      // Add line stats
+      const stats = this.calculateLineStats(line, 'forward');
+      const statsDiv = document.createElement("div");
+      statsDiv.className = "line-stats";
+      statsDiv.textContent = stats;
+      lineDiv. appendChild(statsDiv);
+      
+      section.appendChild(lineDiv);
     }
     
-    // Update defense pair stats
+    return section;
+  },
+  
+  createDefenseSection() {
+    const section = document.createElement("div");
+    section.className = "lineup-section";
+    
+    const title = document. createElement("h2");
+    title.textContent = "DEFENSE PAIRS";
+    title.className = "lineup-section-title";
+    section. appendChild(title);
+    
     for (let pair = 1; pair <= 3; pair++) {
-      const pairEl = this.container?.querySelector(`.lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
-      if (pairEl) {
-        const stats = this.calculateDefenseStats(pair);
-        pairEl.textContent = this.formatDefenseStats(stats);
+      const pairDiv = document. createElement("div");
+      pairDiv. className = "defense-pair";
+      
+      const pairTitle = document.createElement("div");
+      pairTitle.className = "line-title";
+      pairTitle.textContent = `Pair ${pair}`;
+      pairDiv. appendChild(pairTitle);
+      
+      const positions = ['DL', 'DR'];
+      const positionsGrid = document. createElement("div");
+      positionsGrid. className = "positions-grid";
+      
+      positions.forEach(pos => {
+        const slot = this. createPositionSlot(`D${pair}-${pos}`, pos);
+        positionsGrid.appendChild(slot);
+      });
+      
+      pairDiv.appendChild(positionsGrid);
+      
+      // Add pair stats
+      const stats = this.calculateLineStats(pair, 'defense');
+      const statsDiv = document.createElement("div");
+      statsDiv. className = "line-stats";
+      statsDiv.textContent = stats;
+      pairDiv.appendChild(statsDiv);
+      
+      section. appendChild(pairDiv);
+    }
+    
+    return section;
+  },
+  
+  createBoxPlaySection() {
+    const section = document.createElement("div");
+    section.className = "lineup-section";
+    
+    const title = document. createElement("h2");
+    title.textContent = "BOX PLAY";
+    title.className = "lineup-section-title";
+    section. appendChild(title);
+    
+    const unitsGrid = document. createElement("div");
+    unitsGrid. className = "special-teams-grid";
+    
+    for (let unit = 1; unit <= 2; unit++) {
+      const unitDiv = document.createElement("div");
+      unitDiv.className = "special-team-unit";
+      
+      const unitTitle = document.createElement("div");
+      unitTitle.className = "unit-title";
+      unitTitle.textContent = `Unit ${unit}`;
+      unitDiv.appendChild(unitTitle);
+      
+      const positionsGrid = document. createElement("div");
+      positionsGrid. className = "positions-grid-bp";
+      
+      ['BP-C', 'BP-W', 'BP-DL', 'BP-DR']. forEach(pos => {
+        const slot = this.createPositionSlot(`${pos}${unit}`, pos. replace('BP-', ''));
+        positionsGrid.appendChild(slot);
+      });
+      
+      unitDiv.appendChild(positionsGrid);
+      unitsGrid.appendChild(unitDiv);
+    }
+    
+    section.appendChild(unitsGrid);
+    return section;
+  },
+  
+  createPowerPlaySection() {
+    const section = document.createElement("div");
+    section.className = "lineup-section";
+    
+    const title = document.createElement("h2");
+    title.textContent = "POWER PLAY";
+    title.className = "lineup-section-title";
+    section.appendChild(title);
+    
+    const unitsGrid = document.createElement("div");
+    unitsGrid.className = "special-teams-grid";
+    
+    for (let unit = 1; unit <= 2; unit++) {
+      const unitDiv = document.createElement("div");
+      unitDiv.className = "special-team-unit";
+      
+      const unitTitle = document.createElement("div");
+      unitTitle.className = "unit-title";
+      unitTitle.textContent = `Unit ${unit}`;
+      unitDiv.appendChild(unitTitle);
+      
+      const positionsGrid = document.createElement("div");
+      positionsGrid.className = "positions-grid-pp";
+      
+      ['PP-C', 'PP-LW', 'PP-RW', 'PP-DL', 'PP-DR'].forEach(pos => {
+        const slot = this. createPositionSlot(`${pos}${unit}`, pos. replace('PP-', ''));
+        positionsGrid.appendChild(slot);
+      });
+      
+      unitDiv.appendChild(positionsGrid);
+      unitsGrid.appendChild(unitDiv);
+    }
+    
+    section.appendChild(unitsGrid);
+    return section;
+  },
+  
+  createPositionSlot(slotId, positionLabel) {
+    const slot = document.createElement("div");
+    slot.className = "position-slot";
+    slot.dataset.slotId = slotId;
+    
+    const label = document.createElement("div");
+    label.className = "position-label";
+    label. textContent = positionLabel;
+    slot.appendChild(label);
+    
+    const playerName = this.assignments[slotId] || "";
+    const isPlayerOut = this.playerOutList.includes(playerName);
+    
+    if (this.currentMode === 'manuell') {
+      // Editable mode
+      const input = document.createElement("input");
+      input.type = "text";
+      input. className = "position-input";
+      input.value = playerName;
+      input. placeholder = "Player";
+      input.addEventListener("change", (e) => {
+        this. assignments[slotId] = e.target.value. trim();
+        this.saveAssignments();
+      });
+      slot. appendChild(input);
+    } else {
+      // Display mode
+      const nameDiv = document.createElement("div");
+      nameDiv.className = "position-name";
+      nameDiv. textContent = playerName || "-";
+      
+      if (isPlayerOut) {
+        nameDiv.classList.add("player-out");
       }
+      
+      slot.appendChild(nameDiv);
     }
+    
+    return slot;
   },
   
-  // Get player season stats from App.data.seasonData
-  getPlayerSeasonStats(playerName) {
-    const seasonData = App.data.seasonData?.[playerName];
-    if (!seasonData) {
-      return { goalsPerGame: 0, assistsPerGame: 0, plusMinusPerGame: 0, shotsPerGame: 0 };
+  calculateLineStats(lineNumber, type) {
+    const players = [];
+    
+    if (type === 'forward') {
+      ['LW', 'C', 'RW'].forEach(pos => {
+        const playerName = this.assignments[`L${lineNumber}-${pos}`];
+        if (playerName) players.push(playerName);
+      });
+    } else if (type === 'defense') {
+      ['DL', 'DR'].forEach(pos => {
+        const playerName = this.assignments[`D${lineNumber}-${pos}`];
+        if (playerName) players.push(playerName);
+      });
     }
     
-    const games = seasonData.games || 0;
-    
-    // If player has no games, return zeros
-    if (games === 0) {
-      return { goalsPerGame: 0, assistsPerGame: 0, plusMinusPerGame: 0, shotsPerGame: 0 };
+    if (players.length === 0) {
+      return "-";
     }
     
-    return {
-      goalsPerGame: (seasonData.goals || 0) / games,
-      assistsPerGame: (seasonData.assists || 0) / games,
-      plusMinusPerGame: (seasonData.plusMinus || 0) / games,
-      shotsPerGame: (seasonData.shots || 0) / games
-    };
-  },
-  
-  // Calculate stats for forward line (LW, C, RW)
-  calculateForwardLineStats(lineNum) {
-    const positions = ['LW', 'C', 'RW'];
-    let totalGoalsPerGame = 0;
+    let totalGoals = 0;
+    let totalPoints = 0;
     let totalPlusMinus = 0;
-    let totalShotsPerGame = 0;
+    let totalShots = 0;
+    let totalGames = 0;
     let playerCount = 0;
     
-    positions.forEach(pos => {
-      const key = `${pos}_line${lineNum}`;
-      const playerName = this.lineUpData[key];
-      if (playerName) {
-        const stats = this.getPlayerSeasonStats(playerName);
-        totalGoalsPerGame += stats.goalsPerGame || 0;
-        totalPlusMinus += stats.plusMinusPerGame || 0;
-        totalShotsPerGame += stats.shotsPerGame || 0;
-        playerCount++;
+    players.forEach(playerName => {
+      const seasonData = App.data.seasonData[playerName];
+      if (seasonData) {
+        const games = Number(seasonData.games || 0);
+        if (games > 0) {
+          totalGoals += Number(seasonData.goals || 0);
+          totalPoints += (Number(seasonData. goals || 0) + Number(seasonData. assists || 0));
+          totalPlusMinus += Number(seasonData.plusMinus || 0);
+          totalShots += Number(seasonData.shots || 0);
+          totalGames += games;
+          playerCount++;
+        }
       }
     });
     
-    return {
-      // SUM of goals per game
-      goalsPerGame: totalGoalsPerGame,
-      // AVERAGE +/-
-      plusMinusPerGame: playerCount > 0 ? totalPlusMinus / playerCount : 0,
-      // AVERAGE shots
-      shotsPerGame: playerCount > 0 ? totalShotsPerGame / playerCount : 0
-    };
-  },
-  
-  // Calculate stats for defense pair (DL, DR)
-  calculateDefenseStats(pairNum) {
-    const positions = ['DL', 'DR'];
-    let totalPointsPerGame = 0; // POINTS instead of goals!
-    let totalPlusMinus = 0;
-    let totalShotsPerGame = 0;
-    let playerCount = 0;
+    if (playerCount === 0) {
+      return "-";
+    }
     
-    positions.forEach(pos => {
-      const key = `${pos}_pair${pairNum}`;
-      const playerName = this.lineUpData[key];
-      if (playerName) {
-        const stats = this.getPlayerSeasonStats(playerName);
-        // Points = Goals + Assists
-        totalPointsPerGame += (stats.goalsPerGame || 0) + (stats.assistsPerGame || 0);
-        totalPlusMinus += stats.plusMinusPerGame || 0;
-        totalShotsPerGame += stats.shotsPerGame || 0;
-        playerCount++;
-      }
-    });
+    const avgGames = totalGames / playerCount;
+    const goalsPerGame = avgGames > 0 ? (totalGoals / avgGames) : 0;
+    const pointsPerGame = avgGames > 0 ?  (totalPoints / avgGames) : 0;
+    const avgPlusMinus = totalPlusMinus / playerCount;
+    const shotsPerGame = avgGames > 0 ? (totalShots / avgGames) : 0;
     
-    return {
-      // SUM of points per game
-      pointsPerGame: totalPointsPerGame,
-      // AVERAGE +/-
-      plusMinusPerGame: playerCount > 0 ? totalPlusMinus / playerCount : 0,
-      // AVERAGE shots
-      shotsPerGame: playerCount > 0 ? totalShotsPerGame / playerCount : 0
-    };
-  },
-  
-  // Format for forward line: "1.6G / +0.1 / 2.4 Sh" or "1.6G / -0.1 / 2.4 Sh"
-  formatForwardStats(stats) {
-    const g = stats.goalsPerGame.toFixed(1);
-    const pm = stats.plusMinusPerGame >= 0 
-      ? `+${stats.plusMinusPerGame.toFixed(1)}` 
-      : stats.plusMinusPerGame.toFixed(1);
-    const sh = stats.shotsPerGame.toFixed(1);
-    return `${g}G / ${pm} / ${sh} Sh`;
-  },
-  
-  // Format for defense pair: "0.7P / +0.4 / 1.4 Sh" or "0.7P / -0.4 / 1.4 Sh"
-  formatDefenseStats(stats) {
-    const p = stats.pointsPerGame.toFixed(1);
-    const pm = stats.plusMinusPerGame >= 0 
-      ? `+${stats.plusMinusPerGame.toFixed(1)}` 
-      : stats.plusMinusPerGame.toFixed(1);
-    const sh = stats.shotsPerGame.toFixed(1);
-    return `${p}P / ${pm} / ${sh} Sh`;
+    if (type === 'forward') {
+      return `${goalsPerGame.toFixed(1)}G / ${avgPlusMinus >= 0 ? '+' : ''}${avgPlusMinus. toFixed(1)} / ${shotsPerGame.toFixed(1)} Sh`;
+    } else {
+      return `${pointsPerGame. toFixed(1)}P / ${avgPlusMinus >= 0 ? '+' : ''}${avgPlusMinus. toFixed(1)} / ${shotsPerGame.toFixed(1)} Sh`;
+    }
   },
   
   changeLineMode() {
@@ -524,37 +323,150 @@ App.lineUp = {
     const nextIndex = (currentIndex + 1) % this.modes.length;
     this.currentMode = this.modes[nextIndex];
     
-    // Modus-Anzeige unter Titel aktualisieren
-    this.updateModeDisplay();
-    
-    // Optional: Aufstellung basierend auf Modus anpassen
+    console.log("[LINE UP] Mode changed to:", this. currentMode);
+    this.saveAssignments();
     this.render();
   },
   
-  updateModeDisplay() {
-    const modeLabel = document.getElementById('lineupModeLabel');
-    if (modeLabel) {
-      const modeNames = {
-        'normal': 'NORMAL',
-        'power': 'POWER',
-        'manuell': 'MANUELL'
+  generatePowerLineup() {
+    console.log("[LINE UP] Generating POWER lineup...");
+    
+    const ASSIST_TO_GOAL_RATIO_THRESHOLD = 1.5;
+    const CENTER_POSITION_FREQUENCY = 3;
+    
+    const players = App.data.selectedPlayers. map(p => {
+      const seasonData = App.data. seasonData[p. name];
+      return {
+        name: p.name,
+        num: p.num,
+        seasonData: seasonData,
+        position: p.position || null
       };
-      modeLabel.textContent = modeNames[this.currentMode];
+    }). filter(p => p.seasonData && Number(p.seasonData.games || 0) > 0);
+    
+    const centers = [];
+    const wings = [];
+    const defense = [];
+    
+    players.forEach(p => {
+      const games = Number(p. seasonData.games || 0);
+      const goals = Number(p.seasonData.goals || 0);
+      const assists = Number(p.seasonData.assists || 0);
+      const plusMinus = Number(p.seasonData. plusMinus || 0);
+      const shots = Number(p.seasonData.shots || 0);
+      
+      const avgGoals = games > 0 ? goals / games : 0;
+      const avgAssists = games > 0 ? assists / games : 0;
+      const avgPlusMinus = games > 0 ?  plusMinus / games : 0;
+      
+      const isLikelyDefense = (avgAssists > avgGoals * ASSIST_TO_GOAL_RATIO_THRESHOLD && avgPlusMinus > 0);
+      
+      if (isLikelyDefense) {
+        p.mvpScore = (goals * 1) + (assists * 1. 5) + (plusMinus * 2) + (shots * 0.3);
+        defense.push(p);
+      } else {
+        p.mvpScore = (goals * 2. 2) + (assists * 1.2) + (plusMinus * 0.9) + (shots * 0.6);
+        wings. push(p);
+      }
+    });
+    
+    wings.sort((a, b) => b. mvpScore - a.mvpScore);
+    defense.sort((a, b) => b.mvpScore - a.mvpScore);
+    
+    const forwardPool = wings.slice();
+    wings. length = 0;
+    centers.length = 0;
+    
+    forwardPool.forEach((p, idx) => {
+      if ((idx + 1) % CENTER_POSITION_FREQUENCY === 2) {
+        centers.push(p);
+      } else {
+        wings.push(p);
+      }
+    });
+    
+    this.assignments = {};
+    
+    for (let line = 1; line <= 4; line++) {
+      if (centers[line - 1]) this.assignments[`L${line}-C`] = centers[line - 1]. name;
+      if (wings[(line - 1) * 2]) this. assignments[`L${line}-LW`] = wings[(line - 1) * 2].name;
+      if (wings[(line - 1) * 2 + 1]) this.assignments[`L${line}-RW`] = wings[(line - 1) * 2 + 1].name;
+    }
+    
+    for (let pair = 1; pair <= 3; pair++) {
+      if (defense[(pair - 1) * 2]) this.assignments[`D${pair}-DL`] = defense[(pair - 1) * 2].name;
+      if (defense[(pair - 1) * 2 + 1]) this.assignments[`D${pair}-DR`] = defense[(pair - 1) * 2 + 1].name;
+    }
+    
+    for (let unit = 1; unit <= 2; unit++) {
+      if (centers[unit - 1]) this. assignments[`PP-C${unit}`] = centers[unit - 1].name;
+      if (wings[(unit - 1) * 2]) this.assignments[`PP-LW${unit}`] = wings[(unit - 1) * 2].name;
+      if (wings[(unit - 1) * 2 + 1]) this.assignments[`PP-RW${unit}`] = wings[(unit - 1) * 2 + 1].name;
+      if (defense[(unit - 1) * 2]) this.assignments[`PP-DL${unit}`] = defense[(unit - 1) * 2]. name;
+      if (defense[(unit - 1) * 2 + 1]) this.assignments[`PP-DR${unit}`] = defense[(unit - 1) * 2 + 1].name;
+    }
+    
+    for (let unit = 1; unit <= 2; unit++) {
+      if (centers[unit + 1]) this. assignments[`BP-C${unit}`] = centers[unit + 1].name;
+      if (wings[unit + 3]) this.assignments[`BP-W${unit}`] = wings[unit + 3].name;
+      if (defense[unit + 1]) this.assignments[`BP-DL${unit}`] = defense[unit + 1]. name;
+      if (defense[unit + 2]) this.assignments[`BP-DR${unit}`] = defense[unit + 2].name;
+    }
+    
+    this.saveAssignments();
+  },
+  
+  showPlayerOutDialog() {
+    const allPlayers = new Set();
+    Object.values(this. assignments).forEach(name => {
+      if (name && name. trim()) allPlayers.add(name);
+    });
+    
+    const playersArray = Array. from(allPlayers).sort();
+    
+    if (playersArray.length === 0) {
+      alert("No players assigned yet.");
+      return;
+    }
+    
+    const selected = prompt(
+      "Player Out - Enter player names separated by commas:\n\n" +
+      "Available players:\n" + playersArray.join(", ") +
+      "\n\nCurrently out: " + (this. playerOutList.join(", ") || "none"),
+      this.playerOutList.join(", ")
+    );
+    
+    if (selected !== null) {
+      this.playerOutList = selected. split(",").map(s => s.trim()).filter(s => s. length > 0);
+      this.saveAssignments();
+      this.render();
     }
   },
   
-  updatePlayerOutButton() {
-    const btn = document.querySelector('#lineUpPage .lineup-player-out-btn');
-    if (!btn) return;
-    
-    const outCount = this.playersOut.length;
-    
-    if (outCount > 0) {
-      btn.textContent = `Player out (${outCount})`;
-      btn.classList.add('has-players-out');
-    } else {
-      btn.innerHTML = 'Player out <span class="player-out-dot"></span>';
-      btn.classList.remove('has-players-out');
+  saveAssignments() {
+    const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo()?.id : 'team1';
+    const data = {
+      mode: this.currentMode,
+      assignments: this.assignments,
+      playerOutList: this.playerOutList
+    };
+    localStorage.setItem(`lineUpData_${teamId}`, JSON. stringify(data));
+    console.log("[LINE UP] Assignments saved");
+  },
+  
+  loadAssignments() {
+    const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo()?.id : 'team1';
+    const saved = localStorage. getItem(`lineUpData_${teamId}`);
+    if (saved) {
+      try {
+        const data = JSON. parse(saved);
+        this.currentMode = data.mode || 'normal';
+        this.assignments = data.assignments || {};
+        this.playerOutList = data. playerOutList || [];
+        console.log("[LINE UP] Assignments loaded");
+      } catch (e) {
+        console. error("[LINE UP] Failed to load assignments:", e);
+      }
     }
   }
 };
