@@ -720,13 +720,24 @@ App.lineUp = {
   
   updateModeDisplay() {
     const modeLabel = document.getElementById('lineupModeLabel');
+    const changeLineBtn = document.getElementById('lineUpChangeLineBtn');
+    
+    const modeConfig = {
+      'normal': { name: 'NORMAL', color: '#FFD400', textColor: '#000' },
+      'power': { name: 'POWER', color: '#FF6A00', textColor: '#fff' },
+      'manuell': { name: 'MANUELL', color: '#FFEEA5', textColor: '#000' }
+    };
+    
+    const config = modeConfig[this.currentMode];
+    
     if (modeLabel) {
-      const modeNames = {
-        'normal': 'NORMAL',
-        'power': 'POWER',
-        'manuell': 'MANUELL'
-      };
-      modeLabel.textContent = modeNames[this.currentMode];
+      modeLabel.textContent = config.name;
+      modeLabel.style.color = config.color;
+    }
+    
+    if (changeLineBtn) {
+      changeLineBtn.style.background = config.color;
+      changeLineBtn.style.color = config.textColor;
     }
   },
   
