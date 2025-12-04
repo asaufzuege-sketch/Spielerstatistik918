@@ -20,14 +20,10 @@ App.lineUp = {
   loadData() {
     const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
     const currentTeamId = currentTeamInfo?.id || 'team1';
-    const savedData = localStorage.getItem(`lineUpData_${currentTeamId}`);
     const savedPlayersOut = localStorage.getItem(`playersOut_${currentTeamId}`);
     
-    try {
-      this.lineUpData = savedData ? JSON.parse(savedData) : {};
-    } catch (e) {
-      this.lineUpData = {};
-    }
+    // Load mode-specific lineup data
+    this.loadDataForMode(this.currentMode);
     
     try {
       this.playersOut = savedPlayersOut ? JSON.parse(savedPlayersOut) : [];
@@ -37,9 +33,26 @@ App.lineUp = {
   },
   
   saveData() {
+    // Save to mode-specific storage
+    this.saveDataForMode(this.currentMode);
+  },
+  
+  saveDataForMode(mode) {
     const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
     const currentTeamId = currentTeamInfo?.id || 'team1';
-    localStorage.setItem(`lineUpData_${currentTeamId}`, JSON.stringify(this.lineUpData));
+    localStorage.setItem(`lineUpData_${mode}_${currentTeamId}`, JSON.stringify(this.lineUpData));
+  },
+  
+  loadDataForMode(mode) {
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedData = localStorage.getItem(`lineUpData_${mode}_${currentTeamId}`);
+    
+    try {
+      this.lineUpData = savedData ? JSON.parse(savedData) : {};
+    } catch (e) {
+      this.lineUpData = {};
+    }
   },
   
   savePlayersOut() {
@@ -701,22 +714,22 @@ App.lineUp = {
   },
   
   changeLineMode() {
+    // Aktuelle Aufstellung für den aktuellen Modus speichern
+    this.saveDataForMode(this.currentMode);
+    
+    // Zum nächsten Modus wechseln
     const currentIndex = this.modes.indexOf(this.currentMode);
     const nextIndex = (currentIndex + 1) % this.modes.length;
     this.currentMode = this.modes[nextIndex];
     
-    // Modus-Anzeige unter Titel aktualisieren (ruft auch updateModeColors() auf)
+    // Modus-Anzeige aktualisieren (ruft auch updateModeColors() auf)
     this.updateModeDisplay();
     
-    // Auto-fill wenn in POWER Modus gewechselt wird
+    // Aufstellung für den neuen Modus laden/generieren
     if (this.currentMode === 'power') {
-      this.autoFillPowerMode();
-    }
-    
-    // Alle Positionen leeren wenn in MANUELL Modus gewechselt wird
-    if (this.currentMode === 'manuell') {
-      this.lineUpData = {};
-      this.saveData();
+      this.autoFillPowerMode(); // Immer neu generieren
+    } else {
+      this.loadDataForMode(this.currentMode); // Gespeicherte laden
     }
     
     // Optional: Aufstellung basierend auf Modus anpassen
