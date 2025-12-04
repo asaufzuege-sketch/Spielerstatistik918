@@ -20,6 +20,22 @@ App.seasonTable = {
     document.getElementById("resetSeasonBtn")?.addEventListener("click", () => {
       this.reset();
     });
+    
+    // Add Time Modal Event Listeners
+    document.getElementById("addTimeCancelBtn")?.addEventListener("click", () => {
+      this.closeAddTimeDialog();
+    });
+    
+    document.getElementById("addTimeConfirmBtn")?.addEventListener("click", () => {
+      this.handleAddTime();
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById("addTimeModal")?.addEventListener("click", (e) => {
+      if (e.target.id === "addTimeModal") {
+        this.closeAddTimeDialog();
+      }
+    });
   },
 
   // NEU: Position des Spielers aus Player Selection holen
@@ -270,6 +286,13 @@ App.seasonTable = {
         // NEU: Position Zelle bekommt spezielle Klasse
         if (cellIdx === 2) {
           td.className = "pos-cell";
+        }
+        // NEU: Time Cell (index 19) bekommt Long Press Handler
+        if (cellIdx === 19) {
+          td.className = "season-time-cell";
+          td.dataset.player = r.name;
+          td.dataset.timeSeconds = r.raw.timeSeconds;
+          this.attachLongPressHandler(td, r.name, r.raw.timeSeconds);
         }
         tr.appendChild(td);
       });
@@ -661,5 +684,138 @@ App.seasonTable = {
     localStorage.removeItem("seasonData");
     this.render();
     alert("Season-Daten gelöscht.");
+  },
+  
+  attachLongPressHandler(timeCell, playerName, currentTimeSeconds) {
+    let pressTimer = null;
+    let isLongPress = false;
+    
+    // Visual feedback for clickability
+    timeCell.style.cursor = "pointer";
+    
+    // Mouse events
+    timeCell.addEventListener("mousedown", (e) => {
+      isLongPress = false;
+      pressTimer = setTimeout(() => {
+        isLongPress = true;
+        this.openAddTimeDialog(playerName, currentTimeSeconds);
+        
+        // Haptic feedback if available
+        if (navigator.vibrate) {
+          navigator.vibrate(100);
+        }
+      }, 500); // 500ms for long press
+    });
+    
+    timeCell.addEventListener("mouseup", () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    });
+    
+    timeCell.addEventListener("mouseleave", () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    });
+    
+    // Touch events for mobile
+    timeCell.addEventListener("touchstart", (e) => {
+      isLongPress = false;
+      pressTimer = setTimeout(() => {
+        isLongPress = true;
+        this.openAddTimeDialog(playerName, currentTimeSeconds);
+        
+        // Haptic feedback if available
+        if (navigator.vibrate) {
+          navigator.vibrate(100);
+        }
+      }, 500); // 500ms for long press
+    }, { passive: true });
+    
+    timeCell.addEventListener("touchend", () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
+    timeCell.addEventListener("touchcancel", () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+  },
+  
+  openAddTimeDialog(playerName, currentTimeSeconds) {
+    const modal = document.getElementById("addTimeModal");
+    if (!modal) return;
+    
+    document.getElementById("addTimePlayerName").textContent = playerName;
+    document.getElementById("addTimeCurrentTime").textContent = App.helpers.formatTimeMMSS(currentTimeSeconds);
+    document.getElementById("addTimeInput").value = "";
+    
+    // Store current player name and time for later use
+    modal.dataset.playerName = playerName;
+    modal.dataset.currentTime = currentTimeSeconds;
+    
+    modal.style.display = "flex";
+    
+    // Focus on input field
+    setTimeout(() => {
+      document.getElementById("addTimeInput")?.focus();
+    }, 100);
+  },
+  
+  closeAddTimeDialog() {
+    const modal = document.getElementById("addTimeModal");
+    if (modal) {
+      modal.style.display = "none";
+      modal.dataset.playerName = "";
+      modal.dataset.currentTime = "";
+    }
+  },
+  
+  handleAddTime() {
+    const modal = document.getElementById("addTimeModal");
+    const playerName = modal.dataset.playerName;
+    const currentSeconds = parseInt(modal.dataset.currentTime) || 0;
+    const input = document.getElementById("addTimeInput").value.trim();
+    
+    if (!input) {
+      alert("Bitte geben Sie eine Zeit ein (MM:SS)");
+      return;
+    }
+    
+    // Parse input time
+    const additionalSeconds = App.helpers.parseTimeToSeconds(input);
+    
+    if (additionalSeconds <= 0) {
+      alert("Bitte geben Sie eine gültige Zeit ein (z.B. 1:30 für 1 Minute 30 Sekunden)");
+      return;
+    }
+    
+    const newTime = currentSeconds + additionalSeconds;
+    
+    // Update player's season time
+    if (App.data.seasonData[playerName]) {
+      App.data.seasonData[playerName].timeSeconds = newTime;
+      
+      // Save to storage
+      App.storage.saveSeasonData();
+      
+      // Close modal
+      this.closeAddTimeDialog();
+      
+      // Re-render table
+      this.render();
+      
+      console.log(`Added ${additionalSeconds}s to ${playerName}. New time: ${newTime}s`);
+    } else {
+      alert("Spieler nicht gefunden");
+    }
   }
 };
