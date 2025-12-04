@@ -53,6 +53,20 @@ App.lineUp = {
     } catch (e) {
       this.lineUpData = {};
     }
+    
+    // Remove any players that are marked as OUT
+    let changed = false;
+    Object.keys(this.lineUpData).forEach(posKey => {
+      if (this.playersOut.includes(this.lineUpData[posKey])) {
+        delete this.lineUpData[posKey];
+        changed = true;
+      }
+    });
+    
+    // Save if we removed any players
+    if (changed) {
+      this.saveDataForMode(mode);
+    }
   },
   
   savePlayersOut() {
@@ -218,12 +232,59 @@ App.lineUp = {
     this.renderPlayerOutList();
     this.updatePlayerOutButton();
     
-    // NEU: Im POWER Modus sofort Aufstellung neu generieren
+    // Gesperrten Spieler aus ALLEN Modi entfernen
+    this.removePlayerFromAllModes(playerName);
+    
+    // Im POWER Modus: Aufstellung neu generieren
     if (this.currentMode === 'power') {
       this.autoFillPowerMode();
     }
     
+    // Im NORMAL Modus: PP und BP neu berechnen
+    if (this.currentMode === 'normal') {
+      this.calculateSpecialTeams();
+    }
+    
     this.render(); // Re-render LINE UP to update blocked players
+  },
+  
+  removePlayerFromAllModes(playerName) {
+    const modes = ['normal', 'power', 'manuell'];
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    
+    modes.forEach(mode => {
+      const key = `lineUpData_${mode}_${currentTeamId}`;
+      const savedData = localStorage.getItem(key);
+      
+      if (savedData) {
+        try {
+          const lineUpData = JSON.parse(savedData);
+          let changed = false;
+          
+          // Spieler aus allen Positionen entfernen
+          Object.keys(lineUpData).forEach(posKey => {
+            if (lineUpData[posKey] === playerName) {
+              delete lineUpData[posKey];
+              changed = true;
+            }
+          });
+          
+          if (changed) {
+            localStorage.setItem(key, JSON.stringify(lineUpData));
+          }
+        } catch (e) {
+          console.error('Error removing player from mode:', mode, e);
+        }
+      }
+    });
+    
+    // Aktuelle lineUpData auch aktualisieren
+    Object.keys(this.lineUpData).forEach(posKey => {
+      if (this.lineUpData[posKey] === playerName) {
+        delete this.lineUpData[posKey];
+      }
+    });
   },
   
   generatePositionKey(posBtn) {
@@ -499,7 +560,7 @@ App.lineUp = {
     return { goals, plusMinus, shots };
   },
   
-  autoFillPowerMode() {
+  calculateSpecialTeams() {
     const playersWithStats = this.getPlayersWithMVPPoints();
     const activePlayers = playersWithStats.filter(p => !this.playersOut.includes(p.name));
     
@@ -509,9 +570,7 @@ App.lineUp = {
     const defense = activePlayers.filter(p => p.position === 'D').sort((a, b) => b.mvpPoints - a.mvpPoints);
     const allForwards = [...centers, ...wings].sort((a, b) => b.mvpPoints - a.mvpPoints);
     
-    this.lineUpData = {};
-    
-    // === POWERPLAY ZUERST BESETZEN ===
+    // === POWERPLAY BESETZEN ===
     const ppAssigned = new Set();
     
     // PP 1
@@ -558,7 +617,7 @@ App.lineUp = {
       ppAssigned.add(ppRW2.name);
     }
     
-    // === PP DEFENSE (wie bisher) ===
+    // === PP DEFENSE ===
     if (defense[0]) {
       this.lineUpData['PP-DL_form1'] = defense[0].name;
     }
@@ -572,7 +631,34 @@ App.lineUp = {
       this.lineUpData['PP-DR_form2'] = defense[3].name;
     }
     
-    // === NORMALE LINIEN (wie bisher, unverändert) ===
+    // === BOX PLAY ===
+    if (centers[0]) this.lineUpData['BP-C_form1'] = centers[0].name;
+    if (centers[1]) this.lineUpData['BP-C_form2'] = centers[1].name;
+    if (wings[0]) this.lineUpData['BP-W_form1'] = wings[0].name;
+    if (wings[1]) this.lineUpData['BP-W_form2'] = wings[1].name;
+    if (defense[0]) this.lineUpData['BP-DL_form1'] = defense[0].name;
+    if (defense[1]) this.lineUpData['BP-DR_form1'] = defense[1].name;
+    if (defense[2]) this.lineUpData['BP-DL_form2'] = defense[2].name;
+    if (defense[3]) this.lineUpData['BP-DR_form2'] = defense[3].name;
+    
+    this.saveData();
+  },
+  
+  autoFillPowerMode() {
+    const playersWithStats = this.getPlayersWithMVPPoints();
+    const activePlayers = playersWithStats.filter(p => !this.playersOut.includes(p.name));
+    
+    // Alle nach MVP sortieren
+    const centers = activePlayers.filter(p => p.position === 'C').sort((a, b) => b.mvpPoints - a.mvpPoints);
+    const wings = activePlayers.filter(p => p.position === 'W').sort((a, b) => b.mvpPoints - a.mvpPoints);
+    const defense = activePlayers.filter(p => p.position === 'D').sort((a, b) => b.mvpPoints - a.mvpPoints);
+    
+    this.lineUpData = {};
+    
+    // Calculate PP and BP using the new function
+    this.calculateSpecialTeams();
+    
+    // === NORMALE LINIEN ===
     // C 1-4
     if (centers[0]) this.lineUpData['C_line1'] = centers[0].name;
     if (centers[1]) this.lineUpData['C_line2'] = centers[1].name;
@@ -596,16 +682,6 @@ App.lineUp = {
     if (defense[3]) this.lineUpData['DR_pair2'] = defense[3].name;
     if (defense[4]) this.lineUpData['DL_pair3'] = defense[4].name;
     if (defense[5]) this.lineUpData['DR_pair3'] = defense[5].name;
-    
-    // === BOX PLAY (wie bisher) ===
-    if (centers[0]) this.lineUpData['BP-C_form1'] = centers[0].name;
-    if (centers[1]) this.lineUpData['BP-C_form2'] = centers[1].name;
-    if (wings[0]) this.lineUpData['BP-W_form1'] = wings[0].name;
-    if (wings[1]) this.lineUpData['BP-W_form2'] = wings[1].name;
-    if (defense[0]) this.lineUpData['BP-DL_form1'] = defense[0].name;
-    if (defense[1]) this.lineUpData['BP-DR_form1'] = defense[1].name;
-    if (defense[2]) this.lineUpData['BP-DL_form2'] = defense[2].name;
-    if (defense[3]) this.lineUpData['BP-DR_form2'] = defense[3].name;
     
     this.saveData();
   },
@@ -691,6 +767,9 @@ App.lineUp = {
     // Aufstellung für den neuen Modus laden/generieren
     if (this.currentMode === 'power') {
       this.autoFillPowerMode(); // Immer neu generieren
+    } else if (this.currentMode === 'normal') {
+      this.loadDataForMode(this.currentMode); // Gespeicherte laden
+      this.calculateSpecialTeams(); // PP und BP neu berechnen
     } else {
       this.loadDataForMode(this.currentMode); // Gespeicherte laden
     }
