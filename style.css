@@ -1563,13 +1563,7 @@ tr[data-player].dragging {
 }
 
 .player-out-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: #ff5252;
-  border-radius: 50%;
-  margin-left: 6px;
-  vertical-align: middle;
+  display: none;
 }
 
 /* Export PDF Button - same color as Export CSV */
@@ -1835,13 +1829,17 @@ tr[data-player].dragging {
   max-width: 400px;
   max-height: 80vh;
   overflow-y: auto;
+copilot/update-ui-line-up-page
+  margin: auto;
   margin: 0 auto;
+copilot/change-line-mode-functionality
   text-align: center;
 }
 
 .lineup-player-list {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
   margin: 15px 0;
   max-height: 400px;
@@ -1858,6 +1856,9 @@ tr[data-player].dragging {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
+  max-width: 300px;
+  margin: 5px auto;
 }
 
 .lineup-player-option:hover {

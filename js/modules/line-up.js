@@ -700,7 +700,7 @@ App.lineUp = {
     const nextIndex = (currentIndex + 1) % this.modes.length;
     this.currentMode = this.modes[nextIndex];
     
-    // Modus-Anzeige unter Titel aktualisieren
+    // Modus-Anzeige unter Titel aktualisieren (ruft auch updateModeColors() auf)
     this.updateModeDisplay();
     
     // Auto-fill wenn in POWER Modus gewechselt wird
@@ -739,6 +739,32 @@ App.lineUp = {
       changeLineBtn.style.background = config.color;
       changeLineBtn.style.color = config.textColor;
     }
+    this.updateModeColors();
+  },
+  
+  updateModeColors() {
+    const colors = {
+      'normal': '#FFD800',
+      'power': '#FF6A00',
+      'manuell': '#FFE97F'
+    };
+    
+    const color = colors[this.currentMode];
+    
+    // Change Line Button Farbe ändern
+    const changeLineBtn = document.getElementById('lineUpChangeLineBtn');
+    if (changeLineBtn) {
+      changeLineBtn.style.backgroundColor = color;
+      changeLineBtn.style.color = '#000'; // Schwarzer Text für bessere Lesbarkeit
+    }
+    
+    // Modus-Label Farbe ändern
+    const modeLabel = document.getElementById('lineupModeLabel');
+    if (modeLabel) {
+      modeLabel.style.color = color;
+      modeLabel.style.webkitTextFillColor = color;
+      modeLabel.style.background = 'none';
+    }
   },
   
   updatePlayerOutButton() {
@@ -751,7 +777,7 @@ App.lineUp = {
       btn.textContent = `Player out (${outCount})`;
       btn.classList.add('has-players-out');
     } else {
-      btn.innerHTML = 'Player out <span class="player-out-dot"></span>';
+      btn.textContent = 'Player out'; // Kein roter Punkt mehr!
       btn.classList.remove('has-players-out');
     }
   }
