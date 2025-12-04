@@ -744,9 +744,9 @@ App.lineUp = {
   
   updateModeColors() {
     const colors = {
-      'normal': '#FFD800',
+      'normal': '#FFD400',
       'power': '#FF6A00',
-      'manuell': '#FFE97F'
+      'manuell': '#FFEEA5'
     };
     
     const color = colors[this.currentMode];
