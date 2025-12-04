@@ -713,7 +713,7 @@ App.lineUp = {
   },
   
   autoFillNormalMode() {
-    const { centers, wings, defense, allForwards } = this.getActiveSortedPlayers();
+    const { centers, wings, defense } = this.getActiveSortedPlayers();
     
     this.lineUpData = {};
     
