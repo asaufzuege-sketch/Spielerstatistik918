@@ -1524,12 +1524,12 @@ tr[data-player].dragging {
 
 /* Change Line Button (merged Team Line + Power Line) - same color as Export Season */
 .lineup-change-line-btn {
-  background: #44bb91 !important;
+  background: #44bb91;
   color: #fff;
 }
 
 .lineup-change-line-btn:hover {
-  background: #3a9d7a !important;
+  filter: brightness(0.9);
 }
 
 /* Player Out Button */
