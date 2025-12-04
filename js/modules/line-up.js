@@ -560,7 +560,7 @@ App.lineUp = {
     return { goals, plusMinus, shots };
   },
   
-  calculateSpecialTeams() {
+  getActiveSortedPlayers() {
     const playersWithStats = this.getPlayersWithMVPPoints();
     const activePlayers = playersWithStats.filter(p => !this.playersOut.includes(p.name));
     
@@ -569,6 +569,12 @@ App.lineUp = {
     const wings = activePlayers.filter(p => p.position === 'W').sort((a, b) => b.mvpPoints - a.mvpPoints);
     const defense = activePlayers.filter(p => p.position === 'D').sort((a, b) => b.mvpPoints - a.mvpPoints);
     const allForwards = [...centers, ...wings].sort((a, b) => b.mvpPoints - a.mvpPoints);
+    
+    return { centers, wings, defense, allForwards };
+  },
+  
+  calculateSpecialTeams() {
+    const { centers, wings, defense, allForwards } = this.getActiveSortedPlayers();
     
     // === POWERPLAY BESETZEN ===
     const ppAssigned = new Set();
@@ -645,13 +651,7 @@ App.lineUp = {
   },
   
   autoFillPowerMode() {
-    const playersWithStats = this.getPlayersWithMVPPoints();
-    const activePlayers = playersWithStats.filter(p => !this.playersOut.includes(p.name));
-    
-    // Alle nach MVP sortieren
-    const centers = activePlayers.filter(p => p.position === 'C').sort((a, b) => b.mvpPoints - a.mvpPoints);
-    const wings = activePlayers.filter(p => p.position === 'W').sort((a, b) => b.mvpPoints - a.mvpPoints);
-    const defense = activePlayers.filter(p => p.position === 'D').sort((a, b) => b.mvpPoints - a.mvpPoints);
+    const { centers, wings, defense } = this.getActiveSortedPlayers();
     
     this.lineUpData = {};
     
