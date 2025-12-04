@@ -12,7 +12,7 @@ App.lineUp = {
     this.container = document.getElementById("lineUpContainer");
     this.loadData();
     this.attachEventListeners();
-    this.updateModeDisplay();
+    this.updateModeDisplay(); // This calls updateModeColors()
     this.render();
     this.updatePlayerOutButton();
   },
@@ -226,6 +226,11 @@ App.lineUp = {
   },
   
   openPlayerModal(posBtn) {
+    // NUR im Manuell-Modus erlauben!
+    if (this.currentMode !== 'manuell') {
+      return; // Nichts tun in Power/Normal Modus
+    }
+    
     this.currentPosition = {
       element: posBtn,
       key: this.generatePositionKey(posBtn),
@@ -720,49 +725,38 @@ App.lineUp = {
   
   updateModeDisplay() {
     const modeLabel = document.getElementById('lineupModeLabel');
-    const changeLineBtn = document.getElementById('lineUpChangeLineBtn');
-    
-    const modeConfig = {
-      'normal': { name: 'NORMAL', color: '#FFD400', textColor: '#000' },
-      'power': { name: 'POWER', color: '#FF6A00', textColor: '#fff' },
-      'manuell': { name: 'MANUELL', color: '#FFEEA5', textColor: '#000' }
-    };
-    
-    const config = modeConfig[this.currentMode];
-    
     if (modeLabel) {
-      modeLabel.textContent = config.name;
-      modeLabel.style.color = config.color;
+      const modeNames = {
+        'normal': 'NORMAL',
+        'power': 'POWER',
+        'manuell': 'MANUELL'
+      };
+      modeLabel.textContent = modeNames[this.currentMode];
     }
-    
-    if (changeLineBtn) {
-      changeLineBtn.style.background = config.color;
-      changeLineBtn.style.color = config.textColor;
-    }
-    this.updateModeColors();
+    this.updateModeColors(); // Farben aktualisieren!
   },
   
   updateModeColors() {
     const colors = {
-      'normal': '#FFD400',
-      'power': '#FF6A00',
-      'manuell': '#FFEEA5'
+      'normal': { bg: '#FFD400', text: '#000000' },
+      'power': { bg: '#FF6A00', text: '#ffffff' },
+      'manuell': { bg: '#FFEEA5', text: '#000000' }
     };
     
-    const color = colors[this.currentMode];
+    const config = colors[this.currentMode];
     
     // Change Line Button Farbe ändern
     const changeLineBtn = document.getElementById('lineUpChangeLineBtn');
     if (changeLineBtn) {
-      changeLineBtn.style.backgroundColor = color;
-      changeLineBtn.style.color = '#000'; // Schwarzer Text für bessere Lesbarkeit
+      changeLineBtn.style.backgroundColor = config.bg;
+      changeLineBtn.style.color = config.text;
     }
     
     // Modus-Label Farbe ändern
     const modeLabel = document.getElementById('lineupModeLabel');
     if (modeLabel) {
-      modeLabel.style.color = color;
-      modeLabel.style.webkitTextFillColor = color;
+      modeLabel.style.color = config.bg;
+      modeLabel.style.webkitTextFillColor = config.bg;
       modeLabel.style.background = 'none';
     }
   },
