@@ -87,6 +87,9 @@ App.statsTable = {
       // Timer Toggle auf Name-Click (aber nicht auf drag handle)
       this.attachTimerToggle(nameTd, tr, timeTd, p.name);
       
+      // Time Cell Click Handlers (+10s single click, -10s double click)
+      this.attachTimeClickHandlers(timeTd, p.name);
+      
       // Drag Handlers nur auf das Drag Handle
       const dragHandle = nameTd.querySelector('.drag-handle');
       this.attachDragHandlers(tr, dragHandle);
@@ -345,6 +348,74 @@ App.statsTable = {
         this.saveActiveTimersState();
       }
     });
+  },
+  
+  attachTimeClickHandlers(timeTd, playerName) {
+    let clickTimer = null;
+    
+    // Single Click: +10 seconds
+    timeTd.addEventListener("click", (e) => {
+      // Prevent time change during drag
+      if (this.dragState.isDragging) {
+        e.preventDefault();
+        return;
+      }
+      
+      if (clickTimer) {
+        // Double click will be handled by dblclick handler
+        return;
+      }
+      
+      clickTimer = setTimeout(() => {
+        // Single click: +10 seconds
+        const currentTime = App.data.playerTimes[playerName] || 0;
+        const newTime = currentTime + 10;
+        App.data.playerTimes[playerName] = newTime;
+        timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
+        
+        // Save to storage
+        this.saveToStorage();
+        
+        // Update ice time colors
+        this.updateIceTimeColors();
+        
+        // Update totals
+        this.updateTotals();
+        
+        clickTimer = null;
+      }, 250); // 250ms delay to detect double click
+    });
+    
+    // Double Click: -10 seconds
+    timeTd.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+      
+      // Prevent time change during drag
+      if (this.dragState.isDragging) return;
+      
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+      }
+      
+      // Double click: -10 seconds (minimum 0)
+      const currentTime = App.data.playerTimes[playerName] || 0;
+      const newTime = Math.max(0, currentTime - 10);
+      App.data.playerTimes[playerName] = newTime;
+      timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
+      
+      // Save to storage
+      this.saveToStorage();
+      
+      // Update ice time colors
+      this.updateIceTimeColors();
+      
+      // Update totals
+      this.updateTotals();
+    });
+    
+    // Add visual feedback for clickability
+    timeTd.style.cursor = "pointer";
   },
   
   attachValueClickHandlers() {
