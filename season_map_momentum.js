@@ -450,6 +450,7 @@
     const clearLSOnReset = () => {
       try {
         localStorage.removeItem('seasonMapTimeData');
+        localStorage.removeItem('seasonMapTimeDataWithPlayers');
         localStorage.removeItem('seasonMapMarkers'); // Clear goal markers too
       } catch (e) {}
       goalMarkers = []; // Clear in-memory markers

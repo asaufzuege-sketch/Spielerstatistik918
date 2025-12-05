@@ -362,23 +362,31 @@ App.seasonMap = {
     // Time Buttons zurücksetzen
     document.querySelectorAll("#seasonMapPage .time-btn").forEach(btn => btn.textContent = "0");
     
+    // LocalStorage Daten löschen
+    localStorage.removeItem("seasonMapMarkers");
+    localStorage.removeItem("seasonMapTimeData");
+    localStorage.removeItem("seasonMapTimeDataWithPlayers");
+    
     // Momentum Container leeren (korrekter ID: seasonMapMomentum)
     const momentumContainer = document.getElementById("seasonMapMomentum");
     if (momentumContainer) {
       momentumContainer.innerHTML = "";
     }
     
-    // LocalStorage Daten löschen
-    localStorage.removeItem("seasonMapMarkers");
-    localStorage.removeItem("seasonMapTimeData");
-    localStorage.removeItem("seasonMapTimeDataWithPlayers");
+    // Momentum-Grafik neu rendern mit leeren Daten
+    // Timeout benötigt, damit localStorage-Änderungen vor dem Rendering propagiert werden
+    if (typeof window.renderSeasonMomentumGraphic === 'function') {
+      setTimeout(() => {
+        window.renderSeasonMomentumGraphic();
+      }, 50);
+    }
     
     // Goal Area Labels zurücksetzen (falls vorhanden)
     document.querySelectorAll("#seasonMapPage .goal-area-label").forEach(label => {
       label.textContent = "0";
     });
     
-    console.log('[Season Map] Reset completed - Momentum container cleared');
+    console.log('[Season Map] Reset completed - Momentum container cleared and re-rendered');
     
     alert("Season Map zurückgesetzt.");
   }
