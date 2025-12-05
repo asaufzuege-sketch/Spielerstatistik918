@@ -268,6 +268,28 @@
     return vals;
   }
 
+  function build12ValuesScored(periods) {
+    const vals = [];
+    for (let p = 0; p < 3; p++) {
+      const period = periods[p] || { scored:[0,0,0,0], conceded:[0,0,0,0] };
+      for (let b = 0; b < 4; b++) {
+        vals.push(Number(period.scored[b] || 0) || 0);
+      }
+    }
+    return vals;
+  }
+
+  function build12ValuesConceded(periods) {
+    const vals = [];
+    for (let p = 0; p < 3; p++) {
+      const period = periods[p] || { scored:[0,0,0,0], conceded:[0,0,0,0] };
+      for (let b = 0; b < 4; b++) {
+        vals.push(Number(period.conceded[b] || 0) || 0);
+      }
+    }
+    return vals;
+  }
+
   function catmullRom2bezier(points) {
     if (!points || points.length === 0) return '';
     if (points.length === 1) return `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
@@ -300,6 +322,12 @@
     return MIDLINE_Y - t * topSpace;
   }
 
+  function valueToYConceded(v, maxScale) {
+    const t = v / maxScale;
+    const bottomSpace = BOTTOM_GUIDE_Y - MIDLINE_Y;
+    return MIDLINE_Y + t * bottomSpace;
+  }
+
   function renderSeasonMomentumGraphic() {
     const root = getSeasonMapRoot();
     if (!root) return;
@@ -318,21 +346,32 @@
     container.innerHTML = '';
 
     const periods = readPeriods();
-    const values12 = build12Values(periods);
+    const scoredValues = build12ValuesScored(periods);
+    const concededValues = build12ValuesConceded(periods);
     console.debug('[momentum] periods used for rendering:', periods);
-    console.debug('[momentum] computed values12:', values12);
+    console.debug('[momentum] scored values:', scoredValues);
+    console.debug('[momentum] conceded values:', concededValues);
 
-    const absMax = Math.max(1, ...values12.map(v => Math.abs(v)));
-    const maxScale = Math.max(absMax, MAX_DISPLAY);
+    const maxScored = Math.max(1, ...scoredValues);
+    const maxConceded = Math.max(1, ...concededValues);
+    const maxScale = Math.max(maxScored, maxConceded, MAX_DISPLAY);
 
-    const pts = values12.map((v,i) => {
+    const scoredPts = scoredValues.map((v,i) => {
       const minute = BUCKET_MINUTES[i];
       const x = minuteToX(minute);
       const y = valueToY(v, maxScale);
       return { idx: i, minute, x, y, v };
     });
 
-    const chron = pts.slice().sort((a,b) => a.minute - b.minute);
+    const concededPts = concededValues.map((v,i) => {
+      const minute = BUCKET_MINUTES[i];
+      const x = minuteToX(minute);
+      const y = valueToYConceded(v, maxScale);
+      return { idx: i, minute, x, y, v };
+    });
+
+    const scoredChron = scoredPts.slice().sort((a,b) => a.minute - b.minute);
+    const concededChron = concededPts.slice().sort((a,b) => a.minute - b.minute);
 
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS,'svg');
@@ -392,58 +431,86 @@
     bottomLine.setAttribute('stroke', '#d6d6d6'); bottomLine.setAttribute('stroke-width', '2');
     svg.appendChild(bottomLine);
 
-    // Areas
-    const posPts = chron.map(p => ({ x: p.x, y: p.v > 0 ? p.y : MIDLINE_Y }));
-    const negPts = chron.map(p => ({ x: p.x, y: p.v < 0 ? p.y : MIDLINE_Y }));
-
-    const posD = catmullRom2bezier(posPts);
-    const negD = catmullRom2bezier(negPts);
-
-    if (values12.some(v => v > 0)) {
-      const closed = posD + ` L ${chron[chron.length-1].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} L ${chron[0].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} Z`;
-      const pathPos = document.createElementNS(svgNS,'path');
-      pathPos.setAttribute('d', closed);
-      pathPos.setAttribute('fill', '#1fb256');
-      pathPos.setAttribute('stroke', '#7a7a7a');
-      pathPos.setAttribute('stroke-width', '0.9');
-      pathPos.setAttribute('stroke-linejoin', 'round');
-      svg.appendChild(pathPos);
-    }
-    if (values12.some(v => v < 0)) {
-      const closed = negD + ` L ${chron[chron.length-1].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} L ${chron[0].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} Z`;
-      const pathNeg = document.createElementNS(svgNS,'path');
-      pathNeg.setAttribute('d', closed);
-      pathNeg.setAttribute('fill', '#f07d7d');
-      pathNeg.setAttribute('stroke', '#7a7a7a');
-      pathNeg.setAttribute('stroke-width', '0.9');
-      pathNeg.setAttribute('stroke-linejoin', 'round');
-      svg.appendChild(pathNeg);
+    // Green area for scored (above midline)
+    if (scoredValues.some(v => v > 0)) {
+      const scoredD = catmullRom2bezier(scoredChron.map(p => ({ x: p.x, y: p.y })));
+      const closedScored = scoredD + ` L ${scoredChron[scoredChron.length-1].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} L ${scoredChron[0].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} Z`;
+      const pathScored = document.createElementNS(svgNS,'path');
+      pathScored.setAttribute('d', closedScored);
+      pathScored.setAttribute('fill', '#1fb256');
+      pathScored.setAttribute('stroke', '#7a7a7a');
+      pathScored.setAttribute('stroke-width', '0.9');
+      pathScored.setAttribute('stroke-linejoin', 'round');
+      svg.appendChild(pathScored);
     }
 
-    // Outline
-    const outlineD = catmullRom2bezier(chron.map(p => ({ x: p.x, y: p.y })));
-    const outline = document.createElementNS(svgNS,'path');
-    outline.setAttribute('d', outlineD);
-    outline.setAttribute('fill', 'none');
-    outline.setAttribute('stroke', '#666');
-    outline.setAttribute('stroke-width', '2.2');
-    outline.setAttribute('stroke-linejoin', 'round');
-    outline.setAttribute('stroke-linecap', 'round');
-    svg.appendChild(outline);
+    // Red area for conceded (below midline)
+    if (concededValues.some(v => v > 0)) {
+      const concededD = catmullRom2bezier(concededChron.map(p => ({ x: p.x, y: p.y })));
+      const closedConceded = concededD + ` L ${concededChron[concededChron.length-1].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} L ${concededChron[0].x.toFixed(2)} ${MIDLINE_Y.toFixed(2)} Z`;
+      const pathConceded = document.createElementNS(svgNS,'path');
+      pathConceded.setAttribute('d', closedConceded);
+      pathConceded.setAttribute('fill', '#f07d7d');
+      pathConceded.setAttribute('stroke', '#7a7a7a');
+      pathConceded.setAttribute('stroke-width', '0.9');
+      pathConceded.setAttribute('stroke-linejoin', 'round');
+      svg.appendChild(pathConceded);
+    }
 
-    // Marker (GRAU statt Grün/Rot)
-    chron.forEach(p => {
-      const c = document.createElementNS(svgNS,'circle');
-      c.setAttribute('cx', p.x.toFixed(2));
-      c.setAttribute('cy', valueToY(p.v, maxScale).toFixed(2));
-      c.setAttribute('r', '3');
-      c.setAttribute('fill', '#808080'); // GRAU für alle Punkte
-      c.setAttribute('opacity', '0.95');
-      svg.appendChild(c);
+    // Outline for scored (green line)
+    if (scoredValues.some(v => v > 0)) {
+      const outlineScored = catmullRom2bezier(scoredChron.map(p => ({ x: p.x, y: p.y })));
+      const outlineScoredPath = document.createElementNS(svgNS,'path');
+      outlineScoredPath.setAttribute('d', outlineScored);
+      outlineScoredPath.setAttribute('fill', 'none');
+      outlineScoredPath.setAttribute('stroke', '#0d7a36');
+      outlineScoredPath.setAttribute('stroke-width', '2.2');
+      outlineScoredPath.setAttribute('stroke-linejoin', 'round');
+      outlineScoredPath.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(outlineScoredPath);
+    }
+
+    // Outline for conceded (red line)
+    if (concededValues.some(v => v > 0)) {
+      const outlineConceded = catmullRom2bezier(concededChron.map(p => ({ x: p.x, y: p.y })));
+      const outlineConcededPath = document.createElementNS(svgNS,'path');
+      outlineConcededPath.setAttribute('d', outlineConceded);
+      outlineConcededPath.setAttribute('fill', 'none');
+      outlineConcededPath.setAttribute('stroke', '#c04040');
+      outlineConcededPath.setAttribute('stroke-width', '2.2');
+      outlineConcededPath.setAttribute('stroke-linejoin', 'round');
+      outlineConcededPath.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(outlineConcededPath);
+    }
+
+    // Green markers for scored
+    scoredChron.forEach(p => {
+      if (p.v > 0) {
+        const c = document.createElementNS(svgNS,'circle');
+        c.setAttribute('cx', p.x.toFixed(2));
+        c.setAttribute('cy', p.y.toFixed(2));
+        c.setAttribute('r', '3');
+        c.setAttribute('fill', '#0d7a36');
+        c.setAttribute('opacity', '0.95');
+        svg.appendChild(c);
+      }
+    });
+
+    // Red markers for conceded
+    concededChron.forEach(p => {
+      if (p.v > 0) {
+        const c = document.createElementNS(svgNS,'circle');
+        c.setAttribute('cx', p.x.toFixed(2));
+        c.setAttribute('cy', p.y.toFixed(2));
+        c.setAttribute('r', '3');
+        c.setAttribute('fill', '#c04040');
+        c.setAttribute('opacity', '0.95');
+        svg.appendChild(c);
+      }
     });
 
     container.appendChild(svg);
-    console.info('[momentum] rendered chart with gray markers');
+    console.info('[momentum] rendered chart with separate scored (green) and conceded (red) lines');
   }
 
   function setupAutoUpdate() {

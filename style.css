@@ -361,18 +361,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
-/* Season Map - EXAKT gleiche Größe wie Goal Map */
+/* Season Map - Images fill the box like Goal Map */
 #seasonMapPage .img-box {
   position: relative;
   width: 100%;
-  max-width: 400px;
-  aspect-ratio: 4/3;
 }
 
 #seasonMapPage .img-box img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   display: block;
 }
 
