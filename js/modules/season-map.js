@@ -374,6 +374,7 @@ App.seasonMap = {
     }
     
     // Momentum-Grafik neu rendern mit leeren Daten
+    // Timeout benötigt, damit localStorage-Änderungen vor dem Rendering propagiert werden
     if (typeof window.renderSeasonMomentumGraphic === 'function') {
       setTimeout(() => {
         window.renderSeasonMomentumGraphic();
