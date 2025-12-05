@@ -168,7 +168,7 @@
   // Rest der ursprünglichen Funktionen...
   function readFromLocalStorageFallback() {
     try {
-      const raw = localStorage.getItem('seasonMapTimeData') || localStorage.getItem('timeData') || null;
+      const raw = localStorage.getItem('seasonMapTimeData') || null;
       console.log('[Season Map] Geladene Momentum-Daten (raw):', raw);
       if (!raw) return null;
       const obj = JSON.parse(raw);
