@@ -233,6 +233,13 @@ App.seasonMap = {
     
     App.showPage("seasonMap");
     this.render();
+    
+    // Momentum-Grafik aktualisieren
+    if (typeof window.renderSeasonMomentumGraphic === 'function') {
+      setTimeout(() => {
+        window.renderSeasonMomentumGraphic();
+      }, 100);
+    }
   },
   
   // liest die Zeitdaten aus der Goal Map Box
