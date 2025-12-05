@@ -361,12 +361,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
-/* Season Map - Goal images fill their boxes completely */
+/* Season Map - Goal images use same sizing as Goal Map */
 #seasonMapPage .img-box img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
+}
+
+#seasonMapPage .img-box {
+  position: relative;
 }
 
 /* Marker: ALLE dunkelgrau, scharfer Rand, gleiche Optik für Feld & Tor */

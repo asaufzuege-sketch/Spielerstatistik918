@@ -107,17 +107,20 @@ App.seasonMap = {
           const torImg = torBox.querySelector('img');
           if (torImg) {
             try {
-              const torCS = getComputedStyle(torImg);
-              const torObjectFit = torCS.getPropertyValue('object-fit') || 'contain';
-              seasonImg.style.objectFit = torObjectFit;
-              
+              // Kopiere die tatsächliche gerenderte Größe
               const torRect = torImg.getBoundingClientRect();
+              
               if (torRect && torRect.width && torRect.height) {
-                seasonImg.style.width = `${Math.round(torRect.width)}px`;
-                seasonImg.style.height = `${Math.round(torRect.height)}px`;
-                seasonBox.style.width = `${Math.round(torRect.width)}px`;
-                seasonBox.style.height = `${Math.round(torRect.height)}px`;
-                seasonBox.style.overflow = 'hidden';
+                // Setze EXAKT die gleiche Größe
+                seasonImg.style.width = `${torRect.width}px`;
+                seasonImg.style.height = `${torRect.height}px`;
+                seasonImg.style.objectFit = 'contain';
+                
+                // Box auch anpassen
+                seasonBox.style.width = `${torRect.width}px`;
+                seasonBox.style.height = `${torRect.height}px`;
+                seasonBox.style.position = 'relative';
+                seasonBox.style.overflow = 'visible';
               }
             } catch (e) {
               seasonImg.style.objectFit = 'contain';
