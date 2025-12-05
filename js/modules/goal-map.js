@@ -286,8 +286,8 @@ App.goalMap = {
     let timeData = JSON.parse(localStorage.getItem("timeData")) || {};
     let timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
     
-    this.timeTrackingBox.querySelectorAll(".period").forEach(period => {
-      const periodNum = period.dataset.period || `p${Array.from(this.timeTrackingBox.querySelectorAll('.period')).indexOf(period)}`;
+    this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
+      const periodNum = period.dataset.period || `p${pIdx}`;
       const buttons = period.querySelectorAll(".time-btn");
       
       buttons.forEach((btn, idx) => {
