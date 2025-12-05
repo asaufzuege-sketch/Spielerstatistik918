@@ -291,12 +291,6 @@ App.goalMap = {
       const buttons = period.querySelectorAll(".time-btn");
       
       buttons.forEach((btn, idx) => {
-        // NEU: Prüfen ob Event-Listener bereits angehängt wurden
-        if (btn.dataset.timeHandlerAttached === 'true') {
-          return; // Überspringe diesen Button
-        }
-        btn.dataset.timeHandlerAttached = 'true'; // Markiere als initialisiert
-        
         const key = `${periodNum}_${idx}`;
         let displayValue = 0;
         
@@ -310,6 +304,12 @@ App.goalMap = {
         }
         
         btn.textContent = displayValue;
+        
+        // NEU: Prüfen ob Event-Listener bereits angehängt wurden
+        if (btn.dataset.timeHandlerAttached === 'true') {
+          return; // Überspringe Event-Listener Registrierung
+        }
+        btn.dataset.timeHandlerAttached = 'true'; // Markiere als initialisiert
         
         let lastTap = 0;
         let clickTimeout = null;
