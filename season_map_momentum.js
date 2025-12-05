@@ -268,26 +268,29 @@
     return vals;
   }
 
-  function build12ValuesScored(periods) {
+  /**
+   * Helper function to extract 12 values from periods for a specific property
+   * @param {Array} periods - Array of period objects
+   * @param {string} property - Property name ('scored' or 'conceded')
+   * @returns {Array} Array of 12 values
+   */
+  function build12ValuesForProperty(periods, property) {
     const vals = [];
     for (let p = 0; p < 3; p++) {
       const period = periods[p] || { scored:[0,0,0,0], conceded:[0,0,0,0] };
       for (let b = 0; b < 4; b++) {
-        vals.push(Number(period.scored[b] || 0) || 0);
+        vals.push(Number(period[property][b] || 0) || 0);
       }
     }
     return vals;
   }
 
+  function build12ValuesScored(periods) {
+    return build12ValuesForProperty(periods, 'scored');
+  }
+
   function build12ValuesConceded(periods) {
-    const vals = [];
-    for (let p = 0; p < 3; p++) {
-      const period = periods[p] || { scored:[0,0,0,0], conceded:[0,0,0,0] };
-      for (let b = 0; b < 4; b++) {
-        vals.push(Number(period.conceded[b] || 0) || 0);
-      }
-    }
-    return vals;
+    return build12ValuesForProperty(periods, 'conceded');
   }
 
   function catmullRom2bezier(points) {
@@ -322,6 +325,12 @@
     return MIDLINE_Y - t * topSpace;
   }
 
+  /**
+   * Calculate Y coordinate for conceded values (below midline)
+   * @param {number} v - The value to position
+   * @param {number} maxScale - Maximum scale for normalization
+   * @returns {number} Y coordinate below midline
+   */
   function valueToYConceded(v, maxScale) {
     const t = v / maxScale;
     const bottomSpace = BOTTOM_GUIDE_Y - MIDLINE_Y;
