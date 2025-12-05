@@ -363,15 +363,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Season Map - Images fill the box like Goal Map */
 #seasonMapPage .img-box {
-  position: relative;
-  width: 100%;
-}
-
-#seasonMapPage .img-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
+  min-height: 200px;  /* Mindesthöhe damit Bilder sichtbar sind */
 }
 
 /* Marker-Punkte korrekt positionieren */
