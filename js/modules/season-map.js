@@ -235,6 +235,7 @@ App.seasonMap = {
     this.render();
     
     // Momentum-Grafik aktualisieren
+    // Timeout benötigt, damit Page-Wechsel, Rendering und localStorage-Änderungen abgeschlossen sind
     if (typeof window.renderSeasonMomentumGraphic === 'function') {
       setTimeout(() => {
         window.renderSeasonMomentumGraphic();
