@@ -298,6 +298,24 @@ App.seasonTable = {
         if (cellIdx === 2) {
           td.className = "pos-cell";
         }
+        
+        // Klickbare Statistik-Zellen mit Click/Doppelklick Handler
+        const clickableStatMap = {
+          3: 'games',
+          4: 'goals',
+          5: 'assists',
+          7: 'plusMinus',
+          9: 'shots',
+          14: 'penaltys',
+          16: 'faceOffs',
+          17: 'faceOffsWon'
+        };
+        
+        if (clickableStatMap[cellIdx]) {
+          td.dataset.stat = clickableStatMap[cellIdx];
+          this.attachStatClickHandlers(td, r.name, clickableStatMap[cellIdx]);
+        }
+        
         // NEU: Time Cell (index 19) bekommt Long Press Handler
         if (cellIdx === 19) {
           td.className = "season-time-cell";
@@ -694,6 +712,64 @@ App.seasonTable = {
     localStorage.removeItem("seasonData");
     this.render();
     alert("Season-Daten gelöscht.");
+  },
+  
+  // Klick-Handler für Statistik-Zellen hinzufügen
+  attachStatClickHandlers(statCell, playerName, statKey) {
+    let clickTimer = null;
+    
+    // Cursor-Style für klickbare Zellen
+    statCell.style.cursor = 'pointer';
+    
+    statCell.addEventListener('click', (e) => {
+      if (clickTimer) return;
+      
+      clickTimer = setTimeout(() => {
+        clickTimer = null;
+        
+        // +1 zum Wert
+        const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
+        const newValue = currentValue + 1;
+        
+        // Wert speichern
+        if (!App.data.seasonData[playerName]) {
+          App.data.seasonData[playerName] = {};
+        }
+        App.data.seasonData[playerName][statKey] = newValue;
+        
+        // Speichern und UI aktualisieren
+        App.storage.saveSeasonData();
+        this.render();
+      }, 250);
+    });
+    
+    statCell.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      
+      // -1 vom Wert (bei +/- auch negativ erlaubt)
+      const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
+      let newValue;
+      
+      if (statKey === 'plusMinus') {
+        // +/- kann negativ werden
+        newValue = currentValue - 1;
+      } else {
+        // Andere Werte minimum 0
+        newValue = Math.max(0, currentValue - 1);
+      }
+      
+      // Wert speichern
+      if (!App.data.seasonData[playerName]) {
+        App.data.seasonData[playerName] = {};
+      }
+      App.data.seasonData[playerName][statKey] = newValue;
+      
+      // Speichern und UI aktualisieren
+      App.storage.saveSeasonData();
+      this.render();
+    });
   },
   
   attachLongPressHandler(timeCell, playerName, currentTimeSeconds) {
