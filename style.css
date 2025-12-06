@@ -471,8 +471,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonPage {
   width: 100%;
-  max-width: 1100px;  /* Wie .page */
-  margin: 0 auto;  /* Zentrieren */
+  max-width: none;
 }
 
 #seasonPage h1 {
@@ -481,18 +480,23 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 #seasonPage .page-top {
-  align-items:center;
+  width: 100%;
+  max-width: 1100px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #seasonContainer {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 auto;  /* Zentrieren */
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
   overflow-x: auto !important;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch !important;
-  padding-right: 20px !important;
+  padding-left: 20px;
+  padding-right: 20px;
   padding-bottom: 20px !important;
   box-sizing: border-box !important;
   position: relative !important;
@@ -849,12 +853,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* --- Season Table Fix: eigenständige Klasse & Scroll-Konsistenz --- */
 #seasonContainer {
   width: 100%;
-  max-width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
   overflow-x: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   box-sizing: border-box;
+  padding-left: 20px;
   padding-right: 20px;
   padding-bottom: 16px;
   position: relative;
