@@ -102,7 +102,7 @@ App.seasonTable = {
     console.log("[Season Table] Rendering started at:", new Date().toISOString());
 
     const headerCols = [
-      "Nr", "Spieler", "Pos.", "Games",
+      "Nr", "Player", "Pos.", "Games",
       "Goals", "Assists", "Points", "+/-", "Ø +/-",
       "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
       "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", "Time",
@@ -539,7 +539,7 @@ App.seasonTable = {
       }
 
       const header = [
-        "Nr","Spieler","Pos.","Games",
+        "Nr","Player","Pos.","Games",
         "Goals","Assists","Points","+/-","Ø +/-",
         "Shots","Shots/Game","Shots %","Goals/Game","Points/Game",
         "Penalty","Goal Value","FaceOffs","FaceOffs Won","FaceOffs %","Time",
