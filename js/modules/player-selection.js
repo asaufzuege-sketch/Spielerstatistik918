@@ -92,7 +92,7 @@ App.playerSelection = {
         };
       });
       
-      // Füge 15 zusätzliche Slots hinzu (25 predefined + 15 = 40 total)
+      // Add 15 additional slots (25 predefined + 15 = 40 total)
       for (let i = 0; i < 15; i++) {
         const saved = savedPlayers[App.data.players.length + i];
         players.push({
@@ -105,7 +105,7 @@ App.playerSelection = {
       
       return players;
     } else {
-      // Team 2 und 3: 40 leere Slots oder gespeicherte Daten
+      // Team 2 and 3: 40 empty slots or saved data
       const players = [];
       for (let i = 0; i < 40; i++) {
         const saved = savedPlayers[i];
