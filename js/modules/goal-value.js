@@ -17,7 +17,7 @@ App.goalValue = {
       const raw = localStorage.getItem("goalValueOpponents");
       if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return Array.from({ length: 19 }, (_, i) => `Gegner ${i + 1}`);
+    return Array.from({ length: 19 }, (_, i) => `Opponent ${i + 1}`);
   },
   
   setOpponents(arr) {
@@ -137,7 +137,7 @@ App.goalValue = {
       const input = document.createElement("input");
       input.type = "text";
       input.value = op || "";
-      input.placeholder = `Gegner ${idx+1}`;
+      input.placeholder = `Opponent ${idx+1}`;
       input.className = "goalvalue-title-input";
       input.addEventListener("change", () => {
         const arr = this.getOpponents();
