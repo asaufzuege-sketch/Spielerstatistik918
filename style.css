@@ -363,7 +363,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Season Map - Layout Höhe wie Goal Map */
 #seasonMapPage .torbild-layout {
-  height: calc(100vh - 180px);  /* Etwas weniger wegen extra margin-top div */
+  height: calc(100vh - 120px);  /* Gleiche Höhe wie Goal Map - beide haben gleiche HTML-Struktur */
 }
 
 #seasonMapPage .goal-column {
