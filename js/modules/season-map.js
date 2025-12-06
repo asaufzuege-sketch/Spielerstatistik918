@@ -1,6 +1,6 @@
 // Season Map Modul – READ ONLY
 // Shows only data exported from the Goal Map.
-// KEINE neuen Marker durch Klicks in Season Map.
+// NO new markers from clicks in Season Map.
 
 App.seasonMap = {
   timeTrackingBox: null,

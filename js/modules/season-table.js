@@ -448,7 +448,7 @@ App.seasonTable = {
   },
 
   exportFromStats() {
-    if (!confirm("Spiel zu Season exportieren?")) return;
+    if (!confirm("Export game to Season?")) return;
 
     if (!App.data.selectedPlayers.length) {
       alert("No players selected.");
@@ -715,9 +715,9 @@ App.seasonTable = {
     alert("Season data deleted.");
   },
   
-  // Klick-Handler für Statistik-Zellen hinzufügen
+  // Add click handler for statistics cells
   attachStatClickHandlers(statCell, playerName, statKey) {
-    // Cursor-Style für klickbare Zellen
+    // Cursor style for clickable cells
     statCell.style.cursor = 'pointer';
     
     statCell.addEventListener('click', (e) => {
