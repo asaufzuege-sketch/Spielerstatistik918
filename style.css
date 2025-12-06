@@ -519,12 +519,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonPage table {
   width: 100%;
-  margin: 0 auto;  /* Tabelle zentrieren */
+  margin: 6px auto 10px auto;  /* Tabelle zentrieren */
   min-width: max-content !important;
   border-collapse: collapse !important;
   font-size: 0.95rem !important;
-  margin-top: 6px !important;
-  margin-bottom: 10px !important;
   display: table !important;
 }
 
@@ -866,13 +864,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .season-table {
   width: 100%;
-  margin: 0 auto;  /* Tabelle zentrieren */
+  margin: 6px auto 10px auto;  /* Tabelle zentrieren */
   min-width: max-content;
   max-width: none;
   border-collapse: collapse;
   font-size: 0.95rem;
-  margin-top: 6px;
-  margin-bottom: 10px;
   table-layout: auto;
   display: table;
 }
