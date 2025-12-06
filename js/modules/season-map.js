@@ -51,6 +51,66 @@ App.seasonMap = {
       filterSelect.value = savedFilter;
       this.playerFilter = savedFilter;
     }
+    
+    // All Goalies button event listener
+    document.getElementById("seasonMapGoalieFilter")?.addEventListener("click", () => {
+      const goalies = App.data.selectedPlayers.filter(p => p.position === "G");
+      const goalieNames = goalies.map(g => g.name);
+      this.filterByGoalies(goalieNames);
+    });
+  },
+  
+  filterByGoalies(goalieNames) {
+    // Clear the player filter dropdown
+    const filterSelect = document.getElementById("seasonMapPlayerFilter");
+    if (filterSelect) {
+      filterSelect.value = "";
+    }
+    
+    // Set filter to show only goalies
+    this.playerFilter = null;
+    localStorage.removeItem("seasonMapPlayerFilter");
+    
+    // Marker nach Spieler filtern
+    const boxes = document.querySelectorAll(App.selectors.seasonMapBoxes);
+    boxes.forEach(box => {
+      box.querySelectorAll(".marker-dot").forEach(marker => {
+        const playerName = marker.dataset.player;
+        marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
+      });
+    });
+    
+    // Update time tracking to show only goalie times
+    this.applyGoalieTimeTrackingFilter(goalieNames);
+    
+    // Goal-Area-Stats neu zeichnen with goalie filter
+    this.renderGoalAreaStats(goalieNames);
+    
+    console.log(`Season Map goalie filter applied: ${goalieNames.join(', ')}`);
+  },
+  
+  applyGoalieTimeTrackingFilter(goalieNames) {
+    let timeDataWithPlayers = {};
+    try {
+      timeDataWithPlayers =
+        JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
+    } catch {
+      timeDataWithPlayers = {};
+    }
+    
+    // Create filtered time data for goalies only
+    const filteredTimeData = {};
+    Object.keys(timeDataWithPlayers).forEach(key => {
+      const playerData = timeDataWithPlayers[key] || {};
+      filteredTimeData[key] = {};
+      goalieNames.forEach(goalieName => {
+        if (playerData[goalieName]) {
+          filteredTimeData[key][goalieName] = playerData[goalieName];
+        }
+      });
+    });
+    
+    this.writeTimeTrackingToBox(filteredTimeData);
   },
   
   applyPlayerFilter() {

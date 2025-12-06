@@ -38,11 +38,14 @@ App.playerSelection = {
       const checkbox = li.querySelector(".player-checkbox");
       const numInput = li.querySelector(".num-input");
       const nameInput = li.querySelector(".name-input");
+      const posSelect = li.querySelector(".pos-select");
+      const posFixed = li.querySelector(".pos-fixed");
       
       if (checkbox && checkbox.checked && nameInput && nameInput.value.trim() !== "") {
         App.data.selectedPlayers.push({
           num: numInput ? numInput.value.trim() : "",
-          name: nameInput.value.trim()
+          name: nameInput.value.trim(),
+          position: posFixed ? "G" : (posSelect ? posSelect.value : "")
         });
       }
     });
@@ -264,11 +267,14 @@ App.playerSelection = {
         const checkbox = li.querySelector(".player-checkbox");
         const numInput = li.querySelector(".num-input");
         const nameInput = li.querySelector(".name-input");
+        const posSelect = li.querySelector(".pos-select");
+        const posFixed = li.querySelector(".pos-fixed");
         
         if (checkbox && checkbox.checked && nameInput && nameInput.value.trim() !== "") {
           App.data.selectedPlayers.push({
             num: numInput ? numInput.value.trim() : "",
-            name: nameInput.value.trim()
+            name: nameInput.value.trim(),
+            position: posFixed ? "G" : (posSelect ? posSelect.value : "")
           });
         }
       });

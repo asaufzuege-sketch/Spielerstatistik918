@@ -414,6 +414,66 @@ App.goalMap = {
       this.playerFilter = savedFilter;
       this.applyPlayerFilter();
     }
+    
+    // All Goalies button event listener
+    document.getElementById("goalMapGoalieFilter")?.addEventListener("click", () => {
+      const goalies = App.data.selectedPlayers.filter(p => p.position === "G");
+      const goalieNames = goalies.map(g => g.name);
+      this.filterByGoalies(goalieNames);
+    });
+  },
+  
+  filterByGoalies(goalieNames) {
+    // Clear the player filter dropdown
+    const filterSelect = document.getElementById("goalMapPlayerFilter");
+    if (filterSelect) {
+      filterSelect.value = "";
+    }
+    
+    // Set filter to show only goalies
+    this.playerFilter = null;
+    localStorage.removeItem("goalMapPlayerFilter");
+    
+    const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
+    boxes.forEach(box => {
+      const markers = box.querySelectorAll(".marker-dot");
+      markers.forEach(marker => {
+        const playerName = marker.dataset.player;
+        marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
+      });
+    });
+    
+    // Update time tracking to show only goalie times
+    this.applyGoalieTimeTrackingFilter(goalieNames);
+  },
+  
+  applyGoalieTimeTrackingFilter(goalieNames) {
+    if (!this.timeTrackingBox) return;
+    
+    let timeDataWithPlayers = {};
+    try {
+      timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
+    } catch {
+      timeDataWithPlayers = {};
+    }
+    
+    this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
+      const periodNum = period.dataset.period || `p${pIdx}`;
+      const buttons = period.querySelectorAll(".time-btn");
+      
+      buttons.forEach((btn, idx) => {
+        const key = `${periodNum}_${idx}`;
+        const playerData = timeDataWithPlayers[key] || {};
+        
+        // Sum up time for all goalies
+        let displayVal = 0;
+        goalieNames.forEach(goalieName => {
+          displayVal += Number(playerData[goalieName]) || 0;
+        });
+        
+        btn.textContent = displayVal;
+      });
+    });
   },
   
   applyPlayerFilter() {
