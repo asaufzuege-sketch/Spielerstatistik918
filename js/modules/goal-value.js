@@ -17,7 +17,7 @@ App.goalValue = {
       const raw = localStorage.getItem("goalValueOpponents");
       if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return Array.from({ length: 19 }, (_, i) => `Gegner ${i + 1}`);
+    return Array.from({ length: 19 }, (_, i) => `Opponent ${i + 1}`);
   },
   
   setOpponents(arr) {
