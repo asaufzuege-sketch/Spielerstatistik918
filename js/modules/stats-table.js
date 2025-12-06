@@ -36,7 +36,7 @@ App.statsTable = {
     // Header
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    headerRow.innerHTML = "<th>#</th><th>Spieler</th>" + 
+    headerRow.innerHTML = "<th>#</th><th>Player</th>" + 
       App.data.categories.map(c => `<th>${App.helpers.escapeHtml(c)}</th>`).join("") + 
       "<th>Time</th>";
     thead.appendChild(headerRow);
@@ -617,6 +617,6 @@ App.statsTable = {
     
     // Re-render table
     this.render();
-    alert("Spieldaten zurückgesetzt.");
+    alert("Game data reset.");
   }
 };

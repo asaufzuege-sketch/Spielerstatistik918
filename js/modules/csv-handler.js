@@ -258,7 +258,7 @@ App.csvHandler = {
         const lines = csv.split(/\r?\n/).filter(line => line.trim());
         
         if (lines.length < 2) {
-          alert("CSV Datei ist leer oder ungültig.");
+          alert("CSV file is empty or invalid.");
           return;
         }
         
@@ -275,7 +275,7 @@ App.csvHandler = {
         }
         
         if (!isValidFormat) {
-          alert("CSV Format ist ungültig. Erwartete Spalten: " + expectedHeaders.join(", "));
+          alert("CSV format is invalid. Expected columns: " + expectedHeaders.join(", "));
           return;
         }
         
@@ -312,11 +312,11 @@ App.csvHandler = {
         App.storage.saveAll();
         App.statsTable.render();
         
-        alert(`Import erfolgreich! ${newSelectedPlayers.length} Spieler importiert.`);
+        alert(`Import successful! ${newSelectedPlayers.length} players imported.`);
         
       } catch (error) {
         console.error("Import Error:", error);
-        alert("Fehler beim Importieren: " + error.message);
+        alert("Import error: " + error.message);
       }
     };
     
@@ -331,7 +331,7 @@ App.csvHandler = {
         const lines = csv.split(/\r?\n/).filter(line => line.trim());
         
         if (lines.length < 2) {
-          alert("CSV Datei ist leer oder ungültig.");
+          alert("CSV file is empty or invalid.");
           return;
         }
         
@@ -361,11 +361,11 @@ App.csvHandler = {
           App.seasonTable.render();
         }
         
-        alert("Season Import erfolgreich!");
+        alert("Season import successful!");
         
       } catch (error) {
         console.error("Season Import Error:", error);
-        alert("Fehler beim Season Import: " + error.message);
+        alert("Season import error: " + error.message);
       }
     };
     

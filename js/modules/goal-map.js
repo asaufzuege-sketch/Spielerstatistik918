@@ -115,13 +115,13 @@ App.goalMap = {
           // Schritt 1: NUR grünes Tor erlaubt
           else if (currentStep === 1) {
             if (!isGreenGoal) {
-              console.log('[Goal Workflow] Schritt 2: Bitte Punkt im grünen Tor setzen');
+              console.log('[Goal Workflow] Step 2: Please click point in green goal');
               return; // Blockiere Spielfeld und rotes Tor
             }
           }
           // Schritt 2: Timebox (wird separat in initTimeTracking behandelt)
           else if (currentStep >= 2) {
-            console.log('[Goal Workflow] Schritt 3: Bitte Zeit-Button klicken');
+            console.log('[Goal Workflow] Step 3: Please click time button');
             return; // Blockiere Spielfeld und Tor komplett
           }
         }
@@ -354,13 +354,13 @@ App.goalMap = {
             const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
             
             if (currentStep !== 2) {
-              console.log('[Goal Workflow] Timebox erst nach Feld und Tor möglich');
+              console.log('[Goal Workflow] Timebox only after field and goal');
               return;
             }
             
             const isTopRow = newBtn.closest('.period-buttons')?.classList.contains('top-row');
             if (!isTopRow) {
-              console.log('[Goal Workflow] Nur grüne Zeit-Buttons erlaubt');
+              console.log('[Goal Workflow] Only green time buttons allowed');
               return;
             }
           }
@@ -395,7 +395,7 @@ App.goalMap = {
     const filterSelect = document.getElementById("goalMapPlayerFilter");
     if (!filterSelect) return;
     
-    filterSelect.innerHTML = '<option value="">Alle Spieler</option>';
+    filterSelect.innerHTML = '<option value="">All Players</option>';
     App.data.selectedPlayers.forEach(player => {
       const option = document.createElement("option");
       option.value = player.name;
@@ -544,7 +544,7 @@ App.goalMap = {
     const timeData = this.readTimeTrackingFromBox();
     localStorage.setItem("timeData", JSON.stringify(timeData));
     
-    alert("Goal Map Daten exportiert!");
+    alert("Goal Map data exported!");
   },
   
   readTimeTrackingFromBox() {
@@ -574,6 +574,6 @@ App.goalMap = {
     // KRITISCH: Buttons neu initialisieren damit Closures neue leere Daten haben!
     this.initTimeTracking();
     
-    alert("Goal Map zurückgesetzt.");
+    alert("Goal Map reset.");
   }
 };

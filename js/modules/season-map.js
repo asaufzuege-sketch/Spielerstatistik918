@@ -1,5 +1,5 @@
 // Season Map Modul – READ ONLY
-// Zeigt nur die aus der Goal Map exportierten Daten an.
+// Shows only data exported from the Goal Map.
 // KEINE neuen Marker durch Klicks in Season Map.
 
 App.seasonMap = {
@@ -33,7 +33,7 @@ App.seasonMap = {
     const filterSelect = document.getElementById("seasonMapPlayerFilter");
     if (!filterSelect) return;
     
-    filterSelect.innerHTML = '<option value="">Alle Spieler</option>';
+    filterSelect.innerHTML = '<option value="">All Players</option>';
     (App.data.selectedPlayers || []).forEach(player => {
       const option = document.createElement("option");
       option.value = player.name;
@@ -196,7 +196,7 @@ App.seasonMap = {
     // Speichere für Momentum-Graph
     localStorage.setItem("seasonMapTimeData", JSON.stringify(momentumData));
     
-    const keep = confirm("Spiel wurde in Season Map exportiert. Daten in Goal Map beibehalten? (OK = Ja)");
+    const keep = confirm("Game exported to Season Map. Keep data in Goal Map? (OK = Yes)");
     if (!keep) {
       document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
       document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
@@ -369,6 +369,6 @@ App.seasonMap = {
     
     console.log('[Season Map] Reset completed - Momentum container cleared and re-rendered');
     
-    alert("Season Map zurückgesetzt.");
+    alert("Season Map reset.");
   }
 };

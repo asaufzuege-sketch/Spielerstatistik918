@@ -260,7 +260,7 @@ App.playerSelection = {
       
     } catch (err) {
       console.error("Error in confirmSelection:", err);
-      alert("Fehler beim Bestätigen (siehe Konsole): " + (err?.message || err));
+      alert("Confirmation error (see console): " + (err?.message || err));
     }
   }
 };

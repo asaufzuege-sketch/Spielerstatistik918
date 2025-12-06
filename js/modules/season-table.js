@@ -451,7 +451,7 @@ App.seasonTable = {
     if (!confirm("Spiel zu Season exportieren?")) return;
 
     if (!App.data.selectedPlayers.length) {
-      alert("Keine Spieler ausgewählt.");
+      alert("No players selected.");
       return;
     }
 
@@ -507,7 +507,7 @@ App.seasonTable = {
       App.goalValue.ensureDataForSeason();
     }
 
-    const keep = confirm("Spiel wurde in Season exportiert. Daten in Game beibehalten? (OK = Ja)");
+    const keep = confirm("Game exported to Season. Keep data in Game? (OK = Yes)");
     if (!keep) {
       App.data.selectedPlayers.forEach(p => {
         const name = p.name;
@@ -699,20 +699,20 @@ App.seasonTable = {
       a.download = "season.csv";
       a.click();
       URL.revokeObjectURL(a.href);
-      alert("Season CSV exportiert.");
+      alert("Season CSV exported.");
     } catch (e) {
-      console.error("Season CSV Export fehlgeschlagen:", e);
-      alert("Fehler beim Season-Export (siehe Konsole).");
+      console.error("Season CSV export failed:", e);
+      alert("Season export error (see console).");
     }
   },
 
   reset() {
-    if (!confirm("Season-Daten löschen?")) return;
+    if (!confirm("Delete Season data?")) return;
 
     App.data.seasonData = {};
     localStorage.removeItem("seasonData");
     this.render();
-    alert("Season-Daten gelöscht.");
+    alert("Season data deleted.");
   },
   
   // Klick-Handler für Statistik-Zellen hinzufügen
@@ -870,7 +870,7 @@ App.seasonTable = {
     const input = document.getElementById("addTimeInput").value.trim();
     
     if (!input) {
-      alert("Bitte geben Sie eine Zeit ein (MM:SS)");
+      alert("Please enter a time (MM:SS)");
       return;
     }
     
@@ -878,7 +878,7 @@ App.seasonTable = {
     const additionalSeconds = App.helpers.parseTimeToSeconds(input);
     
     if (additionalSeconds <= 0) {
-      alert("Bitte geben Sie eine gültige Zeit ein (z.B. 1:30 für 1 Minute 30 Sekunden)");
+      alert("Please enter a valid time (e.g. 1:30 for 1 minute 30 seconds)");
       return;
     }
     
@@ -899,7 +899,7 @@ App.seasonTable = {
       
       console.log(`Added ${additionalSeconds}s to ${playerName}. New time: ${newTime}s`);
     } else {
-      alert("Spieler nicht gefunden");
+      alert("Player not found");
     }
   }
 };
