@@ -78,46 +78,60 @@ App.playerSelection = {
       savedPlayers = [];
     }
     
+    const players = [];
+    
+    // Add 5 goalie slots at the top
+    for (let i = 0; i < 5; i++) {
+      const saved = savedPlayers[i];
+      players.push({
+        number: saved?.number || "",
+        name: saved?.name || "",
+        position: "G",  // Fixed position for goalies
+        active: saved?.active || false,
+        isGoalie: true
+      });
+    }
+    
     // Team 1 gets predefined players, other teams get empty slots
     if (currentTeamId === 'team1') {
       // Convert existing player data to new format
-      const players = App.data.players.map((p, idx) => {
+      const regularPlayers = App.data.players.map((p, idx) => {
         const saved = savedPlayers.find(sp => sp.name === p.name);
         const isSelected = App.data.selectedPlayers.some(sp => sp.name === p.name);
         return {
           number: saved?.number || (p.num !== "" && p.num !== null && p.num !== undefined ? String(p.num) : ""),
           name: p.name,
           position: saved?.position || "",
-          active: saved?.active !== undefined ? saved.active : isSelected
+          active: saved?.active !== undefined ? saved.active : isSelected,
+          isGoalie: false
         };
       });
       
-copilot/fix-translate-german-headers
-      // Add 15 additional slots (25 predefined + 15 = 40 total)
-      for (let i = 0; i < 15; i++) {
+      players.push(...regularPlayers);
+      
       // Add 13 additional slots (40 players total)
       for (let i = 0; i < 13; i++) {
-copilot/change-line-mode-functionality
-        const saved = savedPlayers[App.data.players.length + i];
+        const saved = savedPlayers[5 + App.data.players.length + i];
         players.push({
           number: saved?.number || "",
           name: saved?.name || "",
           position: saved?.position || "",
-          active: saved?.active || false
+          active: saved?.active || false,
+          isGoalie: false
         });
       }
       
       return players;
     } else {
-      // Team 2 and 3: 40 empty slots or saved data
-      const players = [];
+      // Team 2 and 3: 40 regular player slots after 5 goalie slots
       for (let i = 0; i < 40; i++) {
-        const saved = savedPlayers[i];
+        const saved = savedPlayers[5 + i];
         players.push({
           number: saved?.number || "",
           name: saved?.name || "",
           position: saved?.position || "",
-          active: saved?.active || false
+          active: saved?.active || false,
+          isGoalie: false
         });
       }
       return players;
@@ -129,32 +143,60 @@ copilot/change-line-mode-functionality
     
     const players = this.getPlayers();
     
-    this.container.innerHTML = players.map((player, i) => `
-      <li>
-        <input type="checkbox" 
-               ${player.active ? 'checked' : ''} 
-               data-index="${i}" 
-               class="player-checkbox">
-        <input type="text" 
-               class="num-input" 
-               placeholder="Nr." 
-               value="${App.helpers.escapeHtml(player.number || '')}" 
-               data-index="${i}" 
-               data-field="number">
-        <input type="text" 
-               class="name-input" 
-               placeholder="Spielername eingeben" 
-               value="${App.helpers.escapeHtml(player.name || '')}" 
-               data-index="${i}" 
-               data-field="name">
-        <select class="pos-select" data-index="${i}" data-field="position">
-          <option value="" disabled ${!player.position ? 'selected' : ''}>Pos.</option>
-          <option value="C" ${player.position === 'C' ? 'selected' : ''}>Center</option>
-          <option value="W" ${player.position === 'W' ? 'selected' : ''}>Wing</option>
-          <option value="D" ${player.position === 'D' ? 'selected' : ''}>Defense</option>
-        </select>
-      </li>
-    `).join('');
+    this.container.innerHTML = players.map((player, i) => {
+      if (player.isGoalie) {
+        // Goalie slot with fixed "G" position and green border
+        return `
+          <li class="goalie-slot">
+            <input type="checkbox" 
+                   ${player.active ? 'checked' : ''} 
+                   data-index="${i}" 
+                   class="player-checkbox">
+            <input type="text" 
+                   class="num-input" 
+                   placeholder="Nr." 
+                   value="${App.helpers.escapeHtml(player.number || '')}" 
+                   data-index="${i}" 
+                   data-field="number">
+            <input type="text" 
+                   class="name-input" 
+                   placeholder="Enter goalie name" 
+                   value="${App.helpers.escapeHtml(player.name || '')}" 
+                   data-index="${i}" 
+                   data-field="name">
+            <div class="pos-fixed">G</div>
+          </li>
+        `;
+      } else {
+        // Regular player slot with position dropdown
+        return `
+          <li>
+            <input type="checkbox" 
+                   ${player.active ? 'checked' : ''} 
+                   data-index="${i}" 
+                   class="player-checkbox">
+            <input type="text" 
+                   class="num-input" 
+                   placeholder="Nr." 
+                   value="${App.helpers.escapeHtml(player.number || '')}" 
+                   data-index="${i}" 
+                   data-field="number">
+            <input type="text" 
+                   class="name-input" 
+                   placeholder="Enter player name" 
+                   value="${App.helpers.escapeHtml(player.name || '')}" 
+                   data-index="${i}" 
+                   data-field="name">
+            <select class="pos-select" data-index="${i}" data-field="position">
+              <option value="" disabled ${!player.position ? 'selected' : ''}>Pos.</option>
+              <option value="C" ${player.position === 'C' ? 'selected' : ''}>Center</option>
+              <option value="W" ${player.position === 'W' ? 'selected' : ''}>Wing</option>
+              <option value="D" ${player.position === 'D' ? 'selected' : ''}>Defense</option>
+            </select>
+          </li>
+        `;
+      }
+    }).join('');
     
     // Event Listeners hinzufügen
     this.attachEventListeners();
@@ -199,11 +241,12 @@ copilot/change-line-mode-functionality
       const numInput = li.querySelector(".num-input");
       const nameInput = li.querySelector(".name-input");
       const posSelect = li.querySelector(".pos-select");
+      const posFixed = li.querySelector(".pos-fixed");
       
       players.push({
         number: numInput ? numInput.value.trim() : "",
         name: nameInput ? nameInput.value.trim() : "",
-        position: posSelect ? posSelect.value : "",
+        position: posFixed ? "G" : (posSelect ? posSelect.value : ""),
         active: checkbox ? checkbox.checked : false
       });
     });
