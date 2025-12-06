@@ -69,7 +69,7 @@ App.playerSelection = {
     const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
     const currentTeamId = currentTeamInfo?.id;
     
-    // Lade gespeicherte Spielerdaten für das Team
+    // Load saved player data for the team
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     let savedPlayers = [];
     try {
@@ -78,9 +78,9 @@ App.playerSelection = {
       savedPlayers = [];
     }
     
-    // Team 1 bekommt vordefinierte Spieler, andere Teams leere Slots
+    // Team 1 gets predefined players, other teams get empty slots
     if (currentTeamId === 'team1') {
-      // Konvertiere bestehende Spielerdaten zum neuen Format
+      // Convert existing player data to new format
       const players = App.data.players.map((p, idx) => {
         const saved = savedPlayers.find(sp => sp.name === p.name);
         const isSelected = App.data.selectedPlayers.some(sp => sp.name === p.name);
