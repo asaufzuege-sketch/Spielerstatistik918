@@ -92,8 +92,12 @@ App.playerSelection = {
         };
       });
       
+copilot/fix-translate-german-headers
       // Add 15 additional slots (25 predefined + 15 = 40 total)
       for (let i = 0; i < 15; i++) {
+      // Add 13 additional slots (40 players total)
+      for (let i = 0; i < 13; i++) {
+copilot/change-line-mode-functionality
         const saved = savedPlayers[App.data.players.length + i];
         players.push({
           number: saved?.number || "",
