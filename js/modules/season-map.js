@@ -411,7 +411,7 @@ App.seasonMap = {
   handleConcededGoalClick(btn, period) {
     // Get current goalies from selectedPlayers
     const goalies = (App.data.selectedPlayers || [])
-      .filter(p => p.position === "G")
+      .filter(p => p && p.position === "G")
       .map(g => g.name);
     
     if (goalies.length === 0) {
@@ -444,7 +444,7 @@ App.seasonMap = {
         if (!timeDataWithPlayers[key][selectedGoalie]) {
           timeDataWithPlayers[key][selectedGoalie] = 0;
         }
-        timeDataWithPlayers[key][selectedGoalie] = Number(timeDataWithPlayers[key][selectedGoalie]) + 1;
+        timeDataWithPlayers[key][selectedGoalie] += 1;
         
         // Save to localStorage
         localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
@@ -474,6 +474,18 @@ App.seasonMap = {
     // Clear previous content
     list.innerHTML = "";
     
+    // Use event delegation instead of adding listeners to each label
+    const handleListClick = (e) => {
+      const label = e.target.closest('.goalie-option');
+      if (label) {
+        const radio = label.querySelector('input[type="radio"]');
+        if (radio) {
+          radio.checked = true;
+          confirmBtn.disabled = false;
+        }
+      }
+    };
+    
     // Populate with goalies
     goalies.forEach(goalieName => {
       const label = document.createElement("label");
@@ -490,13 +502,10 @@ App.seasonMap = {
       label.appendChild(radio);
       label.appendChild(span);
       list.appendChild(label);
-      
-      // Make the whole label clickable
-      label.addEventListener("click", () => {
-        radio.checked = true;
-        confirmBtn.disabled = false;
-      });
     });
+    
+    // Add event listener to list container
+    list.addEventListener("click", handleListClick);
     
     // Disable confirm button initially
     confirmBtn.disabled = true;
@@ -519,23 +528,26 @@ App.seasonMap = {
       cleanup();
     };
     
+    // Handle background click
+    const handleModalClick = (e) => {
+      if (e.target === modal) {
+        handleCancel();
+      }
+    };
+    
     // Cleanup function
     const cleanup = () => {
       modal.style.display = "none";
       confirmBtn.removeEventListener("click", handleConfirm);
       cancelBtn.removeEventListener("click", handleCancel);
+      modal.removeEventListener("click", handleModalClick);
+      list.removeEventListener("click", handleListClick);
     };
     
     // Attach event listeners
     confirmBtn.addEventListener("click", handleConfirm);
     cancelBtn.addEventListener("click", handleCancel);
-    
-    // Close on background click
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        handleCancel();
-      }
-    });
+    modal.addEventListener("click", handleModalClick);
   },
   
   // Goal-Area-Statistik (Zonen im Tor)
