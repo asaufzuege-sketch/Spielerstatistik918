@@ -716,7 +716,7 @@ App.goalMap = {
   // Show Goalie Selection Modal
   showGoalieSelectionModal(callback) {
     // Get goalies from currently selected players
-    const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+    const goalies = App.data.selectedPlayers?.filter(p => p.position === "G") || [];
     
     if (goalies.length === 0) {
       alert("No goalies available. Please add goalies in Player Selection.");
@@ -731,12 +731,26 @@ App.goalMap = {
       return;
     }
     
-    list.innerHTML = goalies.map(g => `
-      <label class="goalie-option">
-        <input type="radio" name="goalieSelect" value="${g.name}">
-        <span>${g.name}</span>
-      </label>
-    `).join("");
+    // Clear existing content
+    list.innerHTML = "";
+    
+    // Create goalie options with proper escaping
+    goalies.forEach(g => {
+      const label = document.createElement("label");
+      label.className = "goalie-option";
+      
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "goalieSelect";
+      radio.value = g.name;
+      
+      const span = document.createElement("span");
+      span.textContent = g.name; // textContent automatically escapes HTML
+      
+      label.appendChild(radio);
+      label.appendChild(span);
+      list.appendChild(label);
+    });
     
     const modal = document.getElementById("goalieSelectionModal");
     if (!modal) {
@@ -750,13 +764,8 @@ App.goalMap = {
     const confirmBtn = document.getElementById("goalieSelectionConfirm");
     const cancelBtn = document.getElementById("goalieSelectionCancel");
     
-    // Remove old listeners if any
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    const newCancelBtn = cancelBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-    
-    newConfirmBtn.onclick = () => {
+    // Use event handler properties to avoid duplicate listeners
+    confirmBtn.onclick = () => {
       const selected = document.querySelector('input[name="goalieSelect"]:checked');
       if (selected) {
         modal.style.display = "none";
@@ -766,7 +775,7 @@ App.goalMap = {
       }
     };
     
-    newCancelBtn.onclick = () => {
+    cancelBtn.onclick = () => {
       modal.style.display = "none";
       callback(null);
     };
