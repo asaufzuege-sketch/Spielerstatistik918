@@ -38,6 +38,7 @@ const App = {
   goalMapWorkflow: {
     active: false,
     eventType: null, // 'goal' or 'shot'
+    workflowType: null, // 'scored' (green) or 'conceded' (red)
     playerName: null,
     requiredPoints: 0,
     collectedPoints: [],
@@ -245,6 +246,7 @@ const App = {
     this.goalMapWorkflow.active = true;
     this.goalMapWorkflow.playerName = playerName;
     this.goalMapWorkflow.eventType = eventType;
+    this.goalMapWorkflow.workflowType = null; // Reset workflow type, will be set on field click
     this.goalMapWorkflow.collectedPoints = [];
     
     if (eventType === 'goal') {
@@ -326,6 +328,7 @@ const App = {
     this.goalMapWorkflow.active = false;
     this.goalMapWorkflow.playerName = null;
     this.goalMapWorkflow.eventType = null;
+    this.goalMapWorkflow.workflowType = null;
     this.goalMapWorkflow.collectedPoints = [];
     this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
@@ -338,6 +341,7 @@ const App = {
     this.goalMapWorkflow.active = false;
     this.goalMapWorkflow.playerName = null;
     this.goalMapWorkflow.eventType = null;
+    this.goalMapWorkflow.workflowType = null;
     this.goalMapWorkflow.collectedPoints = [];
     this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];

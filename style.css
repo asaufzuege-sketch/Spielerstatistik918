@@ -1316,6 +1316,51 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: #555;
 }
 
+.modal-buttons .confirm-btn {
+  background: #44bb91;
+  color: white;
+}
+
+.modal-buttons .confirm-btn:hover {
+  background: #36a67d;
+}
+
+/* Goalie Selection Modal */
+.goalie-selection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.goalie-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.goalie-option:hover {
+  background: #333;
+  border-color: #44bb91;
+}
+
+.goalie-option input[type="radio"] {
+  cursor: pointer;
+}
+
+.goalie-option span {
+  color: #fff;
+  font-size: 1rem;
+}
+
 /* ==================== */
 /* WORKFLOW STATUS      */
 /* ==================== */
@@ -1493,7 +1538,7 @@ tr[data-player].dragging {
 
 /* Goalie Slots - Green Border */
 #playerSelectionPage .player-list li.goalie-slot {
-  border: 0.5px solid #44bb91;  /* Green border for goalie slots - even thinner and more subtle */
+  border: 0.3px solid #44bb91;  /* Very subtle - was 0.5px */
 }
 
 /* Fixed Position "G" for Goalies */
