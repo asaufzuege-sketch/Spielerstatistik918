@@ -3,6 +3,8 @@
 App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
+  goalieFilter: null,
+  selectedGoalie: null,
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -265,6 +267,7 @@ App.goalMap = {
       
       buttons.forEach((btn, idx) => {
         const key = `${periodNum}_${idx}`;
+        const isBottomRow = btn.closest('.bottom-row') !== null;
         let displayValue = 0;
         
         if (timeDataWithPlayers[key]) {
@@ -282,6 +285,12 @@ App.goalMap = {
         let clickTimeout = null;
         
         const updateValue = (delta) => {
+          // For bottom row buttons (red workflow), show goalie selection modal
+          if (isBottomRow && delta > 0 && App.goalMapWorkflow?.active) {
+            this.showGoalieSelectionModal(key, timeDataWithPlayers, timeData, periodNum, idx, btn);
+            return;
+          }
+          
           const playerName =
             this.playerFilter ||
             (App.goalMapWorkflow?.active ? App.goalMapWorkflow.playerName : '_anonymous');
@@ -344,13 +353,103 @@ App.goalMap = {
     }
   },
   
+  showGoalieSelectionModal(key, timeDataWithPlayers, timeData, periodNum, idx, btn) {
+    const modal = document.getElementById('goalieSelectionModal');
+    const list = document.getElementById('goalieSelectionList');
+    const confirmBtn = document.getElementById('goalieSelectionConfirm');
+    const cancelBtn = document.getElementById('goalieSelectionCancel');
+    
+    if (!modal || !list) return;
+    
+    // Populate goalie list
+    list.innerHTML = '';
+    const goalies = App.data.selectedPlayers.filter(p => p.position === "G");
+    
+    if (goalies.length === 0) {
+      list.innerHTML = '<p style="text-align:center;color:#888;">No goalies selected</p>';
+      modal.style.display = 'block';
+      return;
+    }
+    
+    goalies.forEach(goalie => {
+      const label = document.createElement('label');
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'goalieSelection';
+      radio.value = goalie.name;
+      
+      const text = document.createTextNode(` ${goalie.name}`);
+      label.appendChild(radio);
+      label.appendChild(text);
+      list.appendChild(label);
+    });
+    
+    // Show modal
+    modal.style.display = 'block';
+    
+    // Handle confirm
+    const handleConfirm = () => {
+      const selected = list.querySelector('input[name="goalieSelection"]:checked');
+      if (selected) {
+        this.selectedGoalie = selected.value;
+        
+        // Update time tracking with goalie
+        if (!timeDataWithPlayers[key]) timeDataWithPlayers[key] = {};
+        if (!timeDataWithPlayers[key][this.selectedGoalie]) timeDataWithPlayers[key][this.selectedGoalie] = 0;
+        
+        timeDataWithPlayers[key][this.selectedGoalie]++;
+        localStorage.setItem("timeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
+        
+        let displayVal = 0;
+        if (this.goalieFilter) {
+          displayVal = timeDataWithPlayers[key][this.goalieFilter] || 0;
+        } else {
+          displayVal = Object.values(timeDataWithPlayers[key])
+            .reduce((sum, val) => sum + Number(val), 0);
+        }
+        btn.textContent = displayVal;
+        
+        if (!timeData[periodNum]) timeData[periodNum] = {};
+        timeData[periodNum][idx] = displayVal;
+        localStorage.setItem("timeData", JSON.stringify(timeData));
+        
+        // Complete workflow with goalie assignment
+        if (App.goalMapWorkflow?.active) {
+          const btnRect = btn.getBoundingClientRect();
+          const boxRect = this.timeTrackingBox.getBoundingClientRect();
+          const xPct = ((btnRect.left + btnRect.width / 2 - boxRect.left) / boxRect.width) * 100;
+          const yPct = ((btnRect.top + btnRect.height / 2 - boxRect.top) / boxRect.height) * 100;
+          
+          App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
+        }
+      }
+      
+      modal.style.display = 'none';
+      cleanup();
+    };
+    
+    const handleCancel = () => {
+      modal.style.display = 'none';
+      cleanup();
+    };
+    
+    const cleanup = () => {
+      confirmBtn.removeEventListener('click', handleConfirm);
+      cancelBtn.removeEventListener('click', handleCancel);
+    };
+    
+    confirmBtn.addEventListener('click', handleConfirm);
+    cancelBtn.addEventListener('click', handleCancel);
+  },
+  
   // Player Filter Dropdown
   initPlayerFilter() {
     const filterSelect = document.getElementById("goalMapPlayerFilter");
     if (!filterSelect) return;
     
-    filterSelect.innerHTML = '<option value="">Alle Spieler</option>';
-    App.data.selectedPlayers.forEach(player => {
+    filterSelect.innerHTML = '<option value="">All Players</option>';
+    // Exclude goalies from player filter
+    App.data.selectedPlayers.filter(p => p.position !== "G").forEach(player => {
       const option = document.createElement("option");
       option.value = player.name;
       option.textContent = player.name;
@@ -368,6 +467,57 @@ App.goalMap = {
       this.playerFilter = savedFilter;
       this.applyPlayerFilter();
     }
+    
+    // Initialize goalie filter
+    this.initGoalieFilter();
+  },
+  
+  initGoalieFilter() {
+    const filterSelect = document.getElementById("goalMapGoalieFilter");
+    if (!filterSelect) return;
+    
+    filterSelect.innerHTML = '<option value="">All Goalies</option>';
+    // Only include goalies in goalie filter
+    App.data.selectedPlayers.filter(p => p.position === "G").forEach(goalie => {
+      const option = document.createElement("option");
+      option.value = goalie.name;
+      option.textContent = goalie.name;
+      filterSelect.appendChild(option);
+    });
+    
+    filterSelect.addEventListener("change", () => {
+      this.goalieFilter = filterSelect.value || null;
+      this.applyGoalieFilter();
+    });
+    
+    const savedGoalieFilter = localStorage.getItem("goalMapGoalieFilter");
+    if (savedGoalieFilter) {
+      filterSelect.value = savedGoalieFilter;
+      this.goalieFilter = savedGoalieFilter;
+      this.applyGoalieFilter();
+    }
+  },
+  
+  applyGoalieFilter() {
+    if (this.goalieFilter) {
+      localStorage.setItem("goalMapGoalieFilter", this.goalieFilter);
+    } else {
+      localStorage.removeItem("goalMapGoalieFilter");
+    }
+    
+    const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
+    boxes.forEach(box => {
+      const markers = box.querySelectorAll(".marker-dot");
+      markers.forEach(marker => {
+        if (marker.dataset.goalie) {
+          if (this.goalieFilter) {
+            marker.style.display = (marker.dataset.goalie === this.goalieFilter) ? '' : 'none';
+          } else {
+            marker.style.display = '';
+          }
+        }
+      });
+    });
   },
   
   applyPlayerFilter() {

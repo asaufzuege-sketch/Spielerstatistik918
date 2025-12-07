@@ -36,7 +36,7 @@ App.statsTable = {
     // Header
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    headerRow.innerHTML = "<th>#</th><th>Spieler</th>" + 
+    headerRow.innerHTML = "<th>#</th><th>Player</th>" + 
       App.data.categories.map(c => `<th>${App.helpers.escapeHtml(c)}</th>`).join("") + 
       "<th>Time</th>";
     thead.appendChild(headerRow);
@@ -46,7 +46,10 @@ App.statsTable = {
     const tbody = document.createElement("tbody");
     tbody.id = "stats-tbody";
     
-    App.data.selectedPlayers.forEach((p, idx) => {
+    // Filter out goalies (position === "G")
+    const playersToRender = App.data.selectedPlayers.filter(p => p.position !== "G");
+    
+    playersToRender.forEach((p, idx) => {
       const tr = document.createElement("tr");
       tr.className = (idx % 2 === 0 ? "even-row" : "odd-row");
       tr.dataset.player = p.name;

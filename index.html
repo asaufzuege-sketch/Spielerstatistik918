@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Spielerstatistik</title>
-  <link rel="stylesheet" href="style. css" />
+  <title>Player Statistics</title>
+  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="Create%20season_table_styles.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2. 5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
@@ -13,7 +13,7 @@
   <!-- TEAMAUSWAHL SEITE (NEUE ERSTE SEITE) -->
   <div id="teamSelectionPage" class="page">
     <h1>TEAM SELECTION</h1>
-    <p class="center-text">Wähle ein Team aus oder erstelle ein neues Team</p>
+    <p class="center-text">Select a team or create a new team</p>
     
     <!-- HIER: Dynamischer Container für Team-Buttons -->
     <div id="teamSelectionContainer"></div>
@@ -21,11 +21,11 @@
     <!-- Team Name Edit Modal -->
     <div id="teamEditModal" class="modal" style="display: none;">
       <div class="modal-content">
-        <h3>Teamname bearbeiten</h3>
-        <input type="text" id="teamNameInput" placeholder="Teamname eingeben" maxlength="30" />
+        <h3>Edit Team Name</h3>
+        <input type="text" id="teamNameInput" placeholder="Enter team name" maxlength="30" />
         <div class="modal-buttons">
-          <button id="saveTeamNameBtn" class="confirm-btn">Speichern</button>
-          <button id="cancelTeamEditBtn" class="cancel-btn">Abbrechen</button>
+          <button id="saveTeamNameBtn" class="confirm-btn">Save</button>
+          <button id="cancelTeamEditBtn" class="cancel-btn">Cancel</button>
         </div>
       </div>
     </div>
@@ -35,16 +35,16 @@
   <div id="playerSelectionPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToTeamSelectionBtn" class="top-btn back-btn">← Zur Teamauswahl</button>
+        <button id="backToTeamSelectionBtn" class="top-btn back-btn">← Back to Team Selection</button>
       </div>
     </div>
     <h1>PLAYER SELECTION</h1>
-    <p class="center-text">Wähle die Spieler, die in der Tabelle angezeigt werden sollen</p>
+    <p class="center-text">Select the players to be displayed in the table</p>
     <div class="current-team-info">
       <span id="currentTeamDisplay"></span>
     </div>
     <ul id="playerList" class="player-list"></ul>
-    <button id="confirmSelection" class="confirm-btn">Bestätigen</button>
+    <button id="confirmSelection" class="confirm-btn">Confirm</button>
   </div>
 
   <!-- STATS SEITE (GAME DATA) -->
@@ -52,7 +52,7 @@
     <div class="page-top">
       <div class="top-bar">
         <button id="timerBtn" class="top-btn timer timer-left reset" aria-label="Spieluhr">00:00</button>
-        <button id="selectPlayersBtn" class="top-btn">Spieler wählen</button>
+        <button id="selectPlayersBtn" class="top-btn">Select Players</button>
         <button id="torbildBtn" class="top-btn">Goal Map</button>
         <button id="goalValueBtn" class="top-btn">Goal Value</button>
         <button id="lineUpBtn" class="top-btn">LINE UP</button>
@@ -77,10 +77,13 @@
   <div id="torbildPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backToStatsBtn" class="top-btn back-btn">← Back</button>
         <button id="exportSeasonMapBtn" class="top-btn export-season">Export Season Map</button>
         <select id="goalMapPlayerFilter" class="top-btn player-filter-btn">
-          <option value="">Alle Spieler</option>
+          <option value="">All Players</option>
+        </select>
+        <select id="goalMapGoalieFilter" class="top-btn player-filter-btn">
+          <option value="">All Goalies</option>
         </select>
         <button id="resetTorbildBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
@@ -157,7 +160,7 @@
   <div id="goalValuePage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backFromGoalValueBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backFromGoalValueBtn" class="top-btn back-btn">← Back</button>
         <button id="resetGoalValueBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
     </div>
@@ -171,10 +174,13 @@
   <div id="seasonMapPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsFromSeasonMapBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backToStatsFromSeasonMapBtn" class="top-btn back-btn">← Back</button>
         <button id="exportSeasonMapPageBtn" class="top-btn export-csv">Export</button>
         <select id="seasonMapPlayerFilter" class="top-btn player-filter-btn">
-          <option value="">Alle Spieler</option>
+          <option value="">All Players</option>
+        </select>
+        <select id="seasonMapGoalieFilter" class="top-btn player-filter-btn">
+          <option value="">All Goalies</option>
         </select>
         <button id="resetSeasonMapBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
@@ -220,7 +226,7 @@
   <div id="seasonPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsFromSeasonBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backToStatsFromSeasonBtn" class="top-btn back-btn">← Back</button>
         <button id="exportSeasonBtn" class="top-btn export-csv">Export CSV</button>
         <button id="importCsvSeasonBtn" class="top-btn import-csv-btn">Import CSV</button>
         <button id="resetSeasonBtn" class="top-btn danger-btn reset-btn">Reset</button>
@@ -234,13 +240,25 @@
   <div id="lineUpPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsFromLineUpBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backToStatsFromLineUpBtn" class="top-btn back-btn">← Back</button>
         <button id="lineModeBtn" class="top-btn">NORMAL</button>
         <button id="playerOutBtn" class="top-btn">Player Out</button>
       </div>
     </div>
     <h1>LINE UP</h1>
     <div id="lineUpContainer"></div>
+  </div>
+
+  <!-- Goalie Selection Modal -->
+  <div id="goalieSelectionModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Select Goalie</h3>
+      <div id="goalieSelectionList"></div>
+      <div class="modal-buttons">
+        <button id="goalieSelectionCancel" class="cancel-btn">Cancel</button>
+        <button id="goalieSelectionConfirm" class="confirm-btn">Confirm</button>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->

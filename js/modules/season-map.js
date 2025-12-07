@@ -5,6 +5,7 @@
 App.seasonMap = {
   timeTrackingBox: null,
   playerFilter: null,
+  goalieFilter: null,
   
   init() {
     this.timeTrackingBox = document.getElementById("seasonMapTimeTrackingBox");
@@ -24,6 +25,9 @@ App.seasonMap = {
     
     // Player Filter
     this.initPlayerFilter();
+    
+    // Goalie Filter
+    this.initGoalieFilter();
   },
   
   // -----------------------------
@@ -33,13 +37,16 @@ App.seasonMap = {
     const filterSelect = document.getElementById("seasonMapPlayerFilter");
     if (!filterSelect) return;
     
-    filterSelect.innerHTML = '<option value="">Alle Spieler</option>';
-    (App.data.selectedPlayers || []).forEach(player => {
-      const option = document.createElement("option");
-      option.value = player.name;
-      option.textContent = player.name;
-      filterSelect.appendChild(option);
-    });
+    filterSelect.innerHTML = '<option value="">All Players</option>';
+    // Exclude goalies from player filter
+    (App.data.selectedPlayers || [])
+      .filter(p => p.position !== "G")
+      .forEach(player => {
+        const option = document.createElement("option");
+        option.value = player.name;
+        option.textContent = player.name;
+        filterSelect.appendChild(option);
+      });
     
     filterSelect.addEventListener("change", () => {
       this.playerFilter = filterSelect.value || null;
@@ -51,6 +58,59 @@ App.seasonMap = {
       filterSelect.value = savedFilter;
       this.playerFilter = savedFilter;
     }
+  },
+  
+  initGoalieFilter() {
+    const filterSelect = document.getElementById("seasonMapGoalieFilter");
+    if (!filterSelect) return;
+    
+    // Get goalies from season data
+    const seasonGoalies = Object.keys(App.data.seasonData || {})
+      .filter(name => {
+        const player = App.data.selectedPlayers.find(p => p.name === name);
+        return player && player.position === "G";
+      });
+    
+    filterSelect.innerHTML = '<option value="">All Goalies</option>';
+    seasonGoalies.forEach(goalieName => {
+      const option = document.createElement("option");
+      option.value = goalieName;
+      option.textContent = goalieName;
+      filterSelect.appendChild(option);
+    });
+    
+    filterSelect.addEventListener("change", () => {
+      this.goalieFilter = filterSelect.value || null;
+      this.applyGoalieFilter();
+    });
+    
+    const savedGoalieFilter = localStorage.getItem("seasonMapGoalieFilter");
+    if (savedGoalieFilter) {
+      filterSelect.value = savedGoalieFilter;
+      this.goalieFilter = savedGoalieFilter;
+    }
+  },
+  
+  applyGoalieFilter() {
+    if (this.goalieFilter) {
+      localStorage.setItem("seasonMapGoalieFilter", this.goalieFilter);
+    } else {
+      localStorage.removeItem("seasonMapGoalieFilter");
+    }
+    
+    // Filter markers by goalie
+    const boxes = document.querySelectorAll(App.selectors.seasonMapBoxes);
+    boxes.forEach(box => {
+      box.querySelectorAll(".marker-dot").forEach(marker => {
+        if (marker.dataset.goalie) {
+          if (this.goalieFilter) {
+            marker.style.display = (marker.dataset.goalie === this.goalieFilter) ? '' : 'none';
+          } else {
+            marker.style.display = '';
+          }
+        }
+      });
+    });
   },
   
   applyPlayerFilter() {

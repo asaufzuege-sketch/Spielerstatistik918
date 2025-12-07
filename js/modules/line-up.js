@@ -334,7 +334,9 @@ App.lineUp = {
     const ASSIST_TO_GOAL_RATIO_THRESHOLD = 1.5;
     const CENTER_POSITION_FREQUENCY = 3;
     
-    const players = App.data.selectedPlayers. map(p => {
+    const players = App.data.selectedPlayers
+      .filter(p => p.position !== "G") // Exclude goalies
+      .map(p => {
       const seasonData = App.data. seasonData[p. name];
       return {
         name: p.name,
