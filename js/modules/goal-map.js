@@ -396,7 +396,7 @@ App.goalMap = {
     if (!filterSelect) return;
     
     filterSelect.innerHTML = '<option value="">All Players</option>';
-    App.data.selectedPlayers.forEach(player => {
+    (App.data.selectedPlayers || []).forEach(player => {
       const option = document.createElement("option");
       option.value = player.name;
       option.textContent = player.name;
@@ -419,7 +419,7 @@ App.goalMap = {
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
     if (goalieFilterSelect) {
       goalieFilterSelect.innerHTML = '<option value="">All Goalies</option>';
-      const goalies = App.data.selectedPlayers.filter(p => p.position === "G");
+      const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
       goalies.forEach(goalie => {
         const option = document.createElement("option");
         option.value = goalie.name;

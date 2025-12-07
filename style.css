@@ -1501,13 +1501,11 @@ tr[data-player].dragging {
   width: 60px;
   min-width: 60px;
   max-width: 60px;
-  height: auto;
-  min-height: 42px;  /* Match .pos-select calculated height (10px + 10px padding + ~22px line height) */
   background: #2a2a2a;
   color: #44bb91;
   border: 1px solid #444;
   border-radius: 8px;
-  padding: 10px 6px;
+  padding: 10px 6px;  /* Same padding as .pos-select for consistent height */
   text-align: center;
   font-size: 0.95rem;
   font-weight: bold;
