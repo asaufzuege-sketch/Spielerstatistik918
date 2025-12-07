@@ -38,7 +38,7 @@ App.seasonTable = {
     console.log("[Season Table] Rendering started at:", new Date().toISOString());
 
     const headerCols = [
-      "No", "Player", "Games",
+      "Nr", "Spieler", "Games",
       "Goals", "Assists", "Points", "+/-", "Ø +/-",
       "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
       "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", "Time",
@@ -77,13 +77,7 @@ App.seasonTable = {
     // Wir rufen es NICHT auf, um die Rekursion zu verhindern
     // ensureDataForSeason wird nur beim ersten Laden oder explizit aufgerufen
 
-    const rows = Object.keys(App.data.seasonData)
-      .filter(name => {
-        // Exclude goalies from season table
-        const player = App.data.selectedPlayers.find(p => p.name === name);
-        return !player || player.position !== "G";
-      })
-      .map(name => {
+    const rows = Object.keys(App.data.seasonData).map(name => {
       const d = App.data.seasonData[name];
       const games = Number(d.games || 0);
       const goals = Number(d.goals || 0);
@@ -318,10 +312,10 @@ App.seasonTable = {
   },
 
   exportFromStats() {
-    if (!confirm("Export game to season?")) return;
+    if (!confirm("Spiel zu Season exportieren?")) return;
 
     if (!App.data.selectedPlayers.length) {
-      alert("No players selected.");
+      alert("Keine Spieler ausgewählt.");
       return;
     }
 
@@ -409,7 +403,7 @@ App.seasonTable = {
       }
 
       const header = [
-        "No","Player","Games",
+        "Nr","Spieler","Games",
         "Goals","Assists","Points","+/-","Ø +/-",
         "Shots","Shots/Game","Shots %","Goals/Game","Points/Game",
         "Penalty","Goal Value","FaceOffs","FaceOffs Won","FaceOffs %","Time",

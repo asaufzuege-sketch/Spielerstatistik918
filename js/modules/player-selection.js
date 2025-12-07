@@ -25,25 +25,6 @@ App.playerSelection = {
     const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
     const currentTeamId = currentTeamInfo?.id;
     
-    // Add 5 goalie slots at the TOP for all teams
-    const existingGoalies = App.data.selectedPlayers.filter(sp => sp.position === "G");
-    
-    for (let i = 0; i < 5; i++) {
-      const goalie = existingGoalies[i];
-      const li = document.createElement("li");
-      li.className = "goalie-slot";
-      const chkId = `goalie-chk-${i}`;
-      
-      li.innerHTML = `
-        <label class="goalie-line" style="display:flex;align-items:center;gap:8px;width:100%;" for="${chkId}">
-          <input id="${chkId}" type="checkbox" class="goalie-checkbox" ${goalie ? "checked" : ""} style="flex:0 0 auto">
-          <input type="text" class="goalie-num" inputmode="numeric" maxlength="3" placeholder="No." value="${App.helpers.escapeHtml(goalie?.num || "")}" style="width:56px;flex:0 0 auto;padding:6px;border-radius:6px;border:1px solid #444;">
-          <div class="pos-fixed" style="flex:0 0 60px;text-align:center;padding:6px;border-radius:6px;border:1px solid #44bb91;background:#1a1a1a;color:#44bb91;font-weight:bold;">G</div>
-          <input type="text" class="goalie-name" placeholder="Goalie Name" value="${App.helpers.escapeHtml(goalie?.name || "")}" style="flex:1;min-width:0;border-radius:6px;border:1px solid #444;padding:6px;">
-        </label>`;
-      this.container.appendChild(li);
-    }
-    
     // Team 1 gets the pre-filled player list, Teams 2 and 3 get 30 empty cells
     if (currentTeamId === 'team1') {
       // Show pre-filled players for Team 1
@@ -63,7 +44,7 @@ App.playerSelection = {
           numAreaHtml = `<div class="num" style="flex:0 0 48px;text-align:center;"><strong>${App.helpers.escapeHtml(p.num)}</strong></div>`;
         } else {
           numAreaHtml = `<div style="flex:0 0 64px;text-align:center;">
-                           <input class="num-input" type="text" inputmode="numeric" maxlength="3" placeholder="No." value="" style="width:56px;padding:6px;border-radius:6px;border:1px solid #444;">
+                           <input class="num-input" type="text" inputmode="numeric" maxlength="3" placeholder="Nr." value="" style="width:56px;padding:6px;border-radius:6px;border:1px solid #444;">
                          </div>`;
         }
         
@@ -89,8 +70,8 @@ App.playerSelection = {
         li.innerHTML = `
           <label class="custom-line" style="display:flex;align-items:center;gap:8px;width:100%;" for="${chkId}">
             <input id="${chkId}" type="checkbox" class="custom-checkbox" ${pre ? "checked" : ""} style="flex:0 0 auto">
-            <input type="text" class="custom-num" inputmode="numeric" maxlength="3" placeholder="No." value="${App.helpers.escapeHtml(pre?.num || "")}" style="width:56px;flex:0 0 auto;padding:6px;border-radius:6px;border:1px solid #444;">
-            <input type="text" class="custom-name" placeholder="Custom Player Name" value="${App.helpers.escapeHtml(pre?.name || "")}" style="flex:1;min-width:0;border-radius:6px;border:1px solid #444;padding:6px;">
+            <input type="text" class="custom-num" inputmode="numeric" maxlength="3" placeholder="Nr." value="${App.helpers.escapeHtml(pre?.num || "")}" style="width:56px;flex:0 0 auto;padding:6px;border-radius:6px;border:1px solid #444;">
+            <input type="text" class="custom-name" placeholder="Eigener Spielername" value="${App.helpers.escapeHtml(pre?.name || "")}" style="flex:1;min-width:0;border-radius:6px;border:1px solid #444;padding:6px;">
           </label>`;
         this.container.appendChild(li);
       }
@@ -103,8 +84,8 @@ App.playerSelection = {
         li.innerHTML = `
           <label class="custom-line" style="display:flex;align-items:center;gap:8px;width:100%;" for="${chkId}">
             <input id="${chkId}" type="checkbox" class="custom-checkbox" style="flex:0 0 auto">
-            <input type="text" class="custom-num" inputmode="numeric" maxlength="3" placeholder="No." value="" style="width:56px;flex:0 0 auto;padding:6px;border-radius:6px;border:1px solid #444;">
-            <input type="text" class="custom-name" placeholder="Enter Player Name" value="" style="flex:1;min-width:0;border-radius:6px;border:1px solid #444;padding:6px;">
+            <input type="text" class="custom-num" inputmode="numeric" maxlength="3" placeholder="Nr." value="" style="width:56px;flex:0 0 auto;padding:6px;border-radius:6px;border:1px solid #444;">
+            <input type="text" class="custom-name" placeholder="Spielername eingeben" value="" style="flex:1;min-width:0;border-radius:6px;border:1px solid #444;padding:6px;">
           </label>`;
         this.container.appendChild(li);
       }
@@ -118,25 +99,9 @@ App.playerSelection = {
       const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
       const currentTeamId = currentTeamInfo?.id;
       
-      // First, handle goalie slots (always at top for all teams)
-      const goalieLis = Array.from(this.container.querySelectorAll(".goalie-slot"));
-      goalieLis.forEach(li => {
-        const chk = li.querySelector(".goalie-checkbox");
-        const numInput = li.querySelector(".goalie-num");
-        const nameInput = li.querySelector(".goalie-name");
-        
-        if (chk && chk.checked && nameInput && nameInput.value.trim() !== "") {
-          App.data.selectedPlayers.push({
-            num: numInput ? (numInput.value.trim() || "") : "",
-            name: nameInput.value.trim(),
-            position: "G"
-          });
-        }
-      });
-      
       if (currentTeamId === 'team1') {
         // Handle Team 1 with pre-filled players
-        const checkedBoxes = Array.from(this.container.querySelectorAll("input[type='checkbox']:not(.custom-checkbox):not(.goalie-checkbox)"))
+        const checkedBoxes = Array.from(this.container.querySelectorAll("input[type='checkbox']:not(.custom-checkbox)"))
           .filter(chk => chk.checked);
         
         checkedBoxes.forEach(chk => {
@@ -158,7 +123,7 @@ App.playerSelection = {
         });
         
         // Handle custom players
-        const customLis = Array.from(this.container.querySelectorAll("li:not(.goalie-slot)")).slice(App.data.players.length);
+        const customLis = Array.from(this.container.querySelectorAll("li")).slice(App.data.players.length);
         customLis.forEach(li => {
           const chk = li.querySelector(".custom-checkbox");
           const numInput = li.querySelector(".custom-num");
@@ -173,7 +138,7 @@ App.playerSelection = {
         });
       } else {
         // Handle Team 2 and Team 3 with all custom entries
-        const allLis = Array.from(this.container.querySelectorAll("li:not(.goalie-slot)"));
+        const allLis = Array.from(this.container.querySelectorAll("li"));
         allLis.forEach(li => {
           const chk = li.querySelector(".custom-checkbox");
           const numInput = li.querySelector(".custom-num");

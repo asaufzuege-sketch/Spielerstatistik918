@@ -75,7 +75,7 @@ App.teamSelection = (function() {
             }
             const teamInfo = document.createElement('p');
             teamInfo.className = 'team-name';
-            teamInfo.textContent = `${playersWithNames} Players`;
+            teamInfo.textContent = `${playersWithNames} Spieler`;
             
             teamDisplay.appendChild(teamTitle);
             teamDisplay.appendChild(teamInfo);
@@ -85,7 +85,7 @@ App.teamSelection = (function() {
             
             const selectBtn = document.createElement('button');
             selectBtn.className = 'team-btn';
-            selectBtn.textContent = 'Select';
+            selectBtn.textContent = 'Auswählen';
             selectBtn.onclick = () => selectTeam(teamDef.id);
             
             const editBtn = document.createElement('button');
@@ -114,10 +114,10 @@ App.teamSelection = (function() {
             const teamId = TEAMS[index].id;
             if (currentTeamId === teamId) {
                 btn.classList.add('active-team');
-                btn.textContent = 'Selected';
+                btn.textContent = 'Ausgewählt';
             } else {
-                btn.classList.remove('active-team');
-                btn.textContent = 'Select';
+                btn.classList. remove('active-team');
+                btn. textContent = 'Auswählen';
             }
         });
     }

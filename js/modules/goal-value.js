@@ -75,13 +75,7 @@ App.goalValue = {
       const opponents = this.getOpponents();
       const all = this.getData();
       
-      Object.keys(App.data.seasonData)
-        .filter(name => {
-          // Exclude goalies from goal value
-          const player = App.data.selectedPlayers.find(p => p.name === name);
-          return !player || player.position !== "G";
-        })
-        .forEach(name => {
+      Object.keys(App.data.seasonData).forEach(name => {
         if (!all[name] || !Array.isArray(all[name])) {
           all[name] = opponents.map(() => 0);
         } else {
@@ -108,14 +102,8 @@ App.goalValue = {
     const bottom = this.getBottom();
     
     const playersList = Object.keys(App.data.seasonData).length 
-      ? Object.keys(App.data.seasonData)
-          .filter(name => {
-            // Exclude goalies from goal value
-            const player = App.data.selectedPlayers.find(p => p.name === name);
-            return !player || player.position !== "G";
-          })
-          .sort()
-      : App.data.selectedPlayers.filter(p => p.position !== "G").map(p => p.name);
+      ? Object.keys(App.data.seasonData).sort() 
+      : App.data.selectedPlayers.map(p => p.name);
     
     // Wrapper ohne eigenen overflow (nur fürs Layout)
     const wrapper = document.createElement('div');
@@ -334,13 +322,8 @@ App.goalValue = {
     
     const opponents = this.getOpponents();
     const playersList = Object.keys(App.data.seasonData).length 
-      ? Object.keys(App.data.seasonData)
-          .filter(name => {
-            // Exclude goalies from goal value
-            const player = App.data.selectedPlayers.find(p => p.name === name);
-            return !player || player.position !== "G";
-          })
-      : App.data.selectedPlayers.filter(p => p.position !== "G").map(p => p.name);
+      ? Object.keys(App.data.seasonData) 
+      : App.data.selectedPlayers.map(p => p.name);
     
     const newData = {};
     playersList.forEach(n => newData[n] = opponents.map(() => 0));
