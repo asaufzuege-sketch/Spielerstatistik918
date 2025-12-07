@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Spielerstatistik</title>
-  <link rel="stylesheet" href="style. css" />
+  <title>Player Statistics</title>
+  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="Create%20season_table_styles.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2. 5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
 
   <!-- TEAMAUSWAHL SEITE (NEUE ERSTE SEITE) -->
   <div id="teamSelectionPage" class="page">
     <h1>TEAM SELECTION</h1>
-    <p class="center-text">Wähle ein Team aus oder erstelle ein neues Team</p>
+    <p class="center-text">Select a team or create a new team</p>
     
     <!-- HIER: Dynamischer Container für Team-Buttons -->
     <div id="teamSelectionContainer"></div>
@@ -24,27 +24,29 @@
         <h3>Teamname bearbeiten</h3>
         <input type="text" id="teamNameInput" placeholder="Teamname eingeben" maxlength="30" />
         <div class="modal-buttons">
-          <button id="saveTeamNameBtn" class="confirm-btn">Speichern</button>
-          <button id="cancelTeamEditBtn" class="cancel-btn">Abbrechen</button>
+          <button id="saveTeamNameBtn" class="confirm-btn">Save</button>
+          <button id="cancelTeamEditBtn" class="cancel-btn">Cancel</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SPIELERAUSWAHL -->
+  <!-- PLAYER SELECTION -->
   <div id="playerSelectionPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToTeamSelectionBtn" class="top-btn back-btn">← Zur Teamauswahl</button>
+        <button id="backToTeamSelectionBtn" class="top-btn back-btn">← Back to Team Selection</button>
+        <button id="gameDataBtn" class="top-btn game-data-btn">Game Data</button>
+        <button id="lineupBtn" class="top-btn lineup-btn">Line Up</button>
       </div>
     </div>
     <h1>PLAYER SELECTION</h1>
-    <p class="center-text">Wähle die Spieler, die in der Tabelle angezeigt werden sollen</p>
+    <p class="subtitle">Select the players to display in the table</p>
     <div class="current-team-info">
+      <!-- Text 'Aktuelles Team:' entfernt, nur noch der Teamname -->
       <span id="currentTeamDisplay"></span>
     </div>
     <ul id="playerList" class="player-list"></ul>
-    <button id="confirmSelection" class="confirm-btn">Bestätigen</button>
   </div>
 
   <!-- STATS SEITE (GAME DATA) -->
@@ -52,10 +54,9 @@
     <div class="page-top">
       <div class="top-bar">
         <button id="timerBtn" class="top-btn timer timer-left reset" aria-label="Spieluhr">00:00</button>
-        <button id="selectPlayersBtn" class="top-btn">Spieler wählen</button>
+        <button id="selectPlayersBtn" class="top-btn">Select Players</button>
         <button id="torbildBtn" class="top-btn">Goal Map</button>
         <button id="goalValueBtn" class="top-btn">Goal Value</button>
-        <button id="lineUpBtn" class="top-btn">LINE UP</button>
         <button id="exportSeasonFromStatsBtn" class="top-btn export-season">Export Season</button>
         <button id="seasonBtn" class="top-btn season-highlight">Season</button>
         <button id="seasonMapBtn" class="top-btn season-highlight">Season Map</button>
@@ -66,6 +67,7 @@
 
     <h1>GAME DATA</h1>
     <div class="current-team-info">
+      <!-- "Team:" Text entfernt -->
       <span><strong id="statsTeamDisplay"></strong></span>
     </div>
     <div id="statsScrollContainer">
@@ -77,10 +79,13 @@
   <div id="torbildPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backToStatsBtn" class="top-btn back-btn">← Back</button>
         <button id="exportSeasonMapBtn" class="top-btn export-season">Export Season Map</button>
         <select id="goalMapPlayerFilter" class="top-btn player-filter-btn">
-          <option value="">Alle Spieler</option>
+          <option value="">All Players</option>
+        </select>
+        <select id="goalMapGoalieFilter" class="top-btn player-filter-btn">
+          <option value="">All Goalies</option>
         </select>
         <button id="resetTorbildBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
@@ -110,7 +115,7 @@
               <button class="time-btn">0</button><button class="time-btn">0</button>
             </div>
             <div class="period-numbers">
-              <span class="num-center">19 - 15</span><span class="num-center">14 - 10</span>
+              <span class=" num-center">19 - 15</span><span class="num-center">14 - 10</span>
               <span class="num-center">9 - 5</span><span class="num-center">4 - 0</span>
             </div>
             <div class="period-buttons bottom-row">
@@ -125,7 +130,7 @@
               <button class="time-btn">0</button><button class="time-btn">0</button>
             </div>
             <div class="period-numbers">
-              <span class="num-center">19 - 15</span><span class="num-center">14 - 10</span>
+              <span class=" num-center">19 - 15</span><span class="num-center">14 - 10</span>
               <span class="num-center">9 - 5</span><span class="num-center">4 - 0</span>
             </div>
             <div class="period-buttons bottom-row">
@@ -140,7 +145,7 @@
               <button class="time-btn">0</button><button class="time-btn">0</button>
             </div>
             <div class="period-numbers">
-              <span class="num-center">19 - 15</span><span class="num-center">14 - 10</span>
+              <span class=" num-center">19 - 15</span><span class="num-center">14 - 10</span>
               <span class="num-center">9 - 5</span><span class="num-center">4 - 0</span>
             </div>
             <div class="period-buttons bottom-row">
@@ -157,7 +162,7 @@
   <div id="goalValuePage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backFromGoalValueBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backFromGoalValueBtn" class="top-btn back-btn">← Back</button>
         <button id="resetGoalValueBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
     </div>
@@ -171,17 +176,18 @@
   <div id="seasonMapPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsFromSeasonMapBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backToStatsFromSeasonMapBtn" class="top-btn back-btn">← Back</button>
         <button id="exportSeasonMapPageBtn" class="top-btn export-csv">Export</button>
         <select id="seasonMapPlayerFilter" class="top-btn player-filter-btn">
-          <option value="">Alle Spieler</option>
+          <option value="">All Players</option>
+        </select>
+        <select id="seasonMapGoalieFilter" class="top-btn player-filter-btn">
+          <option value="">All Goalies</option>
         </select>
         <button id="resetSeasonMapBtn" class="top-btn danger-btn reset-btn">Reset</button>
       </div>
     </div>
-    <div style="margin-top:18px; padding:10px;">
-      <h1>SEASON MAP</h1>
-    </div>
+    <h1>SEASON MAP</h1>
     <div class="torbild-layout">
       <div class="field-column">
         <div class="img-box field-box" id="seasonFieldBox">
@@ -190,7 +196,7 @@
       </div>
       <div class="goal-column">
         <div class="img-box goal-img-box" id="seasonGoalGreenBox">
-          <img src="Tor Grün. png" alt="Tor (Grün)" />
+          <img src="Tor Grün.png" alt="Tor (Grün)" />
         </div>
         <div class="img-box goal-img-box" id="seasonGoalRedBox">
           <img src="Tor Rot.png" alt="Tor (Rot)" />
@@ -203,7 +209,7 @@
               <button class="time-btn">0</button><button class="time-btn">0</button>
             </div>
             <div class="period-numbers">
-              <span class="num-center">19 - 15</span><span class="num-center">14 - 10</span>
+              <span class=" num-center">19 - 15</span><span class="num-center">14 - 10</span>
               <span class="num-center">9 - 5</span><span class="num-center">4 - 0</span>
             </div>
             <div class="period-buttons bottom-row">
@@ -220,7 +226,7 @@
   <div id="seasonPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsFromSeasonBtn" class="top-btn back-btn">← Zurück</button>
+        <button id="backToStatsFromSeasonBtn" class="top-btn back-btn">← Back</button>
         <button id="exportSeasonBtn" class="top-btn export-csv">Export CSV</button>
         <button id="importCsvSeasonBtn" class="top-btn import-csv-btn">Import CSV</button>
         <button id="resetSeasonBtn" class="top-btn danger-btn reset-btn">Reset</button>
@@ -228,39 +234,206 @@
     </div>
     <h1>SEASON</h1>
     <div id="seasonContainer"></div>
+    
+    <!-- Add Time Modal -->
+    <div id="addTimeModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h3>Add Time</h3>
+        <p>Player: <span id="addTimePlayerName"></span></p>
+        <p>Current Time: <span id="addTimeCurrentTime"></span></p>
+        
+        <div class="time-input-group">
+          <label>Add time (MM:SS):</label>
+          <input type="text" id="addTimeInput" placeholder="00:00" pattern="[0-9]{1,2}:[0-9]{2}">
+        </div>
+        
+        <div class="modal-buttons">
+          <button id="addTimeCancelBtn">Cancel</button>
+          <button id="addTimeConfirmBtn">Add</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- LINE UP SEITE -->
   <div id="lineUpPage" class="page" style="display:none;">
     <div class="page-top">
       <div class="top-bar">
-        <button id="backToStatsFromLineUpBtn" class="top-btn back-btn">← Zurück</button>
-        <button id="lineModeBtn" class="top-btn">NORMAL</button>
-        <button id="playerOutBtn" class="top-btn">Player Out</button>
+        <button id="lineUpPlayerSelectionBtn" class="top-btn back-btn">Player Selection</button>
+        <button id="lineUpChangeLineBtn" class="top-btn lineup-change-line-btn">Change Line</button>
+        <div class="player-out-container">
+          <button id="lineUpPlayerOutBtn" class="top-btn lineup-player-out-btn">Player out <span class="player-out-dot"></span></button>
+          <div id="playerOutDropdown" class="player-out-dropdown">
+            <div id="playerOutList" class="player-out-list">
+              <!-- Dynamisch gefüllt -->
+            </div>
+          </div>
+        </div>
+        <button id="lineUpExportPdfBtn" class="top-btn lineup-export-pdf-btn">Export PDF</button>
+        <button id="lineUpGameDataBtn" class="top-btn">Game Data</button>
       </div>
     </div>
-    <h1>LINE UP</h1>
-    <div id="lineUpContainer"></div>
+    <h1 class="lineup-title">LINE UP</h1>
+    <div id="lineupModeLabel" class="lineup-mode-label">NORMAL</div>
+    
+    <div id="lineUpContainer">
+      <!-- 4 Linien (Forwards) -->
+      <div class="lineup-section lineup-forwards">
+        <div class="lineup-line" data-line="1">
+          <div class="lineup-line-row">
+            <button class="lineup-position" data-pos="LW" data-line="1">LW 1</button>
+            <button class="lineup-position lineup-center" data-pos="C" data-line="1">C 1</button>
+            <button class="lineup-position" data-pos="RW" data-line="1">RW 1</button>
+          </div>
+          <div class="lineup-line-stats">0G / +- 0 / 0 Sh</div>
+        </div>
+        <div class="lineup-line" data-line="2">
+          <div class="lineup-line-row">
+            <button class="lineup-position" data-pos="LW" data-line="2">LW 2</button>
+            <button class="lineup-position lineup-center" data-pos="C" data-line="2">C 2</button>
+            <button class="lineup-position" data-pos="RW" data-line="2">RW 2</button>
+          </div>
+          <div class="lineup-line-stats">0G / +- 0 / 0 Sh</div>
+        </div>
+        <div class="lineup-line" data-line="3">
+          <div class="lineup-line-row">
+            <button class="lineup-position" data-pos="LW" data-line="3">LW 3</button>
+            <button class="lineup-position lineup-center" data-pos="C" data-line="3">C 3</button>
+            <button class="lineup-position" data-pos="RW" data-line="3">RW 3</button>
+          </div>
+          <div class="lineup-line-stats">0G / +- 0 / 0 Sh</div>
+        </div>
+        <div class="lineup-line" data-line="4">
+          <div class="lineup-line-row">
+            <button class="lineup-position" data-pos="LW" data-line="4">LW 4</button>
+            <button class="lineup-position lineup-center" data-pos="C" data-line="4">C 4</button>
+            <button class="lineup-position" data-pos="RW" data-line="4">RW 4</button>
+          </div>
+          <div class="lineup-line-stats">0G / +- 0 / 0 Sh</div>
+        </div>
+      </div>
+      
+      <!-- 3 Defense Paare -->
+      <div class="lineup-section lineup-defense">
+        <div class="lineup-defense-pair" data-pair="1">
+          <button class="lineup-position" data-pos="DL" data-pair="1">DL 1</button>
+          <div class="lineup-pair-stats">0G / +- 0 / 0 Sh</div>
+          <button class="lineup-position" data-pos="DR" data-pair="1">DR 1</button>
+        </div>
+        <div class="lineup-defense-pair" data-pair="2">
+          <button class="lineup-position" data-pos="DL" data-pair="2">DL 2</button>
+          <div class="lineup-pair-stats">0G / +- 0 / 0 Sh</div>
+          <button class="lineup-position" data-pos="DR" data-pair="2">DR 2</button>
+        </div>
+        <div class="lineup-defense-pair" data-pair="3">
+          <button class="lineup-position" data-pos="DL" data-pair="3">DL 3</button>
+          <div class="lineup-pair-stats">0G / +- 0 / 0 Sh</div>
+          <button class="lineup-position" data-pos="DR" data-pair="3">DR 3</button>
+        </div>
+      </div>
+      
+      <!-- Special Teams Container -->
+      <div class="lineup-special-teams">
+        <!-- BOX PLAY Sektion (links) -->
+        <div class="lineup-section lineup-boxplay">
+          <h3 class="lineup-section-title">BOX PLAY</h3>
+          <div class="lineup-formation" data-formation="1">
+            <div class="lineup-formation-row">
+              <button class="lineup-position" data-pos="BP-W" data-formation="1">BP W 1</button>
+              <button class="lineup-position" data-pos="BP-C" data-formation="1">BP C 1</button>
+            </div>
+            <div class="lineup-formation-row">
+              <button class="lineup-position" data-pos="BP-DL" data-formation="1">BP DL 1</button>
+              <button class="lineup-position" data-pos="BP-DR" data-formation="1">BP DR 1</button>
+            </div>
+          </div>
+          <div class="lineup-formation" data-formation="2">
+            <div class="lineup-formation-row">
+              <button class="lineup-position" data-pos="BP-W" data-formation="2">BP W 2</button>
+              <button class="lineup-position" data-pos="BP-C" data-formation="2">BP C 2</button>
+            </div>
+            <div class="lineup-formation-row">
+              <button class="lineup-position" data-pos="BP-DL" data-formation="2">BP DL 2</button>
+              <button class="lineup-position" data-pos="BP-DR" data-formation="2">BP DR 2</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- POWER PLAY Sektion (rechts) -->
+        <div class="lineup-section lineup-powerplay">
+          <h3 class="lineup-section-title">POWER PLAY</h3>
+          <div class="lineup-formation" data-formation="1">
+            <div class="lineup-formation-row">
+              <button class="lineup-position" data-pos="PP-LW" data-formation="1">PP LW 1</button>
+              <button class="lineup-position" data-pos="PP-C" data-formation="1">PP C 1</button>
+              <button class="lineup-position" data-pos="PP-RW" data-formation="1">PP RW 1</button>
+            </div>
+            <div class="lineup-formation-row lineup-pp-defense">
+              <button class="lineup-position" data-pos="PP-DL" data-formation="1">PP DL 1</button>
+              <button class="lineup-position" data-pos="PP-DR" data-formation="1">PP DR 1</button>
+            </div>
+          </div>
+          <div class="lineup-formation" data-formation="2">
+            <div class="lineup-formation-row">
+              <button class="lineup-position" data-pos="PP-LW" data-formation="2">PP LW 2</button>
+              <button class="lineup-position" data-pos="PP-C" data-formation="2">PP C 2</button>
+              <button class="lineup-position" data-pos="PP-RW" data-formation="2">PP RW 2</button>
+            </div>
+            <div class="lineup-formation-row lineup-pp-defense">
+              <button class="lineup-position" data-pos="PP-DL" data-formation="2">PP DL 2</button>
+              <button class="lineup-position" data-pos="PP-DR" data-formation="2">PP DR 2</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Player Selection Modal -->
+    <div id="lineUpPlayerModal" class="modal" style="display: none;">
+      <div class="modal-content lineup-player-modal">
+        <h3 id="lineUpModalTitle">Select Player</h3>
+        <div id="lineUpPlayerList" class="lineup-player-list"></div>
+        <div class="modal-buttons">
+          <button id="lineUpClearPositionBtn" class="cancel-btn">Clear Position</button>
+          <button id="lineUpCancelModalBtn" class="cancel-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- GOALIE SELECTION MODAL -->
+  <div id="goalieSelectionModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Select Goalie</h3>
+      <div id="goalieSelectionList" class="goalie-selection-list">
+        <!-- Dynamically populated with goalies from Goal Map goalie filter -->
+      </div>
+      <div class="modal-buttons">
+        <button id="goalieSelectionCancel" class="cancel-btn">Cancel</button>
+        <button id="goalieSelectionConfirm" class="confirm-btn">Confirm</button>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->
   <script src="js/core/config.js"></script>
-  <script src="js/core/helpers. js"></script>
+  <script src="js/core/helpers.js"></script>
   <script src="js/utils/storage.js"></script>
   <script src="js/utils/marker-handler.js"></script>
-  <script src="js/modules/timer. js"></script>
+  <script src="js/modules/timer.js"></script>
   <script src="js/modules/csv-handler.js"></script>
   <script src="js/modules/team-selection.js"></script>
   <script src="js/modules/player-selection.js"></script>
   <script src="js/modules/stats-table.js"></script>
-  <script src="js/modules/season-table. js"></script>
+  <script src="js/modules/season-table.js"></script>
   <script src="js/modules/goal-map.js"></script>
   <script src="js/modules/season-map.js"></script>
   <script src="js/modules/goal-value.js"></script>
   <script src="js/modules/line-up.js"></script>
   <script src="js/app.js"></script>
   <script src="season_table_ui_patch.js"></script>
-  <script src="season_map_momentum. js"></script>
-  <script src="https://cdnjs.cloudflare. com/ajax/libs/html2canvas/1.4.1/html2canvas. min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="season_map_momentum.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

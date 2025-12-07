@@ -1,472 +1,900 @@
-// LINE UP Module
+// Line Up Module
 App.lineUp = {
+  container: null,
+  modalOpen: false,
+  currentPosition: null,
+  lineUpData: {},
+  playersOut: [],
   currentMode: 'normal', // 'normal', 'power', 'manuell'
   modes: ['normal', 'power', 'manuell'],
-  assignments: {}, // { 'L1-LW': 'Player Name', ...  }
-  playerOutList: [], // List of players marked as "out"
   
   init() {
-    console.log("[LINE UP] Initializing.. .");
+    this.container = document.getElementById("lineUpContainer");
+    this.loadData();
+    this.attachEventListeners();
+    this.updateModeDisplay(); // This calls updateModeColors()
+    this.render();
+    this.updatePlayerOutButton();
+  },
+  
+  loadData() {
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedPlayersOut = localStorage.getItem(`playersOut_${currentTeamId}`);
     
-    // Load saved assignments from localStorage
-    this. loadAssignments();
+    // Load mode-specific lineup data
+    this.loadDataForMode(this.currentMode);
     
-    // Event listeners
-    document. getElementById("lineModeBtn")?.addEventListener("click", () => {
+    try {
+      this.playersOut = savedPlayersOut ? JSON.parse(savedPlayersOut) : [];
+    } catch (e) {
+      this.playersOut = [];
+    }
+  },
+  
+  saveData() {
+    // Save to mode-specific storage
+    this.saveDataForMode(this.currentMode);
+  },
+  
+  saveDataForMode(mode) {
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    localStorage.setItem(`lineUpData_${mode}_${currentTeamId}`, JSON.stringify(this.lineUpData));
+  },
+  
+  loadDataForMode(mode) {
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedData = localStorage.getItem(`lineUpData_${mode}_${currentTeamId}`);
+    
+    try {
+      this.lineUpData = savedData ? JSON.parse(savedData) : {};
+    } catch (e) {
+      this.lineUpData = {};
+    }
+    
+    // Remove any players that are marked as OUT
+    let changed = false;
+    Object.keys(this.lineUpData).forEach(posKey => {
+      if (this.playersOut.includes(this.lineUpData[posKey])) {
+        delete this.lineUpData[posKey];
+        changed = true;
+      }
+    });
+    
+    // Save if we removed any players
+    if (changed) {
+      this.saveDataForMode(mode);
+    }
+  },
+  
+  savePlayersOut() {
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    localStorage.setItem(`playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
+  },
+  
+  getAvailablePlayers() {
+    // Get players from player selection that are active
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    
+    let players = [];
+    try {
+      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      players = savedPlayers.filter(p => p.active && p.name && p.name.trim() !== "");
+    } catch (e) {
+      players = [];
+    }
+    
+    // Fallback to App.data.selectedPlayers if available
+    if (players.length === 0 && App.data.selectedPlayers && App.data.selectedPlayers.length > 0) {
+      players = App.data.selectedPlayers.map(p => ({
+        number: p.num || "",
+        name: p.name,
+        position: "",
+        active: true
+      }));
+    }
+    
+    return players;
+  },
+  
+  attachEventListeners() {
+    // Navigation buttons
+    document.getElementById("lineUpPlayerSelectionBtn")?.addEventListener("click", () => {
+      App.showPage("selection");
+    });
+    
+    document.getElementById("lineUpGameDataBtn")?.addEventListener("click", () => {
+      App.showPage("stats");
+    });
+    
+    // Change Line button (merged Power Line + Team Line)
+    document.getElementById("lineUpChangeLineBtn")?.addEventListener("click", () => {
       this.changeLineMode();
     });
     
-    document.getElementById("playerOutBtn")?.addEventListener("click", () => {
-      this. showPlayerOutDialog();
+    // Export PDF button
+    document.getElementById("lineUpExportPdfBtn")?.addEventListener("click", () => {
+      console.log("Export PDF clicked");
     });
     
-    document.getElementById("backToStatsFromLineUpBtn")?.addEventListener("click", () => {
-      App.showPage("stats");
+    // Player Out button - toggle dropdown
+    document.getElementById("lineUpPlayerOutBtn")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.togglePlayerOutDropdown();
     });
-  },
-  
-  render() {
-    const container = document.getElementById("lineUpContainer");
-    if (!container) return;
     
-    console.log("[LINE UP] Rendering in mode:", this.currentMode);
-    
-    // Update mode button text
-    const modeBtn = document.getElementById("lineModeBtn");
-    if (modeBtn) {
-      modeBtn.textContent = this.currentMode. toUpperCase();
-    }
-    
-    // If in POWER mode, auto-generate assignments
-    if (this.currentMode === 'power') {
-      this.generatePowerLineup();
-    }
-    
-    container.innerHTML = "";
-    
-    // Forward Lines Section
-    const forwardSection = this.createForwardSection();
-    container. appendChild(forwardSection);
-    
-    // Defense Pairs Section
-    const defenseSection = this.createDefenseSection();
-    container.appendChild(defenseSection);
-    
-    // Box Play Section
-    const boxPlaySection = this.createBoxPlaySection();
-    container. appendChild(boxPlaySection);
-    
-    // Power Play Section
-    const powerPlaySection = this.createPowerPlaySection();
-    container.appendChild(powerPlaySection);
-  },
-  
-  createForwardSection() {
-    const section = document.createElement("div");
-    section.className = "lineup-section";
-    
-    const title = document.createElement("h2");
-    title. textContent = "FORWARD LINES";
-    title.className = "lineup-section-title";
-    section.appendChild(title);
-    
-    for (let line = 1; line <= 4; line++) {
-      const lineDiv = document.createElement("div");
-      lineDiv.className = "forward-line";
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      const dropdown = document.getElementById("playerOutDropdown");
+      const playerOutBtn = document.getElementById("lineUpPlayerOutBtn");
+      const container = document.querySelector(".player-out-container");
       
-      const lineTitle = document.createElement("div");
-      lineTitle.className = "line-title";
-      lineTitle.textContent = `Line ${line}`;
-      lineDiv.appendChild(lineTitle);
-      
-      const positions = ['LW', 'C', 'RW'];
-      const positionsGrid = document.createElement("div");
-      positionsGrid.className = "positions-grid";
-      
-      positions.forEach(pos => {
-        const slot = this.createPositionSlot(`L${line}-${pos}`, pos);
-        positionsGrid.appendChild(slot);
-      });
-      
-      lineDiv.appendChild(positionsGrid);
-      
-      // Add line stats
-      const stats = this.calculateLineStats(line, 'forward');
-      const statsDiv = document.createElement("div");
-      statsDiv.className = "line-stats";
-      statsDiv.textContent = stats;
-      lineDiv. appendChild(statsDiv);
-      
-      section.appendChild(lineDiv);
-    }
-    
-    return section;
-  },
-  
-  createDefenseSection() {
-    const section = document.createElement("div");
-    section.className = "lineup-section";
-    
-    const title = document. createElement("h2");
-    title.textContent = "DEFENSE PAIRS";
-    title.className = "lineup-section-title";
-    section. appendChild(title);
-    
-    for (let pair = 1; pair <= 3; pair++) {
-      const pairDiv = document. createElement("div");
-      pairDiv. className = "defense-pair";
-      
-      const pairTitle = document.createElement("div");
-      pairTitle.className = "line-title";
-      pairTitle.textContent = `Pair ${pair}`;
-      pairDiv. appendChild(pairTitle);
-      
-      const positions = ['DL', 'DR'];
-      const positionsGrid = document. createElement("div");
-      positionsGrid. className = "positions-grid";
-      
-      positions.forEach(pos => {
-        const slot = this. createPositionSlot(`D${pair}-${pos}`, pos);
-        positionsGrid.appendChild(slot);
-      });
-      
-      pairDiv.appendChild(positionsGrid);
-      
-      // Add pair stats
-      const stats = this.calculateLineStats(pair, 'defense');
-      const statsDiv = document.createElement("div");
-      statsDiv. className = "line-stats";
-      statsDiv.textContent = stats;
-      pairDiv.appendChild(statsDiv);
-      
-      section. appendChild(pairDiv);
-    }
-    
-    return section;
-  },
-  
-  createBoxPlaySection() {
-    const section = document.createElement("div");
-    section.className = "lineup-section";
-    
-    const title = document. createElement("h2");
-    title.textContent = "BOX PLAY";
-    title.className = "lineup-section-title";
-    section. appendChild(title);
-    
-    const unitsGrid = document. createElement("div");
-    unitsGrid. className = "special-teams-grid";
-    
-    for (let unit = 1; unit <= 2; unit++) {
-      const unitDiv = document.createElement("div");
-      unitDiv.className = "special-team-unit";
-      
-      const unitTitle = document.createElement("div");
-      unitTitle.className = "unit-title";
-      unitTitle.textContent = `Unit ${unit}`;
-      unitDiv.appendChild(unitTitle);
-      
-      const positionsGrid = document. createElement("div");
-      positionsGrid. className = "positions-grid-bp";
-      
-      ['BP-C', 'BP-W', 'BP-DL', 'BP-DR']. forEach(pos => {
-        const slot = this.createPositionSlot(`${pos}${unit}`, pos. replace('BP-', ''));
-        positionsGrid.appendChild(slot);
-      });
-      
-      unitDiv.appendChild(positionsGrid);
-      unitsGrid.appendChild(unitDiv);
-    }
-    
-    section.appendChild(unitsGrid);
-    return section;
-  },
-  
-  createPowerPlaySection() {
-    const section = document.createElement("div");
-    section.className = "lineup-section";
-    
-    const title = document.createElement("h2");
-    title.textContent = "POWER PLAY";
-    title.className = "lineup-section-title";
-    section.appendChild(title);
-    
-    const unitsGrid = document.createElement("div");
-    unitsGrid.className = "special-teams-grid";
-    
-    for (let unit = 1; unit <= 2; unit++) {
-      const unitDiv = document.createElement("div");
-      unitDiv.className = "special-team-unit";
-      
-      const unitTitle = document.createElement("div");
-      unitTitle.className = "unit-title";
-      unitTitle.textContent = `Unit ${unit}`;
-      unitDiv.appendChild(unitTitle);
-      
-      const positionsGrid = document.createElement("div");
-      positionsGrid.className = "positions-grid-pp";
-      
-      ['PP-C', 'PP-LW', 'PP-RW', 'PP-DL', 'PP-DR'].forEach(pos => {
-        const slot = this. createPositionSlot(`${pos}${unit}`, pos. replace('PP-', ''));
-        positionsGrid.appendChild(slot);
-      });
-      
-      unitDiv.appendChild(positionsGrid);
-      unitsGrid.appendChild(unitDiv);
-    }
-    
-    section.appendChild(unitsGrid);
-    return section;
-  },
-  
-  createPositionSlot(slotId, positionLabel) {
-    const slot = document.createElement("div");
-    slot.className = "position-slot";
-    slot.dataset.slotId = slotId;
-    
-    const label = document.createElement("div");
-    label.className = "position-label";
-    label. textContent = positionLabel;
-    slot.appendChild(label);
-    
-    const playerName = this.assignments[slotId] || "";
-    const isPlayerOut = this.playerOutList.includes(playerName);
-    
-    if (this.currentMode === 'manuell') {
-      // Editable mode
-      const input = document.createElement("input");
-      input.type = "text";
-      input. className = "position-input";
-      input.value = playerName;
-      input. placeholder = "Player";
-      input.addEventListener("change", (e) => {
-        this. assignments[slotId] = e.target.value. trim();
-        this.saveAssignments();
-      });
-      slot. appendChild(input);
-    } else {
-      // Display mode
-      const nameDiv = document.createElement("div");
-      nameDiv.className = "position-name";
-      nameDiv. textContent = playerName || "-";
-      
-      if (isPlayerOut) {
-        nameDiv.classList.add("player-out");
-      }
-      
-      slot.appendChild(nameDiv);
-    }
-    
-    return slot;
-  },
-  
-  calculateLineStats(lineNumber, type) {
-    const players = [];
-    
-    if (type === 'forward') {
-      ['LW', 'C', 'RW'].forEach(pos => {
-        const playerName = this.assignments[`L${lineNumber}-${pos}`];
-        if (playerName) players.push(playerName);
-      });
-    } else if (type === 'defense') {
-      ['DL', 'DR'].forEach(pos => {
-        const playerName = this.assignments[`D${lineNumber}-${pos}`];
-        if (playerName) players.push(playerName);
-      });
-    }
-    
-    if (players.length === 0) {
-      return "-";
-    }
-    
-    let totalGoals = 0;
-    let totalPoints = 0;
-    let totalPlusMinus = 0;
-    let totalShots = 0;
-    let totalGames = 0;
-    let playerCount = 0;
-    
-    players.forEach(playerName => {
-      const seasonData = App.data.seasonData[playerName];
-      if (seasonData) {
-        const games = Number(seasonData.games || 0);
-        if (games > 0) {
-          totalGoals += Number(seasonData.goals || 0);
-          totalPoints += (Number(seasonData. goals || 0) + Number(seasonData. assists || 0));
-          totalPlusMinus += Number(seasonData.plusMinus || 0);
-          totalShots += Number(seasonData.shots || 0);
-          totalGames += games;
-          playerCount++;
+      if (dropdown && dropdown.classList.contains("open")) {
+        if (!container.contains(e.target)) {
+          dropdown.classList.remove("open");
         }
       }
     });
     
-    if (playerCount === 0) {
-      return "-";
+    // Position buttons - delegate click events
+    if (this.container) {
+      this.container.addEventListener("click", (e) => {
+        const posBtn = e.target.closest(".lineup-position");
+        if (posBtn) {
+          this.openPlayerModal(posBtn);
+        }
+      });
     }
     
-    const avgGames = totalGames / playerCount;
-    const goalsPerGame = avgGames > 0 ? (totalGoals / avgGames) : 0;
-    const pointsPerGame = avgGames > 0 ?  (totalPoints / avgGames) : 0;
-    const avgPlusMinus = totalPlusMinus / playerCount;
-    const shotsPerGame = avgGames > 0 ? (totalShots / avgGames) : 0;
+    // Modal buttons
+    document.getElementById("lineUpCancelModalBtn")?.addEventListener("click", () => {
+      this.closePlayerModal();
+    });
     
-    if (type === 'forward') {
-      return `${goalsPerGame.toFixed(1)}G / ${avgPlusMinus >= 0 ? '+' : ''}${avgPlusMinus. toFixed(1)} / ${shotsPerGame.toFixed(1)} Sh`;
-    } else {
-      return `${pointsPerGame. toFixed(1)}P / ${avgPlusMinus >= 0 ? '+' : ''}${avgPlusMinus. toFixed(1)} / ${shotsPerGame.toFixed(1)} Sh`;
+    document.getElementById("lineUpClearPositionBtn")?.addEventListener("click", () => {
+      this.clearCurrentPosition();
+    });
+    
+    // Modal overlay click to close
+    const modal = document.getElementById("lineUpPlayerModal");
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          this.closePlayerModal();
+        }
+      });
     }
   },
   
+  togglePlayerOutDropdown() {
+    const dropdown = document.getElementById("playerOutDropdown");
+    if (!dropdown) return;
+    
+    dropdown.classList.toggle("open");
+    
+    if (dropdown.classList.contains("open")) {
+      this.renderPlayerOutList();
+    }
+  },
+  
+  renderPlayerOutList() {
+    const list = document.getElementById("playerOutList");
+    if (!list) return;
+    
+    const players = this.getAvailablePlayers();
+    
+    if (players.length === 0) {
+      list.innerHTML = '<div class="player-out-item" style="cursor: default; opacity: 0.7;">No active players</div>';
+      return;
+    }
+    
+    list.innerHTML = players.map(p => {
+      const isOut = this.playersOut.includes(p.name);
+      const number = p.number || '';
+      const displayText = number ? `${number} ${p.name}` : p.name;
+      
+      return `
+        <div class="player-out-item ${isOut ? 'is-out' : ''}" 
+             data-player="${App.helpers.escapeHtml(p.name)}">
+          ${App.helpers.escapeHtml(displayText)}
+        </div>
+      `;
+    }).join('');
+    
+    // Add click handlers
+    list.querySelectorAll(".player-out-item").forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const playerName = item.dataset.player;
+        if (playerName) {
+          this.togglePlayerOut(playerName);
+        }
+      });
+    });
+  },
+  
+  togglePlayerOut(playerName) {
+    const index = this.playersOut.indexOf(playerName);
+    if (index > -1) {
+      // Reactivate player
+      this.playersOut.splice(index, 1);
+    } else {
+      // Mark as OUT
+      this.playersOut.push(playerName);
+    }
+    
+    this.savePlayersOut();
+    this.renderPlayerOutList();
+    this.updatePlayerOutButton();
+    
+    // Gesperrten Spieler aus ALLEN Modi entfernen
+    this.removePlayerFromAllModes(playerName);
+    
+    // Im POWER Modus: Aufstellung neu generieren
+    if (this.currentMode === 'power') {
+      this.autoFillPowerMode();
+    }
+    
+    // Im NORMAL Modus: PP und BP neu berechnen
+    if (this.currentMode === 'normal') {
+      this.calculateSpecialTeams();
+    }
+    
+    this.render(); // Re-render LINE UP to update blocked players
+  },
+  
+  removePlayerFromAllModes(playerName) {
+    const modes = ['normal', 'power', 'manuell'];
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    
+    modes.forEach(mode => {
+      const key = `lineUpData_${mode}_${currentTeamId}`;
+      const savedData = localStorage.getItem(key);
+      
+      if (savedData) {
+        try {
+          const lineUpData = JSON.parse(savedData);
+          let changed = false;
+          
+          // Spieler aus allen Positionen entfernen
+          Object.keys(lineUpData).forEach(posKey => {
+            if (lineUpData[posKey] === playerName) {
+              delete lineUpData[posKey];
+              changed = true;
+            }
+          });
+          
+          if (changed) {
+            localStorage.setItem(key, JSON.stringify(lineUpData));
+          }
+        } catch (e) {
+          console.error('Error removing player from mode:', mode, e);
+        }
+      }
+    });
+    
+    // Aktuelle lineUpData auch aktualisieren
+    Object.keys(this.lineUpData).forEach(posKey => {
+      if (this.lineUpData[posKey] === playerName) {
+        delete this.lineUpData[posKey];
+      }
+    });
+  },
+  
+  generatePositionKey(posBtn) {
+    const pos = posBtn.dataset.pos;
+    const line = posBtn.dataset.line;
+    const pair = posBtn.dataset.pair;
+    const formation = posBtn.dataset.formation;
+    
+    if (line) return `${pos}_line${line}`;
+    if (pair) return `${pos}_pair${pair}`;
+    if (formation) return `${pos}_form${formation}`;
+    return pos;
+  },
+  
+  openPlayerModal(posBtn) {
+    // NUR im Manuell-Modus erlauben!
+    if (this.currentMode !== 'manuell') {
+      return; // Nichts tun in Power/Normal Modus
+    }
+    
+    this.currentPosition = {
+      element: posBtn,
+      key: this.generatePositionKey(posBtn),
+      pos: posBtn.dataset.pos,
+      line: posBtn.dataset.line,
+      pair: posBtn.dataset.pair,
+      formation: posBtn.dataset.formation
+    };
+    
+    const modal = document.getElementById("lineUpPlayerModal");
+    const title = document.getElementById("lineUpModalTitle");
+    const playerList = document.getElementById("lineUpPlayerList");
+    
+    if (!modal || !playerList) return;
+    
+    // Set modal title
+    const posLabel = this.getPositionLabel(this.currentPosition);
+    if (title) {
+      title.textContent = `Select player for ${posLabel}`;
+    }
+    
+    // Get available players (excluding OUT players)
+    const allPlayers = this.getAvailablePlayers();
+    const players = allPlayers.filter(p => !this.playersOut.includes(p.name));
+    
+    // Get already assigned players
+    const assignedPlayers = Object.values(this.lineUpData);
+    
+    // Render player list
+    playerList.innerHTML = players.map(player => {
+      const isAssigned = assignedPlayers.includes(player.name);
+      const isCurrentPosition = this.lineUpData[this.currentPosition.key] === player.name;
+      
+      return `
+        <div class="lineup-player-option ${isCurrentPosition ? 'selected' : ''} ${isAssigned && !isCurrentPosition ? 'assigned' : ''}"
+             data-player="${App.helpers.escapeHtml(player.name)}">
+          <span class="lineup-player-number">${App.helpers.escapeHtml(player.number || "")}</span>
+          <span class="lineup-player-name">${App.helpers.escapeHtml(player.name)}</span>
+          ${isAssigned && !isCurrentPosition ? '<span class="lineup-player-assigned">✓</span>' : ''}
+        </div>
+      `;
+    }).join('');
+    
+    // Add click handlers to player options
+    playerList.querySelectorAll(".lineup-player-option").forEach(option => {
+      option.addEventListener("click", () => {
+        const playerName = option.dataset.player;
+        this.assignPlayer(playerName);
+      });
+    });
+    
+    modal.style.display = "flex";
+    this.modalOpen = true;
+  },
+  
+  getPositionLabel(pos) {
+    const labels = {
+      "LW": "Left Wing",
+      "C": "Center",
+      "RW": "Right Wing",
+      "DL": "Defense Left",
+      "DR": "Defense Right",
+      "BP-W": "Box Play Wing",
+      "BP-C": "Box Play Center",
+      "BP-DL": "Box Play Defense Left",
+      "BP-DR": "Box Play Defense Right",
+      "PP-LW": "Power Play Left Wing",
+      "PP-C": "Power Play Center",
+      "PP-RW": "Power Play Right Wing",
+      "PP-DL": "Power Play Defense Left",
+      "PP-DR": "Power Play Defense Right"
+    };
+    
+    let label = labels[pos.pos] || pos.pos;
+    
+    if (pos.line) label += ` (Linie ${pos.line})`;
+    if (pos.pair) label += ` (Paar ${pos.pair})`;
+    if (pos.formation) label += ` (Formation ${pos.formation})`;
+    
+    return label;
+  },
+  
+  assignPlayer(playerName) {
+    if (!this.currentPosition) return;
+    
+    // Check if player is OUT
+    if (this.playersOut.includes(playerName)) {
+      alert('This player is OUT and cannot be assigned.');
+      return;
+    }
+    
+    // Remove player from any previous position
+    Object.keys(this.lineUpData).forEach(key => {
+      if (this.lineUpData[key] === playerName) {
+        delete this.lineUpData[key];
+      }
+    });
+    
+    // Assign player to current position
+    this.lineUpData[this.currentPosition.key] = playerName;
+    
+    this.saveData();
+    this.render();
+    this.closePlayerModal();
+  },
+  
+  clearCurrentPosition() {
+    if (!this.currentPosition) return;
+    
+    delete this.lineUpData[this.currentPosition.key];
+    
+    this.saveData();
+    this.render();
+    this.closePlayerModal();
+  },
+  
+  closePlayerModal() {
+    const modal = document.getElementById("lineUpPlayerModal");
+    if (modal) {
+      modal.style.display = "none";
+    }
+    this.modalOpen = false;
+    this.currentPosition = null;
+  },
+  
+  getPlayerDisplayName(key, defaultLabel) {
+    const playerName = this.lineUpData[key];
+    if (!playerName) return defaultLabel;
+    
+    // Try to get player number
+    const players = this.getAvailablePlayers();
+    const player = players.find(p => p.name === playerName);
+    
+    // Display format: "Nr. Name" (e.g., "8 Diego Warth")
+    if (player) {
+      const number = player.number || '';
+      return number ? `${number} ${player.name}` : player.name;
+    }
+    
+    return playerName;
+  },
+  
+  render() {
+    if (!this.container) return;
+    
+    // Update all position buttons with assigned players
+    const posButtons = this.container.querySelectorAll(".lineup-position");
+    posButtons.forEach(btn => {
+      const key = this.generatePositionKey(btn);
+      const defaultLabel = btn.textContent;
+      const pos = btn.dataset.pos;
+      const line = btn.dataset.line;
+      const pair = btn.dataset.pair;
+      const formation = btn.dataset.formation;
+      
+      // Generate default label based on position data
+      let label = pos;
+      if (line) label += ` ${line}`;
+      if (pair) label += ` ${pair}`;
+      if (formation) label += ` ${formation}`;
+      
+      const displayName = this.getPlayerDisplayName(key, label);
+      btn.textContent = displayName;
+      
+      // Add/remove assigned class
+      if (this.lineUpData[key]) {
+        btn.classList.add("assigned");
+      } else {
+        btn.classList.remove("assigned");
+      }
+    });
+    
+    // Update stats (placeholder for now)
+    this.updateStats();
+  },
+  
+  updateStats() {
+    // Update line stats
+    for (let line = 1; line <= 4; line++) {
+      const lineEl = this.container?.querySelector(`.lineup-line[data-line="${line}"] .lineup-line-stats`);
+      if (lineEl) {
+        const stats = this.calculateLineStats(line);
+        lineEl.textContent = `${stats.goals}G / +- ${stats.plusMinus} / ${stats.shots} Sh`;
+      }
+    }
+    
+    // Update defense pair stats
+    for (let pair = 1; pair <= 3; pair++) {
+      const pairEl = this.container?.querySelector(`.lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
+      if (pairEl) {
+        const stats = this.calculatePairStats(pair);
+        pairEl.textContent = `${stats.goals}G / +- ${stats.plusMinus} / ${stats.shots} Sh`;
+      }
+    }
+  },
+  
+  calculateTotalStats() {
+    let goals = 0;
+    let plusMinus = 0;
+    let shots = 0;
+    
+    Object.values(this.lineUpData).forEach(playerName => {
+      const playerStats = App.data.statsData?.[playerName];
+      if (playerStats) {
+        goals += playerStats["Goals"] || 0;
+        plusMinus += playerStats["+/-"] || 0;
+        shots += playerStats["Shot"] || 0;
+      }
+    });
+    
+    return { goals, plusMinus, shots };
+  },
+  
+  calculateLineStats(lineNum) {
+    let goals = 0;
+    let plusMinus = 0;
+    let shots = 0;
+    
+    ["LW", "C", "RW"].forEach(pos => {
+      const key = `${pos}_line${lineNum}`;
+      const playerName = this.lineUpData[key];
+      if (playerName) {
+        const playerStats = App.data.statsData?.[playerName];
+        if (playerStats) {
+          goals += playerStats["Goals"] || 0;
+          plusMinus += playerStats["+/-"] || 0;
+          shots += playerStats["Shot"] || 0;
+        }
+      }
+    });
+    
+    return { goals, plusMinus, shots };
+  },
+  
+  calculatePairStats(pairNum) {
+    let goals = 0;
+    let plusMinus = 0;
+    let shots = 0;
+    
+    ["DL", "DR"].forEach(pos => {
+      const key = `${pos}_pair${pairNum}`;
+      const playerName = this.lineUpData[key];
+      if (playerName) {
+        const playerStats = App.data.statsData?.[playerName];
+        if (playerStats) {
+          goals += playerStats["Goals"] || 0;
+          plusMinus += playerStats["+/-"] || 0;
+          shots += playerStats["Shot"] || 0;
+        }
+      }
+    });
+    
+    return { goals, plusMinus, shots };
+  },
+  
+  /**
+   * Get active players sorted by MVP points for lineup assignment.
+   * Filters out players marked as "OUT" and sorts by position and MVP score.
+   * 
+   * @returns {Object} Object containing sorted arrays:
+   *   - centers: Centers sorted by MVP points (descending)
+   *   - wings: Wings sorted by MVP points (descending)
+   *   - defense: Defense players sorted by MVP points (descending)
+   *   - allForwards: All forwards (C+W) sorted by MVP points (descending)
+   */
+  getActiveSortedPlayers() {
+    const playersWithStats = this.getPlayersWithMVPPoints();
+    const activePlayers = playersWithStats.filter(p => !this.playersOut.includes(p.name));
+    
+    // Alle nach MVP sortieren
+    const centers = activePlayers.filter(p => p.position === 'C').sort((a, b) => b.mvpPoints - a.mvpPoints);
+    const wings = activePlayers.filter(p => p.position === 'W').sort((a, b) => b.mvpPoints - a.mvpPoints);
+    const defense = activePlayers.filter(p => p.position === 'D').sort((a, b) => b.mvpPoints - a.mvpPoints);
+    const allForwards = [...centers, ...wings].sort((a, b) => b.mvpPoints - a.mvpPoints);
+    
+    return { centers, wings, defense, allForwards };
+  },
+  
+  /**
+   * Calculate and assign PowerPlay (PP) and Box Play (BP) positions.
+   * Uses MVP-based logic to select the best players for special teams:
+   * 
+   * PowerPlay Logic:
+   * - PP1: Best Center, Best Wing, Next best Forward
+   * - PP2: Next best Center, Wing, Forward (not already in PP1)
+   * - PP Defense: Best 4 defense players
+   * 
+   * Box Play Logic:
+   * - BP Centers: Best 2 centers
+   * - BP Wings: Best 2 wings  
+   * - BP Defense: Best 4 defense players
+   * 
+   * This function modifies this.lineUpData and calls saveData().
+   */
+  calculateSpecialTeams() {
+    const { centers, wings, defense, allForwards } = this.getActiveSortedPlayers();
+    
+    // === POWERPLAY BESETZEN ===
+    const ppAssigned = new Set();
+    
+    // PP 1
+    // PP-C 1 = Bester Center
+    const ppC1 = centers[0];
+    if (ppC1) {
+      this.lineUpData['PP-C_form1'] = ppC1.name;
+      ppAssigned.add(ppC1.name);
+    }
+    
+    // PP-LW 1 = Bester Wing
+    const ppLW1 = wings[0];
+    if (ppLW1) {
+      this.lineUpData['PP-LW_form1'] = ppLW1.name;
+      ppAssigned.add(ppLW1.name);
+    }
+    
+    // PP-RW 1 = Nächstbester Stürmer der noch nicht in PP ist
+    const ppRW1 = allForwards.find(p => !ppAssigned.has(p.name));
+    if (ppRW1) {
+      this.lineUpData['PP-RW_form1'] = ppRW1.name;
+      ppAssigned.add(ppRW1.name);
+    }
+    
+    // PP 2
+    // PP-C 2 = Nächstbester Center der noch nicht in PP ist
+    const ppC2 = centers.find(p => !ppAssigned.has(p.name));
+    if (ppC2) {
+      this.lineUpData['PP-C_form2'] = ppC2.name;
+      ppAssigned.add(ppC2.name);
+    }
+    
+    // PP-LW 2 = Nächstbester Wing der noch nicht in PP ist
+    const ppLW2 = wings.find(p => !ppAssigned.has(p.name));
+    if (ppLW2) {
+      this.lineUpData['PP-LW_form2'] = ppLW2.name;
+      ppAssigned.add(ppLW2.name);
+    }
+    
+    // PP-RW 2 = Nächstbester Stürmer der noch nicht in PP ist
+    const ppRW2 = allForwards.find(p => !ppAssigned.has(p.name));
+    if (ppRW2) {
+      this.lineUpData['PP-RW_form2'] = ppRW2.name;
+      ppAssigned.add(ppRW2.name);
+    }
+    
+    // === PP DEFENSE ===
+    if (defense[0]) {
+      this.lineUpData['PP-DL_form1'] = defense[0].name;
+    }
+    if (defense[1]) {
+      this.lineUpData['PP-DR_form1'] = defense[1].name;
+    }
+    if (defense[2]) {
+      this.lineUpData['PP-DL_form2'] = defense[2].name;
+    }
+    if (defense[3]) {
+      this.lineUpData['PP-DR_form2'] = defense[3].name;
+    }
+    
+    // === BOX PLAY ===
+    if (centers[0]) this.lineUpData['BP-C_form1'] = centers[0].name;
+    if (centers[1]) this.lineUpData['BP-C_form2'] = centers[1].name;
+    if (wings[0]) this.lineUpData['BP-W_form1'] = wings[0].name;
+    if (wings[1]) this.lineUpData['BP-W_form2'] = wings[1].name;
+    if (defense[0]) this.lineUpData['BP-DL_form1'] = defense[0].name;
+    if (defense[1]) this.lineUpData['BP-DR_form1'] = defense[1].name;
+    if (defense[2]) this.lineUpData['BP-DL_form2'] = defense[2].name;
+    if (defense[3]) this.lineUpData['BP-DR_form2'] = defense[3].name;
+    
+    this.saveData();
+  },
+  
+  autoFillPowerMode() {
+    const { centers, wings, defense } = this.getActiveSortedPlayers();
+    
+    this.lineUpData = {};
+    
+    // Calculate PP and BP using the new function
+    this.calculateSpecialTeams();
+    
+    // === NORMALE LINIEN ===
+    // C 1-4
+    if (centers[0]) this.lineUpData['C_line1'] = centers[0].name;
+    if (centers[1]) this.lineUpData['C_line2'] = centers[1].name;
+    if (centers[2]) this.lineUpData['C_line3'] = centers[2].name;
+    if (centers[3]) this.lineUpData['C_line4'] = centers[3].name;
+    
+    // LW/RW 1-4
+    if (wings[0]) this.lineUpData['LW_line1'] = wings[0].name;
+    if (wings[1]) this.lineUpData['RW_line1'] = wings[1].name;
+    if (wings[2]) this.lineUpData['LW_line2'] = wings[2].name;
+    if (wings[3]) this.lineUpData['RW_line2'] = wings[3].name;
+    if (wings[4]) this.lineUpData['LW_line3'] = wings[4].name;
+    if (wings[5]) this.lineUpData['RW_line3'] = wings[5].name;
+    if (wings[6]) this.lineUpData['LW_line4'] = wings[6].name;
+    if (wings[7]) this.lineUpData['RW_line4'] = wings[7].name;
+    
+    // Defense Pairs 1-3
+    if (defense[0]) this.lineUpData['DL_pair1'] = defense[0].name;
+    if (defense[1]) this.lineUpData['DR_pair1'] = defense[1].name;
+    if (defense[2]) this.lineUpData['DL_pair2'] = defense[2].name;
+    if (defense[3]) this.lineUpData['DR_pair2'] = defense[3].name;
+    if (defense[4]) this.lineUpData['DL_pair3'] = defense[4].name;
+    if (defense[5]) this.lineUpData['DR_pair3'] = defense[5].name;
+    
+    this.saveData();
+  },
+  
+  autoFillNormalMode() {
+    const { centers, wings, defense } = this.getActiveSortedPlayers();
+    
+    this.lineUpData = {};
+    
+    // === STÜRMER VERTEILUNG (ausgeglichen) ===
+    // Center: 1-4 nach MVP
+    if (centers[0]) this.lineUpData['C_line1'] = centers[0].name;
+    if (centers[1]) this.lineUpData['C_line2'] = centers[1].name;
+    if (centers[2]) this.lineUpData['C_line3'] = centers[2].name;
+    if (centers[3]) this.lineUpData['C_line4'] = centers[3].name;
+    
+    // Wings: Ausgeglichene Verteilung
+    // LW: #1, #2, #3, #5 Wings
+    // RW: #4, #6, #7, #8 Wings (schwächere auf stärkeren Linien für Balance)
+    if (wings[0]) this.lineUpData['LW_line1'] = wings[0].name;
+    if (wings[1]) this.lineUpData['LW_line2'] = wings[1].name;
+    if (wings[2]) this.lineUpData['LW_line3'] = wings[2].name;
+    if (wings[4]) this.lineUpData['LW_line4'] = wings[4].name;
+    
+    if (wings[3]) this.lineUpData['RW_line1'] = wings[3].name;  // #4 Wing auf Linie 1 (Balance)
+    if (wings[5]) this.lineUpData['RW_line2'] = wings[5].name;  // #6 Wing auf Linie 2
+    if (wings[6]) this.lineUpData['RW_line3'] = wings[6].name;  // #7 Wing auf Linie 3
+    if (wings[7]) this.lineUpData['RW_line4'] = wings[7].name;  // #8 Wing auf Linie 4
+    
+    // === VERTEIDIGER VERTEILUNG (ausgeglichen) ===
+    // Top 3 Verteidiger auf DL 1, 2, 3 verteilen
+    // Verteidiger 4-6 als Partner auf DR (für Balance)
+    if (defense[0]) this.lineUpData['DL_pair1'] = defense[0].name;
+    if (defense[1]) this.lineUpData['DL_pair2'] = defense[1].name;
+    if (defense[2]) this.lineUpData['DL_pair3'] = defense[2].name;
+    
+    if (defense[3]) this.lineUpData['DR_pair1'] = defense[3].name;  // #4 mit #1
+    if (defense[4]) this.lineUpData['DR_pair2'] = defense[4].name;  // #5 mit #2
+    if (defense[5]) this.lineUpData['DR_pair3'] = defense[5].name;  // #6 mit #3
+    
+    // === SPECIAL TEAMS (PP + BP) ===
+    this.calculateSpecialTeams();
+    
+    this.saveData();
+  },
+  
+  getPlayersWithMVPPoints() {
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    
+    let players = [];
+    try {
+      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      players = savedPlayers.filter(p => p.active && p.name && p.name.trim() !== "" && p.position);
+    } catch (e) {
+      players = [];
+    }
+    
+    // Calculate MVP points for each player
+    const playersWithMVP = players.map(player => {
+      const seasonData = App.data.seasonData?.[player.name];
+      let mvpPoints = 0;
+      
+      if (seasonData) {
+        const games = Number(seasonData.games || 0);
+        const goals = Number(seasonData.goals || 0);
+        const assists = Number(seasonData.assists || 0);
+        const plusMinus = Number(seasonData.plusMinus || 0);
+        const shots = Number(seasonData.shots || 0);
+        const penalty = Number(seasonData.penaltys || 0);
+        
+        const avgPlusMinus = games ? (plusMinus / games) : 0;
+        const shotsPerGame = games ? (shots / games) : 0;
+        const goalsPerGame = games ? (goals / games) : 0;
+        const assistsPerGame = games ? (assists / games) : 0;
+        const penaltyPerGame = games ? (penalty / games) : 0;
+        
+        // Get goal value
+        let goalValue = 0;
+        try {
+          if (App.goalValue && typeof App.goalValue.computeValueForPlayer === "function") {
+            goalValue = App.goalValue.computeValueForPlayer(player.name) || Number(seasonData.goalValue || 0);
+          } else {
+            goalValue = Number(seasonData.goalValue || 0);
+          }
+        } catch (e) {
+          goalValue = Number(seasonData.goalValue || 0);
+        }
+        const gvNum = Number(goalValue || 0);
+        
+        // Calculate MVP points using the same formula as season-table.js
+        mvpPoints = (
+          (assistsPerGame * 8) +
+          (avgPlusMinus * 0.5) +
+          (shotsPerGame * 0.5) +
+          (goalsPerGame + (games ? (gvNum / games) * 10 : 0)) -
+          (penaltyPerGame * 1.2)
+        );
+      }
+      
+      return {
+        name: player.name,
+        number: player.number,
+        position: player.position,
+        mvpPoints: mvpPoints
+      };
+    });
+    
+    return playersWithMVP;
+  },
+  
   changeLineMode() {
+    // Aktuelle Aufstellung für den aktuellen Modus speichern
+    this.saveDataForMode(this.currentMode);
+    
+    // Zum nächsten Modus wechseln
     const currentIndex = this.modes.indexOf(this.currentMode);
     const nextIndex = (currentIndex + 1) % this.modes.length;
     this.currentMode = this.modes[nextIndex];
     
-    console.log("[LINE UP] Mode changed to:", this. currentMode);
-    this.saveAssignments();
+    // Modus-Anzeige aktualisieren (ruft auch updateModeColors() auf)
+    this.updateModeDisplay();
+    
+    // Aufstellung für den neuen Modus laden/generieren
+    if (this.currentMode === 'power') {
+      this.autoFillPowerMode(); // Immer neu generieren
+    } else if (this.currentMode === 'normal') {
+      this.autoFillNormalMode(); // NEU: Immer neu generieren wie Power-Modus
+    } else {
+      this.loadDataForMode(this.currentMode); // Gespeicherte laden
+    }
+    
+    // Optional: Aufstellung basierend auf Modus anpassen
     this.render();
   },
   
-  generatePowerLineup() {
-    console.log("[LINE UP] Generating POWER lineup...");
-    
-    const ASSIST_TO_GOAL_RATIO_THRESHOLD = 1.5;
-    const CENTER_POSITION_FREQUENCY = 3;
-    
-    const players = App.data.selectedPlayers. map(p => {
-      const seasonData = App.data. seasonData[p. name];
-      return {
-        name: p.name,
-        num: p.num,
-        seasonData: seasonData,
-        position: p.position || null
+  updateModeDisplay() {
+    const modeLabel = document.getElementById('lineupModeLabel');
+    if (modeLabel) {
+      const modeNames = {
+        'normal': 'NORMAL',
+        'power': 'POWER',
+        'manuell': 'MANUELL'
       };
-    }). filter(p => p.seasonData && Number(p.seasonData.games || 0) > 0);
-    
-    const centers = [];
-    const wings = [];
-    const defense = [];
-    
-    players.forEach(p => {
-      const games = Number(p. seasonData.games || 0);
-      const goals = Number(p.seasonData.goals || 0);
-      const assists = Number(p.seasonData.assists || 0);
-      const plusMinus = Number(p.seasonData. plusMinus || 0);
-      const shots = Number(p.seasonData.shots || 0);
-      
-      const avgGoals = games > 0 ? goals / games : 0;
-      const avgAssists = games > 0 ? assists / games : 0;
-      const avgPlusMinus = games > 0 ?  plusMinus / games : 0;
-      
-      const isLikelyDefense = (avgAssists > avgGoals * ASSIST_TO_GOAL_RATIO_THRESHOLD && avgPlusMinus > 0);
-      
-      if (isLikelyDefense) {
-        p.mvpScore = (goals * 1) + (assists * 1. 5) + (plusMinus * 2) + (shots * 0.3);
-        defense.push(p);
-      } else {
-        p.mvpScore = (goals * 2. 2) + (assists * 1.2) + (plusMinus * 0.9) + (shots * 0.6);
-        wings. push(p);
-      }
-    });
-    
-    wings.sort((a, b) => b. mvpScore - a.mvpScore);
-    defense.sort((a, b) => b.mvpScore - a.mvpScore);
-    
-    const forwardPool = wings.slice();
-    wings. length = 0;
-    centers.length = 0;
-    
-    forwardPool.forEach((p, idx) => {
-      if ((idx + 1) % CENTER_POSITION_FREQUENCY === 2) {
-        centers.push(p);
-      } else {
-        wings.push(p);
-      }
-    });
-    
-    this.assignments = {};
-    
-    for (let line = 1; line <= 4; line++) {
-      if (centers[line - 1]) this.assignments[`L${line}-C`] = centers[line - 1]. name;
-      if (wings[(line - 1) * 2]) this. assignments[`L${line}-LW`] = wings[(line - 1) * 2].name;
-      if (wings[(line - 1) * 2 + 1]) this.assignments[`L${line}-RW`] = wings[(line - 1) * 2 + 1].name;
+      modeLabel.textContent = modeNames[this.currentMode];
     }
-    
-    for (let pair = 1; pair <= 3; pair++) {
-      if (defense[(pair - 1) * 2]) this.assignments[`D${pair}-DL`] = defense[(pair - 1) * 2].name;
-      if (defense[(pair - 1) * 2 + 1]) this.assignments[`D${pair}-DR`] = defense[(pair - 1) * 2 + 1].name;
-    }
-    
-    for (let unit = 1; unit <= 2; unit++) {
-      if (centers[unit - 1]) this. assignments[`PP-C${unit}`] = centers[unit - 1].name;
-      if (wings[(unit - 1) * 2]) this.assignments[`PP-LW${unit}`] = wings[(unit - 1) * 2].name;
-      if (wings[(unit - 1) * 2 + 1]) this.assignments[`PP-RW${unit}`] = wings[(unit - 1) * 2 + 1].name;
-      if (defense[(unit - 1) * 2]) this.assignments[`PP-DL${unit}`] = defense[(unit - 1) * 2]. name;
-      if (defense[(unit - 1) * 2 + 1]) this.assignments[`PP-DR${unit}`] = defense[(unit - 1) * 2 + 1].name;
-    }
-    
-    for (let unit = 1; unit <= 2; unit++) {
-      if (centers[unit + 1]) this. assignments[`BP-C${unit}`] = centers[unit + 1].name;
-      if (wings[unit + 3]) this.assignments[`BP-W${unit}`] = wings[unit + 3].name;
-      if (defense[unit + 1]) this.assignments[`BP-DL${unit}`] = defense[unit + 1]. name;
-      if (defense[unit + 2]) this.assignments[`BP-DR${unit}`] = defense[unit + 2].name;
-    }
-    
-    this.saveAssignments();
+    this.updateModeColors(); // Farben aktualisieren!
   },
   
-  showPlayerOutDialog() {
-    const allPlayers = new Set();
-    Object.values(this. assignments).forEach(name => {
-      if (name && name. trim()) allPlayers.add(name);
-    });
-    
-    const playersArray = Array. from(allPlayers).sort();
-    
-    if (playersArray.length === 0) {
-      alert("No players assigned yet.");
-      return;
-    }
-    
-    const selected = prompt(
-      "Player Out - Enter player names separated by commas:\n\n" +
-      "Available players:\n" + playersArray.join(", ") +
-      "\n\nCurrently out: " + (this. playerOutList.join(", ") || "none"),
-      this.playerOutList.join(", ")
-    );
-    
-    if (selected !== null) {
-      this.playerOutList = selected. split(",").map(s => s.trim()).filter(s => s. length > 0);
-      this.saveAssignments();
-      this.render();
-    }
-  },
-  
-  saveAssignments() {
-    const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo()?.id : 'team1';
-    const data = {
-      mode: this.currentMode,
-      assignments: this.assignments,
-      playerOutList: this.playerOutList
+  updateModeColors() {
+    const colors = {
+      'normal': { bg: '#FFD400', text: '#000000' },
+      'power': { bg: '#FF6A00', text: '#ffffff' },
+      'manuell': { bg: '#FFEEA5', text: '#000000' }
     };
-    localStorage.setItem(`lineUpData_${teamId}`, JSON. stringify(data));
-    console.log("[LINE UP] Assignments saved");
+    
+    const config = colors[this.currentMode];
+    
+    // Change Line Button Farbe ändern
+    const changeLineBtn = document.getElementById('lineUpChangeLineBtn');
+    if (changeLineBtn) {
+      changeLineBtn.style.backgroundColor = config.bg;
+      changeLineBtn.style.color = config.text;
+    }
+    
+    // Modus-Label Farbe ändern
+    const modeLabel = document.getElementById('lineupModeLabel');
+    if (modeLabel) {
+      modeLabel.style.color = config.bg;
+      modeLabel.style.webkitTextFillColor = config.bg;
+      modeLabel.style.background = 'none';
+    }
   },
   
-  loadAssignments() {
-    const teamId = App.teamSelection ? App.teamSelection.getCurrentTeamInfo()?.id : 'team1';
-    const saved = localStorage. getItem(`lineUpData_${teamId}`);
-    if (saved) {
-      try {
-        const data = JSON. parse(saved);
-        this.currentMode = data.mode || 'normal';
-        this.assignments = data.assignments || {};
-        this.playerOutList = data. playerOutList || [];
-        console.log("[LINE UP] Assignments loaded");
-      } catch (e) {
-        console. error("[LINE UP] Failed to load assignments:", e);
-      }
+  updatePlayerOutButton() {
+    const btn = document.querySelector('#lineUpPage .lineup-player-out-btn');
+    if (!btn) return;
+    
+    const outCount = this.playersOut.length;
+    
+    if (outCount > 0) {
+      btn.textContent = `Player out (${outCount})`;
+      btn.classList.add('has-players-out');
+    } else {
+      btn.textContent = 'Player out'; // Kein roter Punkt mehr!
+      btn.classList.remove('has-players-out');
     }
   }
 };
