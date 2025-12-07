@@ -36,17 +36,19 @@ App.statsTable = {
     // Header
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    headerRow.innerHTML = "<th>#</th><th>Spieler</th>" + 
+    headerRow.innerHTML = "<th>#</th><th>Player</th>" + 
       App.data.categories.map(c => `<th>${App.helpers.escapeHtml(c)}</th>`).join("") + 
       "<th>Time</th>";
     thead.appendChild(headerRow);
     table.appendChild(thead);
     
-    // Body
+    // Body - Filter out goalies (players with position = "G")
     const tbody = document.createElement("tbody");
     tbody.id = "stats-tbody";
     
-    App.data.selectedPlayers.forEach((p, idx) => {
+    const playersToRender = App.data.selectedPlayers.filter(p => p.position !== "G");
+    
+    playersToRender.forEach((p, idx) => {
       const tr = document.createElement("tr");
       tr.className = (idx % 2 === 0 ? "even-row" : "odd-row");
       tr.dataset.player = p.name;
@@ -87,6 +89,9 @@ App.statsTable = {
       // Timer Toggle auf Name-Click (aber nicht auf drag handle)
       this.attachTimerToggle(nameTd, tr, timeTd, p.name);
       
+      // Time Cell Click Handlers (+10s single click, -10s double click)
+      this.attachTimeClickHandlers(timeTd, p.name);
+      
       // Drag Handlers nur auf das Drag Handle
       const dragHandle = nameTd.querySelector('.drag-handle');
       this.attachDragHandlers(tr, dragHandle);
@@ -103,7 +108,7 @@ App.statsTable = {
     totalTr.appendChild(emptyTd);
     
     const labelTd = document.createElement("td");
-    labelTd.textContent = `Total (${App.data.selectedPlayers.length})`;
+    labelTd.textContent = `Total (${playersToRender.length})`;
     labelTd.style.textAlign = "left";
     labelTd.style.fontWeight = "700";
     totalTr.appendChild(labelTd);
@@ -347,6 +352,74 @@ App.statsTable = {
     });
   },
   
+  attachTimeClickHandlers(timeTd, playerName) {
+    let clickTimer = null;
+    
+    // Single Click: +10 seconds
+    timeTd.addEventListener("click", (e) => {
+      // Prevent time change during drag
+      if (this.dragState.isDragging) {
+        e.preventDefault();
+        return;
+      }
+      
+      if (clickTimer) {
+        // Double click will be handled by dblclick handler
+        return;
+      }
+      
+      clickTimer = setTimeout(() => {
+        // Single click: +10 seconds
+        const currentTime = App.data.playerTimes[playerName] || 0;
+        const newTime = currentTime + 10;
+        App.data.playerTimes[playerName] = newTime;
+        timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
+        
+        // Save to storage
+        this.saveToStorage();
+        
+        // Update ice time colors
+        this.updateIceTimeColors();
+        
+        // Update totals
+        this.updateTotals();
+        
+        clickTimer = null;
+      }, 250); // 250ms delay to detect double click
+    });
+    
+    // Double Click: -10 seconds
+    timeTd.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+      
+      // Prevent time change during drag
+      if (this.dragState.isDragging) return;
+      
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+      }
+      
+      // Double click: -10 seconds (minimum 0)
+      const currentTime = App.data.playerTimes[playerName] || 0;
+      const newTime = Math.max(0, currentTime - 10);
+      App.data.playerTimes[playerName] = newTime;
+      timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
+      
+      // Save to storage
+      this.saveToStorage();
+      
+      // Update ice time colors
+      this.updateIceTimeColors();
+      
+      // Update totals
+      this.updateTotals();
+    });
+    
+    // Add visual feedback for clickability
+    timeTd.style.cursor = "pointer";
+  },
+  
   attachValueClickHandlers() {
     this.container.querySelectorAll("td[data-player][data-cat]").forEach(td => {
       let clickTimeout = null;
@@ -546,6 +619,6 @@ App.statsTable = {
     
     // Re-render table
     this.render();
-    alert("Spieldaten zurückgesetzt.");
+    alert("Game data reset.");
   }
 };

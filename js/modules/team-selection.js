@@ -1,6 +1,6 @@
 // Team Selection Module
 App.teamSelection = (function() {
-    console.log('Team Selection Module loading.. .');
+    console.log('Team Selection Module loading...');
     
     const TEAMS = [
         { id: 'team1', name: 'Team 1' },
@@ -36,7 +36,7 @@ App.teamSelection = (function() {
             const teamData = localStorage.getItem(team.id);
             if (!teamData) {
                 // Create empty team with no players
-                saveTeam(team. id, {
+                saveTeam(team.id, {
                     name: team.name,
                     players: []
                 });
@@ -68,14 +68,14 @@ App.teamSelection = (function() {
             let playersWithNames = 0;
             if (teamDef.id === 'team1') {
                 // Count players with names from App.data.players
-                playersWithNames = App.data.players ?  App.data.players.filter(p => p. name && p.name.trim() !== '').length : 0;
+                playersWithNames = App.data.players ? App.data.players.filter(p => p.name && p.name.trim() !== '').length : 0;
             } else {
                 // Count players in team data for Team 2 & 3
-                playersWithNames = teamData.players ? teamData.players.filter(p => p. name && p.name.trim() !== '').length : 0;
+                playersWithNames = teamData.players ? teamData.players.filter(p => p.name && p.name.trim() !== '').length : 0;
             }
             const teamInfo = document.createElement('p');
             teamInfo.className = 'team-name';
-            teamInfo.textContent = `${playersWithNames} Spieler`;
+            teamInfo.textContent = `${playersWithNames} Players`;
             
             teamDisplay.appendChild(teamTitle);
             teamDisplay.appendChild(teamInfo);
@@ -85,7 +85,7 @@ App.teamSelection = (function() {
             
             const selectBtn = document.createElement('button');
             selectBtn.className = 'team-btn';
-            selectBtn.textContent = 'Auswählen';
+            selectBtn.textContent = 'Select';
             selectBtn.onclick = () => selectTeam(teamDef.id);
             
             const editBtn = document.createElement('button');
@@ -96,7 +96,7 @@ App.teamSelection = (function() {
             buttonGroup.appendChild(selectBtn);
             buttonGroup.appendChild(editBtn);
             
-            teamSlot. appendChild(teamDisplay);
+            teamSlot.appendChild(teamDisplay);
             teamSlot.appendChild(buttonGroup);
             
             container.appendChild(teamSlot);
@@ -114,10 +114,10 @@ App.teamSelection = (function() {
             const teamId = TEAMS[index].id;
             if (currentTeamId === teamId) {
                 btn.classList.add('active-team');
-                btn.textContent = 'Ausgewählt';
+                btn.textContent = 'Selected';
             } else {
-                btn.classList. remove('active-team');
-                btn. textContent = 'Auswählen';
+                btn.classList.remove('active-team');
+                btn.textContent = 'Select';
             }
         });
     }
@@ -130,14 +130,14 @@ App.teamSelection = (function() {
         
         // Navigate to player selection
         if (App.showPage) {
-            App. showPage('selection');
+            App.showPage('selection');
         }
     }
     
     function openEditModal(teamId) {
         editingTeamId = teamId;
         const teamData = getTeam(teamId);
-        if (! teamData) return;
+        if (!teamData) return;
         
         const modal = document.getElementById('teamEditModal');
         const input = document.getElementById('teamNameInput');
@@ -152,7 +152,7 @@ App.teamSelection = (function() {
     function closeEditModal() {
         const modal = document.getElementById('teamEditModal');
         if (modal) {
-            modal.style. display = 'none';
+            modal.style.display = 'none';
         }
         editingTeamId = null;
     }
@@ -161,12 +161,12 @@ App.teamSelection = (function() {
         if (!editingTeamId) return;
         
         const input = document.getElementById('teamNameInput');
-        const newName = input ? input. value.trim() : '';
+        const newName = input ? input.value.trim() : '';
         
         if (newName) {
             const teamData = getTeam(editingTeamId);
             if (teamData) {
-                teamData. name = newName;
+                teamData.name = newName;
                 saveTeam(editingTeamId, teamData);
                 renderTeamSelection();
             }
@@ -190,7 +190,7 @@ App.teamSelection = (function() {
         }
         
         if (modal) {
-            modal. onclick = (e) => {
+            modal.onclick = (e) => {
                 if (e.target === modal) {
                     closeEditModal();
                 }
@@ -207,7 +207,7 @@ App.teamSelection = (function() {
     }
     
     function getTeam(teamId) {
-        const data = localStorage. getItem(teamId);
+        const data = localStorage.getItem(teamId);
         if (data) {
             try {
                 return JSON.parse(data);
@@ -220,7 +220,7 @@ App.teamSelection = (function() {
     }
     
     function saveTeam(teamId, data) {
-        localStorage. setItem(teamId, JSON.stringify(data));
+        localStorage.setItem(teamId, JSON.stringify(data));
     }
     
     function saveTeams() {
