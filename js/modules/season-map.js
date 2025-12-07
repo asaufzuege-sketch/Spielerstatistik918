@@ -385,9 +385,156 @@ App.seasonMap = {
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
-    this.timeTrackingBox.querySelectorAll(".time-btn").forEach(btn => {
-      btn.disabled = true;
-      btn.classList.add("disabled-readonly");
+    // Make bottom-row buttons (conceded goals) interactive for goalie assignment
+    this.timeTrackingBox.querySelectorAll(".time-btn").forEach((btn, index) => {
+      const period = btn.closest(".period");
+      const isBottomRow = btn.closest(".period-buttons")?.classList.contains("bottom-row");
+      
+      if (isBottomRow) {
+        // Bottom-row buttons (conceded goals) are interactive
+        btn.disabled = false;
+        btn.classList.remove("disabled-readonly");
+        
+        // Add click handler for goalie selection
+        btn.addEventListener("click", () => {
+          this.handleConcededGoalClick(btn, period);
+        });
+      } else {
+        // Top-row buttons (scored goals) remain read-only
+        btn.disabled = true;
+        btn.classList.add("disabled-readonly");
+      }
+    });
+  },
+  
+  // Handle click on conceded goal time button (red zone)
+  handleConcededGoalClick(btn, period) {
+    // Get current goalies from selectedPlayers
+    const goalies = (App.data.selectedPlayers || [])
+      .filter(p => p.position === "G")
+      .map(g => g.name);
+    
+    if (goalies.length === 0) {
+      alert("No goalies available. Please select goalies in Player Selection first.");
+      return;
+    }
+    
+    // Show goalie selection modal
+    this.showGoalieSelectionModal(goalies, (selectedGoalie) => {
+      if (selectedGoalie) {
+        // Get the key for this button
+        const periodNum = period.dataset.period;
+        const buttons = Array.from(period.querySelectorAll(".time-btn"));
+        const btnIndex = buttons.indexOf(btn);
+        const key = `${periodNum}_${btnIndex}`;
+        
+        // Update time data with goalie assignment
+        let timeDataWithPlayers = {};
+        try {
+          timeDataWithPlayers = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
+        } catch (e) {
+          timeDataWithPlayers = {};
+        }
+        
+        if (!timeDataWithPlayers[key]) {
+          timeDataWithPlayers[key] = {};
+        }
+        
+        // Increment the count for this goalie
+        if (!timeDataWithPlayers[key][selectedGoalie]) {
+          timeDataWithPlayers[key][selectedGoalie] = 0;
+        }
+        timeDataWithPlayers[key][selectedGoalie] = Number(timeDataWithPlayers[key][selectedGoalie]) + 1;
+        
+        // Save to localStorage
+        localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
+        
+        // Update button display
+        const total = Object.values(timeDataWithPlayers[key])
+          .reduce((sum, val) => sum + Number(val), 0);
+        btn.textContent = total;
+        
+        console.log(`Conceded goal assigned to ${selectedGoalie} at ${key}`);
+      }
+    });
+  },
+  
+  // Show goalie selection modal
+  showGoalieSelectionModal(goalies, callback) {
+    const modal = document.getElementById("goalieSelectionModal");
+    const list = document.getElementById("goalieSelectionList");
+    const confirmBtn = document.getElementById("goalieSelectionConfirm");
+    const cancelBtn = document.getElementById("goalieSelectionCancel");
+    
+    if (!modal || !list || !confirmBtn || !cancelBtn) {
+      console.error("Goalie selection modal elements not found");
+      return;
+    }
+    
+    // Clear previous content
+    list.innerHTML = "";
+    
+    // Populate with goalies
+    goalies.forEach(goalieName => {
+      const label = document.createElement("label");
+      label.className = "goalie-option";
+      
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "goalieSelect";
+      radio.value = goalieName;
+      
+      const span = document.createElement("span");
+      span.textContent = goalieName;
+      
+      label.appendChild(radio);
+      label.appendChild(span);
+      list.appendChild(label);
+      
+      // Make the whole label clickable
+      label.addEventListener("click", () => {
+        radio.checked = true;
+        confirmBtn.disabled = false;
+      });
+    });
+    
+    // Disable confirm button initially
+    confirmBtn.disabled = true;
+    
+    // Show modal
+    modal.style.display = "flex";
+    
+    // Handle confirm
+    const handleConfirm = () => {
+      const selected = list.querySelector('input[name="goalieSelect"]:checked');
+      if (selected) {
+        callback(selected.value);
+      }
+      cleanup();
+    };
+    
+    // Handle cancel
+    const handleCancel = () => {
+      callback(null);
+      cleanup();
+    };
+    
+    // Cleanup function
+    const cleanup = () => {
+      modal.style.display = "none";
+      confirmBtn.removeEventListener("click", handleConfirm);
+      cancelBtn.removeEventListener("click", handleCancel);
+    };
+    
+    // Attach event listeners
+    confirmBtn.addEventListener("click", handleConfirm);
+    cancelBtn.addEventListener("click", handleCancel);
+    
+    // Close on background click
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        handleCancel();
+      }
     });
   },
   
