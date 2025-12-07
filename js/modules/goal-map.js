@@ -138,6 +138,12 @@ App.goalMap = {
           return;
         }
         
+        // GREEN workflow restriction: Ignore right field half clicks
+        if (workflowActive && isScoredWorkflow && isFieldBox && pos.xPctImage >= 50) {
+          console.log('[Goal Map] GREEN workflow: Right field half not allowed - only left (green) half');
+          return;
+        }
+        
         // Im Goal-Workflow: Strenge Schritt-Kontrolle
         if (isGoalWorkflow) {
           const isGreenGoal = box.id === "goalGreenBox";
@@ -164,13 +170,17 @@ App.goalMap = {
           }
           // Schritt 1: Nur entsprechendes Tor erlaubt
           else if (currentStep === 1) {
-            if (isScoredWorkflow && !isGreenGoal) {
-              console.log('[Goal Workflow] Step 2: Please click point in green goal');
-              return;
+            if (isScoredWorkflow) {
+              if (!isGreenGoal) {
+                console.log('[Goal Workflow] GREEN workflow: Only green goal allowed');
+                return;
+              }
             }
-            if (isConcededWorkflow && !isRedGoal) {
-              console.log('[Goal Workflow] Step 2: Please click point in red goal');
-              return;
+            if (isConcededWorkflow) {
+              if (!isRedGoal) {
+                console.log('[Goal Workflow] RED workflow: Only red goal allowed');
+                return;
+              }
             }
           }
           // Schritt 2: Timebox (wird separat in initTimeTracking behandelt)
@@ -650,8 +660,10 @@ App.goalMap = {
       let workflowDesc = '';
       if (workflowType === 'scored') {
         workflowDesc = '🟢 SCORED';
+        document.body.setAttribute('data-workflow', 'scored');
       } else if (workflowType === 'conceded') {
         workflowDesc = '🔴 CONCEDED';
+        document.body.setAttribute('data-workflow', 'conceded');
       }
       
       indicator.style.display = 'block';
@@ -677,6 +689,7 @@ App.goalMap = {
     } else {
       indicator.style.display = 'none';
       textEl.textContent = "";
+      document.body.removeAttribute('data-workflow');
     }
   },
   
