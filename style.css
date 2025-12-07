@@ -1493,7 +1493,7 @@ tr[data-player].dragging {
 
 /* Goalie Slots - Green Border */
 #playerSelectionPage .player-list li.goalie-slot {
-  border: 2px solid #44bb91;  /* Green border for goalie slots */
+  border: 1px solid #44bb91;  /* Green border for goalie slots - thinner and more subtle */
 }
 
 /* Fixed Position "G" for Goalies */
@@ -1501,6 +1501,8 @@ tr[data-player].dragging {
   width: 60px;
   min-width: 60px;
   max-width: 60px;
+  height: auto;
+  min-height: 42px;  /* Match .pos-select calculated height (10px + 10px padding + ~22px line height) */
   background: #2a2a2a;
   color: #44bb91;
   border: 1px solid #444;

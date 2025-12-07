@@ -52,12 +52,78 @@ App.seasonMap = {
       this.playerFilter = savedFilter;
     }
     
-    // All Goalies button event listener
-    document.getElementById("seasonMapGoalieFilter")?.addEventListener("click", () => {
-      const goalies = App.data.selectedPlayers.filter(p => p.position === "G");
-      const goalieNames = goalies.map(g => g.name);
-      this.filterByGoalies(goalieNames);
-    });
+    // Goalie Filter Dropdown - populate with ALL goalies ever entered for this team's season
+    const goalieFilterSelect = document.getElementById("seasonMapGoalieFilter");
+    if (goalieFilterSelect) {
+      // Collect all unique goalies from season data (markers and time data)
+      const allGoalies = new Set();
+      
+      // Get goalies from markers
+      const markersRaw = localStorage.getItem("seasonMapMarkers");
+      if (markersRaw) {
+        try {
+          const allMarkers = JSON.parse(markersRaw);
+          allMarkers.forEach(markersForBox => {
+            if (Array.isArray(markersForBox)) {
+              markersForBox.forEach(m => {
+                if (m.player) {
+                  allGoalies.add(m.player);
+                }
+              });
+            }
+          });
+        } catch (e) {
+          console.warn("Failed to parse seasonMapMarkers for goalie filter", e);
+        }
+      }
+      
+      // Get goalies from time data
+      const timeDataRaw = localStorage.getItem("seasonMapTimeDataWithPlayers");
+      if (timeDataRaw) {
+        try {
+          const timeData = JSON.parse(timeDataRaw);
+          Object.values(timeData).forEach(playerData => {
+            if (typeof playerData === 'object' && playerData !== null) {
+              Object.keys(playerData).forEach(playerName => {
+                allGoalies.add(playerName);
+              });
+            }
+          });
+        } catch (e) {
+          console.warn("Failed to parse seasonMapTimeDataWithPlayers for goalie filter", e);
+        }
+      }
+      
+      // Filter to only include players that are goalies in current selection
+      const currentGoalies = (App.data.selectedPlayers || [])
+        .filter(p => p.position === "G")
+        .map(g => g.name);
+      
+      // Use intersection: players that are in allGoalies AND are currently marked as goalies
+      const seasonGoalies = Array.from(allGoalies).filter(name => currentGoalies.includes(name));
+      
+      // If no goalies found in season data, use currently selected goalies as fallback
+      const goaliesToShow = seasonGoalies.length > 0 ? seasonGoalies : currentGoalies;
+      
+      goalieFilterSelect.innerHTML = '<option value="">All Goalies</option>';
+      goaliesToShow.forEach(goalieName => {
+        const option = document.createElement("option");
+        option.value = goalieName;
+        option.textContent = goalieName;
+        goalieFilterSelect.appendChild(option);
+      });
+      
+      goalieFilterSelect.addEventListener("change", () => {
+        const selectedGoalie = goalieFilterSelect.value;
+        if (selectedGoalie) {
+          // Filter by single goalie
+          this.filterByGoalies([selectedGoalie]);
+        } else {
+          // Show all goalies
+          this.filterByGoalies(goaliesToShow);
+        }
+      });
+    }
   },
   
   filterByGoalies(goalieNames) {
