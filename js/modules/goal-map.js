@@ -83,14 +83,14 @@ App.goalMap = {
       };
       
       const placeMarker = (pos, long, forceGrey = false) => {
-        const workflowActive = App.goalMapWorkflow?.active;
-        const eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
-        const workflowType = App.goalMapWorkflow?.workflowType; // 'scored' | 'conceded' | null
-        const isGoalWorkflow = workflowActive && eventType === 'goal';
-        const isScoredWorkflow = workflowType === 'scored';
-        const isConcededWorkflow = workflowType === 'conceded';
+        let workflowActive = App.goalMapWorkflow?.active;
+        let eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
+        let workflowType = App.goalMapWorkflow?.workflowType; // 'scored' | 'conceded' | null
+        let isGoalWorkflow = workflowActive && eventType === 'goal';
+        let isScoredWorkflow = workflowType === 'scored';
+        let isConcededWorkflow = workflowType === 'conceded';
         const neutralGrey = "#444444";
-        const currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
+        let currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
         
         const pointPlayer =
           this.playerFilter ||
@@ -103,9 +103,37 @@ App.goalMap = {
         
         if (!pos.insideImage) return;
         
+        // Check if we should start a RED workflow (conceded goal) directly on Goal Map
+        const isFieldBox = box.classList.contains("field-box");
+        if (!workflowActive && isFieldBox && pos.xPctImage >= 50) {
+          // Start RED workflow for conceded goal
+          App.goalMapWorkflow.active = true;
+          App.goalMapWorkflow.eventType = 'goal';
+          App.goalMapWorkflow.workflowType = 'conceded';
+          App.goalMapWorkflow.playerName = null; // Will be set when goalie is selected
+          App.goalMapWorkflow.requiredPoints = 3;
+          App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
+          App.goalMapWorkflow.collectedPoints = [];
+          console.log('[Goal Map] Starting RED workflow (conceded goal) from right half click');
+          
+          // Re-read variables after starting workflow
+          workflowActive = true;
+          eventType = 'goal';
+          workflowType = 'conceded';
+          isGoalWorkflow = true;
+          isScoredWorkflow = false;
+          isConcededWorkflow = true;
+          currentStep = 0;
+        }
+        
+        // If clicking left half without active workflow, ignore (GREEN workflow must start from Game Data)
+        if (!workflowActive && isFieldBox && pos.xPctImage < 50) {
+          console.log('[Goal Map] Cannot start GREEN workflow directly on Goal Map - use Game Data page');
+          return;
+        }
+        
         // Im Goal-Workflow: Strenge Schritt-Kontrolle
         if (isGoalWorkflow) {
-          const isFieldBox = box.classList.contains("field-box");
           const isGreenGoal = box.id === "goalGreenBox";
           const isRedGoal = box.id === "goalRedBox";
           
@@ -115,7 +143,7 @@ App.goalMap = {
               console.log('[Goal Workflow] Step 1: Please click point in field first');
               return; // Blockiere alle anderen Bereiche
             }
-            // Detect which half was clicked and set workflow type
+            // Detect which half was clicked and set workflow type (if not already set)
             if (isFieldBox && !workflowType) {
               // Left half (x < 50%) = scored (green), Right half (x >= 50%) = conceded (red)
               const isRightHalf = pos.xPctImage >= 50;
