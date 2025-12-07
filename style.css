@@ -1455,7 +1455,6 @@ tr[data-player].dragging {
   align-items: center;
   gap: 10px;
   background: #1a1a1a;
-  border: 1px solid #333;
   border-radius: 10px;
   padding: 10px 15px;
   margin: 8px 0;
