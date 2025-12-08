@@ -496,7 +496,7 @@ App.lineUp = {
       const pairEl = this.container?.querySelector(`.lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
       if (pairEl) {
         const stats = this.calculatePairStats(pair);
-        pairEl.textContent = `${stats.goals}G / +- ${stats.plusMinus} / ${stats.shots} Sh`;
+        pairEl.textContent = `${stats.goals}P / +- ${stats.plusMinus} / ${stats.shots} Sh`;
       }
     }
   },

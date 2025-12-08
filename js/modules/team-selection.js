@@ -63,15 +63,15 @@ App.teamSelection = (function() {
             const teamTitle = document.createElement('h3');
             teamTitle.textContent = teamData.name;
             
-            // For Team 1, show count of available players from App.data.players
-            // For Team 2 & 3, show count of players in team data
+            // Count players with names from playerSelectionData in localStorage
             let playersWithNames = 0;
-            if (teamDef.id === 'team1') {
-                // Count players with names from App.data.players
-                playersWithNames = App.data.players ? App.data.players.filter(p => p.name && p.name.trim() !== '').length : 0;
-            } else {
-                // Count players in team data for Team 2 & 3
-                playersWithNames = teamData.players ? teamData.players.filter(p => p.name && p.name.trim() !== '').length : 0;
+            const savedPlayersKey = `playerSelectionData_${teamDef.id}`;
+            try {
+                const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+                // Count all players (goalies + regular players) with names
+                playersWithNames = savedPlayers.filter(p => p && p.name && p.name.trim() !== '').length;
+            } catch (e) {
+                playersWithNames = 0;
             }
             const teamInfo = document.createElement('p');
             teamInfo.className = 'team-name';
