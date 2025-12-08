@@ -103,8 +103,9 @@ App.markerHandler = {
    * @param {boolean} interactive Klick zum Entfernen? 
    * @param {string|null} playerName optionaler Spielername
    * @param {string|null} workflowSessionId optional workflow session ID
+   * @param {string|null} markerType 'scored' or 'conceded' to identify marker type for filtering
    */
-  createMarkerPercent(xPct, yPct, color, container, interactive = true, playerName = null, workflowSessionId = null) {
+  createMarkerPercent(xPct, yPct, color, container, interactive = true, playerName = null, workflowSessionId = null, markerType = null) {
     xPct = this.clampPct(xPct);
     yPct = this.clampPct(yPct);
     
@@ -122,6 +123,10 @@ App.markerHandler = {
     
     if (workflowSessionId) {
       dot.dataset.workflowSession = workflowSessionId;
+    }
+    
+    if (markerType) {
+      dot.dataset.type = markerType;
     }
     
     if (interactive) {

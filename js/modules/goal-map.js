@@ -5,6 +5,7 @@ App.goalMap = {
   VERTICAL_SPLIT_THRESHOLD: 50,
   timeTrackingBox: null,
   playerFilter: null,
+  filterType: null, // 'player' or 'goalie' to distinguish filter types
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -138,9 +139,11 @@ App.goalMap = {
             isConcededWorkflow = true;
             currentStep = 0;
           } else {
-            // Top half - GREEN workflow must start from Game Data page
-            console.log('[Goal Map] Cannot start GREEN workflow directly on Goal Map - use Game Data page');
-            return;
+            // Top half - Long press creates gray dot (manual goal without player assignment)
+            // Don't start workflow, just place the marker and return
+            console.log('[Goal Map] Long press in green area - creating gray marker (manual goal)');
+            // Marker will be created in the field box section below
+            // We don't return here, we let it continue to create the marker
           }
         }
         
@@ -216,6 +219,9 @@ App.goalMap = {
           
           const color = neutralGrey;
           
+          // Determine marker type based on goal box
+          const markerType = (box.id === "goalGreenBox") ? 'scored' : 'conceded';
+          
           const workflowSessionId = workflowActive ? App.goalMapWorkflow.sessionId : null;
           
           App.markerHandler.createMarkerPercent(
@@ -225,7 +231,8 @@ App.goalMap = {
             box,
             true,
             pointPlayer,
-            workflowSessionId
+            workflowSessionId,
+            markerType
           );
           
           if (workflowActive) {
@@ -243,18 +250,25 @@ App.goalMap = {
         // FELD-BOX: grün/rot oder grau je nach Kontext
         if (box.classList.contains("field-box")) {
           let color = null;
+          let markerType = null;
 
           // Im Goal-Workflow ist der Feldpunkt immer grau (neutral)
           if (isGoalWorkflow) {
             color = neutralGrey;
+            // Determine marker type based on workflow type
+            markerType = workflowType; // 'scored' or 'conceded'
           }
           // Longpress oder erzwungen grau (z.B. Doppelklick)
           else if (long || forceGrey) {
             color = neutralGrey;
+            // For long press, determine type based on vertical position
+            markerType = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD ? 'conceded' : 'scored';
           }
           // Normaler manueller Klick: oben grün, unten rot
           else {
-            color = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD ? "#ff0000" : "#00ff66";
+            const isBottomHalf = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD;
+            color = isBottomHalf ? "#ff0000" : "#00ff66";
+            markerType = isBottomHalf ? 'conceded' : 'scored';
           }
           
           const workflowSessionId = workflowActive ? App.goalMapWorkflow.sessionId : null;
@@ -266,7 +280,8 @@ App.goalMap = {
             box,
             true,
             pointPlayer,
-            workflowSessionId
+            workflowSessionId,
+            markerType
           );
           
           if (workflowActive) {
@@ -551,6 +566,7 @@ App.goalMap = {
       }
       
       this.playerFilter = filterSelect.value || null;
+      this.filterType = filterSelect.value ? 'player' : null;
       this.applyPlayerFilter();
     });
     
@@ -558,6 +574,7 @@ App.goalMap = {
     if (savedFilter) {
       filterSelect.value = savedFilter;
       this.playerFilter = savedFilter;
+      this.filterType = 'player';
       this.applyPlayerFilter();
     }
     
@@ -582,6 +599,7 @@ App.goalMap = {
         
         // Set goalie as player filter (same logic as player filter)
         this.playerFilter = goalieFilterSelect.value || null;
+        this.filterType = goalieFilterSelect.value ? 'goalie' : null;
         this.applyPlayerFilter();
       });
     }
@@ -598,9 +616,28 @@ App.goalMap = {
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
+        const markerType = marker.dataset.type; // 'scored' or 'conceded'
+        const markerPlayer = marker.dataset.player;
+        
         if (this.playerFilter) {
-          marker.style.display = (marker.dataset.player === this.playerFilter) ? '' : 'none';
+          // Player filter: only affect 'scored' markers (green area)
+          if (this.filterType === 'player') {
+            if (markerType === 'scored') {
+              // Filter scored markers by player
+              marker.style.display = (markerPlayer === this.playerFilter) ? '' : 'none';
+            }
+            // Leave 'conceded' markers unaffected
+          }
+          // Goalie filter: only affect 'conceded' markers (red area)
+          else if (this.filterType === 'goalie') {
+            if (markerType === 'conceded') {
+              // Filter conceded markers by goalie
+              marker.style.display = (markerPlayer === this.playerFilter) ? '' : 'none';
+            }
+            // Leave 'scored' markers unaffected
+          }
         } else {
+          // No filter active - show all markers
           marker.style.display = '';
         }
       });
