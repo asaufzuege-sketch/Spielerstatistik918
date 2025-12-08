@@ -560,6 +560,14 @@ App.goalMap = {
     const filterSelect = document.getElementById("goalMapPlayerFilter");
     if (!filterSelect) return;
     
+    // Prevent multiple event listener attachments
+    if (filterSelect.dataset.listenersAttached === 'true') {
+      console.log('[Goal Map] Filter listeners already attached, skipping re-attachment');
+      // Still restore filter state even if listeners are attached
+      this.restoreFilterState();
+      return;
+    }
+    
     filterSelect.innerHTML = '<option value="">All Players</option>';
     // All Players - exclude goalies (only field players)
     const players = (App.data.selectedPlayers || []).filter(p => p && p.name && p.position !== 'G');
@@ -570,10 +578,6 @@ App.goalMap = {
       filterSelect.appendChild(option);
     });
     
-    // Task 1: Restore player filter value (fix button title on page navigation)
-    const savedPlayerFilter = localStorage.getItem("goalMapPlayerFilter");
-    const savedPlayerFilterType = localStorage.getItem("goalMapPlayerFilterType");
-    
     filterSelect.addEventListener("change", () => {
       // Clear goalie filter when player filter is used
       const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
@@ -583,6 +587,8 @@ App.goalMap = {
       
       this.playerFilter = filterSelect.value || null;
       this.filterType = filterSelect.value ? 'player' : null;
+      
+      console.log('[Goal Map] Player filter changed:', this.playerFilter, 'filterType:', this.filterType);
       
       // Task 1: Save filter state
       if (this.playerFilter) {
@@ -620,6 +626,8 @@ App.goalMap = {
         this.playerFilter = goalieFilterSelect.value || null;
         this.filterType = goalieFilterSelect.value ? 'goalie' : null;
         
+        console.log('[Goal Map] Goalie filter changed:', this.playerFilter, 'filterType:', this.filterType);
+        
         // Task 2 & 3: Update button title and active state
         this.updateGoalieButtonTitle(this.playerFilter);
         
@@ -637,10 +645,31 @@ App.goalMap = {
       });
     }
     
+    // Mark that listeners have been attached
+    filterSelect.dataset.listenersAttached = 'true';
+    if (goalieFilterSelect) {
+      goalieFilterSelect.dataset.listenersAttached = 'true';
+    }
+    
+    // Restore saved filter state
+    this.restoreFilterState();
+  },
+  
+  // Separate method to restore filter state (can be called independently)
+  restoreFilterState() {
+    const filterSelect = document.getElementById("goalMapPlayerFilter");
+    const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+    const savedPlayerFilter = localStorage.getItem("goalMapPlayerFilter");
+    const savedPlayerFilterType = localStorage.getItem("goalMapPlayerFilterType");
+    
+    console.log('[Goal Map] Restoring filter state:', savedPlayerFilter, savedPlayerFilterType);
+    
     // Task 1: Restore saved filter on page load
     if (savedPlayerFilter && savedPlayerFilterType) {
       if (savedPlayerFilterType === 'player') {
-        filterSelect.value = savedPlayerFilter;
+        if (filterSelect) {
+          filterSelect.value = savedPlayerFilter;
+        }
         this.playerFilter = savedPlayerFilter;
         this.filterType = 'player';
       } else if (savedPlayerFilterType === 'goalie') {
@@ -653,6 +682,10 @@ App.goalMap = {
       }
       this.applyPlayerFilter();
       this.updateGoalieNameOverlay(); // Task 6
+      
+      console.log('[Goal Map] Filter state restored - playerFilter:', this.playerFilter, 'filterType:', this.filterType);
+    } else {
+      console.log('[Goal Map] No saved filter state found');
     }
   },
   
@@ -717,11 +750,33 @@ App.goalMap = {
   
   // Task 4 & 5: Get currently active goalie
   getActiveGoalie() {
+    console.log('[Goal Map] getActiveGoalie called - filterType:', this.filterType, 'playerFilter:', this.playerFilter);
+    
     if (this.filterType === 'goalie' && this.playerFilter) {
+      const goalie = {
+        name: this.playerFilter,
+        position: 'G'
+      };
+      console.log('[Goal Map] Active goalie found:', goalie);
+      return goalie;
+    }
+    
+    // Fallback: check localStorage directly in case state was lost
+    const savedPlayerFilter = localStorage.getItem("goalMapPlayerFilter");
+    const savedPlayerFilterType = localStorage.getItem("goalMapPlayerFilterType");
+    
+    if (savedPlayerFilterType === 'goalie' && savedPlayerFilter) {
+      console.log('[Goal Map] Active goalie found in localStorage (fallback):', savedPlayerFilter);
+      // Restore state
+      this.playerFilter = savedPlayerFilter;
+      this.filterType = 'goalie';
       return {
-        name: this.playerFilter
+        name: savedPlayerFilter,
+        position: 'G'
       };
     }
+    
+    console.log('[Goal Map] No active goalie found');
     return null;
   },
   
