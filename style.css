@@ -1012,10 +1012,12 @@ body[data-workflow="conceded"] .period-buttons.top-row .time-btn {
 
 /* Pos. Zelle in der Tabelle */
 #seasonPage .pos-cell {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   text-align: center;
   color: #44bb91;
   font-weight: bold;
-  min-width: 40px;
 }
 
 /* Sticky Column für Pos. */
