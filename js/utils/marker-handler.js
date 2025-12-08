@@ -1,6 +1,6 @@
 // Marker & Image Sampling – Version mit Spieler-Support
 App.markerHandler = {
-  LONG_MARK_MS: 600,
+  LONG_MARK_MS: 500,
   samplerCache: new WeakMap(),
   
   clampPct(v) {

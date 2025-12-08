@@ -1,6 +1,8 @@
 // Goal Map Modul – Verhalten wie in Repo 912, erweitert um Goal/Shot-Workflow + Spieler-Filter
 // Ziel: Feldpunkte wie bisher (grün/rot), alle Torpunkte (Workflow + manuell) identisch dunkelgrau & scharf
 App.goalMap = {
+  // Vertical split threshold for workflow detection: Top half (y < 50%) = green, Bottom half (y >= 50%) = red
+  VERTICAL_SPLIT_THRESHOLD: 50,
   timeTrackingBox: null,
   playerFilter: null,
   
@@ -105,43 +107,51 @@ App.goalMap = {
         
         if (!pos.insideImage) return;
         
-        // Check if we should start a RED workflow (conceded goal) directly on Goal Map
-        if (!workflowActive && isFieldBox && pos.xPctImage >= 50) {
-          // Start RED workflow for conceded goal
-          App.goalMapWorkflow.active = true;
-          App.goalMapWorkflow.eventType = 'goal';
-          App.goalMapWorkflow.workflowType = 'conceded';
-          App.goalMapWorkflow.playerName = null; // Will be set when goalie is selected
-          App.goalMapWorkflow.requiredPoints = 3;
-          App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
-          App.goalMapWorkflow.collectedPoints = [];
-          console.log('[Goal Map] Starting RED workflow (conceded goal) from right half click');
+        // Check if we should start a workflow directly on Goal Map (ONLY on LONG PRESS)
+        if (!workflowActive && isFieldBox && long) {
+          // Vertical split: Top half (y < threshold) = GREEN workflow, Bottom half (y >= threshold) = RED workflow
+          const isBottomHalf = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD;
           
-          // Update workflow indicator
-          if (App.goalMap && typeof App.goalMap.updateWorkflowIndicator === 'function') {
-            App.goalMap.updateWorkflowIndicator();
+          if (isBottomHalf) {
+            // Start RED workflow for conceded goal
+            App.goalMapWorkflow.active = true;
+            App.goalMapWorkflow.eventType = 'goal';
+            App.goalMapWorkflow.workflowType = 'conceded';
+            App.goalMapWorkflow.playerName = null; // Will be set when goalie is selected
+            App.goalMapWorkflow.requiredPoints = 3;
+            App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
+            App.goalMapWorkflow.collectedPoints = [];
+            console.log('[Goal Map] Starting RED workflow (conceded goal) from bottom half long press');
+            
+            // Update workflow indicator
+            if (App.goalMap && typeof App.goalMap.updateWorkflowIndicator === 'function') {
+              App.goalMap.updateWorkflowIndicator();
+            }
+            
+            // Re-read variables after starting workflow
+            workflowActive = true;
+            eventType = 'goal';
+            workflowType = 'conceded';
+            isGoalWorkflow = true;
+            isScoredWorkflow = false;
+            isConcededWorkflow = true;
+            currentStep = 0;
+          } else {
+            // Top half - GREEN workflow must start from Game Data page
+            console.log('[Goal Map] Cannot start GREEN workflow directly on Goal Map - use Game Data page');
+            return;
           }
-          
-          // Re-read variables after starting workflow
-          workflowActive = true;
-          eventType = 'goal';
-          workflowType = 'conceded';
-          isGoalWorkflow = true;
-          isScoredWorkflow = false;
-          isConcededWorkflow = true;
-          currentStep = 0;
         }
         
-        // If clicking left half without active workflow, ignore (GREEN workflow must start from Game Data)
-        if (!workflowActive && isFieldBox && pos.xPctImage < 50) {
-          console.log('[Goal Map] Cannot start GREEN workflow directly on Goal Map - use Game Data page');
-          return;
+        // If clicking field without active workflow and NOT long press, just place colored marker (no workflow)
+        if (!workflowActive && isFieldBox && !long) {
+          // Short click - just place colored point, don't start workflow
+          // Will be handled below in field box section
         }
         
-        // GREEN workflow restriction: Ignore right field half clicks
-        if (workflowActive && isScoredWorkflow && isFieldBox && pos.xPctImage >= 50) {
-          console.log('[Goal Map] GREEN workflow: Right field half not allowed - only left (green) half');
-          return;
+        // GREEN workflow restriction: Block if trying to access it without coming from Game Data
+        if (workflowActive && isScoredWorkflow && isFieldBox && currentStep === 0) {
+          // Allow first field click in green workflow (it's already started from Game Data)
         }
         
         // Im Goal-Workflow: Strenge Schritt-Kontrolle
@@ -158,10 +168,10 @@ App.goalMap = {
             // Detect which half was clicked and set workflow type (if not already set)
             // This handles GREEN workflow started from Game Data page
             if (!workflowType) {
-              // Left half (x < 50%) = scored (green), Right half (x >= 50%) = conceded (red)
-              const isRightHalf = pos.xPctImage >= 50;
-              App.goalMapWorkflow.workflowType = isRightHalf ? 'conceded' : 'scored';
-              console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow`);
+              // Vertical split: Top half (y < threshold) = scored (green), Bottom half (y >= threshold) = conceded (red)
+              const isBottomHalf = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD;
+              App.goalMapWorkflow.workflowType = isBottomHalf ? 'conceded' : 'scored';
+              console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow from vertical position`);
               // Update local variables
               workflowType = App.goalMapWorkflow.workflowType;
               isScoredWorkflow = workflowType === 'scored';
@@ -240,7 +250,7 @@ App.goalMap = {
           }
           // Normaler manueller Klick: oben grün, unten rot
           else {
-            color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
+            color = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD ? "#ff0000" : "#00ff66";
           }
           
           App.markerHandler.createMarkerPercent(
@@ -800,22 +810,22 @@ App.goalMap = {
     // Clear existing content
     list.innerHTML = "";
     
-    // Create goalie options with proper escaping
+    // Create goalie options - clickable divs instead of radio buttons
     goalies.forEach(g => {
-      const label = document.createElement("label");
-      label.className = "goalie-option";
+      const option = document.createElement("div");
+      option.className = "goalie-option";
+      option.textContent = g.name; // textContent automatically escapes HTML
       
-      const radio = document.createElement("input");
-      radio.type = "radio";
-      radio.name = "goalieSelect";
-      radio.value = g.name;
+      // Direct click handler - select and close immediately
+      option.addEventListener('click', () => {
+        const modal = document.getElementById("goalieSelectionModal");
+        if (modal) {
+          modal.style.display = "none";
+        }
+        callback(g.name);
+      });
       
-      const span = document.createElement("span");
-      span.textContent = g.name; // textContent automatically escapes HTML
-      
-      label.appendChild(radio);
-      label.appendChild(span);
-      list.appendChild(label);
+      list.appendChild(option);
     });
     
     const modal = document.getElementById("goalieSelectionModal");
@@ -827,23 +837,13 @@ App.goalMap = {
     
     modal.style.display = "flex";
     
-    const confirmBtn = document.getElementById("goalieSelectionConfirm");
+    // Only cancel button handler needed
     const cancelBtn = document.getElementById("goalieSelectionCancel");
-    
-    // Use event handler properties to avoid duplicate listeners
-    confirmBtn.onclick = () => {
-      const selected = document.querySelector('input[name="goalieSelect"]:checked');
-      if (selected) {
+    if (cancelBtn) {
+      cancelBtn.onclick = () => {
         modal.style.display = "none";
-        callback(selected.value);
-      } else {
-        alert("Please select a goalie");
-      }
-    };
-    
-    cancelBtn.onclick = () => {
-      modal.style.display = "none";
-      callback(null);
-    };
+        callback(null);
+      };
+    }
   }
 };
