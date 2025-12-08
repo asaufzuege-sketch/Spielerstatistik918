@@ -472,7 +472,7 @@ App.goalMap = {
                   App.goalMapWorkflow.playerName = selectedGoalie;
                   console.log(`[Goal Workflow] Goalie selected: ${selectedGoalie}`);
                   
-                  // CRITICAL: Update all markers from THIS workflow with goalie name
+                  // Update all workflow markers with the selected goalie's name
                   // Use the workflow session ID to identify markers from this specific workflow
                   const workflowSessionId = App.goalMapWorkflow.sessionId;
                   
@@ -534,7 +534,7 @@ App.goalMap = {
     if (!filterSelect) return;
     
     filterSelect.innerHTML = '<option value="">All Players</option>';
-    // All Players Button - NUR Spieler (keine Goalies)
+    // All Players - exclude goalies (only field players)
     const players = (App.data.selectedPlayers || []).filter(p => p && p.name && p.position !== 'G');
     players.forEach(player => {
       const option = document.createElement("option");
