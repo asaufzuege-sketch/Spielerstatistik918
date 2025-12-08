@@ -166,10 +166,10 @@ App.goalMap = {
             // Detect which half was clicked and set workflow type (if not already set)
             // This handles GREEN workflow started from Game Data page
             if (!workflowType) {
-              // Left half (x < 50%) = scored (green), Right half (x >= 50%) = conceded (red)
-              const isRightHalf = pos.xPctImage >= 50;
-              App.goalMapWorkflow.workflowType = isRightHalf ? 'conceded' : 'scored';
-              console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow`);
+              // Vertical split: Top half (y < 50%) = scored (green), Bottom half (y >= 50%) = conceded (red)
+              const isBottomHalf = pos.yPctImage >= 50;
+              App.goalMapWorkflow.workflowType = isBottomHalf ? 'conceded' : 'scored';
+              console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow from vertical position`);
               // Update local variables
               workflowType = App.goalMapWorkflow.workflowType;
               isScoredWorkflow = workflowType === 'scored';
