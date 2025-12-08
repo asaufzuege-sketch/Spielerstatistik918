@@ -288,6 +288,56 @@ h1 {
   color: #fff;
 }
 
+/* Task 3: Pulsing Neon-Glow for Active Goalie Button */
+#goalMapGoalieFilter.active {
+  animation: neon-pulse 1.5s ease-in-out infinite;
+  border: 2px solid #00ff88 !important;
+}
+
+@keyframes neon-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88; 
+    border-color: #00ff88;
+  }
+  50% { 
+    box-shadow: 0 0 15px #00ff88, 0 0 30px #00ff88, 0 0 45px #00ff88; 
+    border-color: #00ffaa;
+  }
+}
+
+/* Task 6: Goalie Name Overlay in Red Field Area */
+.goalie-name-overlay {
+  position: absolute;
+  bottom: 25%; /* Middle of red area (bottom half) */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 48px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.15); /* 15% transparency */
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 1;
+  letter-spacing: 8px;
+  user-select: none;
+}
+
+/* Task 6: Goalie Name in Goal Area */
+.goalie-name-goal {
+  position: absolute;
+  bottom: 5%; /* In goal area */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.25); /* 25% transparency */
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+  letter-spacing: 4px;
+}
+
+
 .confirm-btn {
   background: #44bb91;
   color: #fff;
@@ -2224,3 +2274,28 @@ copilot/change-line-mode-functionality
   cursor: pointer !important;
   user-select: none;
 }
+
+/* Task 4: Toast Notification Styles */
+.toast-notification {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(68, 187, 145, 0.95);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+

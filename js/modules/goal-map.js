@@ -108,49 +108,82 @@ App.goalMap = {
         
         if (!pos.insideImage) return;
         
-        // Check if we should start a workflow directly on Goal Map (ONLY on LONG PRESS)
-        if (!workflowActive && isFieldBox && long) {
-          // Vertical split: Top half (y < threshold) = GREEN workflow, Bottom half (y >= threshold) = RED workflow
+        // Task 4 & 5: Handle clicks in red area with active goalie
+        if (!workflowActive && isFieldBox) {
           const isBottomHalf = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD;
           
           if (isBottomHalf) {
-            // Start RED workflow for conceded goal
-            App.goalMapWorkflow.active = true;
-            App.goalMapWorkflow.eventType = 'goal';
-            App.goalMapWorkflow.workflowType = 'conceded';
-            App.goalMapWorkflow.playerName = null; // Will be set when goalie is selected
-            App.goalMapWorkflow.requiredPoints = 3;
-            App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
-            App.goalMapWorkflow.collectedPoints = [];
-            App.goalMapWorkflow.sessionId = 'wf_' + Date.now(); // Unique session ID
-            console.log('[Goal Map] Starting RED workflow (conceded goal) from bottom half long press');
+            // RED AREA - check for active goalie
+            const activeGoalie = App.goalMap.getActiveGoalie();
             
-            // Update workflow indicator
-            if (App.goalMap && typeof App.goalMap.updateWorkflowIndicator === 'function') {
-              App.goalMap.updateWorkflowIndicator();
+            if (!activeGoalie) {
+              // No goalie selected - show toast
+              if (typeof App.showToast === 'function') {
+                App.showToast('Please select a goalie first');
+              } else {
+                alert('Please select a goalie first');
+              }
+              return;
             }
             
-            // Re-read variables after starting workflow
-            workflowActive = true;
-            eventType = 'goal';
-            workflowType = 'conceded';
-            isGoalWorkflow = true;
-            isScoredWorkflow = false;
-            isConcededWorkflow = true;
-            currentStep = 0;
+            // Task 4: Simple click - auto-assign shot to goalie (no workflow)
+            if (!long) {
+              console.log(`[Goal Map] Simple click in red area - auto-assigning shot to ${activeGoalie.name}`);
+              const color = "#ff0000"; // Red for conceded shot
+              const markerType = 'conceded';
+              
+              App.markerHandler.createMarkerPercent(
+                pos.xPctContainer,
+                pos.yPctContainer,
+                color,
+                box,
+                true,
+                activeGoalie.name, // Auto-assign to active goalie
+                null, // No workflow session
+                markerType
+              );
+              return; // Done - no workflow needed
+            }
+            
+            // Task 5: Long press - start RED workflow with goalie already assigned
+            if (long) {
+              console.log(`[Goal Map] Long press in red area - starting workflow with goalie ${activeGoalie.name}`);
+              
+              // Start RED workflow for conceded goal
+              App.goalMapWorkflow.active = true;
+              App.goalMapWorkflow.eventType = 'goal';
+              App.goalMapWorkflow.workflowType = 'conceded';
+              App.goalMapWorkflow.playerName = activeGoalie.name; // Task 5: Set goalie immediately
+              App.goalMapWorkflow.requiredPoints = 3;
+              App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
+              App.goalMapWorkflow.collectedPoints = [];
+              App.goalMapWorkflow.sessionId = 'wf_' + Date.now();
+              
+              // Update workflow indicator
+              if (App.goalMap && typeof App.goalMap.updateWorkflowIndicator === 'function') {
+                App.goalMap.updateWorkflowIndicator();
+              }
+              
+              // Re-read variables after starting workflow
+              workflowActive = true;
+              eventType = 'goal';
+              workflowType = 'conceded';
+              isGoalWorkflow = true;
+              isScoredWorkflow = false;
+              isConcededWorkflow = true;
+              currentStep = 0;
+            }
           } else {
-            // Top half - Long press creates gray dot (manual goal without player assignment)
-            // Don't start workflow, just place the marker and return
-            console.log('[Goal Map] Long press in green area - creating gray marker (manual goal)');
-            // Marker will be created in the field box section below
-            // We don't return here, we let it continue to create the marker
+            // Top half (GREEN area) - Keep existing behavior
+            if (long) {
+              // Long press creates gray dot (manual goal without player assignment)
+              console.log('[Goal Map] Long press in green area - creating gray marker (manual goal)');
+              // Marker will be created in the field box section below
+            } else {
+              // Short click - just place colored point, don't start workflow
+              // Will be handled below in field box section
+            }
           }
-        }
-        
-        // If clicking field without active workflow and NOT long press, just place colored marker (no workflow)
-        if (!workflowActive && isFieldBox && !long) {
-          // Short click - just place colored point, don't start workflow
-          // Will be handled below in field box section
         }
         
         // GREEN workflow restriction: Block if trying to access it without coming from Game Data
@@ -470,7 +503,7 @@ App.goalMap = {
               return;
             }
             
-            // If it's a conceded goal workflow, show goalie selection modal
+            // Task 5: If it's a conceded goal workflow, goalie is already assigned - no modal needed
             if (workflowType === 'conceded' && isBottomRow) {
               // Record the time button click
               const btnRect = newBtn.getBoundingClientRect();
@@ -480,40 +513,19 @@ App.goalMap = {
               
               App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
               
-              // Show goalie selection modal
-              this.showGoalieSelectionModal((selectedGoalie) => {
-                if (selectedGoalie) {
-                  // Update the workflow with goalie info
-                  App.goalMapWorkflow.playerName = selectedGoalie;
-                  console.log(`[Goal Workflow] Goalie selected: ${selectedGoalie}`);
-                  
-                  // Update all workflow markers with the selected goalie's name
-                  // Use the workflow session ID to identify markers from this specific workflow
-                  const workflowSessionId = App.goalMapWorkflow.sessionId;
-                  
-                  if (workflowSessionId) {
-                    const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
-                    let updatedCount = 0;
-                    boxes.forEach(box => {
-                      const markers = box.querySelectorAll(".marker-dot");
-                      markers.forEach(marker => {
-                        // Update only markers from this workflow session
-                        if (marker.dataset.workflowSession === workflowSessionId) {
-                          marker.dataset.player = selectedGoalie;
-                          updatedCount++;
-                        }
-                      });
-                    });
-                    
-                    console.log(`[Goal Workflow] Updated ${updatedCount} markers with goalie: ${selectedGoalie}`);
-                  }
-                  
-                  // Increment the time counter for the goalie
-                  updateValue(1);
-                } else {
-                  console.log('[Goal Workflow] Goalie selection cancelled');
-                }
-              });
+              // Task 5: Goalie is already set in workflow, just update value and finish
+              if (App.goalMapWorkflow.playerName) {
+                console.log(`[Goal Workflow] Time button clicked - goalie already assigned: ${App.goalMapWorkflow.playerName}`);
+                
+                // Increment the time counter for the goalie
+                updateValue(1);
+                
+                // Workflow is complete - no modal needed
+              } else {
+                // Fallback: If somehow goalie is not set, show error
+                console.error('[Goal Workflow] ERROR: Goalie should be assigned but is null');
+                alert('Error: No goalie assigned. Please select a goalie first.');
+              }
               return;
             }
           }
@@ -558,6 +570,10 @@ App.goalMap = {
       filterSelect.appendChild(option);
     });
     
+    // Task 1: Restore player filter value (fix button title on page navigation)
+    const savedPlayerFilter = localStorage.getItem("goalMapPlayerFilter");
+    const savedPlayerFilterType = localStorage.getItem("goalMapPlayerFilterType");
+    
     filterSelect.addEventListener("change", () => {
       // Clear goalie filter when player filter is used
       const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
@@ -567,21 +583,24 @@ App.goalMap = {
       
       this.playerFilter = filterSelect.value || null;
       this.filterType = filterSelect.value ? 'player' : null;
+      
+      // Task 1: Save filter state
+      if (this.playerFilter) {
+        localStorage.setItem("goalMapPlayerFilter", this.playerFilter);
+        localStorage.setItem("goalMapPlayerFilterType", "player");
+      } else {
+        localStorage.removeItem("goalMapPlayerFilter");
+        localStorage.removeItem("goalMapPlayerFilterType");
+      }
+      
       this.applyPlayerFilter();
+      this.updateGoalieNameOverlay(); // Task 6
     });
-    
-    const savedFilter = localStorage.getItem("goalMapPlayerFilter");
-    if (savedFilter) {
-      filterSelect.value = savedFilter;
-      this.playerFilter = savedFilter;
-      this.filterType = 'player';
-      this.applyPlayerFilter();
-    }
     
     // Goalie Filter Dropdown - populate with currently selected goalies
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
     if (goalieFilterSelect) {
-      goalieFilterSelect.innerHTML = '<option value="">All Goalies</option>';
+      goalieFilterSelect.innerHTML = '<option value="">Select a Goalie</option>'; // Task 2: Default text
       const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
       goalies.forEach(goalie => {
         const option = document.createElement("option");
@@ -600,9 +619,110 @@ App.goalMap = {
         // Set goalie as player filter (same logic as player filter)
         this.playerFilter = goalieFilterSelect.value || null;
         this.filterType = goalieFilterSelect.value ? 'goalie' : null;
+        
+        // Task 2 & 3: Update button title and active state
+        this.updateGoalieButtonTitle(this.playerFilter);
+        
+        // Task 1: Save filter state
+        if (this.playerFilter) {
+          localStorage.setItem("goalMapPlayerFilter", this.playerFilter);
+          localStorage.setItem("goalMapPlayerFilterType", "goalie");
+        } else {
+          localStorage.removeItem("goalMapPlayerFilter");
+          localStorage.removeItem("goalMapPlayerFilterType");
+        }
+        
         this.applyPlayerFilter();
+        this.updateGoalieNameOverlay(); // Task 6
       });
     }
+    
+    // Task 1: Restore saved filter on page load
+    if (savedPlayerFilter && savedPlayerFilterType) {
+      if (savedPlayerFilterType === 'player') {
+        filterSelect.value = savedPlayerFilter;
+        this.playerFilter = savedPlayerFilter;
+        this.filterType = 'player';
+      } else if (savedPlayerFilterType === 'goalie') {
+        if (goalieFilterSelect) {
+          goalieFilterSelect.value = savedPlayerFilter;
+        }
+        this.playerFilter = savedPlayerFilter;
+        this.filterType = 'goalie';
+        this.updateGoalieButtonTitle(savedPlayerFilter); // Task 2 & 3
+      }
+      this.applyPlayerFilter();
+      this.updateGoalieNameOverlay(); // Task 6
+    }
+  },
+  
+  // Task 2: Update Goalie Button Title
+  updateGoalieButtonTitle(goalieName) {
+    const goalieBtn = document.getElementById('goalMapGoalieFilter');
+    if (!goalieBtn) return;
+    
+    if (goalieName) {
+      // Task 3: Add active class for neon pulse animation
+      goalieBtn.classList.add('active');
+    } else {
+      // Task 3: Remove active class when no goalie selected
+      goalieBtn.classList.remove('active');
+    }
+  },
+  
+  // Task 6: Show Goalie Name Overlay in Red Area
+  showGoalieNameOverlay(goalieName) {
+    // Remove old overlays
+    const oldFieldOverlay = document.querySelector('.goalie-name-overlay');
+    const oldGoalOverlay = document.querySelector('.goalie-name-goal');
+    if (oldFieldOverlay) oldFieldOverlay.remove();
+    if (oldGoalOverlay) oldGoalOverlay.remove();
+    
+    if (!goalieName) return;
+    
+    // Extract surname (last name)
+    const lastName = goalieName.split(' ').pop().toUpperCase();
+    
+    // Overlay in red field area (middle of bottom half)
+    const fieldOverlay = document.createElement('div');
+    fieldOverlay.className = 'goalie-name-overlay';
+    fieldOverlay.textContent = lastName;
+    
+    // Overlay in goal area
+    const goalOverlay = document.createElement('div');
+    goalOverlay.className = 'goalie-name-goal';
+    goalOverlay.textContent = lastName;
+    
+    // Add to field box
+    const fieldBox = document.getElementById('fieldBox');
+    if (fieldBox) {
+      fieldBox.appendChild(fieldOverlay);
+    }
+    
+    // Add to red goal box
+    const goalRedBox = document.getElementById('goalRedBox');
+    if (goalRedBox) {
+      goalRedBox.appendChild(goalOverlay);
+    }
+  },
+  
+  // Task 6: Update overlay when filter changes
+  updateGoalieNameOverlay() {
+    if (this.filterType === 'goalie' && this.playerFilter) {
+      this.showGoalieNameOverlay(this.playerFilter);
+    } else {
+      this.showGoalieNameOverlay(null);
+    }
+  },
+  
+  // Task 4 & 5: Get currently active goalie
+  getActiveGoalie() {
+    if (this.filterType === 'goalie' && this.playerFilter) {
+      return {
+        name: this.playerFilter
+      };
+    }
+    return null;
   },
   
   applyPlayerFilter() {

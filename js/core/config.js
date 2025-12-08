@@ -242,6 +242,36 @@ const App = {
     }
   },
   
+  // Show Toast Notification (Task 4)
+  showToast(message, duration = 3000) {
+    // Remove existing toast if any
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+      existingToast.remove();
+    }
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.textContent = message;
+    
+    // Add to body
+    document.body.appendChild(toast);
+    
+    // Show toast
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 10);
+    
+    // Hide and remove toast after duration
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, duration);
+  },
+  
   // Goal Map Workflow Functions
   startGoalMapWorkflow(playerName, eventType) {
     this.goalMapWorkflow.active = true;
