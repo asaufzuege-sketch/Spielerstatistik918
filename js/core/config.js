@@ -333,6 +333,9 @@ const App = {
     this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
     
+    // Remove workflow data attribute from body
+    document.body.removeAttribute('data-workflow');
+    
     // Return to stats page
     this.showPage('stats');
   },
@@ -345,6 +348,10 @@ const App = {
     this.goalMapWorkflow.collectedPoints = [];
     this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
+    
+    // Remove workflow data attribute from body
+    document.body.removeAttribute('data-workflow');
+    
     console.log('Goal Map workflow cancelled');
   }
 };

@@ -465,6 +465,19 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
 .time-btn:active { transform: scale(1.05); }
 
+/* Visual deactivation of time buttons during workflows */
+body[data-workflow="scored"] .period-buttons.bottom-row .time-btn {
+  opacity: 0.3;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+}
+
+body[data-workflow="conceded"] .period-buttons.top-row .time-btn {
+  opacity: 0.3;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+}
+
 /* ====================== */
 /* SEASON PAGE (Scroll wie Goal Value) */
 /* ====================== */
@@ -1442,7 +1455,6 @@ tr[data-player].dragging {
   align-items: center;
   gap: 10px;
   background: #1a1a1a;
-  border: 1px solid #333;
   border-radius: 10px;
   padding: 10px 15px;
   margin: 8px 0;
@@ -1539,6 +1551,11 @@ tr[data-player].dragging {
 /* Goalie Slots - Green Border */
 #playerSelectionPage .player-list li.goalie-slot {
   border: 0.15px solid #44bb91;  /* Even more subtle */
+}
+
+/* Player Slots (non-goalie) - Gray Border */
+#playerSelectionPage .player-list li:not(.goalie-slot) {
+  border: 0.15px solid #888888;
 }
 
 /* Fixed Position "G" for Goalies */
