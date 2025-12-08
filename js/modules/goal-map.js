@@ -706,6 +706,8 @@ App.goalMap = {
             window.selectedGoalie = this.selectedGoalie;
           } catch (e) {
             console.error('[Goal Map] Failed to parse saved goalie:', e);
+            // Clean up corrupted data
+            localStorage.removeItem('activeGoalie');
           }
         }
         // If not in localStorage, reconstruct from player data
@@ -831,6 +833,8 @@ App.goalMap = {
         return goalie;
       } catch (e) {
         console.error('[Goal Map] Failed to parse activeGoalie from localStorage:', e);
+        // Clean up corrupted data
+        localStorage.removeItem('activeGoalie');
       }
     }
     
