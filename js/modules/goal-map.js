@@ -6,6 +6,7 @@ App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
   filterType: null, // 'player' or 'goalie' to distinguish filter types
+  selectedGoalie: null, // Direct storage for active goalie
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -624,6 +625,23 @@ App.goalMap = {
           this.playerFilter = goalieFilterSelect.value || null;
           this.filterType = goalieFilterSelect.value ? 'goalie' : null;
           
+          // CRITICAL: Save goalie directly for robustness
+          if (this.playerFilter) {
+            const goalie = (App.data.selectedPlayers || []).find(p => 
+              p.name === this.playerFilter && p.position === 'G'
+            );
+            if (goalie) {
+              this.selectedGoalie = goalie;
+              window.selectedGoalie = goalie; // Global backup
+              localStorage.setItem('activeGoalie', JSON.stringify(goalie));
+              console.log('[Goal Map] Goalie selected and saved directly:', goalie);
+            }
+          } else {
+            this.selectedGoalie = null;
+            window.selectedGoalie = null;
+            localStorage.removeItem('activeGoalie');
+          }
+          
           console.log('[Goal Map] Goalie filter changed:', this.playerFilter, 'filterType:', this.filterType);
           
           // Task 2 & 3: Update button title and active state
@@ -679,6 +697,29 @@ App.goalMap = {
         }
         this.playerFilter = savedPlayerFilter;
         this.filterType = 'goalie';
+        
+        // Restore selectedGoalie from multiple sources
+        const savedGoalie = localStorage.getItem('activeGoalie');
+        if (savedGoalie) {
+          try {
+            this.selectedGoalie = JSON.parse(savedGoalie);
+            window.selectedGoalie = this.selectedGoalie;
+          } catch (e) {
+            console.error('[Goal Map] Failed to parse saved goalie:', e);
+          }
+        }
+        // If not in localStorage, reconstruct from player data
+        if (!this.selectedGoalie) {
+          const goalie = (App.data.selectedPlayers || []).find(p => 
+            p.name === savedPlayerFilter && p.position === 'G'
+          );
+          if (goalie) {
+            this.selectedGoalie = goalie;
+            window.selectedGoalie = goalie;
+            localStorage.setItem('activeGoalie', JSON.stringify(goalie));
+          }
+        }
+        
         this.updateGoalieButtonTitle(savedPlayerFilter); // Task 2 & 3
       }
       this.applyPlayerFilter();
@@ -753,28 +794,88 @@ App.goalMap = {
   getActiveGoalie() {
     console.log('[Goal Map] getActiveGoalie called - filterType:', this.filterType, 'playerFilter:', this.playerFilter);
     
-    if (this.filterType === 'goalie' && this.playerFilter) {
-      const goalie = {
-        name: this.playerFilter,
-        position: 'G'
-      };
-      console.log('[Goal Map] Active goalie found:', goalie);
-      return goalie;
+    // Priority 1: Direct storage
+    if (this.selectedGoalie) {
+      console.log('[Goal Map] Active goalie found (direct storage):', this.selectedGoalie);
+      return this.selectedGoalie;
     }
     
-    // Fallback: check localStorage directly in case state was lost
+    // Priority 2: Window global backup
+    if (window.selectedGoalie) {
+      console.log('[Goal Map] Active goalie found (window.selectedGoalie):', window.selectedGoalie);
+      this.selectedGoalie = window.selectedGoalie; // Sync back
+      return window.selectedGoalie;
+    }
+    
+    // Priority 3: Filter type check
+    if (this.filterType === 'goalie' && this.playerFilter) {
+      const goalie = (App.data.selectedPlayers || []).find(p => 
+        p.name === this.playerFilter && p.position === 'G'
+      );
+      if (goalie) {
+        console.log('[Goal Map] Active goalie found (filter):', goalie);
+        this.selectedGoalie = goalie;
+        window.selectedGoalie = goalie;
+        return goalie;
+      }
+    }
+    
+    // Priority 4: localStorage activeGoalie
+    const savedGoalie = localStorage.getItem('activeGoalie');
+    if (savedGoalie) {
+      try {
+        const goalie = JSON.parse(savedGoalie);
+        console.log('[Goal Map] Active goalie found (localStorage activeGoalie):', goalie);
+        this.selectedGoalie = goalie;
+        window.selectedGoalie = goalie;
+        return goalie;
+      } catch (e) {
+        console.error('[Goal Map] Failed to parse activeGoalie from localStorage:', e);
+      }
+    }
+    
+    // Priority 5: localStorage filter fallback
     const savedPlayerFilter = localStorage.getItem("goalMapPlayerFilter");
     const savedPlayerFilterType = localStorage.getItem("goalMapPlayerFilterType");
     
     if (savedPlayerFilterType === 'goalie' && savedPlayerFilter) {
-      console.log('[Goal Map] Active goalie found in localStorage (fallback):', savedPlayerFilter);
+      console.log('[Goal Map] Active goalie found in localStorage filter (fallback):', savedPlayerFilter);
       // Restore state
       this.playerFilter = savedPlayerFilter;
       this.filterType = 'goalie';
-      return {
+      const goalie = (App.data.selectedPlayers || []).find(p => 
+        p.name === savedPlayerFilter && p.position === 'G'
+      );
+      if (goalie) {
+        this.selectedGoalie = goalie;
+        window.selectedGoalie = goalie;
+        localStorage.setItem('activeGoalie', JSON.stringify(goalie));
+        return goalie;
+      }
+      // If not found in player data, return basic object
+      const basicGoalie = {
         name: savedPlayerFilter,
         position: 'G'
       };
+      this.selectedGoalie = basicGoalie;
+      window.selectedGoalie = basicGoalie;
+      return basicGoalie;
+    }
+    
+    // Priority 6: Dropdown button text fallback
+    const goalieBtn = document.getElementById('goalMapGoalieFilter');
+    if (goalieBtn && goalieBtn.value && goalieBtn.value !== '') {
+      const btnValue = goalieBtn.value;
+      console.log('[Goal Map] Active goalie found from dropdown value:', btnValue);
+      const goalie = (App.data.selectedPlayers || []).find(p => 
+        p.name === btnValue && p.position === 'G'
+      );
+      if (goalie) {
+        this.selectedGoalie = goalie;
+        window.selectedGoalie = goalie;
+        localStorage.setItem('activeGoalie', JSON.stringify(goalie));
+        return goalie;
+      }
     }
     
     console.log('[Goal Map] No active goalie found');
