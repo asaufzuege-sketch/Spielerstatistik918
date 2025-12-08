@@ -1,6 +1,8 @@
 // Goal Map Modul – Verhalten wie in Repo 912, erweitert um Goal/Shot-Workflow + Spieler-Filter
 // Ziel: Feldpunkte wie bisher (grün/rot), alle Torpunkte (Workflow + manuell) identisch dunkelgrau & scharf
 App.goalMap = {
+  // Vertical split threshold for workflow detection: Top half (y < 50%) = green, Bottom half (y >= 50%) = red
+  VERTICAL_SPLIT_THRESHOLD: 50,
   timeTrackingBox: null,
   playerFilter: null,
   
@@ -107,8 +109,8 @@ App.goalMap = {
         
         // Check if we should start a workflow directly on Goal Map (ONLY on LONG PRESS)
         if (!workflowActive && isFieldBox && long) {
-          // Vertical split: Top half (y < 50%) = GREEN workflow, Bottom half (y >= 50%) = RED workflow
-          const isBottomHalf = pos.yPctImage >= 50;
+          // Vertical split: Top half (y < threshold) = GREEN workflow, Bottom half (y >= threshold) = RED workflow
+          const isBottomHalf = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD;
           
           if (isBottomHalf) {
             // Start RED workflow for conceded goal
@@ -166,8 +168,8 @@ App.goalMap = {
             // Detect which half was clicked and set workflow type (if not already set)
             // This handles GREEN workflow started from Game Data page
             if (!workflowType) {
-              // Vertical split: Top half (y < 50%) = scored (green), Bottom half (y >= 50%) = conceded (red)
-              const isBottomHalf = pos.yPctImage >= 50;
+              // Vertical split: Top half (y < threshold) = scored (green), Bottom half (y >= threshold) = conceded (red)
+              const isBottomHalf = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD;
               App.goalMapWorkflow.workflowType = isBottomHalf ? 'conceded' : 'scored';
               console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow from vertical position`);
               // Update local variables
@@ -248,7 +250,7 @@ App.goalMap = {
           }
           // Normaler manueller Klick: oben grün, unten rot
           else {
-            color = pos.yPctImage > 50 ? "#ff0000" : "#00ff66";
+            color = pos.yPctImage >= App.goalMap.VERTICAL_SPLIT_THRESHOLD ? "#ff0000" : "#00ff66";
           }
           
           App.markerHandler.createMarkerPercent(
