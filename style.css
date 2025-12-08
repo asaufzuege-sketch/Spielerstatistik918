@@ -1551,9 +1551,9 @@ tr[data-player].dragging {
 
 /* Fixed Position "G" for Goalies */
 #playerSelectionPage .player-list .pos-fixed {
-  width: 30px;
-  min-width: 30px;
-  max-width: 30px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   background: #2a2a2a;
   color: #44bb91;
   border: 1px solid #444;
@@ -1562,7 +1562,7 @@ tr[data-player].dragging {
   text-align: center;
   font-size: 0.95rem;
   font-weight: bold;
-  flex: 0 0 30px;
+  flex: 0 0 60px;
   display: flex;
   align-items: center;
   justify-content: center;

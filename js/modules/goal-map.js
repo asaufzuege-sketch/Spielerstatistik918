@@ -513,6 +513,12 @@ App.goalMap = {
     });
     
     filterSelect.addEventListener("change", () => {
+      // Clear goalie filter when player filter is used
+      const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+      if (goalieFilterSelect) {
+        goalieFilterSelect.value = "";
+      }
+      
       this.playerFilter = filterSelect.value || null;
       this.applyPlayerFilter();
     });
@@ -537,70 +543,17 @@ App.goalMap = {
       });
       
       goalieFilterSelect.addEventListener("change", () => {
-        const selectedGoalie = goalieFilterSelect.value;
-        if (selectedGoalie) {
-          // Filter by single goalie
-          this.filterByGoalies([selectedGoalie]);
-        } else {
-          // Show all goalies
-          const goalieNames = goalies.map(g => g.name);
-          this.filterByGoalies(goalieNames);
+        // Clear player filter when goalie filter is used
+        const playerFilterSelect = document.getElementById("goalMapPlayerFilter");
+        if (playerFilterSelect) {
+          playerFilterSelect.value = "";
         }
-      });
-    }
-  },
-  
-  filterByGoalies(goalieNames) {
-    // Clear the player filter dropdown
-    const filterSelect = document.getElementById("goalMapPlayerFilter");
-    if (filterSelect) {
-      filterSelect.value = "";
-    }
-    
-    // Set filter to show only goalies
-    this.playerFilter = null;
-    localStorage.removeItem("goalMapPlayerFilter");
-    
-    const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
-    boxes.forEach(box => {
-      const markers = box.querySelectorAll(".marker-dot");
-      markers.forEach(marker => {
-        const playerName = marker.dataset.player;
-        marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
-      });
-    });
-    
-    // Update time tracking to show only goalie times
-    this.applyGoalieTimeTrackingFilter(goalieNames);
-  },
-  
-  applyGoalieTimeTrackingFilter(goalieNames) {
-    if (!this.timeTrackingBox) return;
-    
-    let timeDataWithPlayers = {};
-    try {
-      timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
-    } catch {
-      timeDataWithPlayers = {};
-    }
-    
-    this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
-      const periodNum = period.dataset.period || `p${pIdx}`;
-      const buttons = period.querySelectorAll(".time-btn");
-      
-      buttons.forEach((btn, idx) => {
-        const key = `${periodNum}_${idx}`;
-        const playerData = timeDataWithPlayers[key] || {};
         
-        // Sum up time for all goalies
-        let displayVal = 0;
-        goalieNames.forEach(goalieName => {
-          displayVal += Number(playerData[goalieName]) || 0;
-        });
-        
-        btn.textContent = displayVal;
+        // Set goalie as player filter (same logic as player filter)
+        this.playerFilter = goalieFilterSelect.value || null;
+        this.applyPlayerFilter();
       });
-    });
+    }
   },
   
   applyPlayerFilter() {
