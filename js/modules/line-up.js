@@ -496,7 +496,7 @@ App.lineUp = {
       const pairEl = this.container?.querySelector(`.lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
       if (pairEl) {
         const stats = this.calculatePairStats(pair);
-        pairEl.textContent = `${stats.goals}P / +- ${stats.plusMinus} / ${stats.shots} Sh`;
+        pairEl.textContent = `${stats.points}P / +- ${stats.plusMinus} / ${stats.shots} Sh`;
       }
     }
   },
@@ -540,7 +540,7 @@ App.lineUp = {
   },
   
   calculatePairStats(pairNum) {
-    let goals = 0;
+    let points = 0;
     let plusMinus = 0;
     let shots = 0;
     
@@ -550,14 +550,17 @@ App.lineUp = {
       if (playerName) {
         const playerStats = App.data.statsData?.[playerName];
         if (playerStats) {
-          goals += playerStats["Goals"] || 0;
+          // Calculate points (Goals + Assists) for defense
+          const goals = playerStats["Goals"] || 0;
+          const assists = playerStats["Assists"] || 0;
+          points += goals + assists;
           plusMinus += playerStats["+/-"] || 0;
           shots += playerStats["Shot"] || 0;
         }
       }
     });
     
-    return { goals, plusMinus, shots };
+    return { points, plusMinus, shots };
   },
   
   /**
