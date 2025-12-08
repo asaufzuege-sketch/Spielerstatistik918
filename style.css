@@ -1568,6 +1568,7 @@ tr[data-player].dragging {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;  /* Match .pos-select box-sizing for consistent width */
 }
 
 /* Top Bar Buttons */
