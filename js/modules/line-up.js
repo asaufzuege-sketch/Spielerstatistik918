@@ -551,9 +551,9 @@ App.lineUp = {
         const playerStats = App.data.statsData?.[playerName];
         if (playerStats) {
           // Calculate points (Goals + Assists) for defense
-          const goals = playerStats["Goals"] || 0;
-          const assists = playerStats["Assists"] || 0;
-          points += goals + assists;
+          const playerGoals = playerStats["Goals"] || 0;
+          const playerAssists = playerStats["Assists"] || 0;
+          points += playerGoals + playerAssists;
           plusMinus += playerStats["+/-"] || 0;
           shots += playerStats["Shot"] || 0;
         }
