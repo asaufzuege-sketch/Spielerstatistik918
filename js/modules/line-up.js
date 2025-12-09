@@ -885,8 +885,8 @@ App.lineUp = {
       modeLabel.style.background = 'none';
     }
     
-    // Box Play und Power Play Labels Farbe aktualisieren
-    // Beide Labels sollten die Farbe des aktiven Modus haben
+    // Update Box Play and Power Play label colors
+    // Both labels should match the active mode color
     const boxPlayLabel = document.querySelector('.lineup-boxplay .lineup-section-title');
     const powerPlayLabel = document.querySelector('.lineup-powerplay .lineup-section-title');
     
