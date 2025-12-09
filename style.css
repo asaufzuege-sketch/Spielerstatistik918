@@ -305,7 +305,7 @@ h1 {
   }
 }
 
-/* Neon Puls Animation mit currentColor - für Player Out Button */
+/* Neon Pulse Animation mit currentColor - für Player Out Button */
 @keyframes neon-pulse-current {
   0%, 100% {
     box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
