@@ -288,12 +288,27 @@ h1 {
   color: #fff;
 }
 
-/* Task 3: Pulsing Neon-Glow for Active Goalie Button */
-#goalMapGoalieFilter.active {
-  animation: neon-pulse 1.5s ease-in-out infinite;
-  border: 2px solid #00ff88 !important;
+/* Unified Neon Pulse Animation for Player Out and Select Goalie */
+/* Uses currentColor to adapt to each button's color */
+@keyframes neon-pulse-sync {
+  0%, 100% {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+    opacity: 0.9;
+  }
 }
 
+/* Task 3: Pulsing Neon-Glow for Active Goalie Button */
+#goalMapGoalieFilter.active {
+  animation: neon-pulse-sync 2s ease-in-out infinite;
+  border: 2px solid #00ff88 !important;
+  color: #00ff88;
+}
+
+/* Legacy animations - kept for backwards compatibility, not currently in use */
 @keyframes neon-pulse {
   0%, 100% { 
     box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88; 
@@ -305,7 +320,6 @@ h1 {
   }
 }
 
-/* Neon Pulse Animation mit currentColor - für Player Out Button */
 @keyframes neon-pulse-current {
   0%, 100% {
     box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
@@ -1709,14 +1723,14 @@ tr[data-player].dragging {
 
 /* Player Out Button */
 .lineup-player-out-btn {
-  background: #b00020 !important;
+  background: #FF006E !important;
   color: #fff;
   position: relative;
-  animation: neon-pulse-current 2s ease-in-out infinite;
+  animation: neon-pulse-sync 2s ease-in-out infinite;
 }
 
 .lineup-player-out-btn:hover {
-  background: #9a001a !important;
+  background: #cc0058 !important;
 }
 
 /* Pulsier-Animation */
@@ -1859,6 +1873,16 @@ tr[data-player].dragging {
   font-weight: 700;
   margin: 0 0 15px 0;
   text-align: center;
+}
+
+/* Box Play Label - uses #FFD400 (Normal mode color from line-up.js) */
+.lineup-boxplay .lineup-section-title {
+  color: #FFD400;
+}
+
+/* Power Play Label - uses #FF6A00 (Power mode color from line-up.js) */
+.lineup-powerplay .lineup-section-title {
+  color: #FF6A00;
 }
 
 /* Forward Lines */
