@@ -293,13 +293,58 @@ App.seasonMap = {
       return markers;
     });
     
-    localStorage.setItem("seasonMapMarkers", JSON.stringify(allMarkers));
+    // ACCUMULATION: Merge new markers with existing markers instead of overwriting
+    const existingMarkersRaw = localStorage.getItem("seasonMapMarkers");
+    let existingMarkers = [];
+    if (existingMarkersRaw) {
+      try {
+        existingMarkers = JSON.parse(existingMarkersRaw);
+      } catch (e) {
+        console.warn("Failed to parse existing seasonMapMarkers", e);
+        existingMarkers = [];
+      }
+    }
     
-    // Player-bezogene Zeitdaten übernehmen
+    // Merge: For each box, add new markers to existing markers
+    const mergedMarkers = allMarkers.map((newMarkersForBox, idx) => {
+      const existingMarkersForBox = existingMarkers[idx] || [];
+      return [...existingMarkersForBox, ...newMarkersForBox];
+    });
+    
+    localStorage.setItem("seasonMapMarkers", JSON.stringify(mergedMarkers));
+    
+    // ACCUMULATION: Merge time data per player/goalie instead of overwriting
     const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
     console.log('[Season Map Export] timeDataWithPlayers:', timeDataWithPlayers);
-    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
     
+    const existingTimeDataRaw = localStorage.getItem("seasonMapTimeDataWithPlayers");
+    let existingTimeData = {};
+    if (existingTimeDataRaw) {
+      try {
+        existingTimeData = JSON.parse(existingTimeDataRaw);
+      } catch (e) {
+        console.warn("Failed to parse existing seasonMapTimeDataWithPlayers", e);
+        existingTimeData = {};
+      }
+    }
+    
+    // Merge: For each key, add values per player
+    const mergedTimeData = { ...existingTimeData };
+    Object.keys(timeDataWithPlayers).forEach(key => {
+      if (!mergedTimeData[key]) {
+        mergedTimeData[key] = {};
+      }
+      const newPlayerData = timeDataWithPlayers[key] || {};
+      Object.keys(newPlayerData).forEach(playerName => {
+        const existingValue = Number(mergedTimeData[key][playerName] || 0);
+        const newValue = Number(newPlayerData[playerName] || 0);
+        mergedTimeData[key][playerName] = existingValue + newValue;
+      });
+    });
+    
+    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(mergedTimeData));
+    
+    // ACCUMULATION: Merge momentum data instead of overwriting
     // Flache Zeitdaten für Momentum-Graph aus timeDataWithPlayers berechnen
     // Format: { "p1": [button0, button1, ..., button7], "p2": [...], "p3": [...] }
     const momentumData = {};
@@ -319,8 +364,30 @@ App.seasonMap = {
     
     console.log('[Season Map Export] momentumData:', momentumData);
     
+    // Get existing momentum data
+    const existingMomentumRaw = localStorage.getItem("seasonMapTimeData");
+    let existingMomentum = {};
+    if (existingMomentumRaw) {
+      try {
+        existingMomentum = JSON.parse(existingMomentumRaw);
+      } catch (e) {
+        console.warn("Failed to parse existing seasonMapTimeData", e);
+        existingMomentum = {};
+      }
+    }
+    
+    // Merge: For each period, add button values
+    const mergedMomentum = {};
+    ['p1', 'p2', 'p3'].forEach(period => {
+      const existingPeriod = existingMomentum[period] || [];
+      const newPeriod = momentumData[period] || [];
+      mergedMomentum[period] = newPeriod.map((val, idx) => {
+        return Number(existingPeriod[idx] || 0) + Number(val || 0);
+      });
+    });
+    
     // Speichere für Momentum-Graph
-    localStorage.setItem("seasonMapTimeData", JSON.stringify(momentumData));
+    localStorage.setItem("seasonMapTimeData", JSON.stringify(mergedMomentum));
     
     const keep = confirm("Game exported to Season Map. Keep data in Goal Map? (OK = Yes)");
     if (!keep) {
