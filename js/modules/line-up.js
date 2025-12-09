@@ -884,6 +884,18 @@ App.lineUp = {
       modeLabel.style.webkitTextFillColor = config.bg;
       modeLabel.style.background = 'none';
     }
+    
+    // Box Play und Power Play Labels Farbe aktualisieren
+    // Beide Labels sollten die Farbe des aktiven Modus haben
+    const boxPlayLabel = document.querySelector('.lineup-boxplay .lineup-section-title');
+    const powerPlayLabel = document.querySelector('.lineup-powerplay .lineup-section-title');
+    
+    if (boxPlayLabel) {
+      boxPlayLabel.style.color = config.bg;
+    }
+    if (powerPlayLabel) {
+      powerPlayLabel.style.color = config.bg;
+    }
   },
   
   updatePlayerOutButton() {

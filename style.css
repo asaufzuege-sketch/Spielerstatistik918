@@ -288,8 +288,9 @@ h1 {
   color: #fff;
 }
 
-/* Unified Neon Pulse Animation for Player Out and Select Goalie */
+/* Unified Neon Pulse Animation for ALL pulsing buttons */
 /* Uses currentColor to adapt to each button's color */
+/* Applied to: Player Out button, Select Goalie button (active state) */
 @keyframes neon-pulse-sync {
   0%, 100% {
     box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
@@ -297,7 +298,7 @@ h1 {
   }
   50% {
     box-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
-    opacity: 0.9;
+    opacity: 0.85;
   }
 }
 
@@ -308,26 +309,7 @@ h1 {
   color: #00ff88;
 }
 
-/* Legacy animations - kept for backwards compatibility, not currently in use */
-@keyframes neon-pulse {
-  0%, 100% { 
-    box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88; 
-    border-color: #00ff88;
-  }
-  50% { 
-    box-shadow: 0 0 15px #00ff88, 0 0 30px #00ff88, 0 0 45px #00ff88; 
-    border-color: #00ffaa;
-  }
-}
-
-@keyframes neon-pulse-current {
-  0%, 100% {
-    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
-  }
-  50% {
-    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
-  }
-}
+/* Legacy animations removed - using unified neon-pulse-sync for all pulsing elements */
 
 /* Task 6: Goalie Name Overlay in Red Field Area */
 .goalie-name-overlay {
