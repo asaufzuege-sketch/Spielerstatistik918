@@ -523,9 +523,21 @@ App.goalMap = {
                 
                 // Workflow is complete - no modal needed
               } else {
-                // Fallback: If somehow goalie is not set, show error
-                console.error('[Goal Workflow] ERROR: Goalie should be assigned but is null');
-                alert('Error: No goalie assigned. Please select a goalie first.');
+                // Fallback: Try to get active goalie from all possible sources
+                const activeGoalie = App.goalMap.getActiveGoalie();
+                if (activeGoalie) {
+                  console.log(`[Goal Workflow] Goalie not in workflow, but found via getActiveGoalie: ${activeGoalie.name}`);
+                  App.goalMapWorkflow.playerName = activeGoalie.name;
+                  
+                  // Increment the time counter for the goalie
+                  updateValue(1);
+                  
+                  // Workflow is complete - continue
+                } else {
+                  // Only show error if no goalie can be found from any source
+                  console.error('[Goal Workflow] ERROR: No goalie found in workflow or via getActiveGoalie()');
+                  alert('Error: No goalie assigned. Please select a goalie first.');
+                }
               }
               return;
             }
