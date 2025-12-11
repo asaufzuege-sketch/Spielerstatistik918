@@ -7,6 +7,7 @@ App.lineUp = {
   playersOut: [],
   currentMode: 'normal', // 'normal', 'power', 'manuell'
   modes: ['normal', 'power', 'manuell'],
+  goaliePositions: ['G', 'GK', 'GOALIE'], // Positions that identify goalies
   
   init() {
     this.container = document.getElementById("lineUpContainer");
@@ -190,7 +191,7 @@ App.lineUp = {
     const allPlayers = this.getAvailablePlayers();
     const players = allPlayers.filter(p => {
       const pos = (p.position || p.pos || '').toUpperCase();
-      return pos !== 'G' && pos !== 'GK' && pos !== 'GOALIE';
+      return !this.goaliePositions.includes(pos);
     });
     
     if (players.length === 0) {
