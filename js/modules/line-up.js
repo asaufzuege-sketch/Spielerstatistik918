@@ -41,9 +41,7 @@ App.lineUp = {
     this.playersOut = this.playersOut.filter(name => validPlayerNames.includes(name));
     
     // Save the cleaned up array
-    const currentTeamInfoAfterCleanup = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamIdAfterCleanup = currentTeamInfoAfterCleanup?.id || 'team1';
-    localStorage.setItem(`playersOut_${currentTeamIdAfterCleanup}`, JSON.stringify(this.playersOut));
+    localStorage.setItem(`playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
   },
   
   saveData() {
