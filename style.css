@@ -506,6 +506,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   height: auto;
   min-height: 0;
   max-height: calc(100vh - 200px);
+  text-align: center;
 }
 
 #seasonContainer::-webkit-scrollbar {

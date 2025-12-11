@@ -181,16 +181,16 @@ const App = {
       
       // Title setzen
       const titles = {
-        teamSelection: "Team Auswahl",
-        selection: "Spielerauswahl",
-        stats: "Statistiken",
+        teamSelection: "Team Selection",
+        selection: "Player Selection",
+        stats: "Statistics",
         torbild: "Goal Map",
         goalValue: "Goal Value",
         season: "Season",
         seasonMap: "Season Map",
         lineUp: "Line Up"
       };
-      document.title = titles[page] || "Spielerstatistik";
+      document.title = titles[page] || "Player Statistics";
       
       // Render bei Seitenwechsel verzögert - NUR EINMAL
       // Verhindert mehrfache render() Aufrufe

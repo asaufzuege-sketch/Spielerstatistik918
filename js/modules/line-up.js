@@ -68,6 +68,20 @@ App.lineUp = {
     if (changed) {
       this.saveDataForMode(mode);
     }
+    
+    // Auto-fill lineup if empty and there are selected players
+    const hasLineupData = Object.keys(this.lineUpData).length > 0;
+    if (!hasLineupData) {
+      const availablePlayers = this.getAvailablePlayers();
+      if (availablePlayers && availablePlayers.length > 0) {
+        // Auto-fill based on current mode
+        if (mode === 'normal') {
+          this.autoFillNormalMode();
+        } else if (mode === 'power') {
+          this.autoFillPowerMode();
+        }
+      }
+    }
   },
   
   savePlayersOut() {
