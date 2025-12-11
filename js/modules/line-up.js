@@ -186,7 +186,12 @@ App.lineUp = {
     const list = document.getElementById("playerOutList");
     if (!list) return;
     
-    const players = this.getAvailablePlayers();
+    // Get all available players and filter out goalies
+    const allPlayers = this.getAvailablePlayers();
+    const players = allPlayers.filter(p => {
+      const pos = (p.position || p.pos || '').toUpperCase();
+      return pos !== 'G' && pos !== 'GK' && pos !== 'GOALIE';
+    });
     
     if (players.length === 0) {
       list.innerHTML = '<div class="player-out-item" style="cursor: default; opacity: 0.7;">No active players</div>';
