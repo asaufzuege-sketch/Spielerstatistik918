@@ -190,7 +190,7 @@ const App = {
         seasonMap: "Season Map",
         lineUp: "Line Up"
       };
-      document.title = titles[page] || "Spielerstatistik";
+      document.title = titles[page] || "Player Statistics";
       
       // Render bei Seitenwechsel verzögert - NUR EINMAL
       // Verhindert mehrfache render() Aufrufe
