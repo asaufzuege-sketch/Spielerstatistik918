@@ -181,9 +181,9 @@ const App = {
       
       // Title setzen
       const titles = {
-        teamSelection: "Team Auswahl",
-        selection: "Spielerauswahl",
-        stats: "Statistiken",
+        teamSelection: "Team Selection",
+        selection: "Player Selection",
+        stats: "Statistics",
         torbild: "Goal Map",
         goalValue: "Goal Value",
         season: "Season",
