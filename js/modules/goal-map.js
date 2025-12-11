@@ -12,7 +12,7 @@ App.goalMap = {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
     
     // Event Listener für Export (speichert Marker + Timeboxen + Spielerinfos)
-    document.getElementById("exportGoalMapBtn")?.addEventListener("click", () => {
+    document.getElementById("exportSeasonMapBtn")?.addEventListener("click", () => {
       this.exportGoalMap();
     });
     

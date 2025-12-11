@@ -1719,7 +1719,6 @@ tr[data-player].dragging {
   background: #8b0000 !important;
   color: #fff;
   position: relative;
-  animation: neon-pulse-sync 2s ease-in-out infinite;
 }
 
 .lineup-player-out-btn:hover {

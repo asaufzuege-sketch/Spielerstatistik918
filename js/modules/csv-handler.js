@@ -29,23 +29,6 @@ App.csvHandler = {
   },
   
   createImportButtons() {
-    // Stats Import Button
-    const exportBtn = document.getElementById("exportBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    
-    if (exportBtn && resetBtn && !document.getElementById("importCsvStatsBtn")) {
-      const btn = document.createElement("button");
-      btn.id = "importCsvStatsBtn";
-      btn.type = "button";
-      btn.textContent = "Import CSV";
-      btn.className = "top-btn import-csv-btn";
-      btn.addEventListener("click", () => {
-        this.fileInput.dataset.target = "stats";
-        this.fileInput.click();
-      });
-      resetBtn.parentNode?.insertBefore(btn, resetBtn);
-    }
-    
     // Season Import Button - prüfe ob Button im HTML existiert
     const existingImportBtn = document.getElementById("importCsvSeasonBtn");
     if (existingImportBtn) {

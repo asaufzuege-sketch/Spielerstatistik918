@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("selection");
   });
   
+  document.getElementById("lineupFromStatsBtn")?.addEventListener("click", () => {
+    App.showPage("lineUp");
+  });
+  
   document.getElementById("backToStatsBtn")?.addEventListener("click", () => {
     App.showPage("stats");
   });
