@@ -34,12 +34,15 @@ App.seasonMap = {
     if (!filterSelect) return;
     
     filterSelect.innerHTML = '<option value="">All Players</option>';
-    (App.data.selectedPlayers || []).forEach(player => {
-      const option = document.createElement("option");
-      option.value = player.name;
-      option.textContent = player.name;
-      filterSelect.appendChild(option);
-    });
+    // Only show field players (non-goalies) in the player filter dropdown
+    (App.data.selectedPlayers || [])
+      .filter(player => player.position !== 'G')
+      .forEach(player => {
+        const option = document.createElement("option");
+        option.value = player.name;
+        option.textContent = player.name;
+        filterSelect.appendChild(option);
+      });
     
     filterSelect.addEventListener("change", () => {
       this.playerFilter = filterSelect.value || null;
