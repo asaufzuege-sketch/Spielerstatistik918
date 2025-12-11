@@ -904,11 +904,13 @@ App.lineUp = {
     
     const outCount = this.playersOut.length;
     
+    // Always show the count, even when it's 0
+    btn.textContent = `Player out (${outCount})`;
+    
     if (outCount > 0) {
-      btn.textContent = `Player out (${outCount})`;
       btn.classList.add('has-players-out');
     } else {
-      btn.textContent = 'Player out'; // Kein roter Punkt mehr!
+      // Remove visual indicator styling when no players are out
       btn.classList.remove('has-players-out');
     }
   }

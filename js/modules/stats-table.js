@@ -119,7 +119,7 @@ App.statsTable = {
       td.dataset.cat = c;
       td.textContent = "0";
       
-      // Teamspezifische Gegner-Schüsse aus LocalStorage wiederherstellen
+      // Team-specific opponent shots restored from LocalStorage
       if (c === "Shot") {
         const teamId = App.teamSelection.getCurrentTeamInfo().id;
         const savedOppShots = localStorage.getItem(`opponentShots_${teamId}`);
@@ -523,7 +523,7 @@ App.statsTable = {
         tc.onclick = () => {
           tc.dataset.opp = String(Number(tc.dataset.opp || 0) + 1);
           
-          // Gegner-Schüsse teamspezifisch in LocalStorage speichern
+          // Save opponent shots team-specifically to LocalStorage
           const teamId = App.teamSelection.getCurrentTeamInfo().id;
           localStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
           
@@ -538,7 +538,7 @@ App.statsTable = {
     });
   },
   
-  // Funktion um Gegner-Schüsse für Export zu erhalten
+  // Function to get opponent shots for export
   getOpponentShots() {
     const shotCell = document.querySelector('.total-cell[data-cat="Shot"]');
     return shotCell ? (Number(shotCell.dataset.opp) || 0) : 0;

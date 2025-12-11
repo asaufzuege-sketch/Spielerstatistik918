@@ -219,6 +219,9 @@ h1 {
   box-sizing: border-box;
   flex: 0 0 auto;
   min-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .top-btn:hover,
 .import-csv-btn:hover { background: #3b3b3b; }
@@ -357,6 +360,10 @@ h1 {
   display: block;
   margin: 20px auto;
   min-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 .confirm-btn:hover { background: #3a9d7a; }
 
@@ -1367,6 +1374,10 @@ body[data-workflow="conceded"] .period-buttons.top-row .time-btn {
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .modal-buttons .save-btn {
@@ -2183,6 +2194,10 @@ copilot/change-line-mode-functionality
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 #addTimeModal #addTimeConfirmBtn {
@@ -2260,6 +2275,10 @@ copilot/change-line-mode-functionality
   font-weight: 600;
   flex: 1;
   max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 #goalieSelectionModal .confirm-btn {
