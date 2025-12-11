@@ -114,6 +114,16 @@ App.lineUp = {
       }));
     }
     
+    // For Team 1, also check App.data.players as a fallback (hardcoded players)
+    if (players.length === 0 && currentTeamId === 'team1' && App.data.players && App.data.players.length > 0) {
+      players = App.data.players.map(p => ({
+        number: p.num || "",
+        name: p.name,
+        position: "",
+        active: true
+      }));
+    }
+    
     return players;
   },
   
@@ -862,6 +872,18 @@ App.lineUp = {
       players = savedPlayers.filter(p => p.active && p.name && p.name.trim() !== "" && p.position);
     } catch (e) {
       players = [];
+    }
+    
+    // For Team 1, also check App.data.players as a fallback (hardcoded players)
+    if (players.length === 0 && currentTeamId === 'team1' && App.data.players && App.data.players.length > 0) {
+      players = App.data.players
+        .filter(p => p.name && p.name.trim() !== "")
+        .map(p => ({
+          number: p.num || "",
+          name: p.name,
+          position: "",  // Position unknown for hardcoded players
+          active: true
+        }));
     }
     
     // Calculate MVP points for each player
