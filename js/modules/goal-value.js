@@ -319,7 +319,7 @@ App.goalValue = {
   },
   
   reset() {
-    if (! confirm("Goal Value zurücksetzen?")) return;
+    if (! confirm("Reset Goal Value?")) return;
     
     const opponents = this.getOpponents();
     const playersList = Object.keys(App. data.seasonData).length 
