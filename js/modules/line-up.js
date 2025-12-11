@@ -910,6 +910,7 @@ App.lineUp = {
     if (outCount > 0) {
       btn.classList.add('has-players-out');
     } else {
+      // Remove visual indicator styling when no players are out
       btn.classList.remove('has-players-out');
     }
   }
