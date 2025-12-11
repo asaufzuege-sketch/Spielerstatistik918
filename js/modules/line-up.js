@@ -103,6 +103,104 @@ App.lineUp = {
     return players;
   },
   
+  sortPlayersForLineup(players) {
+    // Check if season data exists and has entries
+    const hasSeasonData = App.data.seasonData && Object.keys(App.data.seasonData).length > 0;
+    
+    if (!hasSeasonData) {
+      // Fallback: Sort alphabetically by name
+      return players.sort((a, b) => {
+        const nameA = (a.name || '').toLowerCase();
+        const nameB = (b.name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+    }
+    
+    // Sort by season statistics (MVP points)
+    return players.sort((a, b) => {
+      const seasonDataA = App.data.seasonData?.[a.name];
+      const seasonDataB = App.data.seasonData?.[b.name];
+      
+      // Calculate MVP points for player A
+      let mvpA = 0;
+      if (seasonDataA) {
+        const gamesA = Number(seasonDataA.games || 0);
+        const goalsA = Number(seasonDataA.goals || 0);
+        const assistsA = Number(seasonDataA.assists || 0);
+        const plusMinusA = Number(seasonDataA.plusMinus || 0);
+        const shotsA = Number(seasonDataA.shots || 0);
+        const penaltyA = Number(seasonDataA.penaltys || 0);
+        
+        if (gamesA > 0) {
+          const avgPlusMinusA = plusMinusA / gamesA;
+          const shotsPerGameA = shotsA / gamesA;
+          const goalsPerGameA = goalsA / gamesA;
+          const assistsPerGameA = assistsA / gamesA;
+          
+          let goalValueA = 0;
+          try {
+            if (App.goalValue && typeof App.goalValue.computeValueForPlayer === 'function') {
+              goalValueA = App.goalValue.computeValueForPlayer(a.name) || Number(seasonDataA.goalValue || 0);
+            } else {
+              goalValueA = Number(seasonDataA.goalValue || 0);
+            }
+          } catch (e) {
+            goalValueA = Number(seasonDataA.goalValue || 0);
+          }
+          const gvNumA = Number(goalValueA || 0);
+          
+          mvpA = (goalsA * 3) + (assistsA * 2) + (avgPlusMinusA * 1.5) + 
+                 (goalsPerGameA * 5) + (assistsPerGameA * 3) + 
+                 (shotsPerGameA * 0.5) + (gvNumA * 0.2) - (penaltyA * 0.5);
+        }
+      }
+      
+      // Calculate MVP points for player B
+      let mvpB = 0;
+      if (seasonDataB) {
+        const gamesB = Number(seasonDataB.games || 0);
+        const goalsB = Number(seasonDataB.goals || 0);
+        const assistsB = Number(seasonDataB.assists || 0);
+        const plusMinusB = Number(seasonDataB.plusMinus || 0);
+        const shotsB = Number(seasonDataB.shots || 0);
+        const penaltyB = Number(seasonDataB.penaltys || 0);
+        
+        if (gamesB > 0) {
+          const avgPlusMinusB = plusMinusB / gamesB;
+          const shotsPerGameB = shotsB / gamesB;
+          const goalsPerGameB = goalsB / gamesB;
+          const assistsPerGameB = assistsB / gamesB;
+          
+          let goalValueB = 0;
+          try {
+            if (App.goalValue && typeof App.goalValue.computeValueForPlayer === 'function') {
+              goalValueB = App.goalValue.computeValueForPlayer(b.name) || Number(seasonDataB.goalValue || 0);
+            } else {
+              goalValueB = Number(seasonDataB.goalValue || 0);
+            }
+          } catch (e) {
+            goalValueB = Number(seasonDataB.goalValue || 0);
+          }
+          const gvNumB = Number(goalValueB || 0);
+          
+          mvpB = (goalsB * 3) + (assistsB * 2) + (avgPlusMinusB * 1.5) + 
+                 (goalsPerGameB * 5) + (assistsPerGameB * 3) + 
+                 (shotsPerGameB * 0.5) + (gvNumB * 0.2) - (penaltyB * 0.5);
+        }
+      }
+      
+      // Sort descending (higher MVP first), fallback to alphabetical
+      if (mvpB !== mvpA) {
+        return mvpB - mvpA;
+      }
+      
+      // If MVP is equal, sort alphabetically
+      const nameA = (a.name || '').toLowerCase();
+      const nameB = (b.name || '').toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  },
+  
   attachEventListeners() {
     // Navigation buttons
     document.getElementById("lineUpPlayerSelectionBtn")?.addEventListener("click", () => {
@@ -334,7 +432,10 @@ App.lineUp = {
     
     // Get available players (excluding OUT players)
     const allPlayers = this.getAvailablePlayers();
-    const players = allPlayers.filter(p => !this.playersOut.includes(p.name));
+    let players = allPlayers.filter(p => !this.playersOut.includes(p.name));
+    
+    // Sort players (alphabetically if no season data, by MVP if season data exists)
+    players = this.sortPlayersForLineup(players);
     
     // Get already assigned players
     const assignedPlayers = Object.values(this.lineUpData);

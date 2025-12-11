@@ -472,6 +472,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonPage {
   width: 100%;
   max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #seasonPage h1 {
@@ -491,7 +494,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonContainer {
   width: 100%;
   max-width: 1100px;
-  margin: 0 auto;
+  margin: 0 auto !important;
   overflow-x: auto !important;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch !important;
@@ -524,7 +527,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonPage table {
   width: 100%;
-  margin: 6px auto 10px auto;  /* Tabelle zentrieren */
+  margin: 6px auto 10px auto !important;  /* Tabelle zentrieren */
   min-width: max-content !important;
   border-collapse: collapse !important;
   font-size: 0.95rem !important;
@@ -854,7 +857,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonContainer {
   width: 100%;
   max-width: 1100px;
-  margin: 0 auto;
+  margin: 0 auto !important;
   overflow-x: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -1462,7 +1465,7 @@ tr[data-player].dragging {
   min-width: 45px;
   max-width: 45px;
   background: #2a2a2a;
-  color: #888;
+  color: #fff;
   border: 1px solid #444;
   border-radius: 8px;
   padding: 10px 6px;
