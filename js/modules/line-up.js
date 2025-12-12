@@ -23,6 +23,14 @@ App.lineUp = {
     const currentTeamId = currentTeamInfo?.id || 'team1';
     const savedPlayersOut = localStorage.getItem(`playersOut_${currentTeamId}`);
     
+    // Load team-specific stats data
+    try {
+      const savedStatsData = localStorage.getItem(`statsData_${currentTeamId}`);
+      App.data.statsData = savedStatsData ? JSON.parse(savedStatsData) : {};
+    } catch (e) {
+      App.data.statsData = {};
+    }
+    
     // Load mode-specific lineup data
     this.loadDataForMode(this.currentMode);
     

@@ -392,6 +392,21 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 8px;
 }
 
+#seasonMapPage .goal-img-box {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 150px;
+  height: 100%;
+}
+
+#seasonMapPage .goal-img-box img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
 /* Marker-Punkte korrekt positionieren */
 #seasonMapPage .marker-dot {
   position: absolute;
@@ -1327,6 +1342,23 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .modal-buttons .confirm-btn:hover {
   background: #36a67d;
+}
+
+/* Team Edit Modal - Equal button sizing */
+#teamEditModal .modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+#teamEditModal .modal-buttons button,
+#saveTeamNameBtn,
+#cancelTeamEditBtn {
+  flex: 1;
+  min-width: 120px;
+  max-width: 150px;
+  padding: 10px 20px;
+  font-size: 1rem;
 }
 
 /* Goalie Selection Modal */

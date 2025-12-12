@@ -121,6 +121,37 @@ App.goalMap = {
               const isRightHalf = pos.xPctImage >= 50;
               App.goalMapWorkflow.workflowType = isRightHalf ? 'conceded' : 'scored';
               console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow`);
+              
+              // For conceded goals, show goalie selection modal first
+              if (isRightHalf) {
+                this.showGoalieSelectionModal((selectedGoalie) => {
+                  if (selectedGoalie) {
+                    App.goalMapWorkflow.playerName = selectedGoalie;
+                    console.log(`[Goal Workflow] Goalie selected: ${selectedGoalie}`);
+                    // Now place the marker with goalie name
+                    const color = "#444444"; // neutral grey
+                    App.markerHandler.createMarkerPercent(
+                      pos.xPctContainer,
+                      pos.yPctContainer,
+                      color,
+                      box,
+                      true,
+                      selectedGoalie
+                    );
+                    App.addGoalMapPoint(
+                      "field",
+                      pos.xPctContainer,
+                      pos.yPctContainer,
+                      color,
+                      box.id
+                    );
+                  } else {
+                    console.log('[Goal Workflow] Goalie selection cancelled, resetting workflow');
+                    App.cancelGoalMapWorkflow();
+                  }
+                });
+                return; // Exit early, marker will be placed in callback
+              }
             }
           }
           // Schritt 1: Nur entsprechendes Tor erlaubt
@@ -389,30 +420,9 @@ App.goalMap = {
               return;
             }
             
-            // If it's a conceded goal workflow, show goalie selection modal
-            if (workflowType === 'conceded' && isBottomRow) {
-              // Record the time button click
-              const btnRect = newBtn.getBoundingClientRect();
-              const boxRect = this.timeTrackingBox.getBoundingClientRect();
-              const xPct = ((btnRect.left + btnRect.width / 2 - boxRect.left) / boxRect.width) * 100;
-              const yPct = ((btnRect.top + btnRect.height / 2 - boxRect.top) / boxRect.height) * 100;
-              
-              App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
-              
-              // Show goalie selection modal
-              this.showGoalieSelectionModal((selectedGoalie) => {
-                if (selectedGoalie) {
-                  // Update the workflow with goalie info
-                  App.goalMapWorkflow.playerName = selectedGoalie;
-                  console.log(`[Goal Workflow] Goalie selected: ${selectedGoalie}`);
-                  // Increment the time counter for the goalie
-                  updateValue(1);
-                } else {
-                  console.log('[Goal Workflow] Goalie selection cancelled');
-                }
-              });
-              return;
-            }
+            // Record time button click by calling updateValue
+            updateValue(1);
+            return;
           }
           
           const now = Date.now();
