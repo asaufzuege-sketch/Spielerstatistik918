@@ -66,6 +66,11 @@ App.helpers = {
   },
   
   sanitizeFilename(str) {
-    return String(str || "").replace(/[^a-zA-Z0-9]/g, '_');
+    // Allow alphanumeric, spaces, hyphens, underscores, and dots
+    // Replace other characters with underscore
+    return String(str || "")
+      .replace(/[^a-zA-Z0-9\s\-_.]/g, '_')
+      .replace(/\s+/g, '_')  // Replace spaces with underscores
+      .replace(/_+/g, '_');  // Collapse multiple underscores
   }
 };
