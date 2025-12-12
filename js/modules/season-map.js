@@ -703,6 +703,13 @@ App.seasonMap = {
     exportContainer.style.left = '-9999px';
     document.body.appendChild(exportContainer);
     
+    // Helper function to cleanup temporary container
+    const cleanupTempContainer = () => {
+      if (document.body.contains(exportContainer)) {
+        document.body.removeChild(exportContainer);
+      }
+    };
+    
     // Capture the combined container as image
     html2canvas(exportContainer, {
       scale: 2,
@@ -711,16 +718,17 @@ App.seasonMap = {
       useCORS: true,
       allowTaint: true
     }).then(canvas => {
-      try {
-        // Remove temporary container
-        document.body.removeChild(exportContainer);
+      // Remove temporary container
+      cleanupTempContainer();
+      
+      // Convert canvas to blob and download
+      canvas.toBlob(blob => {
+        if (!blob) {
+          alert("Error: Failed to create image blob");
+          return;
+        }
         
-        // Convert canvas to blob and download
-        canvas.toBlob(blob => {
-          if (!blob) {
-            throw new Error("Failed to create image blob");
-          }
-          
+        try {
           // Generate filename with date
           const date = App.helpers.getCurrentDateString();
           const filename = `season_map_${date}.png`;
@@ -736,20 +744,14 @@ App.seasonMap = {
           URL.revokeObjectURL(link.href);
           
           console.log("Season Map export completed:", filename);
-        }, 'image/png');
-      } catch (error) {
-        // Clean up on error
-        if (document.body.contains(exportContainer)) {
-          document.body.removeChild(exportContainer);
+        } catch (error) {
+          console.error("Error creating download:", error);
+          alert("Error creating download: " + error.message);
         }
-        console.error("Error creating download:", error);
-        alert("Error creating download: " + error.message);
-      }
+      }, 'image/png');
     }).catch(error => {
       // Clean up on error
-      if (document.body.contains(exportContainer)) {
-        document.body.removeChild(exportContainer);
-      }
+      cleanupTempContainer();
       console.error("Error capturing season map:", error);
       alert("Error capturing season map: " + error.message);
     });
