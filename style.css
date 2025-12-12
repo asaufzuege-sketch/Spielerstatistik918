@@ -1583,7 +1583,13 @@ tr[data-player].dragging {
 }
 
 #playerSelectionPage .top-btn.lineup-btn {
-  background: #FF6A00;
+  background: #5a5a8a;
+  color: #fff;
+}
+
+/* Line Up button in Game Data (Stats Page) */
+#statsPage .top-btn.lineup-btn {
+  background: #5a5a8a;
   color: #fff;
 }
 

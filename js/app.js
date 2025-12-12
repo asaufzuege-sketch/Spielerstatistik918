@@ -74,6 +74,10 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("seasonMap");
   });
   
+  document.getElementById("lineupBtnFromStats")?.addEventListener("click", () => {
+    App.showPage("lineUp");
+  });
+  
   // 6. Delegierte Back-Button Handler
   document.addEventListener("click", (e) => {
     try {

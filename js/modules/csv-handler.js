@@ -4,7 +4,8 @@ App.csvHandler = {
   
   init() {
     this.createFileInput();
-    this.createImportButtons();
+    // createImportButtons() removed - Import buttons no longer needed
+    // this.createImportButtons();
   },
   
   createFileInput() {
@@ -28,6 +29,7 @@ App.csvHandler = {
     });
   },
   
+  /* REMOVED - Import buttons no longer needed
   createImportButtons() {
     // Stats Import Button
     const exportBtn = document.getElementById("exportBtn");
@@ -56,6 +58,7 @@ App.csvHandler = {
       });
     }
   },
+  */
   
   // Aktuelle Team-ID ermitteln
   getCurrentTeamId() {
