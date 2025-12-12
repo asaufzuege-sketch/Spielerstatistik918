@@ -420,8 +420,9 @@ App.goalMap = {
               return;
             }
             
-            // Record time button click and complete workflow
-            recordTimeButton();
+            // Record time button click by calling updateValue
+            updateValue(1);
+            return;
           }
           
           const now = Date.now();
