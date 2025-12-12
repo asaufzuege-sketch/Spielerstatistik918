@@ -206,7 +206,7 @@ App.csvHandler = {
     // BOM für UTF-8 Erkennung in Excel
     const BOM = '\uFEFF';
     
-    // CSV Zeilen mit korrekter Formatierung
+    // CSV Zeilen mit korrekter Formatierung (Semikolon als Trennzeichen für deutsche Excel-Versionen)
     const csvLines = data.map(row => {
       return row.map(cell => {
         let cellValue = String(cell || "");
@@ -224,7 +224,7 @@ App.csvHandler = {
         }
         
         return cellValue;
-      }).join(',');
+      }).join(';');  // Semikolon statt Komma für bessere Excel-Kompatibilität
     });
     
     // CSV Content erstellen
@@ -372,7 +372,7 @@ App.csvHandler = {
     reader.readAsText(file);
   },
   
-  parseCSVLine(line) {
+  parseCSVLine(line, delimiter = null) {
     const result = [];
     let current = "";
     let inQuotes = false;
@@ -381,6 +381,11 @@ App.csvHandler = {
     // BOM entfernen
     if (line.charCodeAt(0) === 0xFEFF) {
       line = line.slice(1);
+    }
+    
+    // Auto-detect delimiter if not provided (prefer semicolon, fallback to comma)
+    if (!delimiter) {
+      delimiter = line.includes(';') ? ';' : ',';
     }
     
     while (i < line.length) {
@@ -395,7 +400,7 @@ App.csvHandler = {
         } else {
           inQuotes = false;
         }
-      } else if (char === ',' && !inQuotes) {
+      } else if (char === delimiter && !inQuotes) {
         result.push(current);
         current = "";
       } else {

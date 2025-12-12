@@ -218,7 +218,7 @@ App.lineUp = {
     
     // Export PDF button
     document.getElementById("lineUpExportPdfBtn")?.addEventListener("click", () => {
-      console.log("Export PDF clicked");
+      this.exportPDF();
     });
     
     // Player Out button - toggle dropdown
@@ -1088,5 +1088,99 @@ App.lineUp = {
       btn.textContent = 'Player out'; // Kein roter Punkt mehr!
       btn.classList.remove('has-players-out');
     }
+  },
+  
+  exportPDF() {
+    const container = document.getElementById("lineUpContainer");
+    const modeLabel = document.getElementById("lineupModeLabel");
+    const modeName = modeLabel ? modeLabel.textContent : this.currentMode.toUpperCase();
+    
+    if (!container) {
+      console.error("Line up container not found");
+      return;
+    }
+    
+    // Check if libraries are loaded
+    if (typeof html2canvas === 'undefined') {
+      console.error("html2canvas is not loaded");
+      alert("Export library not loaded. Please refresh the page and try again.");
+      return;
+    }
+    
+    if (typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined') {
+      console.error("jsPDF is not loaded");
+      alert("PDF library not loaded. Please refresh the page and try again.");
+      return;
+    }
+    
+    // Show loading indicator (optional)
+    console.log("Generating PDF...");
+    
+    // Capture the lineup container as image
+    html2canvas(container, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false
+    }).then(canvas => {
+      try {
+        // Get jsPDF from the global scope
+        const { jsPDF } = window.jspdf;
+        
+        // Create PDF in landscape mode
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4'
+        });
+        
+        // Guard against division by zero
+        if (canvas.width === 0 || canvas.height === 0) {
+          throw new Error("Canvas has invalid dimensions");
+        }
+        
+        // Calculate dimensions to fit the image on the page
+        const pageWidth = 297; // A4 landscape width in mm
+        const pageHeight = 210; // A4 landscape height in mm
+        const titleHeight = 20; // Space reserved for title
+        const availableHeight = pageHeight - titleHeight - 10; // 10mm bottom margin
+        
+        // Calculate scaling to fit both width and height
+        let imgWidth = pageWidth;
+        let imgHeight = (canvas.height * pageWidth) / canvas.width;
+        
+        // If height exceeds available space, scale down further
+        if (imgHeight > availableHeight) {
+          imgHeight = availableHeight;
+          imgWidth = (canvas.width * availableHeight) / canvas.height;
+        }
+        
+        // Center the image horizontally if it's narrower than the page
+        const xOffset = (pageWidth - imgWidth) / 2;
+        
+        // Add title
+        pdf.setFontSize(16);
+        pdf.text(`LINE UP - ${modeName}`, pageWidth / 2, 15, { align: 'center' });
+        
+        // Add the image to PDF
+        const imgData = canvas.toDataURL('image/png');
+        pdf.addImage(imgData, 'PNG', xOffset, titleHeight, imgWidth, imgHeight);
+        
+        // Generate filename with mode and date - sanitize mode name
+        const date = App.helpers.getCurrentDateString();
+        const sanitizedMode = App.helpers.sanitizeFilename(modeName);
+        const filename = `lineup_${sanitizedMode}_${date}.pdf`;
+        
+        // Save the PDF
+        pdf.save(filename);
+        
+        console.log("PDF export completed:", filename);
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        alert("Error generating PDF: " + error.message);
+      }
+    }).catch(error => {
+      console.error("Error capturing lineup:", error);
+      alert("Error capturing lineup: " + error.message);
+    });
   }
 };

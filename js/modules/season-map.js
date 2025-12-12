@@ -15,6 +15,10 @@ App.seasonMap = {
       this.exportFromGoalMap();
     });
     
+    document.getElementById("exportSeasonMapPageBtn")?.addEventListener("click", () => {
+      this.exportAsImage();
+    });
+    
     document.getElementById("resetSeasonMapBtn")?.addEventListener("click", () => {
       this.reset();
     });
@@ -655,5 +659,63 @@ App.seasonMap = {
     console.log('[Season Map] Reset completed - Momentum container cleared and re-rendered');
     
     alert("Season Map reset.");
+  },
+  
+  exportAsImage() {
+    const layout = document.querySelector("#seasonMapPage .torbild-layout");
+    
+    if (!layout) {
+      console.error("Season map layout not found");
+      return;
+    }
+    
+    // Check if html2canvas is loaded
+    if (typeof html2canvas === 'undefined') {
+      console.error("html2canvas is not loaded");
+      alert("Export library not loaded. Please refresh the page and try again.");
+      return;
+    }
+    
+    console.log("Generating Season Map image...");
+    
+    // Capture the season map layout as image
+    html2canvas(layout, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false,
+      useCORS: true,
+      allowTaint: true
+    }).then(canvas => {
+      try {
+        // Convert canvas to blob and download
+        canvas.toBlob(blob => {
+          if (!blob) {
+            throw new Error("Failed to create image blob");
+          }
+          
+          // Generate filename with date
+          const date = App.helpers.getCurrentDateString();
+          const filename = `season_map_${date}.png`;
+          
+          // Create download link
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+          
+          console.log("Season Map export completed:", filename);
+        }, 'image/png');
+      } catch (error) {
+        console.error("Error creating download:", error);
+        alert("Error creating download: " + error.message);
+      }
+    }).catch(error => {
+      console.error("Error capturing season map:", error);
+      alert("Error capturing season map: " + error.message);
+    });
   }
 };

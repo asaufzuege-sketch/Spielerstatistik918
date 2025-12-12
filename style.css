@@ -1583,7 +1583,7 @@ tr[data-player].dragging {
 }
 
 #playerSelectionPage .top-btn.lineup-btn {
-  background: #5a9a9a;
+  background: #FF6A00;
   color: #fff;
 }
 
@@ -1674,7 +1674,7 @@ tr[data-player].dragging {
   display: none;
 }
 
-/* Export PDF Button - same color as Export CSV */
+/* Export PDF Button */
 .lineup-export-pdf-btn {
   background: #5a9a9a !important;
   color: #fff;
@@ -1682,6 +1682,16 @@ tr[data-player].dragging {
 
 .lineup-export-pdf-btn:hover {
   background: #4a8a8a !important;
+}
+
+/* Game Data Button in Line Up - same green as season-highlight */
+#lineUpGameDataBtn {
+  background: #44bb91 !important;
+  color: #fff;
+}
+
+#lineUpGameDataBtn:hover {
+  filter: brightness(0.95);
 }
 
 /* Player Out Dropdown Container */
