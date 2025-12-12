@@ -371,55 +371,31 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   display: flex;
   flex-direction: column;
   gap: 15px;
-  height: 100%;  /* Volle Höhe des Parent */
+  height: 100%;
 }
 
-/* Season Map - Bilder EXAKT wie Goal Map */
-#seasonMapPage .img-box {
-  position: relative !important;
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 150px !important;
-  height: 100% !important;  /* Volle Höhe nutzen */
-}
-
-#seasonMapPage .img-box img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  border-radius: 8px !important;
-}
-
-#seasonMapPage .goal-img-box {
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-  min-height: 150px !important;
-  height: 100% !important;
-}
-
-#seasonMapPage .goal-img-box img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  border-radius: 8px !important;
-}
-
-/* Copy exact Goal Map styles */
+/* Season Map Goal Boxes - EXAKT wie Goal Map */
+#seasonMapPage .goal-img-box,
 #seasonGoalGreenBox,
 #seasonGoalRedBox {
   flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  min-height: 0 !important;
+  height: auto !important;
 }
 
+#seasonMapPage .goal-img-box img,
 #seasonGoalGreenBox img,
 #seasonGoalRedBox img {
   width: 100% !important;
   height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
   object-fit: contain !important;
+  border-radius: 8px !important;
 }
 
 /* Marker-Punkte korrekt positionieren */
@@ -524,6 +500,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonContainer {
   display: flex !important;
   justify-content: center !important;
+  align-items: flex-start !important;
   width: 100% !important;
   max-width: 1100px;
   margin: 0 auto !important;
@@ -570,6 +547,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonContainer .season-table,
 #seasonContainer table {
   margin: 0 auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 #seasonPage thead th {
@@ -1380,23 +1359,31 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   flex: 1 !important;
   min-width: 120px !important;
   max-width: 150px !important;
+  width: 120px !important;
   padding: 12px 24px !important;
   font-size: 1rem !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
   cursor: pointer !important;
+  border: none !important;
 }
 
 #saveTeamNameBtn {
   background: #44bb91 !important;
   color: #fff !important;
-  border: none !important;
+}
+
+#saveTeamNameBtn:hover {
+  background: #3a9d7a !important;
 }
 
 #cancelTeamEditBtn {
   background: #3a3a3a !important;
   color: #fff !important;
-  border: none !important;
+}
+
+#cancelTeamEditBtn:hover {
+  background: #4a4a4a !important;
 }
 
 /* Goalie Selection Modal */

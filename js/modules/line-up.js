@@ -563,6 +563,10 @@ App.lineUp = {
   },
   
   render() {
+    // Container prüfen - wenn nicht vorhanden, aus DOM holen
+    if (!this.container) {
+      this.container = document.getElementById("lineUpContainer");
+    }
     if (!this.container) return;
     
     // Update all position buttons with assigned players
@@ -592,14 +596,18 @@ App.lineUp = {
       }
     });
     
-    // Update stats (placeholder for now)
+    // Update stats am Ende
     this.updateStats();
   },
   
   updateStats() {
     // Update line stats
     for (let line = 1; line <= 4; line++) {
-      const lineEl = this.container?.querySelector(`.lineup-line[data-line="${line}"] .lineup-line-stats`);
+      // Erst im Container suchen, dann im ganzen Document
+      let lineEl = this.container?.querySelector(`.lineup-line[data-line="${line}"] .lineup-line-stats`);
+      if (!lineEl) {
+        lineEl = document.querySelector(`#lineUpContainer .lineup-line[data-line="${line}"] .lineup-line-stats`);
+      }
       if (lineEl) {
         const stats = this.calculateLineStats(line);
         lineEl.textContent = `${stats.goals}G / +- ${stats.plusMinus} / ${stats.shots} Sh`;
@@ -608,7 +616,10 @@ App.lineUp = {
     
     // Update defense pair stats
     for (let pair = 1; pair <= 3; pair++) {
-      const pairEl = this.container?.querySelector(`.lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
+      let pairEl = this.container?.querySelector(`.lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
+      if (!pairEl) {
+        pairEl = document.querySelector(`#lineUpContainer .lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
+      }
       if (pairEl) {
         const stats = this.calculatePairStats(pair);
         pairEl.textContent = `${stats.goals}G / +- ${stats.plusMinus} / ${stats.shots} Sh`;

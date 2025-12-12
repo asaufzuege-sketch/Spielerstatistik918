@@ -743,8 +743,9 @@ App.goalMap = {
     const goalies = App.data.selectedPlayers?.filter(p => p.position === "G") || [];
     
     if (goalies.length === 0) {
-      alert("No goalies available. Please add goalies in Player Selection.");
-      callback(null);
+      // WICHTIG: Wenn keine Goalies, trotzdem den Marker setzen mit "Unknown Goalie"
+      console.warn('[Goal Map] No goalies found, using default');
+      callback("Unknown Goalie");
       return;
     }
     
