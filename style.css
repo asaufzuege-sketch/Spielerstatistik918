@@ -1984,7 +1984,7 @@ tr[data-player].dragging {
   font-size: 0.85rem !important;
   text-align: center !important;
   margin-top: 4px !important;
-  min-width: 120px;
+  min-width: 120px !important;
 }
 
 /* Special Teams */
