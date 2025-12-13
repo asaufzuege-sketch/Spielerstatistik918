@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Button Size Test</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { 
+      background: #1a1a1a; 
+      color: white; 
+      font-family: Arial, sans-serif;
+      padding: 50px;
+    }
+    .modal {
+      display: block !important;
+      position: relative;
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+    }
+    .modal-content {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Team Edit Modal Button Size Test</h1>
+  
+  <div id="teamEditModal" class="modal">
+    <div class="modal-content">
+      <h3>Edit Team Name</h3>
+      <input type="text" id="teamNameInput" placeholder="Enter team name" maxlength="30" style="width: 100%; padding: 10px; margin: 10px 0;"/>
+      <div class="modal-buttons">
+        <button id="saveTeamNameBtn" class="confirm-btn">Save</button>
+        <button id="cancelTeamEditBtn" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Add visual measurements
+    window.addEventListener('load', () => {
+      const saveBtn = document.getElementById('saveTeamNameBtn');
+      const cancelBtn = document.getElementById('cancelTeamEditBtn');
+      
+      const saveRect = saveBtn.getBoundingClientRect();
+      const cancelRect = cancelBtn.getBoundingClientRect();
+      
+      console.log('Save button dimensions:', {
+        width: saveRect.width,
+        height: saveRect.height
+      });
+      console.log('Cancel button dimensions:', {
+        width: cancelRect.width,
+        height: cancelRect.height
+      });
+      
+      // Display measurements on page
+      const info = document.createElement('div');
+      info.style.cssText = 'margin-top: 30px; padding: 20px; background: #333; border-radius: 8px;';
+      info.innerHTML = `
+        <h3>Button Measurements</h3>
+        <p><strong>Save Button:</strong> ${saveRect.width.toFixed(2)}px × ${saveRect.height.toFixed(2)}px</p>
+        <p><strong>Cancel Button:</strong> ${cancelRect.width.toFixed(2)}px × ${cancelRect.height.toFixed(2)}px</p>
+        <p><strong>Sizes Match:</strong> ${Math.abs(saveRect.width - cancelRect.width) < 1 && Math.abs(saveRect.height - cancelRect.height) < 1 ? '✅ YES' : '❌ NO'}</p>
+      `;
+      document.body.appendChild(info);
+    });
+  </script>
+</body>
+</html>
