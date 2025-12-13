@@ -167,33 +167,14 @@ App.goalMap = {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
           }
           
-          // Red goal box: If no workflow and no player filter, show goalie selection modal
-          if (box.id === "goalRedBox" && !workflowActive && !this.playerFilter) {
-            this.showGoalieSelectionModal((selectedGoalie) => {
-              if (selectedGoalie) {
-                // Set player filter and update localStorage
-                this.playerFilter = selectedGoalie;
-                localStorage.setItem("goalMapPlayerFilter", selectedGoalie);
-                
-                // Update filter dropdown if it exists
-                const filterSelect = document.getElementById("goalMapPlayerFilter");
-                if (filterSelect) {
-                  filterSelect.value = selectedGoalie;
-                }
-                
-                // Now place the marker with selected goalie
-                const color = neutralGrey;
-                App.markerHandler.createMarkerPercent(
-                  pos.xPctContainer,
-                  pos.yPctContainer,
-                  color,
-                  box,
-                  true,
-                  selectedGoalie
-                );
-              }
-            });
-            return;
+          // Red goal box: If no workflow and no active goalie, show warning (NO MODAL!)
+          if (box.id === "goalRedBox" && !workflowActive) {
+            const activeGoalie = this.getActiveGoalie();
+            if (!activeGoalie) {
+              alert("Please select a goalie first");
+              console.log('[Goal Map] Red goal box click without active goalie');
+              return;
+            }
           }
           
           const color = neutralGrey;
