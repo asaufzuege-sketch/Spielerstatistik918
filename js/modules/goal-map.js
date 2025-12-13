@@ -190,6 +190,35 @@ App.goalMap = {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
           }
           
+          // Red goal box: If no workflow and no player filter, show goalie selection modal
+          if (box.id === "goalRedBox" && !workflowActive && !this.playerFilter) {
+            this.showGoalieSelectionModal((selectedGoalie) => {
+              if (selectedGoalie) {
+                // Set player filter and update localStorage
+                this.playerFilter = selectedGoalie;
+                localStorage.setItem("goalMapPlayerFilter", selectedGoalie);
+                
+                // Update filter dropdown if it exists
+                const filterSelect = document.getElementById("goalMapPlayerFilter");
+                if (filterSelect) {
+                  filterSelect.value = selectedGoalie;
+                }
+                
+                // Now place the marker with selected goalie
+                const color = neutralGrey;
+                App.markerHandler.createMarkerPercent(
+                  pos.xPctContainer,
+                  pos.yPctContainer,
+                  color,
+                  box,
+                  true,
+                  selectedGoalie
+                );
+              }
+            });
+            return;
+          }
+          
           const color = neutralGrey;
           
           App.markerHandler.createMarkerPercent(
@@ -678,7 +707,35 @@ App.goalMap = {
     const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
     console.log('[Goal Map Export] timeDataWithPlayers:', timeDataWithPlayers);
     
-    // Flaches Format für Momentum-Tabelle erstellen
+    // ACCUMULATE markers to Season Map (merge instead of overwrite)
+    const existingSeasonMarkers = JSON.parse(localStorage.getItem("seasonMapMarkers")) || [];
+    const mergedMarkers = [];
+    
+    // Merge each box's markers
+    for (let i = 0; i < Math.max(allMarkers.length, existingSeasonMarkers.length); i++) {
+      const currentMarkers = allMarkers[i] || [];
+      const existingMarkers = existingSeasonMarkers[i] || [];
+      mergedMarkers[i] = [...existingMarkers, ...currentMarkers];
+    }
+    
+    // ACCUMULATE time data (merge player times)
+    const existingTimeData = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
+    const mergedTimeData = { ...existingTimeData };
+    
+    // Merge time data for each button
+    Object.keys(timeDataWithPlayers).forEach(key => {
+      if (!mergedTimeData[key]) {
+        mergedTimeData[key] = {};
+      }
+      const currentPlayers = timeDataWithPlayers[key];
+      Object.keys(currentPlayers).forEach(playerName => {
+        const currentValue = Number(currentPlayers[playerName]) || 0;
+        const existingValue = Number(mergedTimeData[key][playerName]) || 0;
+        mergedTimeData[key][playerName] = existingValue + currentValue;
+      });
+    });
+    
+    // Flaches Format für Momentum-Tabelle erstellen (from merged data)
     const momentumData = {};
     const periods = ['p1', 'p2', 'p3'];
     
@@ -687,7 +744,7 @@ App.goalMap = {
       // 8 Buttons pro Period (0-3 top-row/scored, 4-7 bottom-row/conceded)
       for (let btnIdx = 0; btnIdx < 8; btnIdx++) {
         const key = `${periodNum}_${btnIdx}`;
-        const playerData = timeDataWithPlayers[key] || {};
+        const playerData = mergedTimeData[key] || {};
         const total = Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
         periodValues.push(total);
       }
@@ -695,21 +752,18 @@ App.goalMap = {
     });
     
     console.log('[Goal Map Export] momentumData:', momentumData);
+    console.log('[Goal Map Export] Merged markers count:', mergedMarkers.map(m => m.length));
     
-    // Speichere in seasonMapTimeData für Momentum-Graph
+    // Speichere merged/accumulated data
+    localStorage.setItem("seasonMapMarkers", JSON.stringify(mergedMarkers));
+    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(mergedTimeData));
     localStorage.setItem("seasonMapTimeData", JSON.stringify(momentumData));
-    
-    // Speichere auch die detaillierten Spieler-Daten
-    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
-    
-    // Auch seasonMapMarkers setzen damit Season Map die Marker anzeigt
-    localStorage.setItem("seasonMapMarkers", JSON.stringify(allMarkers));
     
     // Alte timeData ebenfalls aktualisieren
     const timeData = this.readTimeTrackingFromBox();
     localStorage.setItem("timeData", JSON.stringify(timeData));
     
-    alert("Goal Map data exported!");
+    alert("Goal Map data exported to Season Map!");
   },
   
   readTimeTrackingFromBox() {
