@@ -2021,10 +2021,7 @@ tr[data-player].dragging {
   max-width: 400px;
   max-height: 80vh;
   overflow-y: auto;
-copilot/update-ui-line-up-page
-  margin: auto;
   margin: 0 auto;
-copilot/change-line-mode-functionality
   text-align: center;
 }
 
@@ -2348,8 +2345,6 @@ copilot/change-line-mode-functionality
 #saveTeamNameBtn,
 #cancelTeamEditBtn {
   flex: 0 0 auto !important;
-  min-width: 120px !important;
-  max-width: 120px !important;
   width: 120px !important;
   padding: 12px 20px !important;
   font-size: 1rem !important;
