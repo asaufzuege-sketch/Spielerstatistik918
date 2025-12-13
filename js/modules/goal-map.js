@@ -401,38 +401,87 @@ App.goalMap = {
   
   // Show goalie name overlay in red zone
   showGoalieNameOverlay(goalieName) {
-    let overlay = document.getElementById("goalieNameOverlay");
-    if (!overlay) {
-      overlay = document.createElement("div");
-      overlay.id = "goalieNameOverlay";
-      overlay.style.cssText = `
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background: rgba(139, 0, 0, 0.9);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: bold;
-        z-index: 1000;
-        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-      `;
-      document.body.appendChild(overlay);
+    // Create overlay in red field area (bottom half)
+    const fieldBox = document.getElementById("fieldBox");
+    if (fieldBox) {
+      let fieldOverlay = fieldBox.querySelector(".goalie-name-overlay");
+      if (!fieldOverlay) {
+        fieldOverlay = document.createElement("div");
+        fieldOverlay.className = "goalie-name-overlay";
+        fieldOverlay.style.cssText = `
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 50%;
+          background: rgba(139, 0, 0, 0.3);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 24px;
+          pointer-events: none;
+          z-index: 100;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        `;
+        fieldBox.appendChild(fieldOverlay);
+      }
+      fieldOverlay.textContent = `🥅 ${goalieName}`;
+      fieldOverlay.style.display = "flex";
     }
-    overlay.textContent = `🥅 ${goalieName}`;
-    overlay.style.display = "block";
+    
+    // Create overlay in red goal box
+    const goalRedBox = document.getElementById("goalRedBox");
+    if (goalRedBox) {
+      let goalOverlay = goalRedBox.querySelector(".goalie-name-overlay");
+      if (!goalOverlay) {
+        goalOverlay = document.createElement("div");
+        goalOverlay.className = "goalie-name-overlay";
+        goalOverlay.style.cssText = `
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(139, 0, 0, 0.3);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 18px;
+          pointer-events: none;
+          z-index: 100;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        `;
+        goalRedBox.appendChild(goalOverlay);
+      }
+      goalOverlay.textContent = `🥅 ${goalieName}`;
+      goalOverlay.style.display = "flex";
+    }
   },
   
   // Update goalie name overlay
   updateGoalieNameOverlay() {
     const goalie = this.getActiveGoalie();
-    const overlay = document.getElementById("goalieNameOverlay");
     
-    if (goalie && overlay) {
-      overlay.textContent = `🥅 ${goalie}`;
-      overlay.style.display = "block";
-    } else if (overlay) {
-      overlay.style.display = "none";
+    if (goalie) {
+      // If goalie is set, create/show overlays
+      this.showGoalieNameOverlay(goalie);
+    } else {
+      // If no goalie, hide overlays
+      const fieldBox = document.getElementById("fieldBox");
+      const fieldOverlay = fieldBox?.querySelector(".goalie-name-overlay");
+      if (fieldOverlay) {
+        fieldOverlay.style.display = "none";
+      }
+      
+      const goalRedBox = document.getElementById("goalRedBox");
+      const goalOverlay = goalRedBox?.querySelector(".goalie-name-overlay");
+      if (goalOverlay) {
+        goalOverlay.style.display = "none";
+      }
     }
   },
   
