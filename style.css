@@ -2343,35 +2343,42 @@ copilot/change-line-mode-functionality
 }
 
 #teamEditModal .modal-buttons button,
+#teamEditModal .modal-buttons .confirm-btn,
+#teamEditModal .modal-buttons .cancel-btn,
 #saveTeamNameBtn,
 #cancelTeamEditBtn {
-  flex: 1 !important;
+  flex: 0 0 auto !important;
   min-width: 120px !important;
-  max-width: 150px !important;
+  max-width: 120px !important;
   width: 120px !important;
-  padding: 12px 24px !important;
+  padding: 12px 20px !important;
   font-size: 1rem !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
   cursor: pointer !important;
   border: none !important;
+  box-sizing: border-box !important;
 }
 
-#saveTeamNameBtn {
+#saveTeamNameBtn,
+#teamEditModal .confirm-btn {
   background: #44bb91 !important;
   color: #fff !important;
 }
 
-#saveTeamNameBtn:hover {
+#saveTeamNameBtn:hover,
+#teamEditModal .confirm-btn:hover {
   background: #3a9d7a !important;
 }
 
-#cancelTeamEditBtn {
+#cancelTeamEditBtn,
+#teamEditModal .cancel-btn {
   background: #3a3a3a !important;
   color: #fff !important;
 }
 
-#cancelTeamEditBtn:hover {
+#cancelTeamEditBtn:hover,
+#teamEditModal .cancel-btn:hover {
   background: #4a4a4a !important;
 }
 
