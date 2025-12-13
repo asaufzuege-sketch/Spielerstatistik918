@@ -239,14 +239,10 @@ App.goalMap = {
               console.log('[Goal Map] Long press in red zone with active goalie - starting goal workflow');
               // Start the goal workflow with the active goalie
               App.startGoalMapWorkflow(activeGoalie, 'goal');
-              // The workflow is now active, and this placeMarker call will be part of step 0
-              // Re-run the workflow logic by returning and letting the workflow handle placement
-              const newWorkflowActive = App.goalMapWorkflow?.active;
-              if (newWorkflowActive) {
-                // Recursively call placeMarker with workflow now active
-                placeMarker(pos, long, forceGrey);
-                return;
-              }
+              // Now re-call placeMarker so it sees the workflow is active
+              // This will cause it to go through the workflow logic
+              placeMarker(pos, long, forceGrey);
+              return;
             }
           }
           
