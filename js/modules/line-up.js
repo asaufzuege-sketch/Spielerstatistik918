@@ -549,11 +549,12 @@ App.lineUp = {
       const key = `${pos}_line${lineNum}`;
       const playerName = this.lineUpData[key];
       if (playerName) {
-        const playerStats = App.data.statsData?.[playerName];
+        // CHANGED: Try seasonData first, fallback to statsData
+        const playerStats = App.data.seasonData?.[playerName] || App.data.statsData?.[playerName];
         if (playerStats) {
-          goals += playerStats["Goals"] || 0;
-          plusMinus += playerStats["+/-"] || 0;
-          shots += playerStats["Shot"] || 0;
+          goals += Number(playerStats["Goals"] || playerStats["goals"] || 0);
+          plusMinus += Number(playerStats["+/-"] || playerStats["plusMinus"] || 0);
+          shots += Number(playerStats["Shot"] || playerStats["shots"] || 0);
         }
       }
     });
@@ -570,14 +571,14 @@ App.lineUp = {
       const key = `${pos}_pair${pairNum}`;
       const playerName = this.lineUpData[key];
       if (playerName) {
-        const playerStats = App.data.statsData?.[playerName];
+        // CHANGED: Try seasonData first, fallback to statsData
+        const playerStats = App.data.seasonData?.[playerName] || App.data.statsData?.[playerName];
         if (playerStats) {
-          // Calculate points (Goals + Assists) for defense
-          const playerGoals = playerStats["Goals"] || 0;
-          const playerAssists = playerStats["Assists"] || 0;
+          const playerGoals = Number(playerStats["Goals"] || playerStats["goals"] || 0);
+          const playerAssists = Number(playerStats["Assist"] || playerStats["assists"] || 0);
           points += playerGoals + playerAssists;
-          plusMinus += playerStats["+/-"] || 0;
-          shots += playerStats["Shot"] || 0;
+          plusMinus += Number(playerStats["+/-"] || playerStats["plusMinus"] || 0);
+          shots += Number(playerStats["Shot"] || playerStats["shots"] || 0);
         }
       }
     });

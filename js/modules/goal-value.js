@@ -319,7 +319,7 @@ App.goalValue = {
   },
   
   reset() {
-    if (! confirm("Goal Value zurücksetzen?")) return;
+    if (!confirm("Reset Goal Value?")) return;
     
     const opponents = this.getOpponents();
     const playersList = Object.keys(App. data.seasonData).length 
@@ -334,6 +334,6 @@ App.goalValue = {
     this.setOpponents(Array.from({ length: 19 }, (_, i) => `Opponent ${i + 1}`));
     
     this.render();
-    alert("Goal Value reset.");
+    alert("Goal Value has been reset.");
   }
 };

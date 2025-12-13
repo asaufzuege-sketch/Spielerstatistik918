@@ -19,6 +19,10 @@ App.seasonMap = {
       this.reset();
     });
     
+    document.getElementById("exportSeasonMapPageBtn")?.addEventListener("click", () => {
+      this.exportAsImage();
+    });
+    
     // Time Tracking read-only
     this.initTimeTracking();
     
@@ -609,5 +613,33 @@ App.seasonMap = {
     console.log('[Season Map] Reset completed - Momentum container cleared and re-rendered');
     
     alert("Season Map reset.");
+  },
+  
+  exportAsImage() {
+    const seasonMapPage = document.getElementById("seasonMapPage");
+    if (!seasonMapPage) {
+      alert("Season Map page not found");
+      return;
+    }
+    
+    // Use html2canvas if available, otherwise use simple screenshot approach
+    if (typeof html2canvas === 'function') {
+      html2canvas(seasonMapPage, {
+        backgroundColor: '#111111',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `season_map_${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error('Export failed:', err);
+        alert('Export failed. Please try again.');
+      });
+    } else {
+      alert('Export feature requires html2canvas library. Please add it to your project.');
+    }
   }
 };

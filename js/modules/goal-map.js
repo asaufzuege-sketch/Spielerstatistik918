@@ -118,12 +118,35 @@ App.goalMap = {
             const activeGoalie = App.goalMap.getActiveGoalie();
             
             if (!activeGoalie) {
-              // No goalie selected - show toast
-              if (typeof App.showToast === 'function') {
-                App.showToast('Please select a goalie first');
-              } else {
-                alert('Please select a goalie first');
-              }
+              // No goalie selected - show modal to select one
+              this.showGoalieSelectionModal((selectedGoalieName) => {
+                if (selectedGoalieName) {
+                  // Set the selected goalie as active
+                  const goalie = (App.data.selectedPlayers || []).find(p => 
+                    p.name === selectedGoalieName && p.position === 'G'
+                  );
+                  if (goalie) {
+                    this.selectedGoalie = goalie;
+                    this.playerFilter = goalie.name;
+                    this.filterType = 'goalie';
+                    localStorage.setItem('activeGoalie', JSON.stringify(goalie));
+                    localStorage.setItem("goalMapPlayerFilter", goalie.name);
+                    localStorage.setItem("goalMapPlayerFilterType", "goalie");
+                    
+                    // Update dropdown
+                    const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+                    if (goalieFilterSelect) {
+                      goalieFilterSelect.value = goalie.name;
+                    }
+                    
+                    this.updateGoalieButtonTitle(goalie.name);
+                    this.updateGoalieNameOverlay();
+                    
+                    // Now proceed with placing the marker
+                    console.log(`[Goal Map] Goalie selected via modal: ${goalie.name}`);
+                  }
+                }
+              });
               return;
             }
             
