@@ -3,6 +3,8 @@
 App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
+  activeGoalie: null, // Tracks the currently selected goalie for red workflow
+  VERTICAL_SPLIT_THRESHOLD: 50, // y-percent threshold for green (top) vs red (bottom) half
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -30,6 +32,9 @@ App.goalMap = {
     
     // Player Filter initialisieren
     this.initPlayerFilter();
+    
+    // Restore saved filter and goalie state
+    this.restoreFilterState();
   },
   
   attachMarkerHandlers() {
@@ -122,40 +127,50 @@ App.goalMap = {
             }
             // Detect which half was clicked and set workflow type
             if (isFieldBox && !workflowType) {
-              // Left half (x < 50%) = scored (green), Right half (x >= 50%) = conceded (red)
-              const isRightHalf = pos.xPctImage >= 50;
-              App.goalMapWorkflow.workflowType = isRightHalf ? 'conceded' : 'scored';
-              console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow`);
+              // Use VERTICAL_SPLIT_THRESHOLD: top half (y < 50%) = scored (green), bottom half (y >= 50%) = conceded (red)
+              const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
+              App.goalMapWorkflow.workflowType = isRedZone ? 'conceded' : 'scored';
+              console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow at y=${pos.yPctImage}%`);
               
-              // For conceded goals, show goalie selection modal first
-              if (isRightHalf) {
-                this.showGoalieSelectionModal((selectedGoalie) => {
-                  if (selectedGoalie) {
-                    App.goalMapWorkflow.playerName = selectedGoalie;
-                    console.log(`[Goal Workflow] Goalie selected: ${selectedGoalie}`);
-                    // Now place the marker with goalie name
-                    const color = "#444444"; // neutral grey
-                    App.markerHandler.createMarkerPercent(
-                      pos.xPctContainer,
-                      pos.yPctContainer,
-                      color,
-                      box,
-                      true,
-                      selectedGoalie
-                    );
-                    App.addGoalMapPoint(
-                      "field",
-                      pos.xPctContainer,
-                      pos.yPctContainer,
-                      color,
-                      box.id
-                    );
-                  } else {
-                    console.log('[Goal Workflow] Goalie selection cancelled, resetting workflow');
-                    App.cancelGoalMapWorkflow();
-                  }
-                });
-                return; // Exit early, marker will be placed in callback
+              // For conceded goals, check if goalie is selected
+              if (isRedZone) {
+                const activeGoalie = this.getActiveGoalie();
+                
+                if (activeGoalie) {
+                  // Use active goalie automatically (no modal)
+                  App.goalMapWorkflow.playerName = activeGoalie;
+                  console.log(`[Goal Workflow] Using active goalie: ${activeGoalie}`);
+                  // Continue to place marker below
+                } else {
+                  // Show goalie selection modal
+                  this.showGoalieSelectionModal((selectedGoalie) => {
+                    if (selectedGoalie) {
+                      App.goalMapWorkflow.playerName = selectedGoalie;
+                      console.log(`[Goal Workflow] Goalie selected: ${selectedGoalie}`);
+                      // Now place the marker with goalie name
+                      const color = "#444444"; // neutral grey
+                      App.markerHandler.createMarkerPercent(
+                        pos.xPctContainer,
+                        pos.yPctContainer,
+                        color,
+                        box,
+                        true,
+                        selectedGoalie
+                      );
+                      App.addGoalMapPoint(
+                        "field",
+                        pos.xPctContainer,
+                        pos.yPctContainer,
+                        color,
+                        box.id
+                      );
+                    } else {
+                      console.log('[Goal Workflow] Goalie selection cancelled, resetting workflow');
+                      App.cancelGoalMapWorkflow();
+                    }
+                  });
+                  return; // Exit early, marker will be placed in callback
+                }
               }
             }
           }
@@ -244,6 +259,28 @@ App.goalMap = {
         
         // FELD-BOX: grün/rot oder grau je nach Kontext
         if (box.classList.contains("field-box")) {
+          const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
+          
+          // Check if clicking in red zone - require active goalie
+          if (isRedZone && !isGoalWorkflow) {
+            const activeGoalie = this.getActiveGoalie();
+            
+            // Long press in red zone or manual red click - needs goalie
+            if (long || !activeGoalie) {
+              if (!activeGoalie) {
+                alert("Please select a goalie first");
+                console.log('[Goal Map] Red zone click without active goalie');
+                return;
+              }
+              // If goalie is active and long press, start workflow automatically
+              if (long && activeGoalie && !workflowActive) {
+                // Long press with active goalie - this will be handled by starting goal workflow
+                // The workflow will use the active goalie
+                console.log('[Goal Map] Long press in red zone with active goalie - starting workflow');
+              }
+            }
+          }
+          
           let color = null;
 
           // Im Goal-Workflow ist der Feldpunkt immer grau (neutral)
@@ -357,6 +394,105 @@ App.goalMap = {
         isLong = false;
       }, { passive: true });
     });
+  },
+  
+  // Get currently active goalie from multiple sources
+  getActiveGoalie() {
+    // Priority: 1) activeGoalie property, 2) goalie filter dropdown, 3) playerFilter if it's a goalie
+    if (this.activeGoalie) {
+      return this.activeGoalie;
+    }
+    
+    const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+    if (goalieFilterSelect && goalieFilterSelect.value) {
+      return goalieFilterSelect.value;
+    }
+    
+    // Check if playerFilter is a goalie
+    if (this.playerFilter) {
+      const player = (App.data.selectedPlayers || []).find(p => p.name === this.playerFilter);
+      if (player && player.position === "G") {
+        return this.playerFilter;
+      }
+    }
+    
+    return null;
+  },
+  
+  // Update goalie button title to show neon-pulse when active
+  updateGoalieButtonTitle() {
+    const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+    if (!goalieFilterSelect) return;
+    
+    const hasActiveGoalie = this.getActiveGoalie() !== null;
+    
+    // Add/remove active class for neon-pulse animation
+    if (hasActiveGoalie) {
+      goalieFilterSelect.classList.add("active");
+    } else {
+      goalieFilterSelect.classList.remove("active");
+    }
+  },
+  
+  // Show goalie name overlay in red zone
+  showGoalieNameOverlay(goalieName) {
+    let overlay = document.getElementById("goalieNameOverlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "goalieNameOverlay";
+      overlay.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(139, 0, 0, 0.9);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+      `;
+      document.body.appendChild(overlay);
+    }
+    overlay.textContent = `🥅 ${goalieName}`;
+    overlay.style.display = "block";
+  },
+  
+  // Update goalie name overlay
+  updateGoalieNameOverlay() {
+    const goalie = this.getActiveGoalie();
+    const overlay = document.getElementById("goalieNameOverlay");
+    
+    if (goalie && overlay) {
+      overlay.textContent = `🥅 ${goalie}`;
+      overlay.style.display = "block";
+    } else if (overlay) {
+      overlay.style.display = "none";
+    }
+  },
+  
+  // Restore filter state from localStorage
+  restoreFilterState() {
+    const savedFilter = localStorage.getItem("goalMapPlayerFilter");
+    if (savedFilter) {
+      this.playerFilter = savedFilter;
+      const filterSelect = document.getElementById("goalMapPlayerFilter");
+      if (filterSelect) {
+        filterSelect.value = savedFilter;
+      }
+    }
+    
+    const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+    if (savedGoalie) {
+      this.activeGoalie = savedGoalie;
+      const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+      if (goalieFilterSelect) {
+        goalieFilterSelect.value = savedGoalie;
+      }
+    }
+    
+    this.updateGoalieButtonTitle();
+    this.updateGoalieNameOverlay();
   },
   
   // Time Tracking mit Spielerzuordnung
@@ -523,6 +659,20 @@ App.goalMap = {
       
       goalieFilterSelect.addEventListener("change", () => {
         const selectedGoalie = goalieFilterSelect.value;
+        
+        // Set active goalie for red workflow
+        this.activeGoalie = selectedGoalie || null;
+        if (selectedGoalie) {
+          localStorage.setItem("goalMapActiveGoalie", selectedGoalie);
+        } else {
+          localStorage.removeItem("goalMapActiveGoalie");
+        }
+        
+        // Update UI to show neon-pulse and overlay
+        this.updateGoalieButtonTitle();
+        this.updateGoalieNameOverlay();
+        
+        // Also filter display
         if (selectedGoalie) {
           // Filter by single goalie
           this.filterByGoalies([selectedGoalie]);
@@ -532,6 +682,15 @@ App.goalMap = {
           this.filterByGoalies(goalieNames);
         }
       });
+      
+      // Restore saved goalie selection
+      const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+      if (savedGoalie) {
+        goalieFilterSelect.value = savedGoalie;
+        this.activeGoalie = savedGoalie;
+        this.updateGoalieButtonTitle();
+        this.updateGoalieNameOverlay();
+      }
     }
   },
   
