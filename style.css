@@ -2402,3 +2402,17 @@ copilot/change-line-mode-functionality
   margin-right: auto !important;
 }
 
+/* FIX: Line Up Button - gleiches Blau auf allen Seiten */
+.lineup-btn,
+#lineupBtn,
+#lineupFromStatsBtn {
+  background: #4a7fb5 !important;
+  color: #fff !important;
+}
+
+.lineup-btn:hover,
+#lineupBtn:hover,
+#lineupFromStatsBtn:hover {
+  background: #3a6fa5 !important;
+}
+

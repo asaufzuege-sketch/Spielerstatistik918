@@ -504,21 +504,21 @@ App.lineUp = {
   },
   
   updateStats() {
-    // Update line stats (forwards show goals)
+    // Update line stats (forwards show goals/game)
     for (let line = 1; line <= 4; line++) {
       const lineEl = this.container?.querySelector(`.lineup-line[data-line="${line}"] .lineup-line-stats`);
       if (lineEl) {
         const stats = this.calculateLineStats(line);
-        lineEl.textContent = `${stats.goals}G / +- ${stats.plusMinus} / ${stats.shots} Sh`;
+        lineEl.textContent = `${stats.goalsPerGame}G / ${stats.plusMinusPerGame}+/- / ${stats.shotsPerGame}Sh`;
       }
     }
     
-    // Update defense pair stats (defense shows points = goals + assists)
+    // Update defense pair stats (defense shows points/game = goals + assists)
     for (let pair = 1; pair <= 3; pair++) {
       const pairEl = this.container?.querySelector(`.lineup-defense-pair[data-pair="${pair}"] .lineup-pair-stats`);
       if (pairEl) {
         const stats = this.calculatePairStats(pair);
-        pairEl.textContent = `${stats.points}P / +- ${stats.plusMinus} / ${stats.shots} Sh`;
+        pairEl.textContent = `${stats.pointsPerGame}P / ${stats.plusMinusPerGame}+/- / ${stats.shotsPerGame}Sh`;
       }
     }
   },
@@ -544,46 +544,68 @@ App.lineUp = {
     let goals = 0;
     let plusMinus = 0;
     let shots = 0;
+    let games = 0;
     
     ["LW", "C", "RW"].forEach(pos => {
       const key = `${pos}_line${lineNum}`;
       const playerName = this.lineUpData[key];
       if (playerName) {
-        // CHANGED: Try seasonData first, fallback to statsData
         const playerStats = App.data.seasonData?.[playerName] || App.data.statsData?.[playerName];
         if (playerStats) {
-          goals += Number(playerStats["Goals"] || playerStats["goals"] || 0);
-          plusMinus += Number(playerStats["+/-"] || playerStats["plusMinus"] || 0);
-          shots += Number(playerStats["Shot"] || playerStats["shots"] || 0);
+          const playerGames = Number(playerStats["games"] || playerStats["Games"] || 1);
+          goals += Number(playerStats["goals"] || playerStats["Goals"] || 0);
+          plusMinus += Number(playerStats["plusMinus"] || playerStats["+/-"] || 0);
+          shots += Number(playerStats["shots"] || playerStats["Shot"] || 0);
+          games = Math.max(games, playerGames); // Use max games for the line
         }
       }
     });
     
-    return { goals, plusMinus, shots };
+    // Calculate per-game averages
+    const gamesDiv = games || 1;
+    const goalsPerGame = (goals / gamesDiv).toFixed(1);
+    const plusMinusPerGame = (plusMinus / gamesDiv).toFixed(1);
+    const shotsPerGame = (shots / gamesDiv).toFixed(1);
+    
+    return { 
+      goals, plusMinus, shots,
+      goalsPerGame, plusMinusPerGame, shotsPerGame
+    };
   },
   
   calculatePairStats(pairNum) {
     let points = 0;
     let plusMinus = 0;
     let shots = 0;
+    let games = 0;
     
     ["DL", "DR"].forEach(pos => {
       const key = `${pos}_pair${pairNum}`;
       const playerName = this.lineUpData[key];
       if (playerName) {
-        // CHANGED: Try seasonData first, fallback to statsData
         const playerStats = App.data.seasonData?.[playerName] || App.data.statsData?.[playerName];
         if (playerStats) {
-          const playerGoals = Number(playerStats["Goals"] || playerStats["goals"] || 0);
-          const playerAssists = Number(playerStats["Assist"] || playerStats["assists"] || 0);
+          const playerGames = Number(playerStats["games"] || playerStats["Games"] || 1);
+          const playerGoals = Number(playerStats["goals"] || playerStats["Goals"] || 0);
+          const playerAssists = Number(playerStats["assists"] || playerStats["Assists"] || 0);
           points += playerGoals + playerAssists;
-          plusMinus += Number(playerStats["+/-"] || playerStats["plusMinus"] || 0);
-          shots += Number(playerStats["Shot"] || playerStats["shots"] || 0);
+          plusMinus += Number(playerStats["plusMinus"] || playerStats["+/-"] || 0);
+          shots += Number(playerStats["shots"] || playerStats["Shot"] || 0);
+          games = Math.max(games, playerGames);
         }
       }
     });
     
-    return { points, plusMinus, shots };
+    // Calculate per-game averages
+    const gamesDiv = games || 1;
+    const pointsPerGame = (points / gamesDiv).toFixed(1);
+    const plusMinusPerGame = (plusMinus / gamesDiv).toFixed(1);
+    const shotsPerGame = (shots / gamesDiv).toFixed(1);
+    
+    return { 
+      points, plusMinus, shots,
+      pointsPerGame, plusMinusPerGame, shotsPerGame
+    };
   },
   
   /**
