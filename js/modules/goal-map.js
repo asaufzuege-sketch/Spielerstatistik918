@@ -132,46 +132,8 @@ App.goalMap = {
               App.goalMapWorkflow.workflowType = isRedZone ? 'conceded' : 'scored';
               console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow at y=${pos.yPctImage}%`);
               
-              // For conceded goals, check if goalie is selected
-              if (isRedZone) {
-                const activeGoalie = this.getActiveGoalie();
-                
-                if (activeGoalie) {
-                  // Use active goalie automatically (no modal)
-                  App.goalMapWorkflow.playerName = activeGoalie;
-                  console.log(`[Goal Workflow] Using active goalie: ${activeGoalie}`);
-                  // Continue to place marker below
-                } else {
-                  // Show goalie selection modal
-                  this.showGoalieSelectionModal((selectedGoalie) => {
-                    if (selectedGoalie) {
-                      App.goalMapWorkflow.playerName = selectedGoalie;
-                      console.log(`[Goal Workflow] Goalie selected: ${selectedGoalie}`);
-                      // Now place the marker with goalie name
-                      const color = "#444444"; // neutral grey
-                      App.markerHandler.createMarkerPercent(
-                        pos.xPctContainer,
-                        pos.yPctContainer,
-                        color,
-                        box,
-                        true,
-                        selectedGoalie
-                      );
-                      App.addGoalMapPoint(
-                        "field",
-                        pos.xPctContainer,
-                        pos.yPctContainer,
-                        color,
-                        box.id
-                      );
-                    } else {
-                      console.log('[Goal Workflow] Goalie selection cancelled, resetting workflow');
-                      App.cancelGoalMapWorkflow();
-                    }
-                  });
-                  return; // Exit early, marker will be placed in callback
-                }
-              }
+              // Goalie should already be set by startGoalMapWorkflow
+              // No modal needed here, workflow was started with goalie pre-selected
             }
           }
           // Schritt 1: Nur entsprechendes Tor erlaubt
@@ -272,9 +234,15 @@ App.goalMap = {
               return;
             }
             
-            // If goalie is active and long press, workflow will be started automatically
+            // If goalie is active and long press, start goal workflow
             if (long && !workflowActive) {
-              console.log('[Goal Map] Long press in red zone with active goalie - starting workflow');
+              console.log('[Goal Map] Long press in red zone with active goalie - starting goal workflow');
+              // Start the goal workflow with the active goalie
+              App.startGoalMapWorkflow(activeGoalie, 'goal');
+              // Now re-call placeMarker so it sees the workflow is active
+              // This will cause it to go through the workflow logic
+              placeMarker(pos, long, forceGrey);
+              return;
             }
           }
           
@@ -284,8 +252,8 @@ App.goalMap = {
           if (isGoalWorkflow) {
             color = neutralGrey;
           }
-          // Longpress oder erzwungen grau (z.B. Doppelklick)
-          else if (long || forceGrey) {
+          // Longpress in green zone or erzwungen grau (z.B. Doppelklick)
+          else if ((long && !isRedZone) || forceGrey) {
             color = neutralGrey;
           }
           // Normaler manueller Klick: oben grün, unten rot

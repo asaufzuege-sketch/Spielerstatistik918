@@ -292,6 +292,7 @@ const App = {
     
     const playerName = this.goalMapWorkflow.playerName;
     const eventType = this.goalMapWorkflow.eventType;
+    const workflowType = this.goalMapWorkflow.workflowType;
     const points = this.goalMapWorkflow.collectedPoints;
     
     // Save the collected points with player data
@@ -305,6 +306,7 @@ const App = {
     
     this.data.goalMapData[playerName].push({
       eventType: eventType,
+      workflowType: workflowType,
       points: points,
       timestamp: Date.now()
     });
@@ -333,8 +335,13 @@ const App = {
     this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
     
-    // Return to stats page
-    this.showPage('stats');
+    // Update workflow indicator to hide it
+    if (this.goalMap && typeof this.goalMap.updateWorkflowIndicator === 'function') {
+      this.goalMap.updateWorkflowIndicator();
+    }
+    
+    // Stay on Goal Map page - NO return to stats page
+    // User can continue marking more goals/shots
   },
   
   cancelGoalMapWorkflow() {
