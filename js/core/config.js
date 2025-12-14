@@ -151,10 +151,6 @@ const App = {
           font-size: 13px !important;
         }
       }
-      #seasonContainer table {
-        width: auto !important;
-        table-layout: auto !important;
-      }
     `;
     document.head.appendChild(style);
   },
