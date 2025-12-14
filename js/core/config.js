@@ -172,14 +172,16 @@ const App = {
         };
       }
       
-      // Alle Seiten verstecken
+      // Alle Seiten verstecken mit !important
       Object.values(this.pages).forEach(p => {
-        if (p) p.style.display = "none";
+        if (p) {
+          p.style.setProperty("display", "none", "important");
+        }
       });
       
       // Target-Seite anzeigen
       if (this.pages[page]) {
-        this.pages[page].style.display = "";
+        this.pages[page].style.removeProperty("display");
       }
       
       // Page in LocalStorage speichern

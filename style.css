@@ -547,11 +547,15 @@ body[data-workflow="conceded"] .period-buttons.top-row .time-btn {
 
 /* Season Page Layout - Tabelle exakt unter Titel zentrieren */
 #seasonPage {
-  display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   width: 100% !important;
   max-width: none;
+}
+
+/* When season page is visible, use flex layout */
+#seasonPage:not([style*="display: none"]) {
+  display: flex !important;
 }
 
 #seasonPage h1 {
