@@ -179,7 +179,7 @@ const App = {
       
       // Target-Seite anzeigen
       if (this.pages[page]) {
-        this.pages[page].style.display = "";
+        this.pages[page].style.display = "block";
       }
       
       // Page in LocalStorage speichern

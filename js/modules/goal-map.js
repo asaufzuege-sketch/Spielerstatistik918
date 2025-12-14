@@ -625,7 +625,7 @@ App.goalMap = {
                   // Fallback: Direkter Seitenwechsel
                   document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
                   const statsPage = document.getElementById('statsPage');
-                  if (statsPage) statsPage.style.display = '';
+                  if (statsPage) statsPage.style.display = 'block';
                 }
               }, App.goalMap.AUTO_NAVIGATION_DELAY_MS); // Kurze Verzögerung damit der User den +1 sieht
             }

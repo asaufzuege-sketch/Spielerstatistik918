@@ -57,7 +57,7 @@ App.playerSelection = {
       App.showPage("lineUp");
     } else {
       document.getElementById("playerSelectionPage").style.display = "none";
-      document.getElementById("lineUpPage").style.display = "";
+      document.getElementById("lineUpPage").style.display = "block";
     }
     
     // Render Line Up if available
@@ -304,7 +304,7 @@ App.playerSelection = {
         console.warn("App.showPage ist noch nicht definiert");
         // Fallback: Direkt die Seiten umschalten
         document.getElementById("playerSelectionPage").style.display = "none";
-        document.getElementById("statsPage").style.display = "";
+        document.getElementById("statsPage").style.display = "block";
       }
       
       if (App.statsTable && typeof App.statsTable.render === 'function') {
