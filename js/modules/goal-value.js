@@ -38,7 +38,7 @@ App.goalValue = {
   },
   
   setOpponents(arr) {
-    localStorage.setItem("goalValueOpponents", JSON. stringify(arr));
+    localStorage.setItem("goalValueOpponents", JSON.stringify(arr));
   },
   
   getData() {
@@ -138,7 +138,7 @@ App.goalValue = {
     } catch (e) {
       // Fallback: filter from selectedPlayers
       const goalieNames = (App.data.selectedPlayers || [])
-        .filter(p => p.position === "G")
+        .filter(p => p.position === "G" || p.isGoalie)
         .map(p => p.name);
       playersList = playersList.filter(name => !goalieNames.includes(name));
     }
@@ -360,9 +360,29 @@ App.goalValue = {
     if (! confirm("Reset Goal Value?")) return;
     
     const opponents = this.getOpponents();
-    const playersList = Object.keys(App. data.seasonData).length 
+    let playersList = Object.keys(App. data.seasonData).length 
       ? Object.keys(App. data.seasonData) 
       : App.data. selectedPlayers.map(p => p.name);
+    
+    // Filter out goalies - same logic as render()
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    
+    try {
+      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      const goalieNames = savedPlayers
+        .filter(p => p.position === "G" || p.isGoalie)
+        .map(p => p.name);
+      
+      playersList = playersList.filter(name => !goalieNames.includes(name));
+    } catch (e) {
+      // Fallback: filter from selectedPlayers
+      const goalieNames = (App.data. selectedPlayers || [])
+        .filter(p => p.position === "G" || p.isGoalie)
+        .map(p => p.name);
+      playersList = playersList.filter(name => !goalieNames.includes(name));
+    }
     
     const newData = {};
     playersList.forEach(n => newData[n] = opponents.map(() => 0));
