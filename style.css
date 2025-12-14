@@ -2156,17 +2156,25 @@ tr[data-player].dragging {
   border-color: #44bb91;
 }
 
+#addTimeModal .modal-buttons {
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: center !important;
+  margin-top: 20px !important;
+}
+
 #addTimeModal .modal-buttons button {
-  padding: 10px 20px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  box-sizing: border-box;
+  flex: 0 0 auto !important;
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  padding: 12px 20px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  border: none !important;
+  box-sizing: border-box !important;
 }
 
 #addTimeModal #addTimeConfirmBtn {
@@ -2287,12 +2295,12 @@ tr[data-player].dragging {
   display: flex !important;
   justify-content: center !important;
   align-items: flex-start !important;
+  width: 100% !important;
 }
 
 #seasonContainer table,
 #seasonContainer .season-table {
-  margin-left: auto !important;
-  margin-right: auto !important;
+  margin: 0 auto !important;
 }
 
 /* FIX: Line Up Button - consistent blue across all pages */
