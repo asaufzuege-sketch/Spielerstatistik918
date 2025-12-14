@@ -126,15 +126,22 @@ const App = {
         padding-left: 12px !important;
       }
       @media (min-width: 1200px) {
-        #seasonContainer, #goalValueContainer {
+        #seasonContainer {
+          width: 100% !important;
+          max-width: 100% !important;
+          overflow: visible !important;
+          display: flex !important;
+          justify-content: center !important;
+        }
+        #goalValueContainer {
           width: 100vw !important;
           overflow: visible !important;
         }
-        /* Season soll auf sehr breiten Screens nicht mehr horizontal scrollen */
         #seasonContainer .table-scroll {
-          overflow-x: hidden !important;
+          overflow-x: auto !important;
+          display: flex !important;
+          justify-content: center !important;
         }
-        /* Goal Value DARF weiterhin scrollen -> KEIN overflow-x: hidden! */
         #goalValueContainer .table-scroll {
           overflow-x: auto !important;
         }
@@ -143,6 +150,7 @@ const App = {
           table-layout: auto !important;
           white-space: nowrap !important;
           font-size: 13px !important;
+          margin: 0 auto !important;
         }
         #goalValueContainer table {
           width: auto !important;
