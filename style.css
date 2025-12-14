@@ -2163,7 +2163,9 @@ tr[data-player].dragging {
   margin-top: 20px !important;
 }
 
-#addTimeModal .modal-buttons button {
+#addTimeModal .modal-buttons button,
+#addTimeModal #addTimeCancelBtn,
+#addTimeModal #addTimeConfirmBtn {
   flex: 0 0 auto !important;
   width: 120px !important;
   min-width: 120px !important;

@@ -267,16 +267,16 @@ App.seasonTable = {
         .map(p => p.name);
     } catch (e) {}
 
-    // Filter out goalies from rows
-    rows = rows.filter(r => !goalieNames.includes(r.name));
+    // Filter out goalies from rows - use new variable instead of reassigning const
+    const filteredRows = rows.filter(r => !goalieNames.includes(r.name));
 
     // MVP Rank berechnen und eintragen
-    const sortedByMvp = rows.slice().sort((a, b) => (b.mvpPointsRounded || 0) - (a.mvpPointsRounded || 0));
+    const sortedByMvp = filteredRows.slice().sort((a, b) => (b.mvpPointsRounded || 0) - (a.mvpPointsRounded || 0));
     const uniqueScores = [...new Set(sortedByMvp.map(r => r.mvpPointsRounded))];
     const scoreToRank = {};
     uniqueScores.forEach((s, idx) => { scoreToRank[s] = idx + 1; });
 
-    rows.forEach(r => {
+    filteredRows.forEach(r => {
       const mvpIdx = headerCols.length - 2;
       const mvpPointsIdx = headerCols.length - 1;
       r.cells[mvpIdx] = (scoreToRank[r.mvpPointsRounded] || "");
@@ -284,7 +284,7 @@ App.seasonTable = {
     });
 
     // Sortieren
-    let displayRows = rows.slice();
+    let displayRows = filteredRows.slice();
     if (this.sortState.index === null) {
       displayRows.sort((a, b) => (b.raw.points || 0) - (a.raw.points || 0));
     } else {
@@ -345,13 +345,13 @@ App.seasonTable = {
     });
 
     // Total-Zeile
-    if (rows.length > 0) {
+    if (filteredRows.length > 0) {
       const sums = {
         games: 0, goals: 0, assists: 0, points: 0, plusMinus: 0,
         shots: 0, penalty: 0, faceOffs: 0, faceOffsWon: 0, timeSeconds: 0
       };
 
-      rows.forEach(r => {
+      filteredRows.forEach(r => {
         const rs = r.raw;
         sums.games += rs.games;
         sums.goals += rs.goals;
@@ -365,7 +365,7 @@ App.seasonTable = {
         sums.timeSeconds += rs.timeSeconds;
       });
 
-      const count = rows.length;
+      const count = filteredRows.length;
       const avgShotsPercent = sums.shots ? Math.round((sums.goals / sums.shots) * 100) : 0;
       const avgFacePercent = sums.faceOffs ? Math.round((sums.faceOffsWon / sums.faceOffs) * 100) : 0;
       const avgTime = Math.round(sums.timeSeconds / count);
