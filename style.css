@@ -545,13 +545,18 @@ body[data-workflow="conceded"] .period-buttons.top-row .time-btn {
 /* SEASON PAGE (Scroll wie Goal Value) */
 /* ====================== */
 
+/* Season Page Layout - Tabelle exakt unter Titel zentrieren */
 #seasonPage {
-  width: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
   max-width: none;
 }
 
 #seasonPage h1 {
-  text-align: center;
+  text-align: center !important;
+  width: 100% !important;
   margin: 12px 0;
 }
 
@@ -565,7 +570,10 @@ body[data-workflow="conceded"] .period-buttons.top-row .time-btn {
 }
 
 #seasonContainer {
-  width: 100%;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  width: 100% !important;
   max-width: 1100px;
   margin: 0 auto;
   overflow-x: auto !important;
