@@ -7,6 +7,7 @@ App.goalMap = {
   WORKFLOW_STEP_FIELD: 0, // First step: click in field
   WORKFLOW_STEP_GOAL: 1, // Second step: click in goal
   WORKFLOW_STEP_TIME: 2, // Third step: click time button
+  AUTO_NAVIGATION_DELAY_MS: 300, // Delay before auto-navigating after workflow completion
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -95,14 +96,14 @@ App.goalMap = {
       };
       
       const placeMarker = (pos, long, forceGrey = false) => {
-        const workflowActive = App.goalMapWorkflow?.active;
-        const eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
-        const workflowType = App.goalMapWorkflow?.workflowType; // 'scored' | 'conceded' | null
-        const isGoalWorkflow = workflowActive && eventType === 'goal';
-        const isScoredWorkflow = workflowType === 'scored';
-        const isConcededWorkflow = workflowType === 'conceded';
+        let workflowActive = App.goalMapWorkflow?.active;
+        let eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
+        let workflowType = App.goalMapWorkflow?.workflowType; // 'scored' | 'conceded' | null
+        let isGoalWorkflow = workflowActive && eventType === 'goal';
+        let isScoredWorkflow = workflowType === 'scored';
+        let isConcededWorkflow = workflowType === 'conceded';
         const neutralGrey = "#444444";
-        const currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
+        let currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
         
         const pointPlayer =
           this.playerFilter ||
@@ -222,19 +223,18 @@ App.goalMap = {
               return;
             }
             
-            // Kurzer Klick = Roter Punkt (Shot)
+            // Kurzer Klick = Roter Punkt (Shot) - NUR bei kurzem Klick!
             if (!long) {
               App.markerHandler.createMarkerPercent(
                 pos.xPctContainer, pos.yPctContainer,
                 "#ff0000", box, true,
                 activeGoalie.name, null, 'conceded'
               );
-              return;
+              return; // WICHTIG: Hier beenden, kein Workflow
             }
             
-            // Langer Klick = Grauer Punkt + Workflow starten
-            // Note: We initialize the workflow directly here instead of using App.startGoalMapWorkflow()
-            // because we don't want a page transition - the user is already on the Goal Map
+            // Langer Klick = DIREKT Workflow starten mit grauem Punkt
+            // KEIN roter Punkt hier!
             if (long) {
               App.goalMapWorkflow.active = true;
               App.goalMapWorkflow.eventType = 'goal';
@@ -250,7 +250,18 @@ App.goalMap = {
                 App.goalMap.updateWorkflowIndicator();
               }
               
-              // Continue with marker creation below
+              // KRITISCH: Lokale Variablen aktualisieren damit der graue Punkt erstellt wird
+              // Diese Variablen wurden am Anfang von placeMarker gelesen, müssen jetzt aktualisiert werden
+              workflowActive = true;
+              eventType = 'goal';
+              workflowType = 'conceded';
+              isGoalWorkflow = true;
+              isScoredWorkflow = false;
+              isConcededWorkflow = true;
+              currentStep = 0;
+              
+              // GRAUER Punkt wird unten in der field-box Sektion erstellt
+              // (weil isGoalWorkflow jetzt true ist, wird dort neutralGrey verwendet)
             }
           }
           
@@ -604,6 +615,21 @@ App.goalMap = {
             
             // Record time button click by calling updateValue
             updateValue(1);
+            
+            // Automatisch zu Game Data (Stats Page) zurückkehren nach grünem Workflow
+            if (workflowType === 'scored') {
+              setTimeout(() => {
+                if (typeof App.showPage === 'function') {
+                  App.showPage('stats');
+                } else {
+                  // Fallback: Direkter Seitenwechsel
+                  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+                  const statsPage = document.getElementById('statsPage');
+                  if (statsPage) statsPage.style.display = 'block';
+                }
+              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS); // Kurze Verzögerung damit der User den +1 sieht
+            }
+            
             return;
           }
           
