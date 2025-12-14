@@ -7,6 +7,7 @@ App.goalMap = {
   WORKFLOW_STEP_FIELD: 0, // First step: click in field
   WORKFLOW_STEP_GOAL: 1, // Second step: click in goal
   WORKFLOW_STEP_TIME: 2, // Third step: click time button
+  AUTO_NAVIGATION_DELAY_MS: 300, // Delay before auto-navigating after workflow completion
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -626,7 +627,7 @@ App.goalMap = {
                   const statsPage = document.getElementById('statsPage');
                   if (statsPage) statsPage.style.display = 'block';
                 }
-              }, 300); // Kurze Verzögerung damit der User den +1 sieht
+              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS); // Kurze Verzögerung damit der User den +1 sieht
             }
             
             return;
