@@ -254,6 +254,22 @@ App.seasonTable = {
       };
     });
 
+    // Filter out goalies from the player list
+    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+
+    let goalieNames = [];
+    try {
+      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      goalieNames = savedPlayers
+        .filter(p => p.position === "G" || p.isGoalie)
+        .map(p => p.name);
+    } catch (e) {}
+
+    // Filter out goalies from rows
+    rows = rows.filter(r => !goalieNames.includes(r.name));
+
     // MVP Rank berechnen und eintragen
     const sortedByMvp = rows.slice().sort((a, b) => (b.mvpPointsRounded || 0) - (a.mvpPointsRounded || 0));
     const uniqueScores = [...new Set(sortedByMvp.map(r => r.mvpPointsRounded))];
