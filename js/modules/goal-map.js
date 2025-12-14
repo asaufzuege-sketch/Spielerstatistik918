@@ -3,7 +3,6 @@
 App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
-  activeGoalie: null, // Tracks the currently selected goalie for red workflow
   VERTICAL_SPLIT_THRESHOLD: 50, // y-percent threshold for green (top) vs red (bottom) half
   
   init() {
@@ -154,18 +153,19 @@ App.goalMap = {
           }
         }
         
-        // ROTES TOR: Nur wenn Goalie ausgewählt UND im Workflow Schritt 1
-        if (box.id === "goalRedBox") {
+        // ROTES TOR: Nur mit Workflow und im richtigen Schritt
+        if (box.id === "goalRedBox" && !workflowActive) {
           const activeGoalie = this.getActiveGoalie();
           if (!activeGoalie) {
             alert('Please select a goalie first');
             return;
           }
-          // Rotes Tor nur im Workflow Schritt 1 (nach Feldpunkt)
-          if (!workflowActive || !isConcededWorkflow || currentStep !== 1) {
-            console.log('[Goal Map] Red goal only allowed in workflow step 1 (after field point)');
-            return;
-          }
+          // Ohne Workflow: Kein Punkt im roten Tor
+          return;
+        }
+        
+        if (box.id === "goalRedBox" && workflowActive && isConcededWorkflow && currentStep !== 1) {
+          return; // Nur in Schritt 1 (nach Feldpunkt) erlaubt
         }
         
         // TOR-BOXEN: immer Graupunkt
@@ -208,30 +208,35 @@ App.goalMap = {
         if (box.classList.contains("field-box")) {
           const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
           
-          // Check if clicking in red zone - require active goalie
-          if (isRedZone && !isGoalWorkflow) {
+          // ROTE ZONE - Goalie muss ausgewählt sein
+          if (!workflowActive && isRedZone) {
             const activeGoalie = this.getActiveGoalie();
             
-            // If no goalie selected, block any interaction in red zone
             if (!activeGoalie) {
-              alert("Please select a goalie first");
-              console.log('[Goal Map] Red zone click without active goalie');
+              alert('Please select a goalie first');
               return;
             }
             
-            // If goalie is active and long press, start goal workflow
-            if (long && !workflowActive) {
-              console.log('[Goal Map] Long press in red zone with active goalie - starting goal workflow');
-              // Start the goal workflow with the active goalie
-              App.startGoalMapWorkflow(activeGoalie, 'goal');
-              // The workflow is now active, and this placeMarker call will be part of step 0
-              // Re-run the workflow logic by returning and letting the workflow handle placement
-              const newWorkflowActive = App.goalMapWorkflow?.active;
-              if (newWorkflowActive) {
-                // Recursively call placeMarker with workflow now active
-                placeMarker(pos, long, forceGrey);
-                return;
-              }
+            // Kurzer Klick = Roter Punkt (Shot)
+            if (!long) {
+              App.markerHandler.createMarkerPercent(
+                pos.xPctContainer, pos.yPctContainer,
+                "#ff0000", box, true,
+                activeGoalie.name, null, 'conceded'
+              );
+              return;
+            }
+            
+            // Langer Klick = Grauer Punkt + Workflow starten
+            if (long) {
+              App.goalMapWorkflow.active = true;
+              App.goalMapWorkflow.eventType = 'goal';
+              App.goalMapWorkflow.workflowType = 'conceded';
+              App.goalMapWorkflow.playerName = activeGoalie.name;
+              App.goalMapWorkflow.requiredPoints = 3;
+              App.goalMapWorkflow.collectedPoints = [];
+              App.goalMapWorkflow.sessionId = 'wf_' + Date.now();
+              // Continue with marker creation below
             }
           }
           
@@ -350,26 +355,12 @@ App.goalMap = {
     });
   },
   
-  // Get currently active goalie from multiple sources
+  // Get currently active goalie - simple dropdown check only
   getActiveGoalie() {
-    // Priority: 1) activeGoalie property, 2) goalie filter dropdown, 3) playerFilter if it's a goalie
-    if (this.activeGoalie) {
-      return this.activeGoalie;
+    const goalieDropdown = document.getElementById('goalMapGoalieFilter');
+    if (goalieDropdown && goalieDropdown.value) {
+      return { name: goalieDropdown.value, position: 'G' };
     }
-    
-    const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
-    if (goalieFilterSelect && goalieFilterSelect.value) {
-      return goalieFilterSelect.value;
-    }
-    
-    // Check if playerFilter is a goalie
-    if (this.playerFilter) {
-      const player = (App.data.selectedPlayers || []).find(p => p.name === this.playerFilter);
-      if (player && player.position === "G") {
-        return this.playerFilter;
-      }
-    }
-    
     return null;
   },
   
@@ -388,66 +379,57 @@ App.goalMap = {
     }
   },
   
-  // Show goalie name overlay in red zone
+  // Show goalie name overlay - TRANSPARENT text only, no background
   showGoalieNameOverlay(goalieName) {
-    // Create overlay in red field area (bottom half)
-    const fieldBox = document.getElementById("fieldBox");
+    // Remove old overlays
+    document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
+    
+    if (!goalieName) return;
+    
+    // Extract last name
+    const lastName = goalieName.split(' ').pop().toUpperCase();
+    
+    // Overlay in field (red half) - TRANSPARENT
+    const fieldBox = document.getElementById('fieldBox');
     if (fieldBox) {
-      let fieldOverlay = fieldBox.querySelector(".goalie-name-overlay");
-      if (!fieldOverlay) {
-        fieldOverlay = document.createElement("div");
-        fieldOverlay.className = "goalie-name-overlay";
-        fieldOverlay.style.cssText = `
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 50%;
-          background: rgba(139, 0, 0, 0.3);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 24px;
-          pointer-events: none;
-          z-index: 100;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        `;
-        fieldBox.appendChild(fieldOverlay);
-      }
-      fieldOverlay.textContent = `🥅 ${goalieName}`;
-      fieldOverlay.style.display = "flex";
+      const overlay = document.createElement('div');
+      overlay.className = 'goalie-name-overlay';
+      overlay.textContent = lastName;
+      overlay.style.cssText = `
+        position: absolute;
+        bottom: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 3rem;
+        font-weight: bold;
+        color: rgba(255, 0, 0, 0.15);
+        pointer-events: none;
+        z-index: 5;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+      `;
+      fieldBox.appendChild(overlay);
     }
     
-    // Create overlay in red goal box
-    const goalRedBox = document.getElementById("goalRedBox");
+    // Overlay in red goal - TRANSPARENT
+    const goalRedBox = document.getElementById('goalRedBox');
     if (goalRedBox) {
-      let goalOverlay = goalRedBox.querySelector(".goalie-name-overlay");
-      if (!goalOverlay) {
-        goalOverlay = document.createElement("div");
-        goalOverlay.className = "goalie-name-overlay";
-        goalOverlay.style.cssText = `
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(139, 0, 0, 0.3);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 18px;
-          pointer-events: none;
-          z-index: 100;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        `;
-        goalRedBox.appendChild(goalOverlay);
-      }
-      goalOverlay.textContent = `🥅 ${goalieName}`;
-      goalOverlay.style.display = "flex";
+      const overlay = document.createElement('div');
+      overlay.className = 'goalie-name-goal';
+      overlay.textContent = lastName;
+      overlay.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: rgba(255, 0, 0, 0.2);
+        pointer-events: none;
+        z-index: 5;
+        text-transform: uppercase;
+      `;
+      goalRedBox.appendChild(overlay);
     }
   },
   
@@ -455,22 +437,12 @@ App.goalMap = {
   updateGoalieNameOverlay() {
     const goalie = this.getActiveGoalie();
     
-    if (goalie) {
-      // If goalie is set, create/show overlays
-      this.showGoalieNameOverlay(goalie);
+    if (goalie && goalie.name) {
+      // If goalie is set, show overlay
+      this.showGoalieNameOverlay(goalie.name);
     } else {
-      // If no goalie, hide overlays
-      const fieldBox = document.getElementById("fieldBox");
-      const fieldOverlay = fieldBox?.querySelector(".goalie-name-overlay");
-      if (fieldOverlay) {
-        fieldOverlay.style.display = "none";
-      }
-      
-      const goalRedBox = document.getElementById("goalRedBox");
-      const goalOverlay = goalRedBox?.querySelector(".goalie-name-overlay");
-      if (goalOverlay) {
-        goalOverlay.style.display = "none";
-      }
+      // If no goalie, remove overlays
+      document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
     }
   },
   
@@ -488,7 +460,6 @@ App.goalMap = {
     
     const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
     if (savedGoalie) {
-      this.activeGoalie = savedGoalie;
       const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
       if (goalieFilterSelect) {
         goalieFilterSelect.value = savedGoalie;
@@ -576,7 +547,7 @@ App.goalMap = {
         };
         
         newBtn.addEventListener("click", () => {
-          // ROTE BUTTONS: Nur wenn Goalie ausgewählt
+          // Am Anfang des click handlers - ROTE BUTTONS blockieren
           const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
           if (isBottomRow) {
             const activeGoalie = App.goalMap.getActiveGoalie();
@@ -584,14 +555,10 @@ App.goalMap = {
               alert('Please select a goalie first');
               return;
             }
-            // Rote Buttons nur im Workflow Schritt 2 (nach Feldpunkt + Tor)
-            if (!App.goalMapWorkflow?.active || App.goalMapWorkflow?.workflowType !== 'conceded') {
-              console.log('[Goal Map] Red time buttons only allowed in conceded workflow');
-              return;
-            }
-            const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
-            if (currentStep !== 2) {
-              console.log('[Goal Map] Red time buttons only allowed after field and goal');
+            // Ohne Workflow oder falscher Schritt: blockieren
+            if (!App.goalMapWorkflow?.active || 
+                App.goalMapWorkflow?.workflowType !== 'conceded' ||
+                (App.goalMapWorkflow.collectedPoints?.length || 0) !== 2) {
               return;
             }
           }
@@ -691,8 +658,7 @@ App.goalMap = {
       goalieFilterSelect.addEventListener("change", () => {
         const selectedGoalie = goalieFilterSelect.value;
         
-        // Set active goalie for red workflow
-        this.activeGoalie = selectedGoalie || null;
+        // Save to localStorage
         if (selectedGoalie) {
           localStorage.setItem("goalMapActiveGoalie", selectedGoalie);
         } else {
@@ -975,74 +941,4 @@ App.goalMap = {
     this.initTimeTracking();
     
     alert("Goal Map reset.");
-  },
-  
-  // Show Goalie Selection Modal
-  showGoalieSelectionModal(callback) {
-    // Get goalies from currently selected players
-    const goalies = App.data.selectedPlayers?.filter(p => p.position === "G") || [];
-    
-    if (goalies.length === 0) {
-      // WICHTIG: Wenn keine Goalies, trotzdem den Marker setzen mit "Unknown Goalie"
-      console.warn('[Goal Map] No goalies found, using default');
-      callback("Unknown Goalie");
-      return;
-    }
-    
-    const list = document.getElementById("goalieSelectionList");
-    if (!list) {
-      console.error("goalieSelectionList element not found");
-      callback(null);
-      return;
-    }
-    
-    // Clear existing content
-    list.innerHTML = "";
-    
-    // Create goalie options with proper escaping
-    goalies.forEach(g => {
-      const label = document.createElement("label");
-      label.className = "goalie-option";
-      
-      const radio = document.createElement("input");
-      radio.type = "radio";
-      radio.name = "goalieSelect";
-      radio.value = g.name;
-      
-      const span = document.createElement("span");
-      span.textContent = g.name; // textContent automatically escapes HTML
-      
-      label.appendChild(radio);
-      label.appendChild(span);
-      list.appendChild(label);
-    });
-    
-    const modal = document.getElementById("goalieSelectionModal");
-    if (!modal) {
-      console.error("goalieSelectionModal element not found");
-      callback(null);
-      return;
-    }
-    
-    modal.style.display = "flex";
-    
-    const confirmBtn = document.getElementById("goalieSelectionConfirm");
-    const cancelBtn = document.getElementById("goalieSelectionCancel");
-    
-    // Use event handler properties to avoid duplicate listeners
-    confirmBtn.onclick = () => {
-      const selected = document.querySelector('input[name="goalieSelect"]:checked');
-      if (selected) {
-        modal.style.display = "none";
-        callback(selected.value);
-      } else {
-        alert("Please select a goalie");
-      }
-    };
-    
-    cancelBtn.onclick = () => {
-      modal.style.display = "none";
-      callback(null);
-    };
-  }
 };
