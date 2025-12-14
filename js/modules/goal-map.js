@@ -154,6 +154,20 @@ App.goalMap = {
           }
         }
         
+        // ROTES TOR: Nur wenn Goalie ausgewählt UND im Workflow Schritt 1
+        if (box.id === "goalRedBox") {
+          const activeGoalie = this.getActiveGoalie();
+          if (!activeGoalie) {
+            alert('Please select a goalie first');
+            return;
+          }
+          // Rotes Tor nur im Workflow Schritt 1 (nach Feldpunkt)
+          if (!workflowActive || !isConcededWorkflow || currentStep !== 1) {
+            console.log('[Goal Map] Red goal only allowed in workflow step 2');
+            return;
+          }
+        }
+        
         // TOR-BOXEN: immer Graupunkt
         if (isGoalBox) {
           const sampler = App.markerHandler.createImageSampler(img);
@@ -165,16 +179,6 @@ App.goalMap = {
             if (!sampler.isNeutralWhiteAt(pos.xPctContainer, pos.yPctContainer, 235, 12)) return;
           } else {
             if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
-          }
-          
-          // Red goal box: If no workflow and no active goalie, show warning (NO MODAL!)
-          if (box.id === "goalRedBox" && !workflowActive) {
-            const activeGoalie = this.getActiveGoalie();
-            if (!activeGoalie) {
-              alert("Please select a goalie first");
-              console.log('[Goal Map] Red goal box click without active goalie');
-              return;
-            }
           }
           
           const color = neutralGrey;
@@ -572,6 +576,26 @@ App.goalMap = {
         };
         
         newBtn.addEventListener("click", () => {
+          // ROTE BUTTONS: Nur wenn Goalie ausgewählt
+          const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
+          if (isBottomRow) {
+            const activeGoalie = App.goalMap.getActiveGoalie();
+            if (!activeGoalie) {
+              alert('Please select a goalie first');
+              return;
+            }
+            // Rote Buttons nur im Workflow Schritt 2 (nach Feldpunkt + Tor)
+            if (!App.goalMapWorkflow?.active || App.goalMapWorkflow?.workflowType !== 'conceded') {
+              console.log('[Goal Map] Red time buttons only allowed in conceded workflow');
+              return;
+            }
+            const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
+            if (currentStep !== 2) {
+              console.log('[Goal Map] Red time buttons only allowed after field and goal');
+              return;
+            }
+          }
+          
           // Im Goal-Workflow: Nur im Schritt 2 (nach Feld + Tor) erlaubt
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
             const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
