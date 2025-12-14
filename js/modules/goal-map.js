@@ -4,6 +4,9 @@ App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
   VERTICAL_SPLIT_THRESHOLD: 50, // y-percent threshold for green (top) vs red (bottom) half
+  WORKFLOW_STEP_FIELD: 0, // First step: click in field
+  WORKFLOW_STEP_GOAL: 1, // Second step: click in goal
+  WORKFLOW_STEP_TIME: 2, // Third step: click time button
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -119,7 +122,7 @@ App.goalMap = {
           const isRedGoal = box.id === "goalRedBox";
           
           // Schritt 0: NUR Spielfeld erlaubt
-          if (currentStep === 0) {
+          if (currentStep === this.WORKFLOW_STEP_FIELD) {
             if (!isFieldBox) {
               console.log('[Goal Workflow] Step 1: Please click point in field first');
               return; // Blockiere alle anderen Bereiche
@@ -136,7 +139,7 @@ App.goalMap = {
             }
           }
           // Schritt 1: Nur entsprechendes Tor erlaubt
-          else if (currentStep === 1) {
+          else if (currentStep === this.WORKFLOW_STEP_GOAL) {
             if (isScoredWorkflow && !isGreenGoal) {
               console.log('[Goal Workflow] Step 2: Please click point in green goal');
               return;
@@ -154,18 +157,20 @@ App.goalMap = {
         }
         
         // ROTES TOR: Nur mit Workflow und im richtigen Schritt
-        if (box.id === "goalRedBox" && !workflowActive) {
+        if (box.id === "goalRedBox") {
           const activeGoalie = this.getActiveGoalie();
           if (!activeGoalie) {
             alert('Please select a goalie first');
             return;
           }
           // Ohne Workflow: Kein Punkt im roten Tor
-          return;
-        }
-        
-        if (box.id === "goalRedBox" && workflowActive && isConcededWorkflow && currentStep !== 1) {
-          return; // Nur in Schritt 1 (nach Feldpunkt) erlaubt
+          if (!workflowActive) {
+            return;
+          }
+          // Im Workflow: Nur in Schritt 1 (nach Feldpunkt) und im conceded workflow erlaubt
+          if (!isConcededWorkflow || currentStep !== this.WORKFLOW_STEP_GOAL) {
+            return;
+          }
         }
         
         // TOR-BOXEN: immer Graupunkt
@@ -228,6 +233,8 @@ App.goalMap = {
             }
             
             // Langer Klick = Grauer Punkt + Workflow starten
+            // Note: We initialize the workflow directly here instead of using App.startGoalMapWorkflow()
+            // because we don't want a page transition - the user is already on the Goal Map
             if (long) {
               App.goalMapWorkflow.active = true;
               App.goalMapWorkflow.eventType = 'goal';
@@ -565,7 +572,7 @@ App.goalMap = {
             // Ohne Workflow oder falscher Schritt: blockieren
             if (!App.goalMapWorkflow?.active || 
                 App.goalMapWorkflow?.workflowType !== 'conceded' ||
-                (App.goalMapWorkflow.collectedPoints?.length || 0) !== 2) {
+                (App.goalMapWorkflow.collectedPoints?.length || 0) !== App.goalMap.WORKFLOW_STEP_TIME) {
               return;
             }
           }
@@ -574,7 +581,7 @@ App.goalMap = {
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
             const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
             
-            if (currentStep !== 2) {
+            if (currentStep !== App.goalMap.WORKFLOW_STEP_TIME) {
               console.log('[Goal Workflow] Timebox only after field and goal');
               return;
             }
