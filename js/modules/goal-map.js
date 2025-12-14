@@ -234,8 +234,15 @@ App.goalMap = {
               App.goalMapWorkflow.workflowType = 'conceded';
               App.goalMapWorkflow.playerName = activeGoalie.name;
               App.goalMapWorkflow.requiredPoints = 3;
+              App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
               App.goalMapWorkflow.collectedPoints = [];
               App.goalMapWorkflow.sessionId = 'wf_' + Date.now();
+              
+              // Update workflow indicator
+              if (App.goalMap && typeof App.goalMap.updateWorkflowIndicator === 'function') {
+                App.goalMap.updateWorkflowIndicator();
+              }
+              
               // Continue with marker creation below
             }
           }
@@ -941,4 +948,5 @@ App.goalMap = {
     this.initTimeTracking();
     
     alert("Goal Map reset.");
+  }
 };
