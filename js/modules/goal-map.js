@@ -222,19 +222,18 @@ App.goalMap = {
               return;
             }
             
-            // Kurzer Klick = Roter Punkt (Shot)
+            // Kurzer Klick = Roter Punkt (Shot) - NUR bei kurzem Klick!
             if (!long) {
               App.markerHandler.createMarkerPercent(
                 pos.xPctContainer, pos.yPctContainer,
                 "#ff0000", box, true,
                 activeGoalie.name, null, 'conceded'
               );
-              return;
+              return; // WICHTIG: Hier beenden, kein Workflow
             }
             
-            // Langer Klick = Grauer Punkt + Workflow starten
-            // Note: We initialize the workflow directly here instead of using App.startGoalMapWorkflow()
-            // because we don't want a page transition - the user is already on the Goal Map
+            // Langer Klick = DIREKT Workflow starten mit grauem Punkt
+            // KEIN roter Punkt hier!
             if (long) {
               App.goalMapWorkflow.active = true;
               App.goalMapWorkflow.eventType = 'goal';
@@ -250,7 +249,17 @@ App.goalMap = {
                 App.goalMap.updateWorkflowIndicator();
               }
               
-              // Continue with marker creation below
+              // KRITISCH: Lokale Variablen aktualisieren damit der graue Punkt erstellt wird
+              // Diese Variablen wurden am Anfang von placeMarker gelesen, müssen jetzt aktualisiert werden
+              workflowActive = true;
+              eventType = 'goal';
+              workflowType = 'conceded';
+              isGoalWorkflow = true;
+              isConcededWorkflow = true;
+              currentStep = 0;
+              
+              // GRAUER Punkt wird unten in der field-box Sektion erstellt
+              // (weil isGoalWorkflow jetzt true ist, wird dort neutralGrey verwendet)
             }
           }
           
@@ -604,6 +613,21 @@ App.goalMap = {
             
             // Record time button click by calling updateValue
             updateValue(1);
+            
+            // Automatisch zu Game Data (Stats Page) zurückkehren nach grünem Workflow
+            if (workflowType === 'scored') {
+              setTimeout(() => {
+                if (typeof App.showPage === 'function') {
+                  App.showPage('stats');
+                } else {
+                  // Fallback: Direkter Seitenwechsel
+                  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+                  const statsPage = document.getElementById('statsPage');
+                  if (statsPage) statsPage.style.display = 'block';
+                }
+              }, 300); // Kurze Verzögerung damit der User den +1 sieht
+            }
+            
             return;
           }
           
