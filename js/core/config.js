@@ -68,7 +68,16 @@ const App = {
     const style = document.createElement('style');
     style.id = 'season-goalvalue-left-align';
     style.textContent = `
-      #seasonContainer, #goalValueContainer {
+      #seasonContainer {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+      }
+      #goalValueContainer {
         display: flex !important;
         justify-content: flex-start !important;
         align-items: flex-start !important;
@@ -84,7 +93,14 @@ const App = {
         width: 100% !important;
         box-sizing: border-box !important;
       }
-      #seasonContainer table, #goalValueContainer table {
+      #seasonContainer table {
+        white-space: nowrap !important;
+        margin: 0 auto !important;
+        width: auto !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+      }
+      #goalValueContainer table {
         white-space: nowrap !important;
         margin-left: 0 !important;
         margin-right: auto !important;
