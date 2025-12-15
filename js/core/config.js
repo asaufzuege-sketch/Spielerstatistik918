@@ -396,6 +396,11 @@ const App = {
       this.goalMap.updateWorkflowIndicator();
     }
     
+    // Remove player name overlay
+    if (this.goalMap && typeof this.goalMap.updatePlayerNameOverlay === 'function') {
+      this.goalMap.updatePlayerNameOverlay();
+    }
+    
     // Stay on Goal Map page - NO return to stats page
     // User can continue marking more goals/shots
   },
@@ -409,5 +414,10 @@ const App = {
     this.goalMapWorkflow.requiredPoints = 0;
     this.goalMapWorkflow.pointTypes = [];
     console.log('Goal Map workflow cancelled');
+    
+    // Remove player name overlay
+    if (this.goalMap && typeof this.goalMap.updatePlayerNameOverlay === 'function') {
+      this.goalMap.updatePlayerNameOverlay();
+    }
   }
 };

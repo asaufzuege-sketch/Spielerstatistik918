@@ -135,6 +135,11 @@ App.goalMap = {
               App.goalMapWorkflow.workflowType = isRedZone ? 'conceded' : 'scored';
               console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow at y=${pos.yPctImage}%`);
               
+              // Update overlays
+              if (App.goalMap && typeof App.goalMap.updatePlayerNameOverlay === 'function') {
+                App.goalMap.updatePlayerNameOverlay();
+              }
+              
               // Goalie should already be set by startGoalMapWorkflow
               // No modal needed here, workflow was started with goalie pre-selected
             }
@@ -476,6 +481,52 @@ App.goalMap = {
     } else {
       // If no goalie, remove overlays
       document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
+    }
+  },
+  
+  // Show player name overlay in GREEN field area during scored workflow
+  showPlayerNameOverlay(playerName) {
+    // Remove old player overlays
+    document.querySelectorAll('.player-name-overlay').forEach(el => el.remove());
+    
+    if (!playerName) return;
+    
+    // Extract last name
+    const lastName = playerName.split(' ').pop().toUpperCase();
+    
+    // Overlay in field (GREEN half - top) - TRANSPARENT
+    const fieldBox = document.getElementById('fieldBox');
+    if (fieldBox) {
+      const overlay = document.createElement('div');
+      overlay.className = 'player-name-overlay';
+      overlay.textContent = lastName;
+      overlay.style.cssText = `
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 3rem;
+        font-weight: bold;
+        color: rgba(0, 255, 102, 0.15);
+        pointer-events: none;
+        z-index: 5;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+      `;
+      fieldBox.appendChild(overlay);
+    }
+  },
+  
+  // Update player name overlay based on workflow state
+  updatePlayerNameOverlay() {
+    const workflow = App.goalMapWorkflow;
+    
+    if (workflow?.active && workflow?.eventType === 'goal' && workflow?.workflowType === 'scored' && workflow?.playerName) {
+      // If scored workflow is active, show player name
+      this.showPlayerNameOverlay(workflow.playerName);
+    } else {
+      // If no scored workflow, remove overlays
+      document.querySelectorAll('.player-name-overlay').forEach(el => el.remove());
     }
   },
   
@@ -889,6 +940,9 @@ App.goalMap = {
       indicator.style.display = 'none';
       textEl.textContent = "";
     }
+    
+    // Update player name overlay for scored workflow
+    this.updatePlayerNameOverlay();
   },
   
   exportGoalMap() {

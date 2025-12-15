@@ -353,6 +353,22 @@ h1 {
   letter-spacing: 4px;
 }
 
+/* Player Name Overlay in Green Field Area */
+.player-name-overlay {
+  position: absolute;
+  top: 25%; /* Middle of green area (top half) */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 48px;
+  font-weight: bold;
+  color: rgba(0, 255, 102, 0.15); /* Green with 15% transparency */
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 1;
+  letter-spacing: 8px;
+  user-select: none;
+}
+
 
 .confirm-btn {
   background: #44bb91;
