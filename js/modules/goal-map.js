@@ -297,6 +297,15 @@ App.goalMap = {
             pointPlayer
           );
           
+          // NEU: Nach Shot (kurzer Klick, KEIN Workflow) sofort zurück zu Game Data
+          if (!workflowActive && !long) {
+            setTimeout(() => {
+              if (typeof App.showPage === 'function') {
+                App.showPage('stats');
+              }
+            }, 300);
+          }
+          
           if (workflowActive) {
             App.addGoalMapPoint(
               "field",
