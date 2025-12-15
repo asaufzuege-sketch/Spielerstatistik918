@@ -666,7 +666,7 @@ App.goalMap = {
     filterSelect.innerHTML = '<option value="">All Players</option>';
     // Nur Spieler ohne Goalie-Position (G) in die Liste aufnehmen
     (App.data.selectedPlayers || [])
-      .filter(player => player.position !== "G")
+      .filter(player => player.position !== "G" && !player.isGoalie)
       .forEach(player => {
         const option = document.createElement("option");
         option.value = player.name;
