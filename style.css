@@ -305,44 +305,31 @@ h1 {
   }
 }
 
-copilot/fix-shot-workflow-return
-/* Goalie Button - ROT pulsierend */
-@keyframes neon-pulse-red {
-  0%, 100% {
-    box-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444;
 /* Red pulsing animation for goalie button */
 @keyframes neon-pulse-red {
   0%, 100% {
     box-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444, 0 0 15px #ff4444;
-copilot/change-line-mode-functionality
   }
   50% {
     box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444, 0 0 30px #ff4444;
   }
 }
 
-copilot/fix-shot-workflow-return
-/* Player Button - GRÜN pulsierend */
+/* Green pulsing animation for player button */
 @keyframes neon-pulse-green {
   0%, 100% {
-    box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
+    box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88, 0 0 15px #00ff88;
   }
   50% {
     box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
   }
 }
 
-/* Task 3: Pulsing Neon-Glow for Active Goalie Button - ROT */
-#goalMapGoalieFilter.active {
-  animation: neon-pulse-red 2s ease-in-out infinite !important;
-  border: 2px solid #ff4444 !important;
-  color: #ff4444 !important;
-/* Task 3: Pulsing Neon-Glow for Active Goalie Button */
+/* Pulsing Neon-Glow for Active Goalie Button - ROT */
 #goalMapGoalieFilter.active {
   animation: neon-pulse-red 2s ease-in-out infinite;
   border: 2px solid #ff4444 !important;
   color: #ff4444;
-copilot/change-line-mode-functionality
 }
 
 /* Pulsing Neon-Glow for Active Player Filter Button - GRÜN */
@@ -583,23 +570,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period-buttons.top-row .time-btn:hover { background-color: #b2f0b2; }
 .period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
 .time-btn:active { transform: scale(1.05); }
-copilot/revert-css-changes-pr-168
-Visual deactivation of time buttons during workflows */
-/* Während grünem Workflow: Rote Buttons ausgegraut */
-body.workflow-scored .period-buttons.bottom-row .time-btn {
-  opacity: 0.3;
-  pointer-events: none;
-  cursor: not-allowed;
-  filter: grayscale(80%);
-}
-
-/* Während rotem Workflow: Grüne Buttons ausgegraut */
-body.workflow-conceded .period-buttons.top-row .time-btn {
-  opacity: 0.3;
-  pointer-events: none;
-  cursor: not-allowed;
-  filter: grayscale(80%);
-}
 
 /* Shot workflow: ALL timebox buttons disabled and grayed out */
 body[data-workflow="shot"] .period-buttons .time-btn {
@@ -608,7 +578,7 @@ body[data-workflow="shot"] .period-buttons .time-btn {
   cursor: not-allowed;
   filter: grayscale(100%);
 }
-copilot/change-line-mode-functionality
+
 /* ====================== */
 /* SEASON PAGE (Scroll wie Goal Value) */
 /* ====================== */
