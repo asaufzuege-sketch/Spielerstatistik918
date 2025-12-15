@@ -428,6 +428,11 @@ const App = {
     this.goalMapWorkflow.pointTypes = [];
     console.log('Goal Map workflow cancelled');
     
+    // Update workflow indicator to hide it and remove body classes
+    if (this.goalMap && typeof this.goalMap.updateWorkflowIndicator === 'function') {
+      this.goalMap.updateWorkflowIndicator();
+    }
+    
     // Remove player name overlay
     if (this.goalMap && typeof this.goalMap.updatePlayerNameOverlay === 'function') {
       this.goalMap.updatePlayerNameOverlay();
