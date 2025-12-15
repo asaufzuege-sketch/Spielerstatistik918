@@ -428,7 +428,9 @@ const App = {
     this.goalMapWorkflow.pointTypes = [];
     console.log('Goal Map workflow cancelled');
     
+copilot/block-timebox-buttons-shot-workflow
     // Update workflow indicator to hide it and remove body classes
+copilot/change-line-mode-functionality
     if (this.goalMap && typeof this.goalMap.updateWorkflowIndicator === 'function') {
       this.goalMap.updateWorkflowIndicator();
     }

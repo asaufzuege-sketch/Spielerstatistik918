@@ -583,7 +583,32 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period-buttons.top-row .time-btn:hover { background-color: #b2f0b2; }
 .period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
 .time-btn:active { transform: scale(1.05); }
+copilot/revert-css-changes-pr-168
+Visual deactivation of time buttons during workflows */
+/* Während grünem Workflow: Rote Buttons ausgegraut */
+body.workflow-scored .period-buttons.bottom-row .time-btn {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+}
 
+/* Während rotem Workflow: Grüne Buttons ausgegraut */
+body.workflow-conceded .period-buttons.top-row .time-btn {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+}
+
+/* Shot workflow: ALL timebox buttons disabled and grayed out */
+body[data-workflow="shot"] .period-buttons .time-btn {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+copilot/change-line-mode-functionality
 /* ====================== */
 /* SEASON PAGE (Scroll wie Goal Value) */
 /* ====================== */
