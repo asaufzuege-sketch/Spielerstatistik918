@@ -465,9 +465,10 @@ App.goalMap = {
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
     if (!goalieFilterSelect) return;
     
-    const hasActiveGoalie = this.getActiveGoalie() !== null;
+    // KRITISCH: Prüfe ob ein ECHTER Goalie ausgewählt ist (nicht "All Goalies")
+    const selectedValue = goalieFilterSelect.value;
+    const hasActiveGoalie = selectedValue && selectedValue !== "" && selectedValue !== "All Goalies";
     
-    // Add/remove active class for neon-pulse animation
     if (hasActiveGoalie) {
       goalieFilterSelect.classList.add("active");
     } else {
@@ -612,12 +613,23 @@ App.goalMap = {
       if (goalieFilterSelect) {
         goalieFilterSelect.value = savedGoalie;
         
+        // Nur pulsieren wenn tatsächlich ein Goalie geladen wurde
+        if (savedGoalie && savedGoalie !== "") {
+          goalieFilterSelect.classList.add("active");
+        }
+        
         // Also apply goalie filtering
         const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
         const goalieNames = goalies.map(g => g.name);
         if (goalieNames.includes(savedGoalie)) {
           this.filterByGoalies([savedGoalie]);
         }
+      }
+    } else {
+      // KEIN gespeicherter Goalie = KEIN Pulsieren
+      const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+      if (goalieFilterSelect) {
+        goalieFilterSelect.classList.remove("active");
       }
     }
     
@@ -833,7 +845,7 @@ App.goalMap = {
         const selectedGoalie = goalieFilterSelect.value;
         
         // Save to localStorage
-        if (selectedGoalie) {
+        if (selectedGoalie && selectedGoalie !== "") {
           localStorage.setItem("goalMapActiveGoalie", selectedGoalie);
           goalieFilterSelect.classList.add("active"); // Pulsieren AN
         } else {

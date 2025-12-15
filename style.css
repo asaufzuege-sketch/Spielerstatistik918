@@ -305,28 +305,51 @@ h1 {
   }
 }
 
+copilot/fix-shot-workflow-return
+/* Goalie Button - ROT pulsierend */
+@keyframes neon-pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444;
 /* Red pulsing animation for goalie button */
 @keyframes neon-pulse-red {
   0%, 100% {
     box-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444, 0 0 15px #ff4444;
+copilot/change-line-mode-functionality
   }
   50% {
     box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444, 0 0 30px #ff4444;
   }
 }
 
+copilot/fix-shot-workflow-return
+/* Player Button - GRÜN pulsierend */
+@keyframes neon-pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
+  }
+  50% {
+    box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+  }
+}
+
+/* Task 3: Pulsing Neon-Glow for Active Goalie Button - ROT */
+#goalMapGoalieFilter.active {
+  animation: neon-pulse-red 2s ease-in-out infinite !important;
+  border: 2px solid #ff4444 !important;
+  color: #ff4444 !important;
 /* Task 3: Pulsing Neon-Glow for Active Goalie Button */
 #goalMapGoalieFilter.active {
   animation: neon-pulse-red 2s ease-in-out infinite;
   border: 2px solid #ff4444 !important;
   color: #ff4444;
+copilot/change-line-mode-functionality
 }
 
-/* Pulsing Neon-Glow for Active Player Filter Button */
+/* Pulsing Neon-Glow for Active Player Filter Button - GRÜN */
 #goalMapPlayerFilter.active {
-  animation: neon-pulse-sync 2s ease-in-out infinite;
+  animation: neon-pulse-green 2s ease-in-out infinite !important;
   border: 2px solid #00ff88 !important;
-  color: #00ff88;
+  color: #00ff88 !important;
 }
 
 /* Legacy animations removed - using unified neon-pulse-sync for all pulsing elements */

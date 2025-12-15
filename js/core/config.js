@@ -411,8 +411,11 @@ const App = {
       this.goalMap.updatePlayerNameOverlay();
     }
     
-    // Stay on Goal Map page - NO return to stats page
-    // User can continue marking more goals/shots
+    // WICHTIG: Nach Shot-Workflow IMMER zurück zu Game Data
+    // Nach Goal-Workflow auch zurück zu Game Data (nach 3 Schritten)
+    setTimeout(() => {
+      this.showPage('stats');
+    }, 300);
   },
   
   cancelGoalMapWorkflow() {
