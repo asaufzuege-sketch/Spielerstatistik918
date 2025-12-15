@@ -974,9 +974,6 @@ App.goalMap = {
     const textEl = document.getElementById("workflowStatusText");
     if (!indicator || !textEl) return;
     
-    // Body-Klassen für CSS-Styling
-    document.body.classList.remove('workflow-scored', 'workflow-conceded');
-    
     if (App.goalMapWorkflow?.active) {
       const collected = App.goalMapWorkflow.collectedPoints.length;
       const required = App.goalMapWorkflow.requiredPoints;
@@ -987,10 +984,8 @@ App.goalMap = {
       let workflowDesc = '';
       if (workflowType === 'scored') {
         workflowDesc = '🟢 SCORED';
-        document.body.classList.add('workflow-scored');
       } else if (workflowType === 'conceded') {
         workflowDesc = '🔴 CONCEDED';
-        document.body.classList.add('workflow-conceded');
       }
       
       indicator.style.display = 'block';
