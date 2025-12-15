@@ -241,7 +241,7 @@ App.goalMap = {
                 if (typeof App.showPage === 'function') {
                   App.showPage('stats');
                 }
-              }, 300); // Kurze Verzögerung damit der User den Punkt sieht
+              }, this.AUTO_NAVIGATION_DELAY_MS); // Kurze Verzögerung damit der User den Punkt sieht
               
               return; // WICHTIG: Hier beenden, kein Workflow
             }
@@ -301,6 +301,15 @@ App.goalMap = {
             true,
             pointPlayer
           );
+          
+          // NEU: Nach Shot (kurzer Klick, KEIN Workflow) sofort zurück zu Game Data
+          if (!workflowActive && !long) {
+            setTimeout(() => {
+              if (typeof App.showPage === 'function') {
+                App.showPage('stats');
+              }
+            }, this.AUTO_NAVIGATION_DELAY_MS);
+          }
           
           if (workflowActive) {
             App.addGoalMapPoint(
