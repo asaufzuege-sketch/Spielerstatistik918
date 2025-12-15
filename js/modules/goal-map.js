@@ -707,7 +707,16 @@ App.goalMap = {
         };
         
         newBtn.addEventListener("click", () => {
+copilot/block-timebox-buttons-shot-workflow
+          // Shot-Workflow: KEINE Timebox-Buttons erlaubt
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'shot') {
+            console.log('[Shot Workflow] Timebox buttons not allowed during shot workflow');
+            return; // Blockiere ALLE Buttons
+          }
+          
+          // Am Anfang des click handlers - ROTE BUTTONS blockieren
           const isTopRow = newBtn.closest('.period-buttons')?.classList.contains('top-row');
+copilot/change-line-mode-functionality
           const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
           
           // Im Goal-Workflow: Strikte Button-Kontrolle
@@ -974,8 +983,20 @@ App.goalMap = {
     const textEl = document.getElementById("workflowStatusText");
     if (!indicator || !textEl) return;
     
+copilot/block-timebox-buttons-shot-workflow
+    // Set body data-workflow attribute for CSS styling
+    if (App.goalMapWorkflow?.active) {
+      if (App.goalMapWorkflow.eventType === 'shot') {
+        document.body.setAttribute('data-workflow', 'shot');
+      } else if (App.goalMapWorkflow?.workflowType) {
+        document.body.setAttribute('data-workflow', App.goalMapWorkflow.workflowType);
+      }
+    } else {
+      document.body.removeAttribute('data-workflow');
+    }
     // Body-Klassen für CSS-Styling
     document.body.classList.remove('workflow-scored', 'workflow-conceded');
+copilot/change-line-mode-functionality
     
     if (App.goalMapWorkflow?.active) {
       const collected = App.goalMapWorkflow.collectedPoints.length;

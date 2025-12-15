@@ -601,6 +601,14 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   filter: grayscale(80%);
 }
 
+/* Shot workflow: ALL timebox buttons disabled and grayed out */
+body[data-workflow="shot"] .period-buttons .time-btn {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
 /* ====================== */
 /* SEASON PAGE (Scroll wie Goal Value) */
 /* ====================== */
