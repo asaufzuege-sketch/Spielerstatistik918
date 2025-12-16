@@ -42,21 +42,20 @@ App.goalMap = {
     // Restore markers from localStorage
     this.restoreMarkers();
     
-    // Safety check: Ensure all markers are visible when no filter is active
+    // Apply both filters independently at the end
+    this.applyPlayerFilter();  // Filter green zone
+    
+    // Apply goalie filter for red zone
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
-    const playerFilterSelect = document.getElementById("goalMapPlayerFilter");
-    
-    const noGoalieFilter = !goalieFilterSelect || !goalieFilterSelect.value || goalieFilterSelect.value === "";
-    const noPlayerFilter = !playerFilterSelect || !playerFilterSelect.value || playerFilterSelect.value === "";
-    
-    if (noGoalieFilter && noPlayerFilter) {
-      // No filters active - ensure all markers are visible
-      const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
-      boxes.forEach(box => {
-        box.querySelectorAll(".marker-dot").forEach(marker => {
-          marker.style.display = '';
-        });
-      });
+    const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+    if (savedGoalie && goalieFilterSelect && goalieFilterSelect.value === savedGoalie) {
+      // Specific goalie is selected, filter red zone
+      this.filterByGoalies([savedGoalie]);
+    } else if (goalieFilterSelect) {
+      // "All Goalies" or no goalie - show all red zone markers
+      const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+      const goalieNames = allGoalies.map(g => g.name);
+      this.filterByGoalies(goalieNames);
     }
   },
   
@@ -490,6 +489,40 @@ App.goalMap = {
     return null;
   },
   
+  // Helper: Check if marker is in GREEN zone (top field half + green goal)
+  isGreenZoneMarker(marker, box) {
+    // Green goal box = always green zone
+    if (box.id === 'goalGreenBox') return true;
+    
+    // Red goal box = never green zone
+    if (box.id === 'goalRedBox') return false;
+    
+    // Field box: check position (top half = green)
+    if (box.classList.contains('field-box')) {
+      const top = parseFloat(marker.style.top) || 0;
+      return top < this.VERTICAL_SPLIT_THRESHOLD; // top < 50% = green zone
+    }
+    
+    return false;
+  },
+  
+  // Helper: Check if marker is in RED zone (bottom field half + red goal)
+  isRedZoneMarker(marker, box) {
+    // Red goal box = always red zone
+    if (box.id === 'goalRedBox') return true;
+    
+    // Green goal box = never red zone
+    if (box.id === 'goalGreenBox') return false;
+    
+    // Field box: check position (bottom half = red)
+    if (box.classList.contains('field-box')) {
+      const top = parseFloat(marker.style.top) || 0;
+      return top >= this.VERTICAL_SPLIT_THRESHOLD; // top >= 50% = red zone
+    }
+    
+    return false;
+  },
+  
   // Update goalie button title to show neon-pulse when active
   updateGoalieButtonTitle() {
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
@@ -732,8 +765,10 @@ App.goalMap = {
         });
       });
       
-      // Apply current filter state to ensure correct marker visibility
-      // Check if goalie filter is active
+      // Apply both filters independently to ensure correct marker visibility
+      this.applyPlayerFilter(); // Green zone
+      
+      // Apply goalie filter for red zone
       const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
       if (savedGoalie) {
         const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
@@ -741,10 +776,14 @@ App.goalMap = {
         if (goalieNames.includes(savedGoalie)) {
           this.filterByGoalies([savedGoalie]);
         } else {
-          this.applyPlayerFilter();
+          // Goalie doesn't exist, show all red zone markers
+          this.filterByGoalies(goalieNames);
         }
       } else {
-        this.applyPlayerFilter();
+        // No goalie filter, show all red zone markers
+        const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+        const goalieNames = goalies.map(g => g.name);
+        this.filterByGoalies(goalieNames);
       }
     } catch (e) {
       console.error('[Goal Map] Error restoring markers:', e);
@@ -1021,15 +1060,7 @@ App.goalMap = {
   },
   
   filterByGoalies(goalieNames) {
-    // Clear the player filter dropdown
-    const filterSelect = document.getElementById("goalMapPlayerFilter");
-    if (filterSelect) {
-      filterSelect.value = "";
-    }
-    
-    // Set filter to show only goalies
-    this.playerFilter = null;
-    localStorage.removeItem("goalMapPlayerFilter");
+    // Player and goalie filters operate independently on different zones
     
     // Detect if "All Goalies" is selected by checking if goalieNames contains all available goalies
     const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
@@ -1041,18 +1072,24 @@ App.goalMap = {
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
-        const playerName = marker.dataset.player;
+        // Only filter RED ZONE markers
+        const isRedMarker = this.isRedZoneMarker(marker, box);
         
-        if (isAllGoaliesFilter) {
-          // "All Goalies" - show all markers
-          marker.style.display = '';
-        } else if (playerName) {
-          // Specific goalie - only show markers matching the selected goalie
-          marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
-        } else {
-          // Marker without player - hide when specific goalie filter is active
-          marker.style.display = 'none';
+        if (isRedMarker) {
+          const playerName = marker.dataset.player;
+          
+          if (isAllGoaliesFilter) {
+            // "All Goalies" - show all red zone markers
+            marker.style.display = '';
+          } else if (playerName) {
+            // Specific goalie - only show markers matching the selected goalie
+            marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
+          } else {
+            // Marker without player - hide when specific goalie filter is active
+            marker.style.display = 'none';
+          }
         }
+        // Green zone markers are not touched by this function
       });
     });
     
@@ -1100,11 +1137,17 @@ App.goalMap = {
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
-        if (this.playerFilter) {
-          marker.style.display = (marker.dataset.player === this.playerFilter) ? '' : 'none';
-        } else {
-          marker.style.display = '';
+        // Only filter GREEN ZONE markers
+        const isGreenMarker = this.isGreenZoneMarker(marker, box);
+        
+        if (isGreenMarker) {
+          if (this.playerFilter) {
+            marker.style.display = (marker.dataset.player === this.playerFilter) ? '' : 'none';
+          } else {
+            marker.style.display = '';
+          }
         }
+        // Red zone markers are not touched by this function
       });
     });
     
