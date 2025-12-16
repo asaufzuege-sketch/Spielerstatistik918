@@ -1103,7 +1103,9 @@ App.goalMap = {
     
     // Detect if "All Goalies" is selected
     const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
-    const isAllGoaliesFilter = goalieNames.length >= allGoalies.length || goalieNames.length === 0;
+    const allGoalieNames = allGoalies.map(g => g.name);
+    const isAllGoaliesFilter = goalieNames.length === allGoalieNames.length && 
+                                goalieNames.every(name => allGoalieNames.includes(name));
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
@@ -1118,13 +1120,12 @@ App.goalMap = {
           if (isAllGoaliesFilter) {
             // "All Goalies" - show all red zone markers
             marker.style.display = '';
+          } else if (playerName && goalieNames.includes(playerName)) {
+            // Marker belongs to selected goalie - show
+            marker.style.display = '';
           } else {
-            // Specific goalie filter
-            if (playerName && goalieNames.includes(playerName)) {
-              marker.style.display = '';
-            } else {
-              marker.style.display = 'none';
-            }
+            // Marker doesn't belong to selected goalie - hide
+            marker.style.display = 'none';
           }
         }
         // Green zone markers are not touched by this function
