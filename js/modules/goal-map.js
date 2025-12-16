@@ -620,13 +620,26 @@ App.goalMap = {
         if (goalieNames.includes(savedGoalie)) {
           // Goalie exists, restore it
           goalieFilterSelect.value = savedGoalie;
-          goalieFilterSelect.classList.add("active");
-          this.filterByGoalies([savedGoalie]);
+          
+          // KRITISCH: Verify the value was actually set (option must exist in DOM)
+          if (goalieFilterSelect.value === savedGoalie) {
+            goalieFilterSelect.classList.add("active");
+            this.filterByGoalies([savedGoalie]);
+          } else {
+            // Value couldn't be set, clean up
+            localStorage.removeItem("goalMapActiveGoalie");
+            goalieFilterSelect.value = ""; // Set to "All Goalies"
+            goalieFilterSelect.classList.remove("active");
+            // Remove overlays
+            document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
+          }
         } else {
           // Goalie doesn't exist anymore, clean up
           localStorage.removeItem("goalMapActiveGoalie");
           goalieFilterSelect.value = ""; // Set to "All Goalies"
           goalieFilterSelect.classList.remove("active");
+          // Remove overlays
+          document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
         }
       }
     } else {
@@ -875,6 +888,38 @@ App.goalMap = {
           this.filterByGoalies(goalieNames);
         }
       });
+      
+      // KRITISCH: Restore saved goalie value after populating dropdown
+      const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+      if (savedGoalie) {
+        // Check if saved goalie still exists as option in dropdown
+        const goalieNames = goalies.map(g => g.name);
+        
+        if (goalieNames.includes(savedGoalie)) {
+          // Goalie exists, restore it
+          goalieFilterSelect.value = savedGoalie;
+          
+          // Verify the value was actually set (option must exist in DOM)
+          if (goalieFilterSelect.value === savedGoalie) {
+            goalieFilterSelect.classList.add("active");
+            this.updateGoalieButtonTitle();
+            this.updateGoalieNameOverlay();
+            this.filterByGoalies([savedGoalie]);
+          } else {
+            // Value couldn't be set, clean up
+            localStorage.removeItem("goalMapActiveGoalie");
+            goalieFilterSelect.classList.remove("active");
+          }
+        } else {
+          // Goalie doesn't exist anymore, clean up
+          localStorage.removeItem("goalMapActiveGoalie");
+          goalieFilterSelect.value = ""; // Set to "All Goalies"
+          goalieFilterSelect.classList.remove("active");
+        }
+      } else {
+        // No saved goalie = no pulsing
+        goalieFilterSelect.classList.remove("active");
+      }
     }
   },
   
