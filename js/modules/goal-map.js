@@ -114,6 +114,15 @@ App.goalMap = {
         return { xPctContainer, yPctContainer, xPctImage, yPctImage, insideImage };
       };
       
+      // Helper function to set zone attribute on last created marker
+      const setMarkerZone = (box, zone) => {
+        const markers = box.querySelectorAll(".marker-dot");
+        const lastMarker = markers[markers.length - 1];
+        if (lastMarker) {
+          lastMarker.dataset.zone = zone;
+        }
+      };
+      
       const placeMarker = (pos, long, forceGrey = false) => {
         let workflowActive = App.goalMapWorkflow?.active;
         let eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
@@ -233,11 +242,7 @@ App.goalMap = {
           );
           
           // Set data-zone attribute for goal boxes
-          const markers = box.querySelectorAll(".marker-dot");
-          const lastMarker = markers[markers.length - 1];
-          if (lastMarker) {
-            lastMarker.dataset.zone = box.id === 'goalRedBox' ? 'red' : 'green';
-          }
+          setMarkerZone(box, box.id === 'goalRedBox' ? 'red' : 'green');
           
           this.saveMarkers();
           
@@ -275,11 +280,7 @@ App.goalMap = {
               );
               
               // Set data-zone attribute for red zone shot
-              const markers = box.querySelectorAll(".marker-dot");
-              const lastMarker = markers[markers.length - 1];
-              if (lastMarker) {
-                lastMarker.dataset.zone = 'red';
-              }
+              setMarkerZone(box, 'red');
               
               this.saveMarkers();
               
@@ -360,11 +361,7 @@ App.goalMap = {
             );
             
             // Set data-zone attribute for shot workflow
-            const markers = box.querySelectorAll(".marker-dot");
-            const lastMarker = markers[markers.length - 1];
-            if (lastMarker) {
-              lastMarker.dataset.zone = 'green';
-            }
+            setMarkerZone(box, 'green');
             
             this.saveMarkers();
             
@@ -398,11 +395,7 @@ App.goalMap = {
           );
           
           // Set data-zone attribute for normal field point
-          const markers = box.querySelectorAll(".marker-dot");
-          const lastMarker = markers[markers.length - 1];
-          if (lastMarker) {
-            lastMarker.dataset.zone = isRedZone ? 'red' : 'green';
-          }
+          setMarkerZone(box, isRedZone ? 'red' : 'green');
           
           this.saveMarkers();
           
