@@ -709,6 +709,9 @@ App.goalMap = {
           );
         });
       });
+      
+      // Apply current filter state to ensure correct marker visibility
+      this.applyPlayerFilter();
     } catch (e) {
       console.error('[Goal Map] Error restoring markers:', e);
     }
@@ -999,7 +1002,12 @@ App.goalMap = {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
         const playerName = marker.dataset.player;
-        marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
+        // Don't hide markers with no player (null) - these are grey workflow markers
+        if (!playerName || playerName === 'null') {
+          marker.style.display = '';
+        } else {
+          marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
+        }
       });
     });
     
