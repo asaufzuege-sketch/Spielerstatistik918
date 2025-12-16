@@ -694,6 +694,11 @@ App.goalMap = {
       const allMarkers = JSON.parse(savedMarkers);
       const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
       
+      // Clear existing markers first to avoid duplicates (idempotent operation)
+      boxes.forEach(box => {
+        box.querySelectorAll(".marker-dot").forEach(dot => dot.remove());
+      });
+      
       allMarkers.forEach((markers, boxIndex) => {
         if (boxIndex >= boxes.length) return;
         const box = boxes[boxIndex];
@@ -996,6 +1001,9 @@ App.goalMap = {
         goalieFilterSelect.classList.remove("active");
       }
     }
+    
+    // Restore markers on SPA navigation - called at end after filter initialization
+    this.restoreMarkers();
   },
   
   filterByGoalies(goalieNames) {
@@ -1014,11 +1022,12 @@ App.goalMap = {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
         const playerName = marker.dataset.player;
-        // Don't hide markers with no player (null) - these are grey workflow markers
-        if (!playerName || playerName === 'null') {
-          marker.style.display = '';
-        } else {
+        // If marker has a player name, filter it
+        if (playerName) {
           marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
+        } else {
+          // Marker without player - hide if specific goalie filter is active
+          marker.style.display = goalieNames.length === 1 ? 'none' : '';
         }
       });
     });
