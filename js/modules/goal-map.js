@@ -1104,8 +1104,8 @@ App.goalMap = {
     // Detect if "All Goalies" is selected
     const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
     const allGoalieNames = allGoalies.map(g => g.name);
-    const isAllGoaliesFilter = goalieNames.length === allGoalieNames.length && 
-                                goalieNames.every(name => allGoalieNames.includes(name));
+    const isAllGoaliesFilter = (goalieNames.length === allGoalieNames.length && 
+                                 goalieNames.every(name => allGoalieNames.includes(name)));
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
