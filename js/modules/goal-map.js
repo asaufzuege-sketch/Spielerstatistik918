@@ -454,8 +454,10 @@ App.goalMap = {
   // Get currently active goalie - simple dropdown check only
   getActiveGoalie() {
     const goalieDropdown = document.getElementById('goalMapGoalieFilter');
-    if (goalieDropdown && goalieDropdown.value) {
-      return { name: goalieDropdown.value, position: 'G' };
+    const value = goalieDropdown ? goalieDropdown.value : '';
+    // Explicitly check for empty value or "All Goalies"
+    if (value && value !== "" && value !== "All Goalies") {
+      return { name: value, position: 'G' };
     }
     return null;
   },
@@ -611,22 +613,24 @@ App.goalMap = {
     if (savedGoalie) {
       const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
       if (goalieFilterSelect) {
-        goalieFilterSelect.value = savedGoalie;
-        
-        // Nur pulsieren wenn tatsächlich ein Goalie geladen wurde
-        if (savedGoalie && savedGoalie !== "") {
-          goalieFilterSelect.classList.add("active");
-        }
-        
-        // Also apply goalie filtering
+        // Check if saved goalie still exists as option in dropdown
         const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
         const goalieNames = goalies.map(g => g.name);
+        
         if (goalieNames.includes(savedGoalie)) {
+          // Goalie exists, restore it
+          goalieFilterSelect.value = savedGoalie;
+          goalieFilterSelect.classList.add("active");
           this.filterByGoalies([savedGoalie]);
+        } else {
+          // Goalie doesn't exist anymore, clean up
+          localStorage.removeItem("goalMapActiveGoalie");
+          goalieFilterSelect.value = ""; // Set to "All Goalies"
+          goalieFilterSelect.classList.remove("active");
         }
       }
     } else {
-      // KEIN gespeicherter Goalie = KEIN Pulsieren
+      // No saved goalie = no pulsing
       const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
       if (goalieFilterSelect) {
         goalieFilterSelect.classList.remove("active");
@@ -845,13 +849,16 @@ App.goalMap = {
       goalieFilterSelect.addEventListener("change", () => {
         const selectedGoalie = goalieFilterSelect.value;
         
-        // Save to localStorage
+        // Save to localStorage or remove if "All Goalies"
         if (selectedGoalie && selectedGoalie !== "") {
           localStorage.setItem("goalMapActiveGoalie", selectedGoalie);
           goalieFilterSelect.classList.add("active"); // Pulsieren AN
         } else {
+          // "All Goalies" selected - remove localStorage and overlays
           localStorage.removeItem("goalMapActiveGoalie");
           goalieFilterSelect.classList.remove("active"); // Pulsieren AUS
+          // Remove any existing goalie name overlays
+          document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
         }
         
         // Update UI to show neon-pulse and overlay
