@@ -38,6 +38,9 @@ App.goalMap = {
     
     // Restore saved filter and goalie state
     this.restoreFilterState();
+    
+    // Restore markers from localStorage
+    this.restoreMarkers();
   },
   
   attachMarkerHandlers() {
@@ -213,6 +216,8 @@ App.goalMap = {
             pointPlayer
           );
           
+          this.saveMarkers();
+          
           if (workflowActive) {
             App.addGoalMapPoint(
               "goal",
@@ -245,6 +250,8 @@ App.goalMap = {
                 "#ff0000", box, true,
                 activeGoalie.name, null, 'conceded'
               );
+              
+              this.saveMarkers();
               
               // NEU: Sofort zurück zu Game Data nach Shot
               setTimeout(() => {
@@ -322,6 +329,8 @@ App.goalMap = {
               pointPlayer
             );
             
+            this.saveMarkers();
+            
             // Complete shot workflow immediately
             App.addGoalMapPoint(
               "field",
@@ -350,6 +359,8 @@ App.goalMap = {
             true,
             pointPlayer
           );
+          
+          this.saveMarkers();
           
           // NEU: Nach Shot (kurzer Klick, KEIN Workflow) sofort zurück zu Game Data
           if (!workflowActive && !long) {
@@ -652,6 +663,55 @@ App.goalMap = {
     
     this.updateGoalieButtonTitle();
     this.updateGoalieNameOverlay();
+  },
+  
+  // Save all markers to localStorage
+  saveMarkers() {
+    const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
+    const allMarkers = boxes.map(box => {
+      const markers = [];
+      box.querySelectorAll(".marker-dot").forEach(dot => {
+        const left = dot.style.left || "";
+        const top = dot.style.top || "";
+        const bg = dot.style.backgroundColor || "";
+        const xPct = parseFloat(left.replace("%", "")) || 0;
+        const yPct = parseFloat(top.replace("%", "")) || 0;
+        const playerName = dot.dataset.player || null;
+        markers.push({ xPct, yPct, color: bg, player: playerName });
+      });
+      return markers;
+    });
+    
+    localStorage.setItem("goalMapMarkers", JSON.stringify(allMarkers));
+  },
+  
+  // Restore markers from localStorage
+  restoreMarkers() {
+    const savedMarkers = localStorage.getItem("goalMapMarkers");
+    if (!savedMarkers) return;
+    
+    try {
+      const allMarkers = JSON.parse(savedMarkers);
+      const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
+      
+      allMarkers.forEach((markers, boxIndex) => {
+        if (boxIndex >= boxes.length) return;
+        const box = boxes[boxIndex];
+        
+        markers.forEach(marker => {
+          App.markerHandler.createMarkerPercent(
+            marker.xPct,
+            marker.yPct,
+            marker.color,
+            box,
+            true,
+            marker.player
+          );
+        });
+      });
+    } catch (e) {
+      console.error('[Goal Map] Error restoring markers:', e);
+    }
   },
   
   // Time Tracking mit Spielerzuordnung
