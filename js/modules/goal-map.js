@@ -499,7 +499,8 @@ App.goalMap = {
     
     // Field box: check position (top half = green)
     if (box.classList.contains('field-box')) {
-      const top = parseFloat(marker.style.top) || 0;
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
       return top < this.VERTICAL_SPLIT_THRESHOLD; // top < 50% = green zone
     }
     
@@ -516,7 +517,8 @@ App.goalMap = {
     
     // Field box: check position (bottom half = red)
     if (box.classList.contains('field-box')) {
-      const top = parseFloat(marker.style.top) || 0;
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
       return top >= this.VERTICAL_SPLIT_THRESHOLD; // top >= 50% = red zone
     }
     
@@ -1060,6 +1062,8 @@ App.goalMap = {
   },
   
   filterByGoalies(goalieNames) {
+    console.log('[Goalie Filter] Filtering by:', goalieNames);
+    
     // Player and goalie filters operate independently on different zones
     
     // Detect if "All Goalies" is selected by checking if goalieNames contains all available goalies
@@ -1068,12 +1072,22 @@ App.goalMap = {
     const isAllGoaliesFilter = goalieNames.length === allGoalieNames.length && 
                                 goalieNames.every(name => allGoalieNames.includes(name));
     
+    console.log('[Goalie Filter] All goalies:', allGoalieNames);
+    console.log('[Goalie Filter] Is "All Goalies" filter:', isAllGoaliesFilter);
+    
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
         // Only filter RED ZONE markers
         const isRedMarker = this.isRedZoneMarker(marker, box);
+        
+        console.log('[Goalie Filter] Marker:', {
+          box: box.id,
+          top: marker.style.top,
+          player: marker.dataset.player,
+          isRedMarker: isRedMarker
+        });
         
         if (isRedMarker) {
           const playerName = marker.dataset.player;
