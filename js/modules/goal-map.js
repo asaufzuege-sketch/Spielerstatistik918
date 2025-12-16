@@ -274,8 +274,8 @@ App.goalMap = {
           if (workflowActive) {
             App.addGoalMapPoint(
               "goal",
-              pos.xPctContainer,
-              pos.yPctContainer,
+              pos.xPctImage,
+              pos.yPctImage,
               color,
               box.id
             );
@@ -393,8 +393,8 @@ App.goalMap = {
             // Complete shot workflow immediately
             App.addGoalMapPoint(
               "field",
-              pos.xPctContainer,
-              pos.yPctContainer,
+              pos.xPctImage,
+              pos.yPctImage,
               color,
               box.id
             );
@@ -436,8 +436,8 @@ App.goalMap = {
           if (workflowActive) {
             App.addGoalMapPoint(
               "field",
-              pos.xPctContainer,
-              pos.yPctContainer,
+              pos.xPctImage,
+              pos.yPctImage,
               color,
               box.id
             );
