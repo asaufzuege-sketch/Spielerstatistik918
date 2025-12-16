@@ -499,7 +499,8 @@ App.goalMap = {
     
     // Field box: check position (top half = green)
     if (box.classList.contains('field-box')) {
-      const top = parseFloat(marker.style.top) || 0;
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
       return top < this.VERTICAL_SPLIT_THRESHOLD; // top < 50% = green zone
     }
     
@@ -516,7 +517,8 @@ App.goalMap = {
     
     // Field box: check position (bottom half = red)
     if (box.classList.contains('field-box')) {
-      const top = parseFloat(marker.style.top) || 0;
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
       return top >= this.VERTICAL_SPLIT_THRESHOLD; // top >= 50% = red zone
     }
     
@@ -1062,11 +1064,9 @@ App.goalMap = {
   filterByGoalies(goalieNames) {
     // Player and goalie filters operate independently on different zones
     
-    // Detect if "All Goalies" is selected by checking if goalieNames contains all available goalies
+    // Detect if "All Goalies" is selected
     const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
-    const allGoalieNames = allGoalies.map(g => g.name);
-    const isAllGoaliesFilter = goalieNames.length === allGoalieNames.length && 
-                                goalieNames.every(name => allGoalieNames.includes(name));
+    const isAllGoaliesFilter = goalieNames.length >= allGoalies.length || goalieNames.length === 0;
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
@@ -1081,12 +1081,13 @@ App.goalMap = {
           if (isAllGoaliesFilter) {
             // "All Goalies" - show all red zone markers
             marker.style.display = '';
-          } else if (playerName) {
-            // Specific goalie - only show markers matching the selected goalie
-            marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
           } else {
-            // Marker without player - hide when specific goalie filter is active
-            marker.style.display = 'none';
+            // Specific goalie filter
+            if (playerName && goalieNames.includes(playerName)) {
+              marker.style.display = '';
+            } else {
+              marker.style.display = 'none';
+            }
           }
         }
         // Green zone markers are not touched by this function
