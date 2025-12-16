@@ -41,6 +41,23 @@ App.goalMap = {
     
     // Restore markers from localStorage
     this.restoreMarkers();
+    
+    // Safety check: Ensure all markers are visible when no filter is active
+    const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+    const playerFilterSelect = document.getElementById("goalMapPlayerFilter");
+    
+    const noGoalieFilter = !goalieFilterSelect || !goalieFilterSelect.value || goalieFilterSelect.value === "";
+    const noPlayerFilter = !playerFilterSelect || !playerFilterSelect.value || playerFilterSelect.value === "";
+    
+    if (noGoalieFilter && noPlayerFilter) {
+      // No filters active - ensure all markers are visible
+      const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
+      boxes.forEach(box => {
+        box.querySelectorAll(".marker-dot").forEach(marker => {
+          marker.style.display = '';
+        });
+      });
+    }
   },
   
   attachMarkerHandlers() {
@@ -1001,9 +1018,6 @@ App.goalMap = {
         goalieFilterSelect.classList.remove("active");
       }
     }
-    
-    // Restore markers on SPA navigation - called at end after filter initialization
-    this.restoreMarkers();
   },
   
   filterByGoalies(goalieNames) {
@@ -1017,17 +1031,27 @@ App.goalMap = {
     this.playerFilter = null;
     localStorage.removeItem("goalMapPlayerFilter");
     
+    // Detect if "All Goalies" is selected by checking if goalieNames contains all available goalies
+    const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+    const allGoalieNames = allGoalies.map(g => g.name);
+    const isAllGoaliesFilter = goalieNames.length === allGoalieNames.length && 
+                                goalieNames.every(name => allGoalieNames.includes(name));
+    
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
         const playerName = marker.dataset.player;
-        // If marker has a player name, filter it
-        if (playerName) {
+        
+        if (isAllGoaliesFilter) {
+          // "All Goalies" - show all markers
+          marker.style.display = '';
+        } else if (playerName) {
+          // Specific goalie - only show markers matching the selected goalie
           marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
         } else {
-          // Marker without player - hide if specific goalie filter is active
-          marker.style.display = goalieNames.length === 1 ? 'none' : '';
+          // Marker without player - hide when specific goalie filter is active
+          marker.style.display = 'none';
         }
       });
     });
