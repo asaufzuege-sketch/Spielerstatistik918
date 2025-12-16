@@ -324,9 +324,9 @@ h1 {
 
 /* Pulsing Neon-Glow for Active Player Filter Button */
 #goalMapPlayerFilter.active {
-  animation: neon-pulse-sync 2s ease-in-out infinite;
+  animation: neon-pulse-green 2s ease-in-out infinite !important;
   border: 2px solid #00ff88 !important;
-  color: #00ff88;
+  color: #00ff88 !important;
 }
 
 /* Legacy animations removed - using unified neon-pulse-sync for all pulsing elements */
@@ -560,19 +560,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period-buttons.top-row .time-btn:hover { background-color: #b2f0b2; }
 .period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
 .time-btn:active { transform: scale(1.05); }
-
-/* Visual deactivation of time buttons during workflows */
-body[data-workflow="scored"] .period-buttons.bottom-row .time-btn {
-  opacity: 0.3;
-  cursor: not-allowed;
-  filter: grayscale(80%);
-}
-
-body[data-workflow="conceded"] .period-buttons.top-row .time-btn {
-  opacity: 0.3;
-  cursor: not-allowed;
-  filter: grayscale(80%);
-}
 
 /* ====================== */
 /* SEASON PAGE (Scroll wie Goal Value) */
@@ -2364,3 +2351,31 @@ tr[data-player].dragging {
   background: #3a6fa5 !important;
 }
 
+
+/* ===== WORKFLOW TIMEBOX BLOCKING ===== */
+/* Während grünem Workflow (scored): Rote Buttons ausgegraut und blockiert */
+body.workflow-scored .period-buttons.bottom-row .time-btn {
+  opacity: 0.3 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Während rotem Workflow (conceded): Grüne Buttons ausgegraut und blockiert */
+body.workflow-conceded .period-buttons.top-row .time-btn {
+  opacity: 0.3 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* ===== FILTER BUTTON PULSIERUNG ===== */
+/* Green pulsing animation for player button */
+@keyframes neon-pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88, 0 0 15px #00ff88;
+  }
+  50% {
+    box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+  }
+}
