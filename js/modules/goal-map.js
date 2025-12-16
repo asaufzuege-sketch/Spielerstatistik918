@@ -248,11 +248,11 @@ App.goalMap = {
           if (!sampler || !sampler.valid) return;
           
           if (box.id === "goalGreenBox") {
-            if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
+            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 220)) return;
           } else if (box.id === "goalRedBox") {
-            if (!sampler.isNeutralWhiteAt(pos.xPctContainer, pos.yPctContainer, 235, 12)) return;
+            if (!sampler.isNeutralWhiteAt(pos.xPctImage, pos.yPctImage, 235, 12)) return;
           } else {
-            if (!sampler.isWhiteAt(pos.xPctContainer, pos.yPctContainer, 220)) return;
+            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 220)) return;
           }
           
           const color = neutralGrey;
