@@ -455,10 +455,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: relative;
   overflow: hidden; /* Versteckt überstehende Teile */
 }
-.field-box img, .img-box img { width: 100%; height: 100%; object-fit: fill; border-radius: 8px; }
+.field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
-/* Goal Map und Season Map - Bilder füllen die Box komplett */
+/* Goal Map und Season Map - Bilder behalten Seitenverhältnis */
 #torbildPage .field-box,
 #torbildPage .img-box {
   overflow: hidden;
@@ -468,7 +468,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #torbildPage .img-box img {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
 }
 
 /* Season Map - Layout Höhe wie Goal Map */
@@ -499,7 +499,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonMapPage .img-box img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: fill !important;
+  object-fit: contain !important;
   border-radius: 8px;
 }
 
@@ -510,7 +510,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonMapPage .field-box img {
   width: 100%;
   height: 100%;
-  object-fit: fill; /* Bild füllt die Box komplett */
+  object-fit: contain; /* Seitenverhältnis bleibt erhalten */
 }
 
 /* Marker-Punkte korrekt positionieren */

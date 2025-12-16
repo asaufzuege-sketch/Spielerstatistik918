@@ -96,8 +96,8 @@ App.markerHandler = {
   /**
    * Marker mit Prozent-Koordinaten erstellen.
    * Alle Styles kommen aus der CSS-Klasse .marker-dot
-   * @param {number} xPct 0–100
-   * @param {number} yPct 0–100
+   * @param {number} xPct 0–100 (relative to image)
+   * @param {number} yPct 0–100 (relative to image)
    * @param {string} color CSS-Farbe
    * @param {HTMLElement} container Box (field-box/goal-img-box)
    * @param {boolean} interactive Klick zum Entfernen? 
@@ -110,9 +110,41 @@ App.markerHandler = {
     const dot = document.createElement("div");
     dot.className = "marker-dot";
     
-    // Nur Position und Farbe setzen - Rest kommt aus CSS-Klasse .marker-dot
-    dot.style.left = `${xPct}%`;
-    dot.style.top = `${yPct}%`;
+    // Store image-relative coordinates as data attributes
+    dot.dataset.xPctImage = xPct;
+    dot.dataset.yPctImage = yPct;
+    
+    // Calculate position relative to rendered image
+    const img = container.querySelector("img");
+    if (img) {
+      const rendered = this.computeRenderedImageRect(img);
+      if (rendered) {
+        const containerRect = container.getBoundingClientRect();
+        
+        // Offset of image within the box
+        const imgOffsetX = rendered.x - containerRect.left;
+        const imgOffsetY = rendered.y - containerRect.top;
+        
+        // Position in pixels relative to box
+        const pixelX = imgOffsetX + (xPct / 100) * rendered.width;
+        const pixelY = imgOffsetY + (yPct / 100) * rendered.height;
+        
+        // Back to percentage relative to box
+        const boxPctX = (pixelX / containerRect.width) * 100;
+        const boxPctY = (pixelY / containerRect.height) * 100;
+        
+        dot.style.left = `${boxPctX}%`;
+        dot.style.top = `${boxPctY}%`;
+      } else {
+        // Fallback
+        dot.style.left = `${xPct}%`;
+        dot.style.top = `${yPct}%`;
+      }
+    } else {
+      dot.style.left = `${xPct}%`;
+      dot.style.top = `${yPct}%`;
+    }
+    
     dot.style.backgroundColor = color;
     
     if (playerName) {
@@ -123,6 +155,10 @@ App.markerHandler = {
       dot.addEventListener("click", (ev) => {
         ev.stopPropagation();
         dot.remove();
+        // Save markers after removal
+        if (App.goalMap && typeof App.goalMap.saveMarkers === 'function') {
+          App.goalMap.saveMarkers();
+        }
       });
     }
     
@@ -130,6 +166,41 @@ App.markerHandler = {
     container.appendChild(dot);
     
     return dot;
+  },
+  
+  /**
+   * Reposition all markers when window is resized
+   */
+  repositionMarkers() {
+    const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
+    boxes.forEach(box => {
+      const img = box.querySelector("img");
+      if (!img) return;
+      
+      const rendered = this.computeRenderedImageRect(img);
+      if (!rendered) return;
+      
+      const containerRect = box.getBoundingClientRect();
+      const imgOffsetX = rendered.x - containerRect.left;
+      const imgOffsetY = rendered.y - containerRect.top;
+      
+      box.querySelectorAll(".marker-dot").forEach(dot => {
+        const xPctImage = parseFloat(dot.dataset.xPctImage);
+        const yPctImage = parseFloat(dot.dataset.yPctImage);
+        
+        // Skip if no image-relative coordinates stored (shouldn't happen after migration)
+        if (isNaN(xPctImage) || isNaN(yPctImage)) return;
+        
+        const pixelX = imgOffsetX + (xPctImage / 100) * rendered.width;
+        const pixelY = imgOffsetY + (yPctImage / 100) * rendered.height;
+        
+        const boxPctX = (pixelX / containerRect.width) * 100;
+        const boxPctY = (pixelY / containerRect.height) * 100;
+        
+        dot.style.left = `${boxPctX}%`;
+        dot.style.top = `${boxPctY}%`;
+      });
+    });
   },
   
   computeRenderedImageRect(imgEl) {
