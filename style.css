@@ -480,11 +480,20 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   overflow: hidden;
 }
 
-#torbildPage .field-box img,
-#torbildPage .img-box img {
+/* Spielfeld behält Seitenverhältnis */
+#torbildPage .field-box img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Torbilder füllen Box komplett aus */
+#torbildPage .goal-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  border-radius: 8px;
 }
 
 /* Season Map - Layout Höhe wie Goal Map */
@@ -526,13 +535,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Mindesthöhe für Torbilder - Season Map */
 /* Removed - using flex: 1 instead */
 
-#seasonMapPage .img-box img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  border-radius: 8px;
-}
-
+/* Spielfeld behält Seitenverhältnis */
 #seasonMapPage .field-box {
   overflow: hidden; /* Versteckt überstehende Teile */
 }
@@ -540,7 +543,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonMapPage .field-box img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Seitenverhältnis bleibt erhalten */
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Torbilder füllen Box komplett aus */
+#seasonMapPage .goal-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  border-radius: 8px;
 }
 
 /* Marker-Punkte korrekt positionieren */
