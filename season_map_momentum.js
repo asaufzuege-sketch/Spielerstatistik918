@@ -10,6 +10,10 @@
   
   const BUCKET_MINUTES = [0,5,10,15, 20,25,30,35, 40,45,50,60];
   
+  // Period and button configuration
+  const MAX_PERIODS = 3;
+  const BUTTONS_PER_PERIOD = 4;
+  
   // Zusätzliche Variablen für Goal Map
   let goalMarkers = [];
   let longPressTimer = null;
@@ -361,7 +365,10 @@
     // Load per-player data instead of aggregated totals
     let timeDataWithPlayers = {};
     try {
-      timeDataWithPlayers = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
+      const rawData = localStorage.getItem("seasonMapTimeDataWithPlayers");
+      if (rawData) {
+        timeDataWithPlayers = JSON.parse(rawData);
+      }
     } catch (e) {
       console.warn('[momentum] Failed to parse seasonMapTimeDataWithPlayers:', e);
       timeDataWithPlayers = {};
@@ -389,11 +396,11 @@
     const scoredValues = [];
     const concededValues = [];
     
-    for (let p = 0; p < 3; p++) {
+    for (let p = 0; p < MAX_PERIODS; p++) {
       const periodKey = `p${p + 1}`;
-      for (let b = 0; b < 4; b++) {
+      for (let b = 0; b < BUTTONS_PER_PERIOD; b++) {
         const scoredKey = `${periodKey}_${b}`;
-        const concededKey = `${periodKey}_${b + 4}`;
+        const concededKey = `${periodKey}_${b + BUTTONS_PER_PERIOD}`;
         
         scoredValues.push(sumButton(scoredKey, false));
         concededValues.push(sumButton(concededKey, true));
