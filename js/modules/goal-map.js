@@ -158,7 +158,7 @@ App.goalMap = {
         const neutralGrey = "#444444";
         let currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
         
-        const pointPlayer =
+        let pointPlayer =
           this.playerFilter ||
           (workflowActive ? App.goalMapWorkflow.playerName : null);
         
@@ -344,6 +344,9 @@ App.goalMap = {
               isScoredWorkflow = false;
               isConcededWorkflow = true;
               currentStep = 0;
+              
+              // KRITISCH: pointPlayer neu setzen damit der Marker den Goalie-Namen bekommt
+              pointPlayer = activeGoalie.name;
               
               // GRAUER Punkt wird unten in der field-box Sektion erstellt
               // (weil isGoalWorkflow jetzt true ist, wird dort neutralGrey verwendet)
