@@ -262,6 +262,11 @@ App.seasonMap = {
     });
     
     this.applyGoalieTimeTrackingFilter(goalieNames);
+    
+    // Update Momentum Graphic when goalie filter changes
+    if (typeof window.renderSeasonMomentumGraphic === 'function') {
+      window.renderSeasonMomentumGraphic();
+    }
   },
   
   applyGoalieTimeTrackingFilter(goalieNames) {
@@ -318,6 +323,11 @@ App.seasonMap = {
     });
     
     this.applyTimeTrackingFilter();
+    
+    // Update Momentum Graphic when player filter changes
+    if (typeof window.renderSeasonMomentumGraphic === 'function') {
+      window.renderSeasonMomentumGraphic();
+    }
   },
   
   // Apply player filter to time tracking

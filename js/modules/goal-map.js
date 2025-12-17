@@ -158,9 +158,9 @@ App.goalMap = {
         const neutralGrey = "#444444";
         let currentStep = App.goalMapWorkflow?.collectedPoints?.length || 0;
         
-        let pointPlayer =
-          this.playerFilter ||
-          (workflowActive ? App.goalMapWorkflow.playerName : null);
+        let pointPlayer = workflowActive
+          ? App.goalMapWorkflow.playerName
+          : (this.playerFilter || null);
         
         const isGoalBox =
           box.classList.contains("goal-img-box") ||
