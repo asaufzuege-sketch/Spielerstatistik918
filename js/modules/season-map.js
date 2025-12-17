@@ -5,6 +5,8 @@
 App.seasonMap = {
   timeTrackingBox: null,
   playerFilter: null,
+  // Vertical split threshold (Y-coordinate) that separates green zone (scored/upper) from red zone (conceded/lower)
+  VERTICAL_SPLIT_THRESHOLD: 50,
   
   init() {
     this.timeTrackingBox = document.getElementById("seasonMapTimeTrackingBox");
@@ -67,6 +69,12 @@ App.seasonMap = {
     filterSelect.addEventListener("change", () => {
       this.playerFilter = filterSelect.value || null;
       this.applyPlayerFilter();
+      
+      if (this.playerFilter) {
+        filterSelect.classList.add("active");
+      } else {
+        filterSelect.classList.remove("active");
+      }
     });
     
     const savedFilter = localStorage.getItem("seasonMapPlayerFilter");
@@ -138,68 +146,152 @@ App.seasonMap = {
       
       goalieFilterSelect.addEventListener("change", () => {
         const selectedGoalie = goalieFilterSelect.value;
-        if (selectedGoalie) {
-          // Filter by single goalie
+        
+        if (selectedGoalie && selectedGoalie !== "") {
+          localStorage.setItem("seasonMapActiveGoalie", selectedGoalie);
+          goalieFilterSelect.classList.add("active");
           this.filterByGoalies([selectedGoalie]);
         } else {
-          // Show all goalies
-          this.filterByGoalies(goaliesToShow);
+          localStorage.removeItem("seasonMapActiveGoalie");
+          goalieFilterSelect.classList.remove("active");
+          const allGoalies = this.getAllGoaliesFromData();
+          this.filterByGoalies(allGoalies);
         }
       });
     }
   },
   
-  filterByGoalies(goalieNames) {
-    // Clear the player filter dropdown
-    const filterSelect = document.getElementById("seasonMapPlayerFilter");
-    if (filterSelect) {
-      filterSelect.value = "";
+  // Helper: Check if marker is in GREEN zone
+  isGreenZoneMarker(marker, box) {
+    if (box.id === 'seasonGoalGreenBox') return true;
+    if (box.id === 'seasonGoalRedBox') return false;
+    
+    if (marker.dataset.zone) {
+      return marker.dataset.zone === 'green';
     }
     
-    // Set filter to show only goalies
-    this.playerFilter = null;
-    localStorage.removeItem("seasonMapPlayerFilter");
+    const color = marker.style.backgroundColor || '';
+    const isGreenColor = color.includes('0, 255, 102') || color.includes('00ff66');
+    if (isGreenColor) return true;
     
-    // Marker nach Spieler filtern
+    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444');
+    if (isGreyColor) {
+      const yPctImage = parseFloat(marker.dataset.yPctImage);
+      if (!isNaN(yPctImage) && yPctImage > 0) {
+        return yPctImage < this.VERTICAL_SPLIT_THRESHOLD;
+      }
+      const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
+      return top < this.VERTICAL_SPLIT_THRESHOLD;
+    }
+    
+    return false;
+  },
+  
+  // Helper: Check if marker is in RED zone
+  isRedZoneMarker(marker, box) {
+    if (box.id === 'seasonGoalRedBox') return true;
+    if (box.id === 'seasonGoalGreenBox') return false;
+    
+    if (marker.dataset.zone) {
+      return marker.dataset.zone === 'red';
+    }
+    
+    const color = marker.style.backgroundColor || '';
+    const isRedColor = color.includes('255, 0, 0') || color.includes('ff0000');
+    if (isRedColor) return true;
+    
+    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444');
+    if (isGreyColor) {
+      const yPctImage = parseFloat(marker.dataset.yPctImage);
+      if (!isNaN(yPctImage) && yPctImage > 0) {
+        return yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
+      }
+      const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
+      return top >= this.VERTICAL_SPLIT_THRESHOLD;
+    }
+    
+    return false;
+  },
+  
+  // Get all unique goalies from season data
+  getAllGoaliesFromData() {
+    const allGoalies = new Set();
+    
+    const markersRaw = localStorage.getItem("seasonMapMarkers");
+    if (markersRaw) {
+      try {
+        const allMarkers = JSON.parse(markersRaw);
+        allMarkers.forEach(markersForBox => {
+          if (Array.isArray(markersForBox)) {
+            markersForBox.forEach(m => {
+              if (m.player && m.zone === 'red') {
+                allGoalies.add(m.player);
+              }
+            });
+          }
+        });
+      } catch (e) {}
+    }
+    
+    return Array.from(allGoalies);
+  },
+  
+  filterByGoalies(goalieNames) {
+    const allGoalies = this.getAllGoaliesFromData();
+    const isAllGoaliesFilter = (goalieNames.length === allGoalies.length && 
+                                 goalieNames.every(name => allGoalies.includes(name)));
+    
     const boxes = document.querySelectorAll(App.selectors.seasonMapBoxes);
     boxes.forEach(box => {
-      box.querySelectorAll(".marker-dot").forEach(marker => {
-        const playerName = marker.dataset.player;
-        marker.style.display = goalieNames.includes(playerName) ? '' : 'none';
+      const markers = box.querySelectorAll(".marker-dot");
+      markers.forEach(marker => {
+        const isRedMarker = this.isRedZoneMarker(marker, box);
+        
+        if (isRedMarker) {
+          const playerName = marker.dataset.player;
+          
+          if (isAllGoaliesFilter) {
+            marker.style.display = '';
+          } else if (playerName && goalieNames.includes(playerName)) {
+            marker.style.display = '';
+          } else {
+            marker.style.display = 'none';
+          }
+        }
       });
     });
     
-    // Update time tracking to show only goalie times
     this.applyGoalieTimeTrackingFilter(goalieNames);
-    
-    // Goal-Area-Stats neu zeichnen with goalie filter
-    this.renderGoalAreaStats(goalieNames);
-    
-    console.log(`Season Map goalie filter applied: ${goalieNames.join(', ')}`);
   },
   
   applyGoalieTimeTrackingFilter(goalieNames) {
+    if (!this.timeTrackingBox) return;
+    
     let timeDataWithPlayers = {};
     try {
-      timeDataWithPlayers =
-        JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
+      timeDataWithPlayers = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
     } catch {
       timeDataWithPlayers = {};
     }
     
-    // Create filtered time data for goalies only
-    const filteredTimeData = {};
-    Object.keys(timeDataWithPlayers).forEach(key => {
-      const playerData = timeDataWithPlayers[key] || {};
-      filteredTimeData[key] = {};
-      goalieNames.forEach(goalieName => {
-        if (playerData[goalieName]) {
-          filteredTimeData[key][goalieName] = playerData[goalieName];
-        }
+    this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
+      const periodNum = period.dataset.period || `sp${pIdx + 1}`;
+      const buttons = period.querySelectorAll(".time-btn");
+      
+      buttons.forEach((btn, idx) => {
+        // Map season period to goal map period for data lookup
+        const goalMapPeriod = periodNum.replace('sp', 'p');
+        const key = `${goalMapPeriod}_${idx}`;
+        const playerData = timeDataWithPlayers[key] || {};
+        
+        let displayVal = 0;
+        goalieNames.forEach(goalieName => {
+          displayVal += Number(playerData[goalieName]) || 0;
+        });
+        
+        btn.textContent = displayVal;
       });
     });
-    
-    this.writeTimeTrackingToBox(filteredTimeData);
   },
   
   applyPlayerFilter() {
@@ -209,33 +301,55 @@ App.seasonMap = {
       localStorage.removeItem("seasonMapPlayerFilter");
     }
     
-    // Marker nach Spieler filtern
     const boxes = document.querySelectorAll(App.selectors.seasonMapBoxes);
     boxes.forEach(box => {
-      box.querySelectorAll(".marker-dot").forEach(marker => {
-        if (this.playerFilter) {
-          marker.style.display =
-            marker.dataset.player === this.playerFilter ? '' : 'none';
-        } else {
-          marker.style.display = '';
+      const markers = box.querySelectorAll(".marker-dot");
+      markers.forEach(marker => {
+        const isGreenMarker = this.isGreenZoneMarker(marker, box);
+        
+        if (isGreenMarker) {
+          if (this.playerFilter) {
+            marker.style.display = (marker.dataset.player === this.playerFilter) ? '' : 'none';
+          } else {
+            marker.style.display = '';
+          }
         }
       });
     });
     
-    // Zeitdaten aktualisieren
+    this.applyTimeTrackingFilter();
+  },
+  
+  // Apply player filter to time tracking
+  applyTimeTrackingFilter() {
+    if (!this.timeTrackingBox) return;
+    
     let timeDataWithPlayers = {};
     try {
-      timeDataWithPlayers =
-        JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
+      timeDataWithPlayers = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
     } catch {
       timeDataWithPlayers = {};
     }
-    this.writeTimeTrackingToBox(timeDataWithPlayers);
     
-    // Goal-Area-Stats neu zeichnen
-    this.renderGoalAreaStats();
-    
-    console.log(`Season Map player filter applied: ${this.playerFilter || 'All players'}`);
+    this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
+      const periodNum = period.dataset.period || `sp${pIdx + 1}`;
+      const buttons = period.querySelectorAll(".time-btn");
+      
+      buttons.forEach((btn, idx) => {
+        const goalMapPeriod = periodNum.replace('sp', 'p');
+        const key = `${goalMapPeriod}_${idx}`;
+        const playerData = timeDataWithPlayers[key] || {};
+        
+        let displayVal = 0;
+        if (this.playerFilter) {
+          displayVal = Number(playerData[this.playerFilter]) || 0;
+        } else {
+          displayVal = Object.values(playerData).reduce((sum, val) => sum + (Number(val) || 0), 0);
+        }
+        
+        btn.textContent = displayVal;
+      });
+    });
   },
   
   // -----------------------------
@@ -269,6 +383,13 @@ App.seasonMap = {
               false, // NICHT interaktiv (kein Entfernen per Klick)
               m.player || null
             );
+            
+            // Restore zone attribute
+            const dots = box.querySelectorAll(".marker-dot");
+            const lastDot = dots[dots.length - 1];
+            if (lastDot && m.zone) {
+              lastDot.dataset.zone = m.zone;
+            }
           });
         });
       } catch (e) {
@@ -276,22 +397,15 @@ App.seasonMap = {
       }
     }
     
-    // Zeitdaten laden
-    let rawTimeWithPlayers = localStorage.getItem("seasonMapTimeDataWithPlayers");
-    if (rawTimeWithPlayers) {
-      try {
-        const timeDataWithPlayers = JSON.parse(rawTimeWithPlayers);
-        this.writeTimeTrackingToBox(timeDataWithPlayers);
-      } catch (e) {
-        console.warn("Season Map: Invalid seasonMapTimeDataWithPlayers", e);
-      }
-    }
+    // Apply filters after restoring
+    this.applyPlayerFilter();
     
-    // Falls Filter aktiv: anwenden
-    if (this.playerFilter) {
-      this.applyPlayerFilter();
+    const savedGoalie = localStorage.getItem("seasonMapActiveGoalie");
+    if (savedGoalie) {
+      this.filterByGoalies([savedGoalie]);
     } else {
-      this.renderGoalAreaStats();
+      const allGoalies = this.getAllGoaliesFromData();
+      this.filterByGoalies(allGoalies);
     }
     
     // Reposition markers after rendering to ensure correct placement

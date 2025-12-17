@@ -1370,11 +1370,10 @@ App.goalMap = {
     const allMarkers = boxes.map(box => {
       const markers = [];
       box.querySelectorAll(".marker-dot").forEach(dot => {
-        const left = dot.style.left || "";
-        const top = dot.style.top || "";
         const bg = dot.style.backgroundColor || "";
-        const xPct = parseFloat(left.replace("%", "")) || 0;
-        const yPct = parseFloat(top.replace("%", "")) || 0;
+        // Use image-relative coordinates from data attributes
+        const xPct = parseFloat(dot.dataset.xPctImage) || 0;
+        const yPct = parseFloat(dot.dataset.yPctImage) || 0;
         const playerName = dot.dataset.player || null;
         const zone = dot.dataset.zone || null; // Include zone attribute
         markers.push({ xPct, yPct, color: bg, player: playerName, zone: zone });
