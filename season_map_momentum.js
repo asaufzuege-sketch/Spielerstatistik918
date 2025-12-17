@@ -10,6 +10,10 @@
   
   const BUCKET_MINUTES = [0,5,10,15, 20,25,30,35, 40,45,50,60];
   
+  // Period and button configuration
+  const MAX_PERIODS = 3;
+  const BUTTONS_PER_PERIOD = 4;
+  
   // Zusätzliche Variablen für Goal Map
   let goalMarkers = [];
   let longPressTimer = null;
@@ -354,12 +358,59 @@
     }
     container.innerHTML = '';
 
-    const periods = readPeriods();
-    const scoredValues = build12ValuesScored(periods);
-    const concededValues = build12ValuesConceded(periods);
-    console.debug('[momentum] periods used for rendering:', periods);
-    console.debug('[momentum] scored values:', scoredValues);
-    console.debug('[momentum] conceded values:', concededValues);
+    // Get active filters
+    const playerFilter = App.seasonMap?.playerFilter || null;
+    const goalieFilter = localStorage.getItem("seasonMapActiveGoalie") || null;
+    
+    // Load per-player data instead of aggregated totals
+    let timeDataWithPlayers = {};
+    try {
+      const rawData = localStorage.getItem("seasonMapTimeDataWithPlayers");
+      if (rawData) {
+        timeDataWithPlayers = JSON.parse(rawData);
+      }
+    } catch (e) {
+      console.warn('[momentum] Failed to parse seasonMapTimeDataWithPlayers:', e);
+      timeDataWithPlayers = {};
+    }
+    
+    // Helper: Sum button value based on filter
+    function sumButton(key, isBottomRow) {
+      const playerData = timeDataWithPlayers[key] || {};
+      
+      // Bottom row (conceded/red) = Goalie Filter
+      if (isBottomRow && goalieFilter) {
+        return Number(playerData[goalieFilter] || 0);
+      }
+      
+      // Top row (scored/green) = Player Filter
+      if (!isBottomRow && playerFilter) {
+        return Number(playerData[playerFilter] || 0);
+      }
+      
+      // No filter = Total sum
+      return Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
+    }
+    
+    // Build scored and conceded arrays from filtered data
+    const scoredValues = [];
+    const concededValues = [];
+    
+    for (let p = 0; p < MAX_PERIODS; p++) {
+      const periodKey = `p${p + 1}`;
+      for (let b = 0; b < BUTTONS_PER_PERIOD; b++) {
+        const scoredKey = `${periodKey}_${b}`;
+        const concededKey = `${periodKey}_${b + BUTTONS_PER_PERIOD}`;
+        
+        scoredValues.push(sumButton(scoredKey, false));
+        concededValues.push(sumButton(concededKey, true));
+      }
+    }
+    
+    console.debug('[momentum] playerFilter:', playerFilter);
+    console.debug('[momentum] goalieFilter:', goalieFilter);
+    console.debug('[momentum] scored values (filtered):', scoredValues);
+    console.debug('[momentum] conceded values (filtered):', concededValues);
 
     const maxScored = Math.max(1, ...scoredValues);
     const maxConceded = Math.max(1, ...concededValues);
