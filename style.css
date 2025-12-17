@@ -499,6 +499,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Season Map - Layout Höhe wie Goal Map */
 #seasonMapPage .torbild-layout {
   height: calc(100vh - 120px);  /* Gleiche Höhe wie Goal Map - beide haben gleiche HTML-Struktur */
+  margin-bottom: 32px;  /* Abstand nach unten zur Momentum-Grafik */
 }
 
 /* Season Map - gleiche Logik */
@@ -508,9 +509,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   gap: 15px;
 }
 
+/* Season Map: Gleiche Größe wie Goal Map */
 #seasonMapPage .goal-img-box {
   flex: 1;
   min-height: 0;
+  position: relative;
 }
 
 #seasonMapPage .time-tracking-box {
@@ -547,12 +550,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 8px;
 }
 
-/* Torbilder füllen Box komplett aus */
+/* Torbilder füllen Box komplett aus - gleiche Größe wie Goal Map */
 #seasonMapPage .goal-img-box img {
   width: 100%;
   height: 100%;
   object-fit: fill;
-  border-radius: 8px;
 }
 
 /* Marker-Punkte korrekt positionieren */
