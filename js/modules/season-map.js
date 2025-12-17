@@ -5,6 +5,7 @@
 App.seasonMap = {
   timeTrackingBox: null,
   playerFilter: null,
+  // Vertical split threshold (Y-coordinate) that separates green zone (scored/upper) from red zone (conceded/lower)
   VERTICAL_SPLIT_THRESHOLD: 50,
   
   init() {
