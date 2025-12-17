@@ -484,6 +484,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   height: 100%;  /* Volle Höhe des Parent */
 }
 
+/* Mindesthöhe für Torbilder - Goal Map */
+#torbildPage .goal-img-box {
+  min-height: 120px;
+}
+
 /* Season Map - Bilder EXAKT wie Goal Map */
 #seasonMapPage .img-box {
   position: relative;
@@ -494,6 +499,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-height: 150px;
   height: 100%;  /* Volle Höhe nutzen */
   overflow: hidden; /* Versteckt überstehende Teile */
+}
+
+/* Mindesthöhe für Torbilder - Season Map */
+#seasonMapPage .goal-img-box {
+  min-height: 120px;
 }
 
 #seasonMapPage .img-box img {
