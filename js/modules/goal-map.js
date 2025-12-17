@@ -542,31 +542,34 @@ App.goalMap = {
     // Red goal box = never green zone
     if (box.id === 'goalRedBox') return false;
     
-    // For field box: check data-zone attribute first
+    // For field box: check data-zone attribute first (most reliable)
     if (marker.dataset.zone) {
       return marker.dataset.zone === 'green';
     }
     
-    // FALLBACK for old markers without data-zone:
+    // FALLBACK for old markers without data-zone attribute:
     const color = marker.style.backgroundColor || '';
-    const isGreenMarker = color.includes('0, 255, 102') || color.includes('00ff66') || color === 'rgb(0, 255, 102)';
     
-    if (isGreenMarker) {
-      return true;  // Green shots are always in green zone
+    // Green markers (#00ff66 / rgb(0, 255, 102)) = always green zone
+    const isGreenColor = color.includes('0, 255, 102') || color.includes('00ff66') || color === 'rgb(0, 255, 102)';
+    if (isGreenColor) {
+      return true;
     }
     
-    // Grey markers in top half = green zone (scored goals)
-    const isGreyMarker = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
-    
-    if (isGreyMarker) {
-      const yPctImage = parseFloat(marker.dataset.yPctImage) || 0;
-      if (yPctImage > 0) {
-        return yPctImage < this.VERTICAL_SPLIT_THRESHOLD;
+    // Grey markers = check position (inverse of red zone check)
+    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
+    if (isGreyColor) {
+      const yPctImage = parseFloat(marker.dataset.yPctImage);
+      if (!isNaN(yPctImage) && yPctImage > 0) {
+        return yPctImage < this.VERTICAL_SPLIT_THRESHOLD;  // < 50% = green zone
       }
-      const top = parseFloat(marker.style.top) || 0;
+      
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
       return top < this.VERTICAL_SPLIT_THRESHOLD;
     }
     
+    // Red markers = never green zone
     return false;
   },
   
@@ -578,35 +581,38 @@ App.goalMap = {
     // Green goal box = never red zone
     if (box.id === 'goalGreenBox') return false;
     
-    // For field box: check data-zone attribute first
+    // For field box: check data-zone attribute first (most reliable)
     if (marker.dataset.zone) {
       return marker.dataset.zone === 'red';
     }
     
-    // FALLBACK for old markers without data-zone:
-    // Check if marker color is red (#ff0000) or grey (#444444)
-    // Grey markers in bottom half = red zone (conceded goals)
-    // Red markers = red zone (shots)
+    // FALLBACK for old markers without data-zone attribute:
+    // Check marker color to determine zone
     const color = marker.style.backgroundColor || '';
-    const isGreyMarker = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
-    const isRedMarker = color.includes('255, 0, 0') || color.includes('ff0000') || color === 'rgb(255, 0, 0)';
     
-    if (isRedMarker) {
-      return true;  // Red shots are always in red zone
+    // Red markers (#ff0000 / rgb(255, 0, 0)) = always red zone (shots)
+    const isRedColor = color.includes('255, 0, 0') || color.includes('ff0000') || color === 'rgb(255, 0, 0)';
+    if (isRedColor) {
+      return true;
     }
     
-    if (isGreyMarker) {
-      // Grey markers: check position (yPctImage from data attribute or style.top)
-      const yPctImage = parseFloat(marker.dataset.yPctImage) || 0;
-      if (yPctImage > 0) {
-        return yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
+    // Grey markers (#444444 / rgb(68, 68, 68)) = check position
+    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
+    if (isGreyColor) {
+      // Try to get image-relative Y position from data attribute
+      const yPctImage = parseFloat(marker.dataset.yPctImage);
+      if (!isNaN(yPctImage) && yPctImage > 0) {
+        return yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;  // >= 50% = red zone
       }
-      // Last resort: use style.top (less accurate but better than nothing)
-      const top = parseFloat(marker.style.top) || 0;
+      
+      // Last resort: use style.top (box-relative, less accurate but better than nothing)
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
       return top >= this.VERTICAL_SPLIT_THRESHOLD;
     }
     
-    return false;  // Green markers are not red zone
+    // Green markers = never red zone
+    return false;
   },
   
   // Update goalie button title to show neon-pulse when active
