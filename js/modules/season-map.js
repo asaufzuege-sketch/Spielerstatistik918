@@ -161,6 +161,13 @@ App.seasonMap = {
     }
   },
   
+  // Helper: Refresh momentum graphic if available
+  refreshMomentumGraphic() {
+    if (typeof window.renderSeasonMomentumGraphic === 'function') {
+      window.renderSeasonMomentumGraphic();
+    }
+  },
+  
   // Helper: Check if marker is in GREEN zone
   isGreenZoneMarker(marker, box) {
     if (box.id === 'seasonGoalGreenBox') return true;
@@ -264,9 +271,7 @@ App.seasonMap = {
     this.applyGoalieTimeTrackingFilter(goalieNames);
     
     // Update Momentum Graphic when goalie filter changes
-    if (typeof window.renderSeasonMomentumGraphic === 'function') {
-      window.renderSeasonMomentumGraphic();
-    }
+    this.refreshMomentumGraphic();
   },
   
   applyGoalieTimeTrackingFilter(goalieNames) {
@@ -325,9 +330,7 @@ App.seasonMap = {
     this.applyTimeTrackingFilter();
     
     // Update Momentum Graphic when player filter changes
-    if (typeof window.renderSeasonMomentumGraphic === 'function') {
-      window.renderSeasonMomentumGraphic();
-    }
+    this.refreshMomentumGraphic();
   },
   
   // Apply player filter to time tracking
