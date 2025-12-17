@@ -815,7 +815,6 @@ App.seasonMap = {
   },
   
   exportAsImage() {
-    // Get both the layout AND the momentum container
     const seasonMapPage = document.getElementById("seasonMapPage");
     
     if (!seasonMapPage) {
@@ -823,19 +822,38 @@ App.seasonMap = {
       return;
     }
     
-    // Check if html2canvas is loaded
     if (typeof html2canvas === 'undefined') {
       console.error("html2canvas is not loaded");
       alert("Export library not loaded. Please refresh the page and try again.");
       return;
     }
     
-    console.log("Generating Season Map image with momentum...");
+    console.log("Generating Season Map image...");
     
-    // Create a temporary container that includes both layout and momentum
+    // Create export container
     const exportContainer = document.createElement('div');
     exportContainer.style.backgroundColor = '#ffffff';
-    exportContainer.style.padding = '10px';
+    exportContainer.style.padding = '16px';
+    
+    // === NEU: Header mit Filter-Informationen ===
+    const playerFilter = this.playerFilter || "All Players";
+    const goalieSelect = document.getElementById("seasonMapGoalieFilter");
+    const goalieFilter = (goalieSelect && goalieSelect.value) ? goalieSelect.value : "All Goalies";
+    
+    const header = document.createElement('div');
+    header.style.cssText = `
+      padding: 12px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #000000;
+      background: #ffffff;
+      margin-bottom: 16px;
+      text-align: center;
+      border-bottom: 2px solid #333;
+    `;
+    header.textContent = `Player: ${playerFilter} | Goalie: ${goalieFilter}`;
+    exportContainer.appendChild(header);
     
     // Clone the layout
     const layout = seasonMapPage.querySelector('.torbild-layout');
@@ -844,27 +862,32 @@ App.seasonMap = {
       exportContainer.appendChild(layoutClone);
     }
     
-    // Clone the momentum container if it exists
-    // Note: This container is dynamically created by season_map_momentum.js
+    // Clone the momentum container
     const momentumContainer = seasonMapPage.querySelector('#seasonMapMomentum');
     if (momentumContainer) {
       const momentumClone = momentumContainer.cloneNode(true);
       exportContainer.appendChild(momentumClone);
     }
     
-    // Temporarily add to page for html2canvas
+    // Temporarily add to page
     exportContainer.style.position = 'absolute';
     exportContainer.style.left = '-9999px';
     document.body.appendChild(exportContainer);
     
-    // Helper function to cleanup temporary container
+    // === NEU: Bildboxen weiß hinterlegen für Export ===
+    const boxes = exportContainer.querySelectorAll('.img-box, .goal-img-box, .field-box');
+    boxes.forEach(box => {
+      box.style.backgroundColor = '#ffffff';
+      box.style.border = 'none';
+      box.style.boxShadow = 'none';
+    });
+    
     const cleanupTempContainer = () => {
       if (document.body.contains(exportContainer)) {
         document.body.removeChild(exportContainer);
       }
     };
     
-    // Capture the combined container as image
     html2canvas(exportContainer, {
       scale: 2,
       backgroundColor: '#ffffff',
@@ -872,10 +895,8 @@ App.seasonMap = {
       useCORS: true,
       allowTaint: true
     }).then(canvas => {
-      // Remove temporary container
       cleanupTempContainer();
       
-      // Convert canvas to blob and download
       canvas.toBlob(blob => {
         if (!blob) {
           alert("Error: Failed to create image blob");
@@ -883,11 +904,13 @@ App.seasonMap = {
         }
         
         try {
-          // Generate filename with date
           const date = App.helpers.getCurrentDateString();
-          const filename = `season_map_${date}.png`;
+          // Filename includes filter info - sanitize player name for filename
+          const filterSuffix = playerFilter !== "All Players" 
+            ? `_${playerFilter.replace(/[^a-zA-Z0-9]/g, '_')}` 
+            : '';
+          const filename = `season_map_${date}${filterSuffix}.png`;
           
-          // Create download link
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
           link.download = filename;
@@ -904,7 +927,6 @@ App.seasonMap = {
         }
       }, 'image/png');
     }).catch(error => {
-      // Clean up on error
       cleanupTempContainer();
       console.error("Error capturing season map:", error);
       alert("Error capturing season map: " + error.message);
