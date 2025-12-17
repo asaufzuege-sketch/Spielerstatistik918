@@ -378,18 +378,29 @@
     function sumButton(key, isBottomRow) {
       const playerData = timeDataWithPlayers[key] || {};
       
-      // Bottom row (conceded/red) = Goalie Filter
-      if (isBottomRow && goalieFilter) {
-        return Number(playerData[goalieFilter] || 0);
+      if (isBottomRow) {
+        // Bottom row (conceded/red) = Goalie Filter
+        if (goalieFilter) {
+          return Number(playerData[goalieFilter] || 0);
+        }
+        // If player filter is active (but no goalie filter), hide conceded
+        if (playerFilter) {
+          return 0;
+        }
+        // No filter = Total sum
+        return Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
+      } else {
+        // Top row (scored/green) = Player Filter
+        if (playerFilter) {
+          return Number(playerData[playerFilter] || 0);
+        }
+        // If goalie filter is active (but no player filter), hide scored
+        if (goalieFilter) {
+          return 0;
+        }
+        // No filter = Total sum
+        return Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
       }
-      
-      // Top row (scored/green) = Player Filter
-      if (!isBottomRow && playerFilter) {
-        return Number(playerData[playerFilter] || 0);
-      }
-      
-      // No filter = Total sum
-      return Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
     }
     
     // Build scored and conceded arrays from filtered data
