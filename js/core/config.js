@@ -267,13 +267,55 @@ const App = {
           this.goalValue.render();
         }
         if (page === "seasonMap" && this.seasonMap && typeof this.seasonMap.render === 'function') {
-          this.seasonMap.render();
+          // Check if markers are missing in DOM but exist in localStorage
+          const markersInDOM = document.querySelectorAll("#seasonMapPage .marker-dot").length;
+          const savedMarkers = localStorage.getItem("seasonMapMarkers");
+          
+          if (markersInDOM === 0 && savedMarkers) {
+            console.log('[Season Map] Restoring markers from localStorage...');
+            this.seasonMap.render();
+          }
+          
           if (typeof this.seasonMap.initPlayerFilter === 'function') {
             this.seasonMap.initPlayerFilter();
           }
+          
+          // Marker neu positionieren
+          if (this.markerHandler && typeof this.markerHandler.repositionMarkers === 'function') {
+            this.markerHandler.repositionMarkers();
+          }
         }
-        if (page === "torbild" && this.goalMap && typeof this.goalMap.updateWorkflowIndicator === 'function') {
-          this.goalMap.updateWorkflowIndicator();
+        if (page === "torbild" && this.goalMap) {
+          // Check if markers are missing in DOM but exist in localStorage
+          const markersInDOM = document.querySelectorAll("#torbildPage .marker-dot").length;
+          const savedMarkers = localStorage.getItem("goalMapMarkers");
+          
+          if (markersInDOM === 0 && savedMarkers) {
+            console.log('[Goal Map] Restoring markers from localStorage...');
+            this.goalMap.restoreMarkers();
+          }
+          
+          // Filter anwenden
+          this.goalMap.applyPlayerFilter();
+          
+          // Goalie Filter anwenden
+          const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+          if (savedGoalie) {
+            this.goalMap.filterByGoalies([savedGoalie]);
+          } else {
+            const allGoalies = (this.data.selectedPlayers || []).filter(p => p.position === "G");
+            const goalieNames = allGoalies.map(g => g.name);
+            this.goalMap.filterByGoalies(goalieNames);
+          }
+          
+          // Marker neu positionieren
+          if (this.markerHandler && typeof this.markerHandler.repositionMarkers === 'function') {
+            this.markerHandler.repositionMarkers();
+          }
+          
+          if (typeof this.goalMap.updateWorkflowIndicator === 'function') {
+            this.goalMap.updateWorkflowIndicator();
+          }
           if (typeof this.goalMap.initPlayerFilter === 'function') {
             this.goalMap.initPlayerFilter();
           }
