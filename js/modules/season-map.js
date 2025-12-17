@@ -905,8 +905,10 @@ App.seasonMap = {
         
         try {
           const date = App.helpers.getCurrentDateString();
-          // Filename includes filter info
-          const filterSuffix = playerFilter !== "All Players" ? `_${playerFilter.replace(/\s+/g, '_')}` : '';
+          // Filename includes filter info - sanitize player name for filename
+          const filterSuffix = playerFilter !== "All Players" 
+            ? `_${playerFilter.replace(/[^a-zA-Z0-9]/g, '_')}` 
+            : '';
           const filename = `season_map_${date}${filterSuffix}.png`;
           
           const link = document.createElement('a');
