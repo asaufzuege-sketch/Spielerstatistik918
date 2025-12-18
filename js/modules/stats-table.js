@@ -302,15 +302,17 @@ App.statsTable = {
     // Separate goalies and non-goalies
     const goalies = App.data.selectedPlayers.filter(p => p.position === "G");
     
+    // Create a name-to-player lookup map for O(n) performance
+    const playerMap = new Map();
+    App.data.selectedPlayers.forEach(p => playerMap.set(p.name, p));
+    
     // Reconstruct non-goalies in the new visual order
-    const nonGoaliesInNewOrder = newVisualOrder.map(name => 
-      App.data.selectedPlayers.find(p => p.name === name)
-    ).filter(p => p !== undefined);
+    const nonGoaliesInNewOrder = newVisualOrder
+      .map(name => playerMap.get(name))
+      .filter(p => p !== undefined);
     
     // Combine: goalies first, then non-goalies in new order
     App.data.selectedPlayers = [...goalies, ...nonGoaliesInNewOrder];
-    
-    console.log('Player order updated:', App.data.selectedPlayers.map(p => p.name));
     
     // Save and re-render
     this.saveToStorage();
