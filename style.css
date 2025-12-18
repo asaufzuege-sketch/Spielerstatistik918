@@ -2511,6 +2511,12 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   margin-bottom: 1rem;
 }
 
+[data-theme="dark"] .info-content ol,
+[data-theme="dark"] .info-content ul {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
 .info-content li {
   margin-bottom: 0.5rem;
   color: #000000;
