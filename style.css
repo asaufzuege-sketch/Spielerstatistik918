@@ -241,8 +241,8 @@ h1 {
 .timer.stopped { background: #b00020; }
 .timer.reset { background: var(--timer-left-bg); }
 
-.top-btn.export-csv { background: #46798e; color: #fff; }
-.top-btn.export-csv:hover { filter: brightness(0.95); }
+.top-btn.export-csv { background: #046798; color: #fff; }
+.top-btn.export-csv:hover { filter: brightness(1.1); }
 
 .top-btn.season-highlight { background: #44bb91; color: #fff; }
 .top-btn.season-highlight:hover { filter: brightness(0.95); }
@@ -255,8 +255,8 @@ h1 {
 
 .import-csv-btn { background: #010741; color: #fff; }
 
-.danger-btn { background: #8b0000; color: #fff; }
-.danger-btn:hover { background: #a30000; }
+.danger-btn { background: #7F0000; color: #fff; }
+.danger-btn:hover { background: #9F0000; }
 .reset-btn { font-weight: 700; }
 
 /* Player Filter Button Style */
@@ -1798,31 +1798,31 @@ tr[data-player].dragging {
 
 /* Player Out Button */
 .lineup-player-out-btn {
-  background: #8b0000 !important;
+  background: #7F0000 !important;
   color: #fff;
   position: relative;
 }
 
 .lineup-player-out-btn:hover {
-  background: #a30000 !important;
+  background: #9F0000 !important;
 }
 
 /* Pulsier-Animation */
 @keyframes pulse-red {
   0% {
-    box-shadow: 0 0 0 0 rgba(139, 0, 0, 0.7);
+    box-shadow: 0 0 0 0 rgba(127, 0, 0, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 12px rgba(139, 0, 0, 0);
+    box-shadow: 0 0 0 12px rgba(127, 0, 0, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(139, 0, 0, 0);
+    box-shadow: 0 0 0 0 rgba(127, 0, 0, 0);
   }
 }
 
 /* Button wenn Spieler OUT sind */
 #lineUpPage .lineup-player-out-btn.has-players-out {
-  background: #8b0000 !important;
+  background: #7F0000 !important;
   animation: pulse-red 1.5s infinite;
 }
 
@@ -1830,14 +1830,14 @@ tr[data-player].dragging {
   display: none;
 }
 
-/* Export PDF Button - same color as Export CSV */
+/* Export PDF Button - same color as Download buttons */
 .lineup-export-pdf-btn {
-  background: #5a9a9a !important;
+  background: #046798 !important;
   color: #fff;
 }
 
 .lineup-export-pdf-btn:hover {
-  background: #4a8a8a !important;
+  filter: brightness(1.1);
 }
 
 /* Player Out Dropdown Container */
