@@ -951,8 +951,9 @@ App.goalMap = {
         
         const updateValue = (delta) => {
           const playerName =
-            this.playerFilter ||
-            (App.goalMapWorkflow?.active ? App.goalMapWorkflow.playerName : '_anonymous');
+            (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName)
+              ? App.goalMapWorkflow.playerName
+              : (this.playerFilter || '_anonymous');
           
           if (!timeDataWithPlayers[key]) timeDataWithPlayers[key] = {};
           if (!timeDataWithPlayers[key][playerName]) timeDataWithPlayers[key][playerName] = 0;
