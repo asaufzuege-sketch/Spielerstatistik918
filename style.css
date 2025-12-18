@@ -2463,9 +2463,11 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   z-index: 1000;
 }
 
-.info-content {
-  background: var(--header-bg);
-  color: var(--text-color);
+/* Info Modal - Light Mode: weißer Hintergrund */
+.info-content,
+.info-modal-content {
+  background: #ffffff;
+  color: #000000;
   padding: 2rem;
   border-radius: 12px;
   max-width: 600px;
@@ -2474,10 +2476,21 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
+/* Dark Mode - bleibt wie es ist */
+[data-theme="dark"] .info-content,
+[data-theme="dark"] .info-modal-content {
+  background: #1e1e1e;
+  color: #ffffff;
+}
+
 .info-content h2 {
   margin-bottom: 1rem;
   text-align: center;
-  color: var(--text-color);
+  color: #7dceb6;
+}
+
+[data-theme="dark"] .info-content h2 {
+  color: #7dceb6;
 }
 
 .info-content h3 {
@@ -2493,7 +2506,11 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
 
 .info-content li {
   margin-bottom: 0.5rem;
-  color: var(--text-color);
+  color: #000000;
+}
+
+[data-theme="dark"] .info-content li {
+  color: #ffffff;
 }
 
 #infoCloseBtn {
@@ -2512,4 +2529,25 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
 #infoCloseBtn:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(125, 206, 182, 0.4);
+}
+
+/* Language Selector Styles */
+.info-language-selector {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.info-language-selector select {
+  padding: 8px 16px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .info-language-selector select {
+  background: #2b2b2b;
+  color: #fff;
+  border-color: #444;
 }
