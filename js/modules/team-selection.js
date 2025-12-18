@@ -252,12 +252,67 @@ App.teamSelection = (function() {
         return false;
     }
     
+    function showInfo() {
+        const modal = document.createElement('div');
+        modal.className = 'info-modal';
+        modal.innerHTML = `
+            <div class="info-content">
+                <h2>Bedienungsanleitung</h2>
+                <h3>Team Selection</h3>
+                <ul>
+                    <li>Spieler aus der Liste auswählen</li>
+                    <li>Goalies mit dem Goalie-Button markieren</li>
+                </ul>
+                <h3>Game Data</h3>
+                <ul>
+                    <li>Long-Press auf Spielernamen: Reihenfolge ändern (Drag & Drop)</li>
+                    <li>Statistiken werden automatisch gespeichert</li>
+                </ul>
+                <h3>Goal Map</h3>
+                <ul>
+                    <li>Goal Workflow: Filter wird ignoriert, Spieler/Goalie kommt aus Workflow</li>
+                    <li>Tore auf der Karte markieren</li>
+                </ul>
+                <h3>Shot Map</h3>
+                <ul>
+                    <li>Shot Workflow: Filter ist aktiv</li>
+                    <li>Schüsse tracken</li>
+                </ul>
+                <h3>Season Map</h3>
+                <ul>
+                    <li>Saisonübersicht aller Spiele</li>
+                    <li>Export: Daten bleiben erhalten bis Reset gedrückt wird</li>
+                </ul>
+                <h3>Momentum-Grafik</h3>
+                <ul>
+                    <li>Filter-sensitiv: Player-Filter für grüne Linie (oben)</li>
+                    <li>Goalie-Filter für rote Linie (unten)</li>
+                </ul>
+                <button id="infoCloseBtn" class="primary-btn">Schließen</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Close button event listener
+        document.getElementById('infoCloseBtn')?.addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        // Close when clicking outside the modal content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+    
     // Public API
     return {
         init,
         getCurrentTeamInfo,
         saveTeams,
         updateButtonStates,
-        resetCurrentTeam
+        resetCurrentTeam,
+        showInfo
     };
 })();

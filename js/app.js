@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("selection");
   });
   
+  document.getElementById("teamSelectionInfoBtn")?.addEventListener("click", () => {
+    App.teamSelection?.showInfo();
+  });
+  
   document.getElementById("backToStatsBtn")?.addEventListener("click", () => {
     App.showPage("stats");
   });

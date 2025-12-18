@@ -2448,3 +2448,68 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
     box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
   }
 }
+
+/* ===== INFO MODAL STYLES ===== */
+.info-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.info-content {
+  background: var(--header-bg);
+  color: var(--text-color);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.info-content h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.info-content h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #7dceb6;
+}
+
+.info-content ul {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-content li {
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+#infoCloseBtn {
+  display: block;
+  margin: 2rem auto 0;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #7dceb6 0%, #66a895 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+#infoCloseBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(125, 206, 182, 0.4);
+}

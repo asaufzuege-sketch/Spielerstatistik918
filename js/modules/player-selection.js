@@ -282,7 +282,15 @@ App.playerSelection = {
       // Speichere den aktuellen Status
       this.saveCurrentState();
       
+      // Save to both non-team-specific (for backwards compatibility) and team-specific keys
       App.storage.saveSelectedPlayers();
+      
+      // Save to team-specific keys for proper persistence
+      const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
+      if (currentTeamInfo) {
+        const teamId = currentTeamInfo.id;
+        localStorage.setItem(`selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
+      }
       
       App.data.selectedPlayers.forEach(p => {
         if (!App.data.statsData[p.name]) {

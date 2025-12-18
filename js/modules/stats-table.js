@@ -28,6 +28,9 @@ App.statsTable = {
   render() {
     if (!this.container) return;
     
+    // Load team-specific player order from localStorage before rendering
+    this.loadTeamSpecificData();
+    
     this.container.innerHTML = "";
     
     const table = document.createElement("table");
@@ -581,7 +584,41 @@ App.statsTable = {
     });
   },
   
-  // Teamspezifische Speicherfunktionen
+  // Teamspezifische Lade- und Speicherfunktionen
+  loadTeamSpecificData() {
+    const teamId = App.teamSelection.getCurrentTeamInfo().id;
+    
+    // Load team-specific selectedPlayers order if it exists
+    const savedSelectedPlayers = localStorage.getItem(`selectedPlayers_${teamId}`);
+    if (savedSelectedPlayers) {
+      try {
+        App.data.selectedPlayers = JSON.parse(savedSelectedPlayers);
+      } catch (e) {
+        console.warn('Failed to load team-specific selectedPlayers:', e);
+      }
+    }
+    
+    // Load team-specific stats data
+    const savedStatsData = localStorage.getItem(`statsData_${teamId}`);
+    if (savedStatsData) {
+      try {
+        App.data.statsData = JSON.parse(savedStatsData);
+      } catch (e) {
+        console.warn('Failed to load team-specific statsData:', e);
+      }
+    }
+    
+    // Load team-specific player times
+    const savedPlayerTimes = localStorage.getItem(`playerTimes_${teamId}`);
+    if (savedPlayerTimes) {
+      try {
+        App.data.playerTimes = JSON.parse(savedPlayerTimes);
+      } catch (e) {
+        console.warn('Failed to load team-specific playerTimes:', e);
+      }
+    }
+  },
+  
   saveToStorage() {
     const teamId = App.teamSelection.getCurrentTeamInfo().id;
     localStorage.setItem(`selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
