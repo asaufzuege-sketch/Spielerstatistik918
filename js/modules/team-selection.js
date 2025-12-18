@@ -254,540 +254,510 @@ App.teamSelection = (function() {
     
     // Language content for Info Modal
     const infoContent = {
-        de: `## Ablauf-Empfehlung (Spiel)
+        de: `Ablauf (Spiel)
 
-1. **Team Selection:** Team wählen oder bearbeiten.
-2. **Player Selection:** Spieler erfassen/aktivieren; bei Bedarf direkt zu Line Up oder Game Data.
-3. **Line Up:** Aufstellung prüfen/setzen (Normal/Power vorgegeben durch KI/AI, Manuell frei).
-4. **Game Data:** Spiel erfassen; Goals/Shot starten Workflows in der Goal Map.
-5. **Goal Map:** Punkte im Feld/Tor/Time setzen, zurück zu Game Data.
-6. **Nach Spiel:** Goal Value je Gegner einschätzen (Schwierigkeit).
-7. **Download:** Game → Season und Season Map exportieren, um die Saison auszuwerten.
+1. Team Selection: Team wählen oder bearbeiten. 
+2. Player Selection: Spieler erfassen/aktivieren; bei Bedarf direkt zu Line Up oder Game Data. 
+3. Line Up: Aufstellung setzen (Manuell, Normal + Power vorgegeben durch KI/AI)
+4. Game Data: Spieldaten erfassen
+5. Goal Map: Punkte im Feld/Tor/Time setzen, zurück zu Game Data. 
+6. Nach Spiel: Goal Value je Gegner einschätzen (Schwierigkeit). 
+7. Download: Game → Season und Season Map exportieren, um die Saison auszuwerten.
 
----
+________________________________________
 
-## Team Selection
-Team wählen oder bearbeiten (team-spezifische Daten/Reihenfolgen).
+Team Selection
+Team wählen oder bearbeiten
 
----
+________________________________________
 
-## Player Selection
-- Spieler erfassen/bearbeiten: Nummer, Name, Position (G = Goalie, sonst Feld).
-- Aktivieren (Checkbox) = Spieler ist für Line Up / Game Data verfügbar.
-- Buttons: „Line Up" → zur Aufstellung; „Game Data" → direkt zur Spiel-Erfassung.
+Player Selection
+• Spieler erfassen/bearbeiten: Nummer, Name, Position (G = Goalie, W = Wing, C= Center, D = Defense).
+• Aktivieren (Checkbox) = Spieler ist für Line Up / Game Data verfügbar.
+• Buttons: „Line Up" → zur Aufstellung; „Game Data" → direkt zur Spiel-Erfassung.
 
----
+________________________________________
 
-## Line Up
-**Modi (umschaltbar per Modus-Button):**
-- **Normal:** Vorgabe durch KI/AI-Logik.
-- **Power:** Spezial-Setup durch KI/AI für entscheidende Szenen.
-- **Manuell:** Frei per Klick auf Position belegen.
+Line Up
+Modi (umschaltbar per Modus-Button):
+• Normal: Vorgabe durch KI/AI-Logik.
+• Power: Spezial-Setup durch KI/AI für entscheidende Szenen.
+• Manuell: Frei per Klick auf Position belegen.
+• „Player Out": Spieler als OUT markieren (Bei Penalty-Strafe). Line Up wird automatisch angepasst.
+• Positions-Buttons aus Player Selection zeigen den zugewiesenen Spieler; in Manuell per Klick wählbar, in Normal/Power vorgegeben.
 
-- „Player Out": Spieler als OUT markieren (aus allen Modi entfernt).
-- Positions-Buttons zeigen den zugewiesenen Spieler; in Manuell per Klick wählbar, in Normal/Power vorgegeben.
+________________________________________
 
----
+Game Data
+Spielerzeile:
+• Klick auf Namen (nicht auf ⋮⋮): Timer Start/Stop.
+• Klick auf Zeit: +10 s; Doppelklick: –10 s.
+• Langer Druck auf ⋮⋮ → Drag & Drop für Reihenfolge
 
-## Game Data
-**Spielerzeile:**
-- Klick auf Namen (nicht auf ⋮⋮): Timer Start/Stop.
-- Klick auf Zeit: +10 s; Doppelklick: –10 s.
-- Langer Druck auf ⋮⋮ → Drag & Drop für Reihenfolge; Reihenfolge wird team-spezifisch gespeichert.
+Statistikzellen (z. B. Goals, Shot):
+• Klick: +1, Doppelklick: –1.
+• Bei +1 auf Goals/Shot startet je nach Ereignis der Goal- bzw. Shot-Workflow in der Goal Map.
 
-**Statistikzellen (z. B. Goals, Shot):**
-- Klick: +1, Doppelklick: –1.
-- Bei +1 auf Goals/Shot startet je nach Ereignis der Goal- bzw. Shot-Workflow in der Goal Map.
+Gegner-Schüsse: In der Shot-Totals-Zelle (unten) per Klick/Doppelklick zählen (team-spezifisch).
 
-**Gegner-Schüsse:** In der Shot-Totals-Zelle (unten) per Klick/Doppelklick zählen (team-spezifisch).
+Download Game → Season: Spiel in Saisonstatistik übertragen
 
-**Download Game → Season:** Spiel in Saisonstatistik übertragen (optional Game Data leeren).
+________________________________________
 
----
+Goal Map
+Feldhälften: Oben = scored (grün), Unten = conceded (rot).
 
-## Goal Map
-**Feldhälften:** Oben = scored (grün), Unten = conceded (rot).
+Goal-Workflow (Tor):
+• Feldpunkt: Oben→scored, Unten→conceded (legt Art fest).
+• Torpunkt: scored→nur grünes Tor; conceded→nur rotes Tor.
+• Time-Button: scored→nur obere Reihe (grün); conceded→nur untere Reihe (rot).
+• Danach Auto-Return zu Game Data.
 
-**Goal-Workflow (Tor):**
-- Feldpunkt: Oben→scored, Unten→conceded (legt Art fest).
-- Torpunkt: scored→nur grünes Tor; conceded→nur rotes Tor.
-- Time-Button: scored→nur obere Reihe (grün); conceded→nur untere Reihe (rot).
-- Danach Auto-Return zu Game Data.
+Shot-Workflow (Schuss): Nur Feldpunkt (grüne Zone), kein Tor/Time; Auto-Return.
 
-**Shot-Workflow (Schuss):** Nur Feldpunkt (grüne Zone), kein Tor/Time; Auto-Return.
+Goalie-Pflicht: Rotes Tor und rote Feldpunkte ohne Workflow nur mit aktivem Goalie im Dropdown.
 
-**Goalie-Pflicht:** Rotes Tor und rote Feldpunkte ohne Workflow nur mit aktivem Goalie im Dropdown.
+Marker/Timeboxen bleiben bis Reset; Download/Export kopiert alles zur Season Map.
 
-**Marker/Timeboxen** bleiben bis Reset; Download/Export kopiert alles zur Season Map.
+________________________________________
 
----
+Season Map
+• Only read
 
-## Season Map
-- Read-only Anzeige exportierter Goal-Map-Daten (Marker, Timeboxen).
+Filter:
+• Player-Filter: Zeigt/aggregiert grüne (scored) Werte nur für diesen Spieler.
+• Goalie-Filter: Zeigt/aggregiert rote (conceded) Werte nur für diesen Goalie.
 
-**Filter:**
-- **Player-Filter:** Zeigt/aggregiert grüne (scored) Werte nur für diesen Spieler.
-- **Goalie-Filter:** Zeigt/aggregiert rote (conceded) Werte nur für diesen Goalie.
+Momentum-Grafik:
+• Mit Player-Filter: grüne Werte nur dieses Spielers.
+• Mit Goalie-Filter: rote Werte nur dieses Goalies.
+• Ohne Filter: Gesamtwerte.
 
-**Momentum-Grafik:**
-- Mit Player-Filter: grüne Werte nur dieses Spielers.
-- Mit Goalie-Filter: rote Werte nur dieses Goalies.
-- Ohne Filter: Gesamtwerte.
+________________________________________
 
-**Download als PNG:** Boxen weiß hinterlegt, Header zeigt aktuelle Filter.
+Goal Value
+• Manuelle Eingabe der erzielten Tore gegen den jeweiligen Gegner
+• Untere Skala (Bottom) gewichtet Gegnerstärke; Value = Summe (Wert × Gewicht).
+• Reset setzt alle Werte, Skalen und Gegnernamen zurück.
+• Goal Value wird für Season Gesamtstatistik benötigt.
 
----
+________________________________________
 
-## Goal Value
-- Matrix Spieler × Gegner: Klick +1, Doppelklick –1 (keine Goalies).
-- Untere Skala (Bottom) gewichtet Gegnerstärke; Value = Summe (Wert × Gewicht).
-- Reset setzt alle Werte, Skalen und Gegnernamen zurück.
+Season
+• Feldspieler-Saisonwerte (Goalies ausgeblendet).
+• Klick/Doppelklick auf Werte: +1/–1 (bei +/- auch negativ).
+• Long-Press auf Time-Zelle: Zusätzliche Zeit kann manuell eingegeben werden.
+• Positionsfilter (Dropdown „Pos.").
+• MVP Points/MVP = Wertvollster Spieler gemäss analysierter Statistik (KI/AI)
 
----
+________________________________________
 
-## Season (Saison-Tabelle)
-- Feldspieler-Saisonwerte (Goalies ausgeblendet).
-- Klick/Doppelklick auf Werte: +1/–1 (bei +/- auch negativ).
-- Long-Press auf Time-Zelle: Zeitdialog.
-- Positionsfilter (Dropdown „Pos.").
-- Download Season CSV (neu: „Download" statt „Export").
-
----
-
-## Reset (irreversibel)
-- **Game Data:** statsData, playerTimes, Timer, Gegner-Schüsse (team-spezifisch).
-- **Goal Map:** Marker, Timeboxen, timeData/timeDataWithPlayers, goalMapMarkers.
-- **Season Map:** seasonMapMarkers, seasonMapTimeData, seasonMapTimeDataWithPlayers, Momentum-Container.
-- **Goal Value:** Werte/Skalen/Gegnernamen.
-- **Season:** seasonData.`,
+Reset (irreversibel)
+• Game Data: Jede Seite Kann/muss einzeln zurückgesetzt werden`,
         
-        en: `## Recommended Workflow (Game)
+        en: `Workflow (Game)
 
-1. **Team Selection:** Choose or edit team.
-2. **Player Selection:** Add/activate players; go directly to Line Up or Game Data if needed.
-3. **Line Up:** Check/set lineup (Normal/Power preset by AI, Manual free choice).
-4. **Game Data:** Record game; Goals/Shot trigger workflows in Goal Map.
-5. **Goal Map:** Set points in field/goal/time, return to Game Data.
-6. **After Game:** Assess Goal Value per opponent (difficulty).
-7. **Download:** Export Game → Season and Season Map to analyze the season.
+1. Team Selection: Choose or edit team.
+2. Player Selection: Add/activate players; go directly to Line Up or Game Data if needed.
+3. Line Up: Set lineup (Manual, Normal + Power preset by AI)
+4. Game Data: Record game data
+5. Goal Map: Set points in field/goal/time, return to Game Data.
+6. After Game: Assess Goal Value per opponent (difficulty).
+7. Download: Export Game → Season and Season Map to analyze the season.
 
----
+________________________________________
 
-## Team Selection
-Choose or edit team (team-specific data/order).
+Team Selection
+Choose or edit team
 
----
+________________________________________
 
-## Player Selection
-- Add/edit players: Number, Name, Position (G = Goalie, otherwise field player).
-- Activate (checkbox) = Player available for Line Up / Game Data.
-- Buttons: "Line Up" → to lineup; "Game Data" → directly to game recording.
+Player Selection
+• Add/edit players: Number, Name, Position (G = Goalie, W = Wing, C = Center, D = Defense).
+• Activate (checkbox) = Player available for Line Up / Game Data.
+• Buttons: "Line Up" → to lineup; "Game Data" → directly to game recording.
 
----
+________________________________________
 
-## Line Up
-**Modes (switchable via mode button):**
-- **Normal:** Preset by AI logic.
-- **Power:** Special AI setup for decisive moments.
-- **Manual:** Free assignment by clicking positions.
+Line Up
+Modes (switchable via mode button):
+• Normal: Preset by AI logic.
+• Power: Special AI setup for decisive moments.
+• Manual: Free assignment by clicking positions.
+• "Player Out": Mark player as OUT (penalty). Line Up adjusts automatically.
+• Position buttons from Player Selection show assigned player; in Manual clickable, in Normal/Power preset.
 
-- "Player Out": Mark player as OUT (removed from all modes).
-- Position buttons show assigned player; in Manual clickable, in Normal/Power preset.
+________________________________________
 
----
+Game Data
+Player Row:
+• Click on name (not on ⋮⋮): Timer Start/Stop.
+• Click on time: +10 s; Double-click: –10 s.
+• Long press on ⋮⋮ → Drag & Drop for order
 
-## Game Data
-**Player Row:**
-- Click on name (not on ⋮⋮): Timer Start/Stop.
-- Click on time: +10 s; Double-click: –10 s.
-- Long press on ⋮⋮ → Drag & Drop for order; order saved team-specifically.
+Stat Cells (e.g., Goals, Shot):
+• Click: +1, Double-click: –1.
+• +1 on Goals/Shot triggers corresponding workflow in Goal Map.
 
-**Stat Cells (e.g., Goals, Shot):**
-- Click: +1, Double-click: –1.
-- +1 on Goals/Shot triggers corresponding workflow in Goal Map.
+Opponent Shots: Count in Shot-Totals cell (bottom) via click/double-click (team-specific).
 
-**Opponent Shots:** Count in Shot-Totals cell (bottom) via click/double-click (team-specific).
+Download Game → Season: Transfer game to season stats
 
-**Download Game → Season:** Transfer game to season stats (optionally clear Game Data).
+________________________________________
 
----
+Goal Map
+Field Halves: Top = scored (green), Bottom = conceded (red).
 
-## Goal Map
-**Field Halves:** Top = scored (green), Bottom = conceded (red).
+Goal Workflow:
+• Field point: Top→scored, Bottom→conceded (sets type).
+• Goal point: scored→green goal only; conceded→red goal only.
+• Time button: scored→top row only (green); conceded→bottom row only (red).
+• Then auto-return to Game Data.
 
-**Goal Workflow:**
-- Field point: Top→scored, Bottom→conceded (sets type).
-- Goal point: scored→green goal only; conceded→red goal only.
-- Time button: scored→top row only (green); conceded→bottom row only (red).
-- Then auto-return to Game Data.
+Shot Workflow: Field point only (green zone), no goal/time; auto-return.
 
-**Shot Workflow:** Field point only (green zone), no goal/time; auto-return.
+Goalie Required: Red goal and red field points without workflow only with active goalie in dropdown.
 
-**Goalie Required:** Red goal and red field points without workflow only with active goalie in dropdown.
+Markers/Time boxes remain until Reset; Download/Export copies everything to Season Map.
 
-**Markers/Time boxes** remain until Reset; Download/Export copies everything to Season Map.
+________________________________________
 
----
+Season Map
+• Read only
 
-## Season Map
-- Read-only display of exported Goal Map data (markers, time boxes).
+Filters:
+• Player Filter: Shows/aggregates green (scored) values for this player only.
+• Goalie Filter: Shows/aggregates red (conceded) values for this goalie only.
 
-**Filters:**
-- **Player Filter:** Shows/aggregates green (scored) values for this player only.
-- **Goalie Filter:** Shows/aggregates red (conceded) values for this goalie only.
+Momentum Chart:
+• With Player Filter: green values of this player only.
+• With Goalie Filter: red values of this goalie only.
+• Without filter: Total values.
 
-**Momentum Chart:**
-- With Player Filter: green values of this player only.
-- With Goalie Filter: red values of this goalie only.
-- Without filter: Total values.
+________________________________________
 
-**Download as PNG:** Boxes with white background, header shows current filters.
+Goal Value
+• Manual entry of goals scored against each opponent
+• Bottom scale weights opponent strength; Value = Sum (value × weight).
+• Reset clears all values, scales, and opponent names.
+• Goal Value is needed for Season overall statistics.
 
----
+________________________________________
 
-## Goal Value
-- Matrix Players × Opponents: Click +1, Double-click –1 (no goalies).
-- Bottom scale weights opponent strength; Value = Sum (value × weight).
-- Reset clears all values, scales, and opponent names.
+Season
+• Field player season values (goalies hidden).
+• Click/double-click on values: +1/–1 (+/- can be negative).
+• Long-press on time cell: Additional time can be entered manually.
+• Position filter (dropdown "Pos.").
+• MVP Points/MVP = Most Valuable Player based on analyzed statistics (AI)
 
----
+________________________________________
 
-## Season (Season Table)
-- Field player season values (goalies hidden).
-- Click/double-click on values: +1/–1 (+/- can be negative).
-- Long-press on time cell: Time dialog.
-- Position filter (dropdown "Pos.").
-- Download Season CSV (new: "Download" instead of "Export").
-
----
-
-## Reset (irreversible)
-- **Game Data:** statsData, playerTimes, timer, opponent shots (team-specific).
-- **Goal Map:** Markers, time boxes, timeData/timeDataWithPlayers, goalMapMarkers.
-- **Season Map:** seasonMapMarkers, seasonMapTimeData, seasonMapTimeDataWithPlayers, momentum container.
-- **Goal Value:** Values/scales/opponent names.
-- **Season:** seasonData.`,
+Reset (irreversible)
+• Game Data: Each page can/must be reset individually`,
         
-        ru: `## Рекомендуемый порядок действий (Игра)
+        ru: `Порядок действий (Игра)
 
-1. **Team Selection:** Выбрать или редактировать команду.
-2. **Player Selection:** Добавить/активировать игроков; при необходимости перейти в Line Up или Game Data.
-3. **Line Up:** Проверить/установить состав (Normal/Power предустановлены ИИ, Manual свободный выбор).
-4. **Game Data:** Записать игру; Goals/Shot запускают процессы в Goal Map.
-5. **Goal Map:** Установить точки на поле/воротах/времени, вернуться в Game Data.
-6. **После игры:** Оценить Goal Value по соперникам (сложность).
-7. **Download:** Экспортировать Game → Season и Season Map для анализа сезона.
+1. Team Selection: Выбрать или редактировать команду.
+2. Player Selection: Добавить/активировать игроков; при необходимости перейти в Line Up или Game Data.
+3. Line Up: Установить состав (Ручной, Normal + Power предустановлены ИИ)
+4. Game Data: Записать игровые данные
+5. Goal Map: Установить точки на поле/воротах/времени, вернуться в Game Data.
+6. После игры: Оценить Goal Value по соперникам (сложность).
+7. Download: Экспортировать Game → Season и Season Map для анализа сезона.
 
----
+________________________________________
 
-## Team Selection
-Выбрать или редактировать команду (данные/порядок для команды).
+Team Selection
+Выбрать или редактировать команду
 
----
+________________________________________
 
-## Player Selection
-- Добавить/редактировать игроков: Номер, Имя, Позиция (G = Вратарь, иначе полевой игрок).
-- Активировать (чекбокс) = Игрок доступен для Line Up / Game Data.
-- Кнопки: «Line Up» → к составу; «Game Data» → сразу к записи игры.
+Player Selection
+• Добавить/редактировать игроков: Номер, Имя, Позиция (G = Вратарь, W = Крайний, C = Центр, D = Защитник).
+• Активировать (чекбокс) = Игрок доступен для Line Up / Game Data.
+• Кнопки: «Line Up» → к составу; «Game Data» → сразу к записи игры.
 
----
+________________________________________
 
-## Line Up
-**Режимы (переключаются кнопкой режима):**
-- **Normal:** Предустановка логикой ИИ.
-- **Power:** Специальная расстановка ИИ для решающих моментов.
-- **Manual:** Свободное назначение кликом на позицию.
+Line Up
+Режимы (переключаются кнопкой режима):
+• Normal: Предустановка логикой ИИ.
+• Power: Специальная расстановка ИИ для решающих моментов.
+• Manual: Свободное назначение кликом на позицию.
+• «Player Out»: Отметить игрока как OUT (штраф). Line Up корректируется автоматически.
+• Кнопки позиций из Player Selection показывают назначенного игрока; в Manual кликабельны, в Normal/Power предустановлены.
 
-- «Player Out»: Отметить игрока как OUT (удалён из всех режимов).
-- Кнопки позиций показывают назначенного игрока; в Manual кликабельны, в Normal/Power предустановлены.
+________________________________________
 
----
+Game Data
+Строка игрока:
+• Клик по имени (не по ⋮⋮): Таймер Старт/Стоп.
+• Клик по времени: +10 с; Двойной клик: –10 с.
+• Долгое нажатие на ⋮⋮ → Drag & Drop для порядка
 
-## Game Data
-**Строка игрока:**
-- Клик по имени (не по ⋮⋮): Таймер Старт/Стоп.
-- Клик по времени: +10 с; Двойной клик: –10 с.
-- Долгое нажатие на ⋮⋮ → Drag & Drop для порядка; порядок сохраняется для команды.
+Ячейки статистики (например, Goals, Shot):
+• Клик: +1, Двойной клик: –1.
+• +1 на Goals/Shot запускает соответствующий процесс в Goal Map.
 
-**Ячейки статистики (например, Goals, Shot):**
-- Клик: +1, Двойной клик: –1.
-- +1 на Goals/Shot запускает соответствующий процесс в Goal Map.
+Броски соперника: Считать в ячейке Shot-Totals (внизу) кликом/двойным кликом (для команды).
 
-**Броски соперника:** Считать в ячейке Shot-Totals (внизу) кликом/двойным кликом (для команды).
+Download Game → Season: Перенести игру в сезонную статистику
 
-**Download Game → Season:** Перенести игру в сезонную статистику (опционально очистить Game Data).
+________________________________________
 
----
+Goal Map
+Половины поля: Верх = забито (зелёный), Низ = пропущено (красный).
 
-## Goal Map
-**Половины поля:** Верх = забито (зелёный), Низ = пропущено (красный).
+Goal Workflow:
+• Точка на поле: Верх→забито, Низ→пропущено (определяет тип).
+• Точка ворот: забито→только зелёные ворота; пропущено→только красные ворота.
+• Кнопка времени: забито→только верхний ряд (зелёный); пропущено→только нижний ряд (красный).
+• Затем авто-возврат в Game Data.
 
-**Goal Workflow (Гол):**
-- Точка на поле: Верх→забито, Низ→пропущено (определяет тип).
-- Точка ворот: забито→только зелёные ворота; пропущено→только красные ворота.
-- Кнопка времени: забито→только верхний ряд (зелёный); пропущено→только нижний ряд (красный).
-- Затем авто-возврат в Game Data.
+Shot Workflow: Только точка на поле (зелёная зона), без ворот/времени; авто-возврат.
 
-**Shot Workflow (Бросок):** Только точка на поле (зелёная зона), без ворот/времени; авто-возврат.
+Требуется вратарь: Красные ворота и красные точки на поле без workflow только с активным вратарём в выпадающем списке.
 
-**Требуется вратарь:** Красные ворота и красные точки на поле без workflow только с активным вратарём в выпадающем списке.
+Маркеры/Тайм-боксы сохраняются до Reset; Download/Export копирует всё в Season Map.
 
-**Маркеры/Тайм-боксы** сохраняются до Reset; Download/Export копирует всё в Season Map.
+________________________________________
 
----
+Season Map
+• Только просмотр
 
-## Season Map
-- Только просмотр экспортированных данных Goal Map (маркеры, тайм-боксы).
+Фильтры:
+• Player Filter: Показывает/суммирует зелёные (забитые) значения только для этого игрока.
+• Goalie Filter: Показывает/суммирует красные (пропущенные) значения только для этого вратаря.
 
-**Фильтры:**
-- **Player Filter:** Показывает/суммирует зелёные (забитые) значения только для этого игрока.
-- **Goalie Filter:** Показывает/суммирует красные (пропущенные) значения только для этого вратаря.
+Momentum-график:
+• С Player Filter: зелёные значения только этого игрока.
+• С Goalie Filter: красные значения только этого вратаря.
+• Без фильтра: Общие значения.
 
-**Momentum-график:**
-- С Player Filter: зелёные значения только этого игрока.
-- С Goalie Filter: красные значения только этого вратаря.
-- Без фильтра: Общие значения.
+________________________________________
 
-**Скачать как PNG:** Боксы с белым фоном, заголовок показывает текущие фильтры.
+Goal Value
+• Ручной ввод забитых голов против каждого соперника
+• Нижняя шкала (Bottom) весит силу соперника; Value = Сумма (значение × вес).
+• Reset сбрасывает все значения, шкалы и имена соперников.
+• Goal Value нужен для общей статистики Season.
 
----
+________________________________________
 
-## Goal Value
-- Матрица Игроки × Соперники: Клик +1, Двойной клик –1 (без вратарей).
-- Нижняя шкала (Bottom) весит силу соперника; Value = Сумма (значение × вес).
-- Reset сбрасывает все значения, шкалы и имена соперников.
+Season
+• Сезонные показатели полевых игроков (вратари скрыты).
+• Клик/двойной клик по значениям: +1/–1 (+/- может быть отрицательным).
+• Долгое нажатие на ячейку времени: Дополнительное время можно ввести вручную.
+• Фильтр позиции (выпадающий «Pos.»).
+• MVP Points/MVP = Самый ценный игрок по анализу статистики (ИИ)
 
----
+________________________________________
 
-## Season (Таблица сезона)
-- Сезонные показатели полевых игроков (вратари скрыты).
-- Клик/двойной клик по значениям: +1/–1 (+/- может быть отрицательным).
-- Долгое нажатие на ячейку времени: Диалог времени.
-- Фильтр позиции (выпадающий «Pos.»).
-- Скачать Season CSV (новое: «Download» вместо «Export»).
-
----
-
-## Reset (необратимо)
-- **Game Data:** statsData, playerTimes, таймер, броски соперника (для команды).
-- **Goal Map:** Маркеры, тайм-боксы, timeData/timeDataWithPlayers, goalMapMarkers.
-- **Season Map:** seasonMapMarkers, seasonMapTimeData, seasonMapTimeDataWithPlayers, momentum-контейнер.
-- **Goal Value:** Значения/шкалы/имена соперников.
-- **Season:** seasonData.`,
+Reset (необратимо)
+• Game Data: Каждую страницу можно/нужно сбросить отдельно`,
         
-        sv: `## Rekommenderat arbetsflöde (Match)
+        sv: `Arbetsflöde (Match)
 
-1. **Team Selection:** Välj eller redigera lag.
-2. **Player Selection:** Lägg till/aktivera spelare; gå direkt till Line Up eller Game Data vid behov.
-3. **Line Up:** Kontrollera/sätt uppställning (Normal/Power förinställt av AI, Manual fritt val).
-4. **Game Data:** Registrera match; Goals/Shot startar arbetsflöden i Goal Map.
-5. **Goal Map:** Sätt punkter i fält/mål/tid, återgå till Game Data.
-6. **Efter match:** Bedöm Goal Value per motståndare (svårighetsgrad).
-7. **Download:** Exportera Game → Season och Season Map för att analysera säsongen.
+1. Team Selection: Välj eller redigera lag.
+2. Player Selection: Lägg till/aktivera spelare; gå direkt till Line Up eller Game Data vid behov.
+3. Line Up: Sätt uppställning (Manuell, Normal + Power förinställt av AI)
+4. Game Data: Registrera matchdata
+5. Goal Map: Sätt punkter i fält/mål/tid, återgå till Game Data.
+6. Efter match: Bedöm Goal Value per motståndare (svårighetsgrad).
+7. Download: Exportera Game → Season och Season Map för att analysera säsongen.
 
----
+________________________________________
 
-## Team Selection
-Välj eller redigera lag (lagspecifik data/ordning).
+Team Selection
+Välj eller redigera lag
 
----
+________________________________________
 
-## Player Selection
-- Lägg till/redigera spelare: Nummer, Namn, Position (G = Målvakt, annars utespelare).
-- Aktivera (kryssruta) = Spelare tillgänglig för Line Up / Game Data.
-- Knappar: "Line Up" → till uppställning; "Game Data" → direkt till matchregistrering.
+Player Selection
+• Lägg till/redigera spelare: Nummer, Namn, Position (G = Målvakt, W = Wing, C = Center, D = Back).
+• Aktivera (kryssruta) = Spelare tillgänglig för Line Up / Game Data.
+• Knappar: "Line Up" → till uppställning; "Game Data" → direkt till matchregistrering.
 
----
+________________________________________
 
-## Line Up
-**Lägen (växla via lägesknapp):**
-- **Normal:** Förinställt av AI-logik.
-- **Power:** Speciell AI-uppställning för avgörande situationer.
-- **Manual:** Fritt val genom att klicka på positioner.
+Line Up
+Lägen (växla via lägesknapp):
+• Normal: Förinställt av AI-logik.
+• Power: Speciell AI-uppställning för avgörande situationer.
+• Manuell: Fritt val genom att klicka på positioner.
+• "Player Out": Markera spelare som OUT (utvisning). Line Up justeras automatiskt.
+• Positionsknappar från Player Selection visar tilldelad spelare; i Manuell klickbar, i Normal/Power förinställd.
 
-- "Player Out": Markera spelare som OUT (borttagen från alla lägen).
-- Positionsknappar visar tilldelad spelare; i Manual klickbar, i Normal/Power förinställd.
+________________________________________
 
----
+Game Data
+Spelarrad:
+• Klicka på namn (inte på ⋮⋮): Timer Start/Stop.
+• Klicka på tid: +10 s; Dubbelklicka: –10 s.
+• Långtryck på ⋮⋮ → Drag & Drop för ordning
 
-## Game Data
-**Spelarrad:**
-- Klicka på namn (inte på ⋮⋮): Timer Start/Stop.
-- Klicka på tid: +10 s; Dubbelklicka: –10 s.
-- Långtryck på ⋮⋮ → Drag & Drop för ordning; ordning sparas lagspecifikt.
+Statistikceller (t.ex. Goals, Shot):
+• Klick: +1, Dubbelklick: –1.
+• +1 på Goals/Shot startar motsvarande arbetsflöde i Goal Map.
 
-**Statistikceller (t.ex. Goals, Shot):**
-- Klick: +1, Dubbelklick: –1.
-- +1 på Goals/Shot startar motsvarande arbetsflöde i Goal Map.
+Motståndarskott: Räkna i Shot-Totals-cellen (nederst) via klick/dubbelklick (lagspecifikt).
 
-**Motståndarskott:** Räkna i Shot-Totals-cellen (nederst) via klick/dubbelklick (lagspecifikt).
+Download Game → Season: Överför match till säsongsstatistik
 
-**Download Game → Season:** Överför match till säsongsstatistik (valfritt rensa Game Data).
+________________________________________
 
----
+Goal Map
+Fälthalvor: Övre = gjorda (grön), Nedre = insläppta (röd).
 
-## Goal Map
-**Fälthalvor:** Övre = gjorda (grön), Nedre = insläppta (röd).
+Goal Workflow:
+• Fältpunkt: Övre→gjort, Nedre→insläppt (bestämmer typ).
+• Målpunkt: gjort→endast grönt mål; insläppt→endast rött mål.
+• Tidknapp: gjort→endast övre rad (grön); insläppt→endast nedre rad (röd).
+• Sedan auto-återgång till Game Data.
 
-**Goal Workflow:**
-- Fältpunkt: Övre→gjort, Nedre→insläppt (bestämmer typ).
-- Målpunkt: gjort→endast grönt mål; insläppt→endast rött mål.
-- Tidknapp: gjort→endast övre rad (grön); insläppt→endast nedre rad (röd).
-- Sedan auto-återgång till Game Data.
+Shot Workflow: Endast fältpunkt (grön zon), inget mål/tid; auto-återgång.
 
-**Shot Workflow:** Endast fältpunkt (grön zon), inget mål/tid; auto-återgång.
+Målvakt krävs: Rött mål och röda fältpunkter utan workflow endast med aktiv målvakt i dropdown.
 
-**Målvakt krävs:** Rött mål och röda fältpunkter utan workflow endast med aktiv målvakt i dropdown.
+Markörer/Tidrutor kvarstår till Reset; Download/Export kopierar allt till Season Map.
 
-**Markörer/Tidrutor** kvarstår till Reset; Download/Export kopierar allt till Season Map.
+________________________________________
 
----
+Season Map
+• Endast läsning
 
-## Season Map
-- Skrivskyddad visning av exporterad Goal Map-data (markörer, tidrutor).
+Filter:
+• Player Filter: Visar/aggregerar gröna (gjorda) värden endast för denna spelare.
+• Goalie Filter: Visar/aggregerar röda (insläppta) värden endast för denna målvakt.
 
-**Filter:**
-- **Player Filter:** Visar/aggregerar gröna (gjorda) värden endast för denna spelare.
-- **Goalie Filter:** Visar/aggregerar röda (insläppta) värden endast för denna målvakt.
+Momentum-graf:
+• Med Player Filter: gröna värden endast för denna spelare.
+• Med Goalie Filter: röda värden endast för denna målvakt.
+• Utan filter: Totalvärden.
 
-**Momentum-graf:**
-- Med Player Filter: gröna värden endast för denna spelare.
-- Med Goalie Filter: röda värden endast för denna målvakt.
-- Utan filter: Totalvärden.
+________________________________________
 
-**Ladda ner som PNG:** Rutor med vit bakgrund, rubrik visar aktuella filter.
+Goal Value
+• Manuell inmatning av gjorda mål mot varje motståndare
+• Nedre skala (Bottom) viktar motståndares styrka; Value = Summa (värde × vikt).
+• Reset återställer alla värden, skalor och motståndarnamn.
+• Goal Value behövs för Season övergripande statistik.
 
----
+________________________________________
 
-## Goal Value
-- Matris Spelare × Motståndare: Klick +1, Dubbelklick –1 (inga målvakter).
-- Nedre skala (Bottom) viktar motståndares styrka; Value = Summa (värde × vikt).
-- Reset återställer alla värden, skalor och motståndarnamn.
+Season
+• Utespelares säsongsvärden (målvakter dolda).
+• Klick/dubbelklick på värden: +1/–1 (+/- kan vara negativt).
+• Långtryck på tidcell: Extra tid kan matas in manuellt.
+• Positionsfilter (dropdown "Pos.").
+• MVP Points/MVP = Mest värdefulla spelaren baserat på analyserad statistik (AI)
 
----
+________________________________________
 
-## Season (Säsongstabell)
-- Utespelares säsongsvärden (målvakter dolda).
-- Klick/dubbelklick på värden: +1/–1 (+/- kan vara negativt).
-- Långtryck på tidcell: Tidsdialog.
-- Positionsfilter (dropdown "Pos.").
-- Ladda ner Season CSV (nytt: "Download" istället för "Export").
-
----
-
-## Reset (oåterkallelig)
-- **Game Data:** statsData, playerTimes, timer, motståndarskott (lagspecifikt).
-- **Goal Map:** Markörer, tidrutor, timeData/timeDataWithPlayers, goalMapMarkers.
-- **Season Map:** seasonMapMarkers, seasonMapTimeData, seasonMapTimeDataWithPlayers, momentum-behållare.
-- **Goal Value:** Värden/skalor/motståndarnamn.
-- **Season:** seasonData.`,
+Reset (oåterkallelig)
+• Game Data: Varje sida kan/måste återställas individuellt`,
         
-        fi: `## Suositeltu työnkulku (Peli)
+        fi: `Työnkulku (Peli)
 
-1. **Team Selection:** Valitse tai muokkaa joukkuetta.
-2. **Player Selection:** Lisää/aktivoi pelaajia; siirry tarvittaessa suoraan Line Up tai Game Data.
-3. **Line Up:** Tarkista/aseta kokoonpano (Normal/Power esiasetettu tekoälyllä, Manual vapaa valinta).
-4. **Game Data:** Tallenna peli; Goals/Shot käynnistävät työnkulut Goal Mapissa.
-5. **Goal Map:** Aseta pisteet kentälle/maaliin/aikaan, palaa Game Dataan.
-6. **Pelin jälkeen:** Arvioi Goal Value vastustajittain (vaikeusaste).
-7. **Download:** Vie Game → Season ja Season Map kauden analysointiin.
+1. Team Selection: Valitse tai muokkaa joukkuetta.
+2. Player Selection: Lisää/aktivoi pelaajia; siirry tarvittaessa suoraan Line Up tai Game Data.
+3. Line Up: Aseta kokoonpano (Manuaalinen, Normal + Power esiasetettu tekoälyllä)
+4. Game Data: Tallenna pelitiedot
+5. Goal Map: Aseta pisteet kentälle/maaliin/aikaan, palaa Game Dataan.
+6. Pelin jälkeen: Arvioi Goal Value vastustajittain (vaikeusaste).
+7. Download: Vie Game → Season ja Season Map kauden analysointiin.
 
----
+________________________________________
 
-## Team Selection
-Valitse tai muokkaa joukkuetta (joukkuekohtaiset tiedot/järjestys).
+Team Selection
+Valitse tai muokkaa joukkuetta
 
----
+________________________________________
 
-## Player Selection
-- Lisää/muokkaa pelaajia: Numero, Nimi, Pelipaikka (G = Maalivahti, muuten kenttäpelaaja).
-- Aktivoi (valintaruutu) = Pelaaja käytettävissä Line Up / Game Data.
-- Painikkeet: "Line Up" → kokoonpanoon; "Game Data" → suoraan pelin tallennukseen.
+Player Selection
+• Lisää/muokkaa pelaajia: Numero, Nimi, Pelipaikka (G = Maalivahti, W = Laitahyökkääjä, C = Keskushyökkääjä, D = Puolustaja).
+• Aktivoi (valintaruutu) = Pelaaja käytettävissä Line Up / Game Data.
+• Painikkeet: "Line Up" → kokoonpanoon; "Game Data" → suoraan pelin tallennukseen.
 
----
+________________________________________
 
-## Line Up
-**Tilat (vaihda tilapainikkeella):**
-- **Normal:** Tekoälyn logiikan esiasetus.
-- **Power:** Erityinen tekoälyasettelu ratkaiseviin hetkiin.
-- **Manual:** Vapaa valinta klikkaamalla paikkoja.
+Line Up
+Tilat (vaihda tilapainikkeella):
+• Normal: Tekoälyn logiikan esiasetus.
+• Power: Erityinen tekoälyasettelu ratkaiseviin hetkiin.
+• Manuaalinen: Vapaa valinta klikkaamalla paikkoja.
+• "Player Out": Merkitse pelaaja OUT (jäähy). Line Up mukautuu automaattisesti.
+• Paikkapainikkeet Player Selectionista näyttävät määrätyn pelaajan; Manuaalisessa klikattava, Normal/Powerissa esiasetettu.
 
-- "Player Out": Merkitse pelaaja OUT (poistettu kaikista tiloista).
-- Paikkapainikkeet näyttävät määrätyn pelaajan; Manual-tilassa klikattava, Normal/Power-tilassa esiasetettu.
+________________________________________
 
----
+Game Data
+Pelaajarivi:
+• Klikkaa nimeä (ei ⋮⋮): Ajastin Käynnistä/Pysäytä.
+• Klikkaa aikaa: +10 s; Tuplaklikkaa: –10 s.
+• Pitkä painallus ⋮⋮ → Vedä ja pudota järjestykseen
 
-## Game Data
-**Pelaajarivi:**
-- Klikkaa nimeä (ei ⋮⋮): Ajastin Käynnistä/Pysäytä.
-- Klikkaa aikaa: +10 s; Tuplaklikkaa: –10 s.
-- Pitkä painallus ⋮⋮ → Vedä ja pudota järjestykseen; järjestys tallennetaan joukkuekohtaisesti.
+Tilastosolut (esim. Goals, Shot):
+• Klikkaus: +1, Tuplaklikkaus: –1.
+• +1 Goals/Shot käynnistää vastaavan työnkulun Goal Mapissa.
 
-**Tilastosolut (esim. Goals, Shot):**
-- Klikkaus: +1, Tuplaklikkaus: –1.
-- +1 Goals/Shot käynnistää vastaavan työnkulun Goal Mapissa.
+Vastustajan laukaukset: Laske Shot-Totals-solussa (alhaalla) klikkauksella/tuplaklikkauksella (joukkuekohtainen).
 
-**Vastustajan laukaukset:** Laske Shot-Totals-solussa (alhaalla) klikkauksella/tuplaklikkauksella (joukkuekohtainen).
+Download Game → Season: Siirrä peli kauden tilastoihin
 
-**Download Game → Season:** Siirrä peli kauden tilastoihin (valinnaisesti tyhjennä Game Data).
+________________________________________
 
----
+Goal Map
+Kenttäpuoliskot: Ylä = tehty (vihreä), Ala = päästetty (punainen).
 
-## Goal Map
-**Kenttäpuoliskot:** Ylä = tehty (vihreä), Ala = päästetty (punainen).
+Goal Workflow:
+• Kenttäpiste: Ylä→tehty, Ala→päästetty (määrittää tyypin).
+• Maalipiste: tehty→vain vihreä maali; päästetty→vain punainen maali.
+• Aikapainike: tehty→vain ylärivit (vihreä); päästetty→vain alarivit (punainen).
+• Sitten automaattinen paluu Game Dataan.
 
-**Goal Workflow:**
-- Kenttäpiste: Ylä→tehty, Ala→päästetty (määrittää tyypin).
-- Maalipiste: tehty→vain vihreä maali; päästetty→vain punainen maali.
-- Aikapainike: tehty→vain ylärivit (vihreä); päästetty→vain alarivit (punainen).
-- Sitten automaattinen paluu Game Dataan.
+Shot Workflow: Vain kenttäpiste (vihreä alue), ei maalia/aikaa; automaattinen paluu.
 
-**Shot Workflow:** Vain kenttäpiste (vihreä alue), ei maalia/aikaa; automaattinen paluu.
+Maalivahti vaaditaan: Punainen maali ja punaiset kenttäpisteet ilman työnkulkua vain aktiivisella maalivahdilla pudotusvalikossa.
 
-**Maalivahti vaaditaan:** Punainen maali ja punaiset kenttäpisteet ilman työnkulkua vain aktiivisella maalivahdilla pudotusvalikossa.
+Merkinnät/Aikalaatikot säilyvät Resetiin asti; Download/Export kopioi kaiken Season Mapiin.
 
-**Merkinnät/Aikalaatikot** säilyvät Resetiin asti; Download/Export kopioi kaiken Season Mapiin.
+________________________________________
 
----
+Season Map
+• Vain luku
 
-## Season Map
-- Vain luku -näkymä viedyistä Goal Map -tiedoista (merkinnät, aikalaatikot).
+Suodattimet:
+• Player Filter: Näyttää/kokoaa vihreät (tehdyt) arvot vain tälle pelaajalle.
+• Goalie Filter: Näyttää/kokoaa punaiset (päästetyt) arvot vain tälle maalivahdille.
 
-**Suodattimet:**
-- **Player Filter:** Näyttää/kokoaa vihreät (tehdyt) arvot vain tälle pelaajalle.
-- **Goalie Filter:** Näyttää/kokoaa punaiset (päästetyt) arvot vain tälle maalivahdille.
+Momentum-kaavio:
+• Player Filterin kanssa: vihreät arvot vain tämän pelaajan.
+• Goalie Filterin kanssa: punaiset arvot vain tämän maalivahdin.
+• Ilman suodatinta: Kokonaisarvot.
 
-**Momentum-kaavio:**
-- Player Filterin kanssa: vihreät arvot vain tämän pelaajan.
-- Goalie Filterin kanssa: punaiset arvot vain tämän maalivahdin.
-- Ilman suodatinta: Kokonaisarvot.
+________________________________________
 
-**Lataa PNG:nä:** Laatikot valkoisella taustalla, otsikko näyttää nykyiset suodattimet.
+Goal Value
+• Manuaalinen syöttö tehdyistä maaleista kutakin vastustajaa vastaan
+• Alaskala (Bottom) painottaa vastustajan vahvuutta; Value = Summa (arvo × paino).
+• Reset nollaa kaikki arvot, asteikot ja vastustajien nimet.
+• Goal Value tarvitaan Season kokonaistilastoihin.
 
----
+________________________________________
 
-## Goal Value
-- Matriisi Pelaajat × Vastustajat: Klikkaus +1, Tuplaklikkaus –1 (ei maalivahteja).
-- Alaskala (Bottom) painottaa vastustajan vahvuutta; Value = Summa (arvo × paino).
-- Reset nollaa kaikki arvot, asteikot ja vastustajien nimet.
+Season
+• Kenttäpelaajien kauden arvot (maalivahdit piilotettu).
+• Klikkaus/tuplaklikkaus arvoihin: +1/–1 (+/- voi olla negatiivinen).
+• Pitkä painallus aikasoluun: Lisäaika voidaan syöttää manuaalisesti.
+• Pelipaikkassuodatin (pudotusvalikko "Pos.").
+• MVP Points/MVP = Arvokkain pelaaja analysoidun tilaston perusteella (tekoäly)
 
----
+________________________________________
 
-## Season (Kauden taulukko)
-- Kenttäpelaajien kauden arvot (maalivahdit piilotettu).
-- Klikkaus/tuplaklikkaus arvoihin: +1/–1 (+/- voi olla negatiivinen).
-- Pitkä painallus aikasoluun: Aikadialogi.
-- Pelipaikkassuodatin (pudotusvalikko "Pos.").
-- Lataa Season CSV (uusi: "Download" eikä "Export").
-
----
-
-## Reset (peruuttamaton)
-- **Game Data:** statsData, playerTimes, ajastin, vastustajan laukaukset (joukkuekohtainen).
-- **Goal Map:** Merkinnät, aikalaatikot, timeData/timeDataWithPlayers, goalMapMarkers.
-- **Season Map:** seasonMapMarkers, seasonMapTimeData, seasonMapTimeDataWithPlayers, momentum-säiliö.
-- **Goal Value:** Arvot/asteikot/vastustajien nimet.
-- **Season:** seasonData.`
+Reset (peruuttamaton)
+• Game Data: Jokainen sivu voidaan/täytyy nollata erikseen`
     };
     
     const closeButtonText = {
