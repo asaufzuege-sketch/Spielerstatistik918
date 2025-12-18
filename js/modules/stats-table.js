@@ -55,7 +55,9 @@ App.statsTable = {
       const tr = document.createElement("tr");
       tr.className = (idx % 2 === 0 ? "even-row" : "odd-row");
       tr.dataset.player = p.name;
-      tr.dataset.playerIndex = idx;
+      // Store the REAL index from the full App.data.selectedPlayers array, not the filtered index
+      const realIndex = App.data.selectedPlayers.findIndex(player => player.name === p.name);
+      tr.dataset.playerIndex = realIndex;
       
       // Nummer
       const numTd = document.createElement("td");
@@ -292,16 +294,27 @@ App.statsTable = {
     row.style.boxShadow = '';
     row.style.transition = '';
     
-    // Get new position
+    // Get the player names in their new visual order (excluding the total row)
     const tbody = document.getElementById('stats-tbody');
-    const allRows = Array.from(tbody.children);
-    const newIndex = allRows.indexOf(row);
-    const oldIndex = parseInt(row.dataset.playerIndex);
+    const allRows = Array.from(tbody.children).filter(r => !r.classList.contains('total-row'));
+    const newVisualOrder = allRows.map(r => r.dataset.player);
     
-    // Update player order
-    if (newIndex !== -1 && newIndex !== oldIndex) {
-      this.updatePlayerOrder(oldIndex, newIndex);
-    }
+    // Separate goalies and non-goalies
+    const goalies = App.data.selectedPlayers.filter(p => p.position === "G");
+    
+    // Reconstruct non-goalies in the new visual order
+    const nonGoaliesInNewOrder = newVisualOrder.map(name => 
+      App.data.selectedPlayers.find(p => p.name === name)
+    ).filter(p => p !== undefined);
+    
+    // Combine: goalies first, then non-goalies in new order
+    App.data.selectedPlayers = [...goalies, ...nonGoaliesInNewOrder];
+    
+    console.log('Player order updated:', App.data.selectedPlayers.map(p => p.name));
+    
+    // Save and re-render
+    this.saveToStorage();
+    this.render();
     
     // Reset state
     this.dragState.isDragging = false;
