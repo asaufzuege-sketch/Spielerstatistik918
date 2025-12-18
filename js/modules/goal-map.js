@@ -850,6 +850,14 @@ App.goalMap = {
         const box = boxes[boxIndex];
         
         markers.forEach(marker => {
+          // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
+          if (!marker.xPct || !marker.yPct || 
+              marker.xPct < 0.1 || marker.yPct < 0.1 ||
+              isNaN(marker.xPct) || isNaN(marker.yPct)) {
+            console.warn('[Goal Map] Skipping marker with invalid coordinates:', marker);
+            return;
+          }
+          
           App.markerHandler.createMarkerPercent(
             marker.xPct,
             marker.yPct,

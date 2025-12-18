@@ -769,24 +769,77 @@ Reset (peruuttamaton)
     };
     
     function convertMarkdownToHTML(markdown) {
-        let html = markdown;
+        // Split by dividers (________________________________________) to get sections
+        const sections = markdown.split(/_{20,}/);
+        let html = '';
         
-        // Convert headers
-        html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-        html = html.replace(/^### (.*$)/gim, '<h3>$3</h3>');
-        
-        // Convert bold text
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        
-        // Convert lists - handle multi-line list items
-        html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
-        html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-        
-        // Convert horizontal rules
-        html = html.replace(/^---$/gim, '<hr>');
-        
-        // Convert line breaks
-        html = html.replace(/\n\n/g, '<br><br>');
+        sections.forEach((section, index) => {
+            section = section.trim();
+            if (!section) return;
+            
+            const lines = section.split('\n');
+            let sectionHtml = '';
+            let currentList = null;
+            let listType = null;
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (!line) continue;
+                
+                // Check for numbered list (1. 2. 3. etc.)
+                const numberedMatch = line.match(/^(\d+)\.\s+(.+)$/);
+                if (numberedMatch) {
+                    if (!currentList || listType !== 'ol') {
+                        if (currentList) sectionHtml += `</${listType}>`;
+                        currentList = [];
+                        listType = 'ol';
+                    }
+                    currentList.push(`<li>${numberedMatch[2].replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`);
+                    continue;
+                }
+                
+                // Check for bullet list (• or - at start)
+                const bulletMatch = line.match(/^[•\-]\s+(.+)$/);
+                if (bulletMatch) {
+                    if (!currentList || listType !== 'ul') {
+                        if (currentList) sectionHtml += `</${listType}>`;
+                        currentList = [];
+                        listType = 'ul';
+                    }
+                    currentList.push(`<li>${bulletMatch[1].replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`);
+                    continue;
+                }
+                
+                // Close any open list before processing non-list items
+                if (currentList) {
+                    sectionHtml += `<${listType}>` + currentList.join('') + `</${listType}>`;
+                    currentList = null;
+                    listType = null;
+                }
+                
+                // Check if line looks like a section title (first line of a section, not containing : or starting with number)
+                if (i === 0 && !line.includes(':') && !line.match(/^\d+\./)) {
+                    sectionHtml += `<h2 class="info-section-title">${line}</h2>`;
+                } else {
+                    // Regular paragraph
+                    sectionHtml += `<p>${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
+                }
+            }
+            
+            // Close any remaining list
+            if (currentList) {
+                sectionHtml += `<${listType}>` + currentList.join('') + `</${listType}>`;
+            }
+            
+            // Add section to HTML
+            if (sectionHtml) {
+                html += sectionHtml;
+                // Add divider after each section except the last one
+                if (index < sections.length - 1) {
+                    html += '<hr class="info-divider">';
+                }
+            }
+        });
         
         return html;
     }

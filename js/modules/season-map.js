@@ -388,6 +388,14 @@ App.seasonMap = {
           if (!box || !Array.isArray(markersForBox)) return;
           
           markersForBox.forEach(m => {
+            // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
+            if (!m.xPct || !m.yPct || 
+                m.xPct < 0.1 || m.yPct < 0.1 ||
+                isNaN(m.xPct) || isNaN(m.yPct)) {
+              console.warn('[Season Map] Skipping marker with invalid coordinates:', m);
+              return;
+            }
+            
             App.markerHandler.createMarkerPercent(
               m.xPct,
               m.yPct,
