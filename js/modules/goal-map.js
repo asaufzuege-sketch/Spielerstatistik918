@@ -90,7 +90,6 @@ App.goalMap = {
     boxes.forEach(box => {
       // KRITISCH: Prüfen ob Event-Listener bereits angehängt wurden
       if (box.dataset.handlersAttached === 'true') {
-        if (App.DEBUG) console.debug('[Goal Map] Handlers already attached to', box.id);
         return; // Überspringe diese Box
       }
       box.dataset.handlersAttached = 'true'; // Markiere als initialisiert

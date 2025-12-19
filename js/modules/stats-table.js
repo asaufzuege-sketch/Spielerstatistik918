@@ -241,6 +241,7 @@ App.statsTable = {
     document.addEventListener('mouseup', globalEndDrag);
     document.addEventListener('touchmove', globalMoveDrag, { passive: false });
     document.addEventListener('touchend', globalEndDrag, { passive: false });
+    document.addEventListener('touchcancel', globalEndDrag, { passive: false });
   },
   
   startDragging(row) {
