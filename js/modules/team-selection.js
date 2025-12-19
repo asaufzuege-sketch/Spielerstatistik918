@@ -256,7 +256,7 @@ App.teamSelection = (function() {
     const infoContent = {
         de: `Ablauf (Spiel)
 
-1. Team Selection: Team wählen oder bearbeiten. 
+1. Team Selection: Team wählen oder bearbeiten 
 2. Player Selection: Spieler erfassen/aktivieren; bei Bedarf direkt zu Line Up oder Game Data. 
 3. Line Up: Aufstellung setzen (Manuell, Normal + Power vorgegeben durch KI/AI)
 4. Game Data: Spieldaten erfassen
@@ -880,11 +880,11 @@ Reset (peruuttamaton)
             <div class="info-content">
                 <div class="info-language-selector">
                     <select id="infoLanguageSelect">
-                        <option value="de">🇩🇪 Deutsch</option>
-                        <option value="en">🇺🇸 English</option>
-                        <option value="ru">🇷🇺 Русский</option>
-                        <option value="sv">🇸🇪 Svenska</option>
-                        <option value="fi">🇫🇮 Suomi</option>
+                        <option value="de">&#x1F1E9;&#x1F1EA; Deutsch</option>
+                        <option value="en">&#x1F1FA;&#x1F1F8; English</option>
+                        <option value="ru">&#x1F1F7;&#x1F1FA; Русский</option>
+                        <option value="sv">&#x1F1F8;&#x1F1EA; Svenska</option>
+                        <option value="fi">&#x1F1EB;&#x1F1EE; Suomi</option>
                     </select>
                 </div>
                 <button id="infoCloseBtn">${closeButtonText[savedLanguage]}</button>
