@@ -21,6 +21,14 @@ App.goalMap = {
     }
   },
   
+  // Helper to normalize filter values
+  normalizeFilterValue(value) {
+    if (!value || value === '' || value === 'All Players' || value === 'All Goalies') {
+      return null;
+    }
+    return value.trim();
+  },
+  
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
     
@@ -308,6 +316,7 @@ App.goalMap = {
           }
           
           const color = neutralGrey;
+          const isRedZone = box.id === 'goalRedBox';
           
           App.markerHandler.createMarkerPercent(
             pos.xPctImage,
@@ -318,8 +327,34 @@ App.goalMap = {
             pointPlayer
           );
           
-          // Set data-zone attribute for goal boxes
-          setMarkerZone(box, box.id === 'goalRedBox' ? 'red' : 'green');
+          // Get last marker and set all attributes
+          const markers = box.querySelectorAll(".marker-dot");
+          const lastMarker = markers[markers.length - 1];
+          if (lastMarker) {
+            // Player-Name für grüne Zone
+            if (pointPlayer) {
+              lastMarker.dataset.player = pointPlayer;
+            }
+            
+            // Goalie-Name für rote Zone
+            if (isRedZone && this.getActiveGoalie()) {
+              lastMarker.dataset.goalie = this.getActiveGoalie().name;
+            }
+            
+            // Type: scored, conceded, oder shot
+            if (isGoalWorkflow) {
+              lastMarker.dataset.type = isConcededWorkflow ? 'conceded' : 'scored';
+            } else {
+              lastMarker.dataset.type = isRedZone ? 'conceded' : 'scored';
+            }
+            
+            // Zone basierend auf Position
+            lastMarker.dataset.zone = isRedZone ? 'red' : 'green';
+            
+            // CSS-Klasse für Farbe (bereits in createMarkerPercent gesetzt, aber sicherstellen)
+            lastMarker.classList.remove('green', 'red', 'gray');
+            lastMarker.classList.add('gray');
+          }
           
           // Marker explizit sichtbar machen (für Mobile)
           this.ensureMarkerVisibility(box);
@@ -367,11 +402,22 @@ App.goalMap = {
               App.markerHandler.createMarkerPercent(
                 pos.xPctImage, pos.yPctImage,
                 "#ff0000", box, true,
-                activeGoalie.name, null, 'conceded'
+                activeGoalie.name
               );
               
-              // Set data-zone attribute for red zone shot
-              setMarkerZone(box, 'red');
+              // Get last marker and set all attributes
+              const markers = box.querySelectorAll(".marker-dot");
+              const lastMarker = markers[markers.length - 1];
+              if (lastMarker) {
+                lastMarker.dataset.player = activeGoalie.name;
+                lastMarker.dataset.goalie = activeGoalie.name;
+                lastMarker.dataset.type = 'conceded';
+                lastMarker.dataset.zone = 'red';
+                
+                // Ensure color class
+                lastMarker.classList.remove('green', 'red', 'gray');
+                lastMarker.classList.add('red');
+              }
               
               // Marker explizit sichtbar machen (für Mobile)
               this.ensureMarkerVisibility(box);
@@ -457,8 +503,20 @@ App.goalMap = {
               pointPlayer
             );
             
-            // Set data-zone attribute for shot workflow
-            setMarkerZone(box, 'green');
+            // Get last marker and set all attributes
+            const markers = box.querySelectorAll(".marker-dot");
+            const lastMarker = markers[markers.length - 1];
+            if (lastMarker) {
+              if (pointPlayer) {
+                lastMarker.dataset.player = pointPlayer;
+              }
+              lastMarker.dataset.type = 'scored';
+              lastMarker.dataset.zone = 'green';
+              
+              // Ensure color class
+              lastMarker.classList.remove('green', 'red', 'gray');
+              lastMarker.classList.add('green');
+            }
             
             // Marker explizit sichtbar machen (für Mobile)
             this.ensureMarkerVisibility(box);
@@ -494,8 +552,40 @@ App.goalMap = {
             pointPlayer
           );
           
-          // Set data-zone attribute for normal field point
-          setMarkerZone(box, isRedZone ? 'red' : 'green');
+          // Get last marker and set all attributes
+          const markers = box.querySelectorAll(".marker-dot");
+          const lastMarker = markers[markers.length - 1];
+          if (lastMarker) {
+            // Player-Name
+            if (pointPlayer) {
+              lastMarker.dataset.player = pointPlayer;
+            }
+            
+            // Goalie-Name für rote Zone
+            if (isRedZone && this.getActiveGoalie()) {
+              lastMarker.dataset.goalie = this.getActiveGoalie().name;
+            }
+            
+            // Type: scored, conceded, oder shot
+            if (isGoalWorkflow) {
+              lastMarker.dataset.type = isConcededWorkflow ? 'conceded' : 'scored';
+            } else {
+              lastMarker.dataset.type = isRedZone ? 'conceded' : 'scored';
+            }
+            
+            // Zone basierend auf Position
+            lastMarker.dataset.zone = isRedZone ? 'red' : 'green';
+            
+            // CSS-Klasse für Farbe
+            lastMarker.classList.remove('green', 'red', 'gray');
+            if (color === '#00ff66' || color.includes('0, 255, 102')) {
+              lastMarker.classList.add('green');
+            } else if (color === '#ff0000' || color.includes('255, 0, 0')) {
+              lastMarker.classList.add('red');
+            } else {
+              lastMarker.classList.add('gray');
+            }
+          }
           
           // Marker explizit sichtbar machen (für Mobile)
           this.ensureMarkerVisibility(box);
@@ -867,8 +957,18 @@ App.goalMap = {
         const yPctImage = parseFloat(dot.dataset.yPctImage) || 0;
         const bg = dot.style.backgroundColor || "";
         const playerName = dot.dataset.player || null;
+        const goalieName = dot.dataset.goalie || null;
+        const type = dot.dataset.type || null;
         const zone = dot.dataset.zone || null;
-        markers.push({ xPct: xPctImage, yPct: yPctImage, color: bg, player: playerName, zone: zone });
+        markers.push({ 
+          xPct: xPctImage, 
+          yPct: yPctImage, 
+          color: bg, 
+          player: playerName, 
+          goalie: goalieName,
+          type: type,
+          zone: zone 
+        });
       });
       return markers;
     });
@@ -880,92 +980,103 @@ App.goalMap = {
   restoreMarkers() {
     const allMarkers = App.helpers.safeJSONParse("goalMapMarkers", null);
     if (!allMarkers) return;
-      const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
+    
+    const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
+    
+    // Clear existing markers first to avoid duplicates (idempotent operation)
+    boxes.forEach(box => {
+      box.querySelectorAll(".marker-dot").forEach(dot => dot.remove());
+    });
+    
+    allMarkers.forEach((markers, boxIndex) => {
+      if (boxIndex >= boxes.length) return;
+      const box = boxes[boxIndex];
       
-      // Clear existing markers first to avoid duplicates (idempotent operation)
-      boxes.forEach(box => {
-        box.querySelectorAll(".marker-dot").forEach(dot => dot.remove());
-      });
-      
-      allMarkers.forEach((markers, boxIndex) => {
-        if (boxIndex >= boxes.length) return;
-        const box = boxes[boxIndex];
+      markers.forEach(marker => {
+        // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
+        if (!marker.xPct || !marker.yPct || 
+            marker.xPct < 0.1 || marker.yPct < 0.1 ||
+            isNaN(marker.xPct) || isNaN(marker.yPct)) {
+          console.warn('[Goal Map] Skipping marker with invalid coordinates:', marker);
+          return;
+        }
         
-        markers.forEach(marker => {
-          // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
-          if (!marker.xPct || !marker.yPct || 
-              marker.xPct < 0.1 || marker.yPct < 0.1 ||
-              isNaN(marker.xPct) || isNaN(marker.yPct)) {
-            console.warn('[Goal Map] Skipping marker with invalid coordinates:', marker);
-            return;
-          }
-          
-          App.markerHandler.createMarkerPercent(
-            marker.xPct,
-            marker.yPct,
-            marker.color,
-            box,
-            true,
-            marker.player
-          );
-          
-          // Get the marker we just created (it's the last one in the box)
-          const dots = box.querySelectorAll(".marker-dot");
-          const lastDot = dots[dots.length - 1];
-          
-          if (!lastDot) return; // Safety check
-          
-          // Restore zone attribute or migrate old markers
-          if (marker.zone) {
-            // Marker has zone attribute - restore it
-            lastDot.dataset.zone = marker.zone;
+        // Determine color class from saved color
+        let colorClass = 'gray';
+        const color = marker.color || '';
+        if (color.includes('0, 255, 102') || color.includes('00ff66')) {
+          colorClass = 'green';
+        } else if (color.includes('255, 0, 0') || color.includes('ff0000')) {
+          colorClass = 'red';
+        }
+        
+        App.markerHandler.createMarkerPercent(
+          marker.xPct,
+          marker.yPct,
+          marker.color,
+          box,
+          true,
+          marker.player
+        );
+        
+        // Get the marker we just created (it's the last one in the box)
+        const dots = box.querySelectorAll(".marker-dot");
+        const lastDot = dots[dots.length - 1];
+        
+        if (!lastDot) return; // Safety check
+        
+        // Restore all data attributes
+        if (marker.player) lastDot.dataset.player = marker.player;
+        if (marker.goalie) lastDot.dataset.goalie = marker.goalie;
+        if (marker.type) lastDot.dataset.type = marker.type;
+        
+        // Zone: restore or calculate (migration)
+        if (marker.zone) {
+          // Marker has zone attribute - restore it
+          lastDot.dataset.zone = marker.zone;
+        } else {
+          // Migration: Calculate zone for old markers without zone attribute
+          if (box.id === 'goalRedBox') {
+            lastDot.dataset.zone = 'red';
+          } else if (box.id === 'goalGreenBox') {
+            lastDot.dataset.zone = 'green';
           } else {
-            // Migration: Calculate zone for old markers without zone attribute
-            if (box.id === 'goalRedBox') {
+            // Field box: check color first, then position
+            if (colorClass === 'red') {
               lastDot.dataset.zone = 'red';
-            } else if (box.id === 'goalGreenBox') {
+            } else if (colorClass === 'green') {
               lastDot.dataset.zone = 'green';
-            } else if (box.classList.contains('field-box')) {
-              // For field box: use saved yPct (image coordinates) if available
-              if (marker.yPct && marker.yPct > 0) {
-                lastDot.dataset.zone = marker.yPct >= this.VERTICAL_SPLIT_THRESHOLD ? 'red' : 'green';
-              } else {
-                // Fallback: calculate from rendered position
-                const topStr = lastDot.style.top || '0';
-                const top = parseFloat(topStr.replace('%', '')) || 0;
-                lastDot.dataset.zone = top >= this.VERTICAL_SPLIT_THRESHOLD ? 'red' : 'green';
-              }
+            } else {
+              // Gray marker - use position
+              lastDot.dataset.zone = marker.yPct >= 50 ? 'red' : 'green';
             }
           }
-          
-          // Marker explizit sichtbar machen (für Mobile)
-          this.ensureMarkerVisibility(box);
-        });
-      });
-      
-      // Save markers to persist any migrated zone attributes
-      this.saveMarkers();
-      
-      // Apply both filters independently to ensure correct marker visibility
-      this.applyPlayerFilter(); // Green zone
-      
-      // Apply goalie filter for red zone
-      const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
-      if (savedGoalie) {
-        const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
-        const goalieNames = goalies.map(g => g.name);
-        if (goalieNames.includes(savedGoalie)) {
-          this.filterByGoalies([savedGoalie]);
-        } else {
-          // Goalie doesn't exist, show all red zone markers
-          this.filterByGoalies(goalieNames);
         }
-      } else {
-        // No goalie filter, show all red zone markers
-        const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
-        const goalieNames = goalies.map(g => g.name);
-        this.filterByGoalies(goalieNames);
-      }
+        
+        // Add color class
+        lastDot.classList.add(colorClass);
+        
+        // Ensure visibility (for mobile)
+        lastDot.style.display = 'block';
+        lastDot.style.visibility = 'visible';
+        lastDot.style.opacity = '1';
+        lastDot.style.zIndex = '100';
+      });
+    });
+    
+    // Save to persist migrated attributes
+    this.saveMarkers();
+    
+    // Apply filters
+    this.applyPlayerFilter();
+    
+    const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+    if (savedGoalie) {
+      this.filterByGoalies([savedGoalie]);
+    } else {
+      const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+      this.filterByGoalies(goalies.map(g => g.name));
+    }
   },
   
   // Time Tracking mit Spielerzuordnung
@@ -1242,54 +1353,44 @@ App.goalMap = {
   },
   
   filterByGoalies(goalieNames) {
-    console.log('[Goal Map] filterByGoalies called:', goalieNames);
+    const isAllGoalies = !goalieNames || goalieNames.length === 0 || 
+      (goalieNames.length === 1 && !goalieNames[0]);
     
-    // Player and goalie filters operate independently on different zones
-    
-    // Detect if "All Goalies" is selected
-    const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
-    const allGoalieNames = allGoalies.map(g => g.name);
-    const isAllGoaliesFilter = (goalieNames.length === allGoalieNames.length && 
-                                 goalieNames.every(name => allGoalieNames.includes(name)));
-    
-    console.log('[Goal Map] isAllGoaliesFilter:', isAllGoaliesFilter);
+    console.log('[Goal Map] filterByGoalies:', goalieNames, 'isAll:', isAllGoalies);
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
+    
     boxes.forEach(box => {
+      // Skip green goal box - not affected by goalie filter
+      if (box.id === 'goalGreenBox') return;
+      
       const markers = box.querySelectorAll(".marker-dot");
+      
       markers.forEach(marker => {
-        // Only filter RED ZONE markers
-        const isRedMarker = this.isRedZoneMarker(marker, box);
+        const markerGoalie = marker.dataset.goalie || marker.dataset.player || null;
+        const zone = marker.dataset.zone;
         
-        if (isRedMarker) {
-          const playerName = marker.dataset.player;
-          
-          console.log('[Goal Map] Red marker:', {
-            player: playerName,
-            goalieNames: goalieNames,
-            isAllGoalies: isAllGoaliesFilter
-          });
-          
-          if (isAllGoaliesFilter) {
-            // "All Goalies" - show all red zone markers
-            marker.style.display = 'block';
+        // Only filter red zone markers
+        if (zone === 'red' || box.id === 'goalRedBox') {
+          if (isAllGoalies) {
+            // No filter - show all red zone markers
+            marker.style.display = '';
             marker.style.visibility = 'visible';
             marker.style.opacity = '1';
-          } else if (playerName && goalieNames.includes(playerName)) {
-            // Marker belongs to selected goalie - show
-            marker.style.display = 'block';
+          } else if (markerGoalie && goalieNames.includes(markerGoalie)) {
+            // Goalie matches - show
+            marker.style.display = '';
             marker.style.visibility = 'visible';
             marker.style.opacity = '1';
           } else {
-            // Marker doesn't belong to selected goalie - hide
+            // Goalie doesn't match - hide
             marker.style.display = 'none';
           }
         }
-        // Green zone markers are not touched by this function
+        // Green zone markers are NOT touched by goalie filter
       });
     });
     
-    // Update time tracking to show only goalie times
     this.applyGoalieTimeTrackingFilter(goalieNames);
   },
   
@@ -1318,50 +1419,45 @@ App.goalMap = {
   },
   
   applyPlayerFilter() {
-    console.log('[Goal Map] applyPlayerFilter called, filter:', this.playerFilter);
+    const playerFilter = this.normalizeFilterValue(this.playerFilter);
+    console.log('[Goal Map] applyPlayerFilter, normalized:', playerFilter);
     
-    if (this.playerFilter) {
-      localStorage.setItem("goalMapPlayerFilter", this.playerFilter);
+    if (playerFilter) {
+      localStorage.setItem("goalMapPlayerFilter", playerFilter);
     } else {
       localStorage.removeItem("goalMapPlayerFilter");
     }
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
-    console.log('[Goal Map] Found boxes:', boxes.length);
     
     boxes.forEach(box => {
+      // Skip red goal box - not affected by player filter
+      if (box.id === 'goalRedBox') return;
+      
       const markers = box.querySelectorAll(".marker-dot");
-      console.log('[Goal Map] Found markers in box:', markers.length);
       
       markers.forEach(marker => {
-        // Only filter GREEN ZONE markers
-        const isGreenMarker = this.isGreenZoneMarker(marker, box);
-        const playerName = marker.dataset.player;
+        const markerPlayer = marker.dataset.player || null;
+        const zone = marker.dataset.zone;
         
-        console.log('[Goal Map] Marker:', {
-          isGreen: isGreenMarker,
-          player: playerName,
-          filter: this.playerFilter
-        });
-        
-        if (isGreenMarker) {
-          if (this.playerFilter) {
-            // KRITISCH: Vergleich muss korrekt sein
-            if (playerName === this.playerFilter) {
-              marker.style.display = 'block';
-              marker.style.visibility = 'visible';
-              marker.style.opacity = '1';
-            } else {
-              marker.style.display = 'none';
-            }
-          } else {
-            // "All Players" - alle grünen Marker anzeigen
-            marker.style.display = 'block';
+        // Only filter green zone markers
+        if (zone === 'green' || box.id === 'goalGreenBox') {
+          if (!playerFilter) {
+            // No filter - show all green zone markers
+            marker.style.display = '';
             marker.style.visibility = 'visible';
             marker.style.opacity = '1';
+          } else if (markerPlayer === playerFilter) {
+            // Player matches - show
+            marker.style.display = '';
+            marker.style.visibility = 'visible';
+            marker.style.opacity = '1';
+          } else {
+            // Player doesn't match - hide
+            marker.style.display = 'none';
           }
         }
-        // Red zone markers are not touched by this function
+        // Red zone markers are NOT touched by player filter
       });
     });
     

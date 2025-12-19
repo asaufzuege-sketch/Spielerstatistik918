@@ -129,6 +129,15 @@ App.markerHandler = {
     dot.dataset.xPctImage = xPct;
     dot.dataset.yPctImage = yPct;
     
+    // Add color class based on color value
+    if (color === '#00ff66' || (color && color.includes('0, 255, 102'))) {
+      dot.classList.add('green');
+    } else if (color === '#ff0000' || (color && color.includes('255, 0, 0'))) {
+      dot.classList.add('red');
+    } else {
+      dot.classList.add('gray');
+    }
+    
     // Calculate position relative to rendered image
     const img = container.querySelector("img");
     if (img) {
