@@ -10,6 +10,17 @@ App.goalMap = {
   WORKFLOW_STEP_TIME: 2, // Third step: click time button
   AUTO_NAVIGATION_DELAY_MS: 300, // Delay before auto-navigating after workflow completion
   
+  // Helper function to ensure marker visibility (for mobile/tablet)
+  ensureMarkerVisibility(container) {
+    const markers = container.querySelectorAll(".marker-dot");
+    const lastMarker = markers[markers.length - 1];
+    if (lastMarker) {
+      lastMarker.style.visibility = 'visible';
+      lastMarker.style.opacity = '1';
+      lastMarker.style.zIndex = '100';
+    }
+  },
+  
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
     
@@ -311,14 +322,7 @@ App.goalMap = {
           setMarkerZone(box, box.id === 'goalRedBox' ? 'red' : 'green');
           
           // Marker explizit sichtbar machen (für Mobile)
-          const markers = box.querySelectorAll(".marker-dot");
-          const lastMarker = markers[markers.length - 1];
-          if (lastMarker) {
-            lastMarker.style.display = '';
-            lastMarker.style.visibility = 'visible';
-            lastMarker.style.opacity = '1';
-            lastMarker.style.zIndex = '100';
-          }
+          this.ensureMarkerVisibility(box);
           
           this.saveMarkers();
           
@@ -370,14 +374,7 @@ App.goalMap = {
               setMarkerZone(box, 'red');
               
               // Marker explizit sichtbar machen (für Mobile)
-              const markers = box.querySelectorAll(".marker-dot");
-              const lastMarker = markers[markers.length - 1];
-              if (lastMarker) {
-                lastMarker.style.display = '';
-                lastMarker.style.visibility = 'visible';
-                lastMarker.style.opacity = '1';
-                lastMarker.style.zIndex = '100';
-              }
+              this.ensureMarkerVisibility(box);
               
               this.saveMarkers();
               
@@ -464,14 +461,7 @@ App.goalMap = {
             setMarkerZone(box, 'green');
             
             // Marker explizit sichtbar machen (für Mobile)
-            const markers = box.querySelectorAll(".marker-dot");
-            const lastMarker = markers[markers.length - 1];
-            if (lastMarker) {
-              lastMarker.style.display = '';
-              lastMarker.style.visibility = 'visible';
-              lastMarker.style.opacity = '1';
-              lastMarker.style.zIndex = '100';
-            }
+            this.ensureMarkerVisibility(box);
             
             this.saveMarkers();
             
@@ -508,14 +498,7 @@ App.goalMap = {
           setMarkerZone(box, isRedZone ? 'red' : 'green');
           
           // Marker explizit sichtbar machen (für Mobile)
-          const markers = box.querySelectorAll(".marker-dot");
-          const lastMarker = markers[markers.length - 1];
-          if (lastMarker) {
-            lastMarker.style.display = '';
-            lastMarker.style.visibility = 'visible';
-            lastMarker.style.opacity = '1';
-            lastMarker.style.zIndex = '100';
-          }
+          this.ensureMarkerVisibility(box);
           
           this.saveMarkers();
           
@@ -961,12 +944,7 @@ App.goalMap = {
           }
           
           // Marker explizit sichtbar machen (für Mobile)
-          if (lastDot) {
-            lastDot.style.display = '';
-            lastDot.style.visibility = 'visible';
-            lastDot.style.opacity = '1';
-            lastDot.style.zIndex = '100';
-          }
+          this.ensureMarkerVisibility(box);
         });
       });
       

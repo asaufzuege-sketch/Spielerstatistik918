@@ -575,8 +575,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonMapPage .field-box {
   overflow: visible !important; /* Allow markers to be visible */
 }
-  overflow: hidden; /* Versteckt überstehende Teile */
-}
 
 #seasonMapPage .field-box img {
   width: 100%;
