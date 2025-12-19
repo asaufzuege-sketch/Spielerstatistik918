@@ -171,10 +171,10 @@ App.statsTable = {
       const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
       this.dragState.startY = clientY;
       this.dragState.hasMoved = false;
-      this.dragState.currentDragHandle = dragHandle;
       
       this.dragState.longPressTimer = setTimeout(() => {
         if (!this.dragState.hasMoved && !this.dragState.isDragging) {
+          this.dragState.currentDragHandle = dragHandle; // Set just before dragging starts
           this.startDragging(row);
           dragHandle.style.cursor = 'grabbing';
           
