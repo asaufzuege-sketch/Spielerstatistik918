@@ -192,12 +192,12 @@ App.seasonMap = {
     // Grey markers - check position
     const yPct = parseFloat(marker.dataset.yPctImage);
     if (!isNaN(yPct) && yPct > 0) {
-      return yPct < 50; // y < 50% = green zone
+      return yPct < this.VERTICAL_SPLIT_THRESHOLD;
     }
     
     // Fallback: use style.top
-    const top = parseFloat(marker.style.top) || 0;
-    return top < 50;
+    const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
+    return top < this.VERTICAL_SPLIT_THRESHOLD;
   },
   
   // Helper: Check if marker is in RED zone
@@ -229,12 +229,12 @@ App.seasonMap = {
     // Grey markers - check position
     const yPct = parseFloat(marker.dataset.yPctImage);
     if (!isNaN(yPct) && yPct > 0) {
-      return yPct >= 50; // y >= 50% = red zone
+      return yPct >= this.VERTICAL_SPLIT_THRESHOLD;
     }
     
     // Fallback: use style.top
-    const top = parseFloat(marker.style.top) || 0;
-    return top >= 50;
+    const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
+    return top >= this.VERTICAL_SPLIT_THRESHOLD;
   },
   
   // Get all unique goalies from season data
