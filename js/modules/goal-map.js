@@ -310,6 +310,16 @@ App.goalMap = {
           // Set data-zone attribute for goal boxes
           setMarkerZone(box, box.id === 'goalRedBox' ? 'red' : 'green');
           
+          // Marker explizit sichtbar machen (für Mobile)
+          const markers = box.querySelectorAll(".marker-dot");
+          const lastMarker = markers[markers.length - 1];
+          if (lastMarker) {
+            lastMarker.style.display = '';
+            lastMarker.style.visibility = 'visible';
+            lastMarker.style.opacity = '1';
+            lastMarker.style.zIndex = '100';
+          }
+          
           this.saveMarkers();
           
           if (workflowActive) {
@@ -358,6 +368,16 @@ App.goalMap = {
               
               // Set data-zone attribute for red zone shot
               setMarkerZone(box, 'red');
+              
+              // Marker explizit sichtbar machen (für Mobile)
+              const markers = box.querySelectorAll(".marker-dot");
+              const lastMarker = markers[markers.length - 1];
+              if (lastMarker) {
+                lastMarker.style.display = '';
+                lastMarker.style.visibility = 'visible';
+                lastMarker.style.opacity = '1';
+                lastMarker.style.zIndex = '100';
+              }
               
               this.saveMarkers();
               
@@ -443,6 +463,16 @@ App.goalMap = {
             // Set data-zone attribute for shot workflow
             setMarkerZone(box, 'green');
             
+            // Marker explizit sichtbar machen (für Mobile)
+            const markers = box.querySelectorAll(".marker-dot");
+            const lastMarker = markers[markers.length - 1];
+            if (lastMarker) {
+              lastMarker.style.display = '';
+              lastMarker.style.visibility = 'visible';
+              lastMarker.style.opacity = '1';
+              lastMarker.style.zIndex = '100';
+            }
+            
             this.saveMarkers();
             
             // Complete shot workflow immediately
@@ -476,6 +506,16 @@ App.goalMap = {
           
           // Set data-zone attribute for normal field point
           setMarkerZone(box, isRedZone ? 'red' : 'green');
+          
+          // Marker explizit sichtbar machen (für Mobile)
+          const markers = box.querySelectorAll(".marker-dot");
+          const lastMarker = markers[markers.length - 1];
+          if (lastMarker) {
+            lastMarker.style.display = '';
+            lastMarker.style.visibility = 'visible';
+            lastMarker.style.opacity = '1';
+            lastMarker.style.zIndex = '100';
+          }
           
           this.saveMarkers();
           
@@ -918,6 +958,14 @@ App.goalMap = {
                 lastDot.dataset.zone = top >= this.VERTICAL_SPLIT_THRESHOLD ? 'red' : 'green';
               }
             }
+          }
+          
+          // Marker explizit sichtbar machen (für Mobile)
+          if (lastDot) {
+            lastDot.style.display = '';
+            lastDot.style.visibility = 'visible';
+            lastDot.style.opacity = '1';
+            lastDot.style.zIndex = '100';
           }
         });
       });
