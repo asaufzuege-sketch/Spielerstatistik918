@@ -110,33 +110,9 @@ App.markerHandler = {
     const dot = document.createElement("div");
     dot.className = "marker-dot";
     
-    // KRITISCH: Explizite Inline-Styles für Mobile/Tablet Sichtbarkeit
-    dot.style.position = "absolute";
-    dot.style.width = "14px";
-    dot.style.height = "14px";
-    dot.style.borderRadius = "50%";
-    dot.style.border = "2px solid #000";
-    dot.style.boxShadow = "0 0 3px rgba(0,0,0,0.5)";
-    dot.style.zIndex = "100";
-    dot.style.opacity = "1";
-    dot.style.visibility = "visible";
-    dot.style.display = "block";
-    dot.style.pointerEvents = "auto";
-    dot.style.transform = "translate(-50%, -50%)";
-    dot.style.cursor = "pointer";
-    
     // Store image-relative coordinates as data attributes
     dot.dataset.xPctImage = xPct;
     dot.dataset.yPctImage = yPct;
-    
-    // Add color class based on color value
-    if (color === '#00ff66' || (color && color.includes('0, 255, 102'))) {
-      dot.classList.add('green');
-    } else if (color === '#ff0000' || (color && color.includes('255, 0, 0'))) {
-      dot.classList.add('red');
-    } else {
-      dot.classList.add('gray');
-    }
     
     // Calculate position relative to rendered image
     const img = container.querySelector("img");
