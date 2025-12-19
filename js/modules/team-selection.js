@@ -881,7 +881,7 @@ Reset (peruuttamaton)
                 <div class="info-language-selector">
                     <select id="infoLanguageSelect">
                         <option value="de">🇩🇪 Deutsch</option>
-                        <option value="en">🇬🇧 English</option>
+                        <option value="en">🇺🇸 English</option>
                         <option value="ru">🇷🇺 Русский</option>
                         <option value="sv">🇸🇪 Svenska</option>
                         <option value="fi">🇫🇮 Suomi</option>
