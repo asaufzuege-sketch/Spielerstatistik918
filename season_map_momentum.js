@@ -363,21 +363,10 @@
     let goalieFilter = localStorage.getItem("seasonMapActiveGoalie") || null;
     
     // Normalize empty string and "All Goalies" values to null for consistent filter logic
-    if (goalieFilter === "" || goalieFilter === "All Goalies") {
-      goalieFilter = null;
-    }
+    goalieFilter = App.helpers.normalizeGoalieFilter(goalieFilter);
     
     // Load per-player data instead of aggregated totals
-    let timeDataWithPlayers = {};
-    try {
-      const rawData = localStorage.getItem("seasonMapTimeDataWithPlayers");
-      if (rawData) {
-        timeDataWithPlayers = JSON.parse(rawData);
-      }
-    } catch (e) {
-      console.warn('[momentum] Failed to parse seasonMapTimeDataWithPlayers:', e);
-      timeDataWithPlayers = {};
-    }
+    const timeDataWithPlayers = App.helpers.safeJSONParse("seasonMapTimeDataWithPlayers", {});
     
     // Helper: Sum button value based on filter
     function sumButton(key, isBottomRow) {

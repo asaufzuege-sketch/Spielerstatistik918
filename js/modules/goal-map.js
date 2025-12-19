@@ -833,11 +833,8 @@ App.goalMap = {
   
   // Restore markers from localStorage
   restoreMarkers() {
-    const savedMarkers = localStorage.getItem("goalMapMarkers");
-    if (!savedMarkers) return;
-    
-    try {
-      const allMarkers = JSON.parse(savedMarkers);
+    const allMarkers = App.helpers.safeJSONParse("goalMapMarkers", null);
+    if (!allMarkers) return;
       const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
       
       // Clear existing markers first to avoid duplicates (idempotent operation)
@@ -921,9 +918,6 @@ App.goalMap = {
         const goalieNames = goalies.map(g => g.name);
         this.filterByGoalies(goalieNames);
       }
-    } catch (e) {
-      console.error('[Goal Map] Error restoring markers:', e);
-    }
   },
   
   // Time Tracking mit Spielerzuordnung
@@ -937,8 +931,8 @@ App.goalMap = {
     }
     this.timeTrackingInitialized = true;
     
-    let timeData = JSON.parse(localStorage.getItem("timeData")) || {};
-    let timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
+    let timeData = App.helpers.safeJSONParse("timeData", {});
+    let timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
@@ -1244,12 +1238,7 @@ App.goalMap = {
   applyGoalieTimeTrackingFilter(goalieNames) {
     if (!this.timeTrackingBox) return;
     
-    let timeDataWithPlayers = {};
-    try {
-      timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
-    } catch {
-      timeDataWithPlayers = {};
-    }
+    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
@@ -1301,12 +1290,7 @@ App.goalMap = {
   applyTimeTrackingFilter() {
     if (!this.timeTrackingBox) return;
     
-    let timeDataWithPlayers = {};
-    try {
-      timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
-    } catch {
-      timeDataWithPlayers = {};
-    }
+    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
@@ -1401,11 +1385,11 @@ App.goalMap = {
     localStorage.setItem("goalMapMarkers", JSON.stringify(allMarkers));
     
     // Time Data für Momentum-Tabelle exportieren
-    const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
+    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
     console.log('[Goal Map Export] timeDataWithPlayers:', timeDataWithPlayers);
     
     // ACCUMULATE markers to Season Map (merge instead of overwrite)
-    const existingSeasonMarkers = JSON.parse(localStorage.getItem("seasonMapMarkers")) || [];
+    const existingSeasonMarkers = App.helpers.safeJSONParse("seasonMapMarkers", []);
     const mergedMarkers = [];
     
     // Merge each box's markers
@@ -1416,7 +1400,7 @@ App.goalMap = {
     }
     
     // ACCUMULATE time data (merge player times)
-    const existingTimeData = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
+    const existingTimeData = App.helpers.safeJSONParse("seasonMapTimeDataWithPlayers", {});
     const mergedTimeData = { ...existingTimeData };
     
     // Merge time data for each button

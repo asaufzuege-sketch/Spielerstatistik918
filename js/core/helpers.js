@@ -72,5 +72,29 @@ App.helpers = {
       .replace(/[^a-zA-Z0-9\s\-_.]/g, '_')
       .replace(/\s+/g, '_')  // Replace spaces with underscores
       .replace(/_+/g, '_');  // Collapse multiple underscores
+  },
+  
+  // Normalize goalie filter value: "All Goalies" or empty string → null
+  normalizeGoalieFilter(value) {
+    if (!value || value === "" || value === "All Goalies") {
+      return null;
+    }
+    return value;
+  },
+  
+  // Safe JSON parse with error handling and user notification
+  safeJSONParse(key, fallback = null) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error(`[Storage] Error parsing ${key}:`, e);
+      // Optional: User notification if showNotification exists
+      if (typeof App.showNotification === 'function') {
+        App.showNotification(`Daten für ${key} konnten nicht geladen werden.`, 'warning');
+      }
+      return fallback;
+    }
   }
 };

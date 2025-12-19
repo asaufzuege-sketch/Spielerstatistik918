@@ -90,22 +90,17 @@ App.seasonMap = {
       const allGoalies = new Set();
       
       // Get goalies from markers
-      const markersRaw = localStorage.getItem("seasonMapMarkers");
-      if (markersRaw) {
-        try {
-          const allMarkers = JSON.parse(markersRaw);
-          allMarkers.forEach(markersForBox => {
-            if (Array.isArray(markersForBox)) {
-              markersForBox.forEach(m => {
-                if (m.player) {
-                  allGoalies.add(m.player);
-                }
-              });
-            }
-          });
-        } catch (e) {
-          console.warn("Failed to parse seasonMapMarkers for goalie filter", e);
-        }
+      const allMarkers = App.helpers.safeJSONParse("seasonMapMarkers", []);
+      if (allMarkers) {
+        allMarkers.forEach(markersForBox => {
+          if (Array.isArray(markersForBox)) {
+            markersForBox.forEach(m => {
+              if (m.player) {
+                allGoalies.add(m.player);
+              }
+            });
+          }
+        });
       }
       
       // Get goalies from time data
@@ -277,12 +272,7 @@ App.seasonMap = {
   applyGoalieTimeTrackingFilter(goalieNames) {
     if (!this.timeTrackingBox) return;
     
-    let timeDataWithPlayers = {};
-    try {
-      timeDataWithPlayers = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
-    } catch {
-      timeDataWithPlayers = {};
-    }
+    const timeDataWithPlayers = App.helpers.safeJSONParse("seasonMapTimeDataWithPlayers", {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `sp${pIdx + 1}`;
@@ -337,12 +327,7 @@ App.seasonMap = {
   applyTimeTrackingFilter() {
     if (!this.timeTrackingBox) return;
     
-    let timeDataWithPlayers = {};
-    try {
-      timeDataWithPlayers = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
-    } catch {
-      timeDataWithPlayers = {};
-    }
+    const timeDataWithPlayers = App.helpers.safeJSONParse("seasonMapTimeDataWithPlayers", {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `sp${pIdx + 1}`;
@@ -379,13 +364,11 @@ App.seasonMap = {
     });
     
     // Marker laden (werden NICHT neu gesetzt, nur angezeigt)
-    const raw = localStorage.getItem("seasonMapMarkers");
-    if (raw) {
-      try {
-        const allMarkers = JSON.parse(raw);
-        allMarkers.forEach((markersForBox, idx) => {
-          const box = boxes[idx];
-          if (!box || !Array.isArray(markersForBox)) return;
+    const allMarkers = App.helpers.safeJSONParse("seasonMapMarkers", null);
+    if (allMarkers) {
+      allMarkers.forEach((markersForBox, idx) => {
+        const box = boxes[idx];
+        if (!box || !Array.isArray(markersForBox)) return;
           
           markersForBox.forEach(m => {
             // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
@@ -413,9 +396,6 @@ App.seasonMap = {
             }
           });
         });
-      } catch (e) {
-        console.warn("Season Map: Invalid seasonMapMarkers", e);
-      }
     }
     
     // Apply filters after restoring
@@ -461,7 +441,7 @@ App.seasonMap = {
     localStorage.setItem("seasonMapMarkers", JSON.stringify(allMarkers));
     
     // Player-bezogene Zeitdaten übernehmen
-    const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
+    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
     console.log('[Season Map Export] timeDataWithPlayers:', timeDataWithPlayers);
     localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
     
@@ -594,12 +574,7 @@ App.seasonMap = {
         const key = `${periodNum}_${btnIndex}`;
         
         // Update time data with goalie assignment
-        let timeDataWithPlayers = {};
-        try {
-          timeDataWithPlayers = JSON.parse(localStorage.getItem("seasonMapTimeDataWithPlayers")) || {};
-        } catch (e) {
-          timeDataWithPlayers = {};
-        }
+        let timeDataWithPlayers = App.helpers.safeJSONParse("seasonMapTimeDataWithPlayers", {});
         
         if (!timeDataWithPlayers[key]) {
           timeDataWithPlayers[key] = {};
