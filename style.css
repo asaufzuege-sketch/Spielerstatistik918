@@ -614,19 +614,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background-color: #444444;
 }
 
-/* Marker-Farben über CSS-Klassen */
-.marker-dot.green {
-  background-color: #00ff66 !important;
-}
-
-.marker-dot.red {
-  background-color: #ff0000 !important;
-}
-
-.marker-dot.gray {
-  background-color: #444444 !important;
-}
-
 /* Farben explizit setzen für grüne Marker */
 .marker-dot[style*="rgb(0, 255, 102)"],
 .marker-dot[style*="#00ff66"] {

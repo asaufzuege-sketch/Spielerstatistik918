@@ -48,14 +48,6 @@ App.seasonMap = {
     window.addEventListener("resize", this.resizeListener);
   },
   
-  // Helper to normalize filter values
-  normalizeFilterValue(value) {
-    if (!value || value === '' || value === 'All Players' || value === 'All Goalies') {
-      return null;
-    }
-    return value.trim();
-  },
-  
   // -----------------------------
   // Player Filter
   // -----------------------------
@@ -179,34 +171,35 @@ App.seasonMap = {
     // Red goal box = never green zone
     if (box.id === 'seasonGoalRedBox') return false;
     
-    // Check data-zone attribute first (most reliable)
+    // For field box: check data-zone attribute first (most reliable)
     if (marker.dataset.zone) {
       return marker.dataset.zone === 'green';
     }
     
-    // For field box without zone attribute - check color first
+    // FALLBACK for old markers without data-zone attribute:
     const color = marker.style.backgroundColor || '';
     
-    // Green color = always green zone
-    if (color.includes('0, 255, 102') || color.includes('00ff66')) {
+    // Green markers (#00ff66 / rgb(0, 255, 102)) = always green zone
+    const isGreenColor = color.includes('0, 255, 102') || color.includes('00ff66') || color === 'rgb(0, 255, 102)';
+    if (isGreenColor) {
       return true;
     }
     
-    // Red color = never green zone
-    if (color.includes('255, 0, 0') || color.includes('ff0000')) {
-      return false;
+    // Grey markers = check position (inverse of red zone check)
+    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
+    if (isGreyColor) {
+      const yPctImage = parseFloat(marker.dataset.yPctImage);
+      if (!isNaN(yPctImage) && yPctImage > 0) {
+        return yPctImage < this.VERTICAL_SPLIT_THRESHOLD;  // < 50% = green zone
+      }
+      
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
+      return top < this.VERTICAL_SPLIT_THRESHOLD;
     }
     
-    // Grey markers - check position
-    const yPct = parseFloat(marker.dataset.yPctImage);
-    // Allow yPct >= 0 to handle markers at top edge (y=0)
-    if (!isNaN(yPct) && yPct >= 0) {
-      return yPct < this.VERTICAL_SPLIT_THRESHOLD;
-    }
-    
-    // Fallback: use style.top
-    const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
-    return top < this.VERTICAL_SPLIT_THRESHOLD;
+    // Red markers = never green zone
+    return false;
   },
   
   // Helper: Check if marker is in RED zone
@@ -217,34 +210,38 @@ App.seasonMap = {
     // Green goal box = never red zone
     if (box.id === 'seasonGoalGreenBox') return false;
     
-    // Check data-zone attribute first (most reliable)
+    // For field box: check data-zone attribute first (most reliable)
     if (marker.dataset.zone) {
       return marker.dataset.zone === 'red';
     }
     
-    // For field box without zone attribute - check color first
+    // FALLBACK for old markers without data-zone attribute:
+    // Check marker color to determine zone
     const color = marker.style.backgroundColor || '';
     
-    // Red color = always red zone
-    if (color.includes('255, 0, 0') || color.includes('ff0000')) {
+    // Red markers (#ff0000 / rgb(255, 0, 0)) = always red zone (shots)
+    const isRedColor = color.includes('255, 0, 0') || color.includes('ff0000') || color === 'rgb(255, 0, 0)';
+    if (isRedColor) {
       return true;
     }
     
-    // Green color = never red zone
-    if (color.includes('0, 255, 102') || color.includes('00ff66')) {
-      return false;
+    // Grey markers (#444444 / rgb(68, 68, 68)) = check position
+    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
+    if (isGreyColor) {
+      // Try to get image-relative Y position from data attribute
+      const yPctImage = parseFloat(marker.dataset.yPctImage);
+      if (!isNaN(yPctImage) && yPctImage > 0) {
+        return yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;  // >= 50% = red zone
+      }
+      
+      // Last resort: use style.top (box-relative, less accurate but better than nothing)
+      const topStr = marker.style.top || '0';
+      const top = parseFloat(topStr.replace('%', '')) || 0;
+      return top >= this.VERTICAL_SPLIT_THRESHOLD;
     }
     
-    // Grey markers - check position
-    const yPct = parseFloat(marker.dataset.yPctImage);
-    // Allow yPct >= 0 to handle markers at top edge (y=0)
-    if (!isNaN(yPct) && yPct >= 0) {
-      return yPct >= this.VERTICAL_SPLIT_THRESHOLD;
-    }
-    
-    // Fallback: use style.top
-    const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
-    return top >= this.VERTICAL_SPLIT_THRESHOLD;
+    // Green markers = never red zone
+    return false;
   },
   
   // Get all unique goalies from season data
@@ -271,36 +268,35 @@ App.seasonMap = {
   },
   
   filterByGoalies(goalieNames) {
-    const isAllGoalies = !goalieNames || goalieNames.length === 0 || 
-      (goalieNames.length === 1 && !goalieNames[0]);
+    // Player and goalie filters operate independently on different zones
     
-    console.log('[Season Map] filterByGoalies:', goalieNames, 'isAll:', isAllGoalies);
+    // Detect if "All Goalies" is selected
+    const allGoalies = this.getAllGoaliesFromData();
+    const isAllGoaliesFilter = (goalieNames.length === allGoalies.length && 
+                                 goalieNames.every(name => allGoalies.includes(name)));
     
     const boxes = document.querySelectorAll(App.selectors.seasonMapBoxes);
     boxes.forEach(box => {
-      // Skip green goal box - not affected by goalie filter
-      if (box.id === 'seasonGoalGreenBox') return;
-      
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
-        const markerGoalie = marker.dataset.goalie || marker.dataset.player || null;
-        const zone = marker.dataset.zone;
+        // Only filter RED ZONE markers
+        const isRedMarker = this.isRedZoneMarker(marker, box);
         
-        // Only filter red zone markers
-        if (zone === 'red' || box.id === 'seasonGoalRedBox') {
-          if (isAllGoalies) {
+        if (isRedMarker) {
+          const playerName = marker.dataset.player;
+          
+          if (isAllGoaliesFilter) {
+            // "All Goalies" - show all red zone markers
             marker.style.display = '';
-            marker.style.visibility = 'visible';
-            marker.style.opacity = '1';
-          } else if (markerGoalie && goalieNames.includes(markerGoalie)) {
+          } else if (playerName && goalieNames.includes(playerName)) {
+            // Marker belongs to selected goalie - show
             marker.style.display = '';
-            marker.style.visibility = 'visible';
-            marker.style.opacity = '1';
           } else {
+            // Marker doesn't belong to selected goalie - hide
             marker.style.display = 'none';
           }
         }
-        // Green zone markers are NOT touched by goalie filter
+        // Green zone markers are not touched by this function
       });
     });
     
@@ -336,53 +332,27 @@ App.seasonMap = {
   },
   
   applyPlayerFilter() {
-    const playerFilter = this.normalizeFilterValue(this.playerFilter);
-    console.log('[Season Map] applyPlayerFilter, normalized:', playerFilter);
-    
-    if (playerFilter) {
-      localStorage.setItem("seasonMapPlayerFilter", playerFilter);
+    if (this.playerFilter) {
+      localStorage.setItem("seasonMapPlayerFilter", this.playerFilter);
     } else {
       localStorage.removeItem("seasonMapPlayerFilter");
     }
     
     const boxes = document.querySelectorAll(App.selectors.seasonMapBoxes);
-    console.log('[Season Map] Found boxes:', boxes.length);
-    
     boxes.forEach(box => {
-      // Skip red goal box - not affected by player filter
-      if (box.id === 'seasonGoalRedBox') return;
-      
       const markers = box.querySelectorAll(".marker-dot");
-      console.log('[Season Map] Found markers in box:', markers.length);
-      
       markers.forEach(marker => {
-        const markerPlayer = marker.dataset.player || null;
-        const zone = marker.dataset.zone;
+        // Only filter GREEN ZONE markers
+        const isGreenMarker = this.isGreenZoneMarker(marker, box);
         
-        console.log('[Season Map] Marker:', {
-          player: markerPlayer,
-          zone: zone,
-          filter: playerFilter
-        });
-        
-        // Only filter green zone markers
-        if (zone === 'green' || box.id === 'seasonGoalGreenBox') {
-          if (!playerFilter) {
-            // No filter - show all green zone markers
-            marker.style.display = '';
-            marker.style.visibility = 'visible';
-            marker.style.opacity = '1';
-          } else if (markerPlayer === playerFilter) {
-            // Player matches - show
-            marker.style.display = '';
-            marker.style.visibility = 'visible';
-            marker.style.opacity = '1';
+        if (isGreenMarker) {
+          if (this.playerFilter) {
+            marker.style.display = (marker.dataset.player === this.playerFilter) ? '' : 'none';
           } else {
-            // Player doesn't match - hide
-            marker.style.display = 'none';
+            marker.style.display = '';
           }
         }
-        // Red zone markers are NOT touched by player filter
+        // Red zone markers are not touched by this function
       });
     });
     
