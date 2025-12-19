@@ -165,54 +165,78 @@ App.seasonMap = {
   
   // Helper: Check if marker is in GREEN zone
   isGreenZoneMarker(marker, box) {
+    // Green goal box = always green zone
     if (box.id === 'seasonGoalGreenBox') return true;
+    
+    // Red goal box = never green zone
     if (box.id === 'seasonGoalRedBox') return false;
     
+    // Check data-zone attribute first (most reliable)
     if (marker.dataset.zone) {
       return marker.dataset.zone === 'green';
     }
     
+    // For field box without zone attribute - check color first
     const color = marker.style.backgroundColor || '';
-    const isGreenColor = color.includes('0, 255, 102') || color.includes('00ff66');
-    if (isGreenColor) return true;
     
-    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444');
-    if (isGreyColor) {
-      const yPctImage = parseFloat(marker.dataset.yPctImage);
-      if (!isNaN(yPctImage) && yPctImage > 0) {
-        return yPctImage < this.VERTICAL_SPLIT_THRESHOLD;
-      }
-      const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
-      return top < this.VERTICAL_SPLIT_THRESHOLD;
+    // Green color = always green zone
+    if (color.includes('0, 255, 102') || color.includes('00ff66')) {
+      return true;
     }
     
-    return false;
+    // Red color = never green zone
+    if (color.includes('255, 0, 0') || color.includes('ff0000')) {
+      return false;
+    }
+    
+    // Grey markers - check position
+    const yPct = parseFloat(marker.dataset.yPctImage);
+    // Allow yPct >= 0 to handle markers at top edge (y=0)
+    if (!isNaN(yPct) && yPct >= 0) {
+      return yPct < this.VERTICAL_SPLIT_THRESHOLD;
+    }
+    
+    // Fallback: use style.top
+    const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
+    return top < this.VERTICAL_SPLIT_THRESHOLD;
   },
   
   // Helper: Check if marker is in RED zone
   isRedZoneMarker(marker, box) {
+    // Red goal box = always red zone
     if (box.id === 'seasonGoalRedBox') return true;
+    
+    // Green goal box = never red zone
     if (box.id === 'seasonGoalGreenBox') return false;
     
+    // Check data-zone attribute first (most reliable)
     if (marker.dataset.zone) {
       return marker.dataset.zone === 'red';
     }
     
+    // For field box without zone attribute - check color first
     const color = marker.style.backgroundColor || '';
-    const isRedColor = color.includes('255, 0, 0') || color.includes('ff0000');
-    if (isRedColor) return true;
     
-    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444');
-    if (isGreyColor) {
-      const yPctImage = parseFloat(marker.dataset.yPctImage);
-      if (!isNaN(yPctImage) && yPctImage > 0) {
-        return yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
-      }
-      const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
-      return top >= this.VERTICAL_SPLIT_THRESHOLD;
+    // Red color = always red zone
+    if (color.includes('255, 0, 0') || color.includes('ff0000')) {
+      return true;
     }
     
-    return false;
+    // Green color = never red zone
+    if (color.includes('0, 255, 102') || color.includes('00ff66')) {
+      return false;
+    }
+    
+    // Grey markers - check position
+    const yPct = parseFloat(marker.dataset.yPctImage);
+    // Allow yPct >= 0 to handle markers at top edge (y=0)
+    if (!isNaN(yPct) && yPct >= 0) {
+      return yPct >= this.VERTICAL_SPLIT_THRESHOLD;
+    }
+    
+    // Fallback: use style.top
+    const top = parseFloat((marker.style.top || '0').replace('%', '')) || 0;
+    return top >= this.VERTICAL_SPLIT_THRESHOLD;
   },
   
   // Get all unique goalies from season data
