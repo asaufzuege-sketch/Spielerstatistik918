@@ -107,19 +107,30 @@ App.goalMap = {
       let lastTouchEnd = 0;
       
       const getPosFromEvent = (e) => {
+        // Frisches BoundingRect bei jedem Event
         const boxRect = img.getBoundingClientRect();
-        const clientX = e.clientX !== undefined ? e.clientX : (e.touches?.[0]?.clientX);
-        const clientY = e.clientY !== undefined ? e.clientY : (e.touches?.[0]?.clientY);
+        
+        // Robust: Touch UND Mouse UND Pointer unterstützen
+        const touch = e.changedTouches?.[0] || e.touches?.[0];
+        const clientX = touch?.clientX ?? e.clientX;
+        const clientY = touch?.clientY ?? e.clientY;
+        
+        // Validierung - wenn keine Koordinaten, abbrechen
+        if (clientX == null || clientY == null) {
+          console.warn('[Goal Map] Invalid event coordinates');
+          return { insideImage: false, xPctImage: 0, yPctImage: 0, xPctContainer: 0, yPctContainer: 0 };
+        }
         
         const xPctContainer = Math.max(0, Math.min(1, (clientX - boxRect.left) / (boxRect.width || 1))) * 100;
         const yPctContainer = Math.max(0, Math.min(1, (clientY - boxRect.top) / (boxRect.height || 1))) * 100;
         
+        // Frische Berechnung der gerenderten Bildgröße
         const rendered = App.markerHandler.computeRenderedImageRect(img);
         let insideImage = false;
         let xPctImage = 0;
         let yPctImage = 0;
         
-        if (rendered) {
+        if (rendered && rendered.width > 0 && rendered.height > 0) {
           insideImage = (
             clientX >= rendered.x &&
             clientX <= rendered.x + rendered.width && 
@@ -127,13 +138,15 @@ App.goalMap = {
             clientY <= rendered.y + rendered.height
           );
           if (insideImage) {
-            xPctImage = Math.max(0, Math.min(1, (clientX - rendered.x) / (rendered.width || 1))) * 100;
-            yPctImage = Math.max(0, Math.min(1, (clientY - rendered.y) / (rendered.height || 1))) * 100;
+            xPctImage = Math.max(0, Math.min(1, (clientX - rendered.x) / rendered.width)) * 100;
+            yPctImage = Math.max(0, Math.min(1, (clientY - rendered.y) / rendered.height)) * 100;
           }
         } else {
+          // Fallback: Wenn Bildgröße nicht berechnet werden kann, Container-Koordinaten verwenden
           insideImage = true;
           xPctImage = xPctContainer;
           yPctImage = yPctContainer;
+          console.warn('[Goal Map] Using container coordinates as fallback');
         }
         
         return { xPctContainer, yPctContainer, xPctImage, yPctImage, insideImage };
@@ -149,9 +162,27 @@ App.goalMap = {
       };
       
       const placeMarker = (pos, long, forceGrey = false) => {
-        let workflowActive = App.goalMapWorkflow?.active;
-        let eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
-        let workflowType = App.goalMapWorkflow?.workflowType; // 'scored' | 'conceded' | null
+        // Debug-Logging für Troubleshooting
+        console.log('[Goal Map] placeMarker:', {
+          insideImage: pos.insideImage,
+          x: pos.xPctImage?.toFixed(1),
+          y: pos.yPctImage?.toFixed(1),
+          long,
+          workflowActive: App.goalMapWorkflow?.active,
+          eventType: App.goalMapWorkflow?.eventType,
+          workflowType: App.goalMapWorkflow?.workflowType
+        });
+        
+        // Früher Abbruch wenn außerhalb des Bildes
+        if (!pos.insideImage) {
+          console.warn('[Goal Map] Click outside image bounds, ignoring');
+          return;
+        }
+        
+        // Workflow-Variablen FRISCH lesen (nicht aus Closure)
+        let workflowActive = App.goalMapWorkflow?.active === true;
+        let eventType = App.goalMapWorkflow?.eventType;
+        let workflowType = App.goalMapWorkflow?.workflowType;
         let isGoalWorkflow = workflowActive && eventType === 'goal';
         let isShotWorkflow = workflowActive && eventType === 'shot';
         let isScoredWorkflow = workflowType === 'scored';
@@ -229,7 +260,18 @@ App.goalMap = {
         if (box.id === "goalRedBox") {
           const activeGoalie = this.getActiveGoalie();
           if (!activeGoalie) {
-            alert('Please select a goalie first');
+            // UI-Hinweis statt blockierendem Alert
+            console.warn('[Goal Map] No goalie selected for red goal');
+            
+            // Goalie-Dropdown pulsieren lassen als Hinweis
+            const goalieSelect = document.getElementById('goalMapGoalieFilter');
+            if (goalieSelect) {
+              goalieSelect.classList.add('highlight-required');
+              setTimeout(() => goalieSelect.classList.remove('highlight-required'), 2000);
+            }
+            
+            // Einfache Benachrichtigung
+            this.showSimpleToast('Please select a goalie first');
             return;
           }
           // Ohne Workflow: Kein Punkt im roten Tor
@@ -292,7 +334,18 @@ App.goalMap = {
             const activeGoalie = this.getActiveGoalie();
             
             if (!activeGoalie) {
-              alert('Please select a goalie first');
+              // UI-Hinweis statt blockierendem Alert
+              console.warn('[Goal Map] No goalie selected for red zone');
+              
+              // Goalie-Dropdown pulsieren lassen als Hinweis
+              const goalieSelect = document.getElementById('goalMapGoalieFilter');
+              if (goalieSelect) {
+                goalieSelect.classList.add('highlight-required');
+                setTimeout(() => goalieSelect.classList.remove('highlight-required'), 2000);
+              }
+              
+              // Einfache Benachrichtigung
+              this.showSimpleToast('Please select a goalie first');
               return;
             }
             
@@ -448,25 +501,32 @@ App.goalMap = {
         }
       };
       
-      // Mouse Events
-      img.addEventListener("mousedown", (ev) => {
+      // Pointer Events (funktioniert für Mouse UND Touch)
+      img.addEventListener("pointerdown", (ev) => {
+        ev.preventDefault();
         isLong = false;
         if (mouseHoldTimer) clearTimeout(mouseHoldTimer);
+        
+        const pos = getPosFromEvent(ev);
+        
         mouseHoldTimer = setTimeout(() => {
           isLong = true;
-          const pos = getPosFromEvent(ev);
           placeMarker(pos, true);
+          if (navigator.vibrate) navigator.vibrate(50);
         }, App.markerHandler.LONG_MARK_MS);
       });
       
-      img.addEventListener("mouseup", (ev) => {
+      img.addEventListener("pointerup", (ev) => {
+        ev.preventDefault();
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
         }
+        
         const now = Date.now();
         const pos = getPosFromEvent(ev);
         
+        // Use lastMouseUp for both mouse and touch (unified with pointer events)
         if (now - lastMouseUp < 300) {
           placeMarker(pos, true, true);
           lastMouseUp = 0;
@@ -477,7 +537,7 @@ App.goalMap = {
         isLong = false;
       });
       
-      img.addEventListener("mouseleave", () => {
+      img.addEventListener("pointerleave", () => {
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
@@ -485,45 +545,13 @@ App.goalMap = {
         isLong = false;
       });
       
-      // Touch Events
-      img.addEventListener("touchstart", (ev) => {
-        isLong = false;
-        if (mouseHoldTimer) clearTimeout(mouseHoldTimer);
-        mouseHoldTimer = setTimeout(() => {
-          isLong = true;
-          const touch = ev.touches[0];
-          const pos = getPosFromEvent(touch);
-          placeMarker(pos, true);
-          if (navigator.vibrate) navigator.vibrate(50);
-        }, App.markerHandler.LONG_MARK_MS);
-      }, { passive: true });
-      
-      img.addEventListener("touchend", (ev) => {
-        if (mouseHoldTimer) {
-          clearTimeout(mouseHoldTimer);
-          mouseHoldTimer = null;
-        }
-        const now = Date.now();
-        const touch = ev.changedTouches[0];
-        const pos = getPosFromEvent(touch);
-        
-        if (now - lastTouchEnd < 300) {
-          placeMarker(pos, true, true);
-          lastTouchEnd = 0;
-        } else {
-          if (!isLong) placeMarker(pos, false);
-          lastTouchEnd = now;
-        }
-        isLong = false;
-      }, { passive: true });
-      
-      img.addEventListener("touchcancel", () => {
+      img.addEventListener("pointercancel", () => {
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
         }
         isLong = false;
-      }, { passive: true });
+      });
     });
   },
   
@@ -947,14 +975,10 @@ App.goalMap = {
       buttons.forEach((btn, idx) => {
         const key = `${periodNum}_${idx}`;
         
-        // Display-Value berechnen
-        let displayValue = 0;
-        if (timeDataWithPlayers[key]) {
-          displayValue = Object.values(timeDataWithPlayers[key])
-            .reduce((sum, val) => sum + Number(val), 0);
-        } else if (timeData[periodNum] && typeof timeData[periodNum][idx] !== "undefined") {
-          displayValue = Number(timeData[periodNum][idx]);
-        }
+        // Display-Value NUR aus timeDataWithPlayers berechnen
+        const playerData = timeDataWithPlayers[key] || {};
+        const displayValue = Object.values(playerData)
+          .reduce((sum, val) => sum + (Number(val) || 0), 0);
         
         // KRITISCH: Button komplett ersetzen um ALLE alten Listener zu entfernen
         const newBtn = btn.cloneNode(true);
@@ -1494,5 +1518,53 @@ App.goalMap = {
     this.initTimeTracking();
     
     alert("Goal Map reset.");
+  },
+  
+  // Simple Toast Notification
+  showSimpleToast(message, duration = 2000) {
+    // Remove any existing toast
+    const existingToast = document.querySelector('.goal-map-toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'goal-map-toast';
+    toast.textContent = message;
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 68, 68, 0.95);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => {
+      toast.style.opacity = '1';
+    }, 10);
+    
+    // Remove after duration
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.remove();
+        }
+      }, 300);
+    }, duration);
   }
 };

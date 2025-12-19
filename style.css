@@ -329,6 +329,36 @@ h1 {
   color: #00ff88 !important;
 }
 
+/* Mobile/Tablet: Doppeltipp-Zoom auf interaktiven Elementen unterdrücken */
+.field-box,
+.goal-img-box,
+.field-box img,
+.goal-img-box img,
+.time-btn,
+.marker-dot,
+.stat-cell,
+.stats-table td,
+.season-table td,
+.goalvalue-table td,
+.lineup-position,
+.player-row {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Highlight wenn Goalie erforderlich ist */
+.highlight-required {
+  animation: pulse-warning 0.5s ease-in-out 3;
+  box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.8);
+}
+
+@keyframes pulse-warning {
+  0%, 100% { box-shadow: 0 0 5px 1px rgba(255, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 15px 3px rgba(255, 0, 0, 1); }
+}
+
 /* Legacy animations removed - using unified neon-pulse-sync for all pulsing elements */
 
 /* Task 6: Goalie Name Overlay in Red Field Area */
