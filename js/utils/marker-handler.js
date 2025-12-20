@@ -204,41 +204,42 @@ App.markerHandler = {
     });
   },
   
-  computeRenderedImageRect(imgEl) {
-    try {
-      const boxRect = imgEl.getBoundingClientRect();
-      const naturalW = imgEl.naturalWidth || imgEl.width || 1;
-      const naturalH = imgEl.naturalHeight || imgEl.height || 1;
-      const boxW = boxRect.width || 1;
-      const boxH = boxRect.height || 1;
-      const cs = getComputedStyle(imgEl);
-      const objectFit = cs?.getPropertyValue('object-fit')?.trim() || 'contain';
-      
-      let scale;
-      if (objectFit === 'cover') {
-        scale = Math.max(boxW / naturalW, boxH / naturalH);
-      } else if (objectFit === 'fill') {
-        return {
-          x: boxRect.left,
-          y: boxRect.top,
-          width: naturalW * (boxW / naturalW),
-          height: naturalH * (boxH / naturalH)
-        };
-      } else if (objectFit === 'none') {
-        scale = 1;
-      } else {
-        scale = Math.min(boxW / naturalW, boxH / naturalH);
-      }
-      
-      const renderedW = naturalW * scale;
-      const renderedH = naturalH * scale;
-      const offsetX = boxRect.left + (boxW - renderedW) / 2;
-      const offsetY = boxRect.top + (boxH - renderedH) / 2;
-      
-      return { x: offsetX, y: offsetY, width: renderedW, height: renderedH };
-    } catch (e) {
-      return null;
+  computeRenderedImageRect(img) {
+    if (!img) return null;
+    
+    const imgRect = img.getBoundingClientRect();
+    const naturalWidth = img.naturalWidth;
+    const naturalHeight = img.naturalHeight;
+    
+    // Warte bis Bild geladen
+    if (!naturalWidth || !naturalHeight) return null;
+    
+    const naturalRatio = naturalWidth / naturalHeight;
+    const containerRatio = imgRect.width / imgRect.height;
+    
+    let renderedWidth, renderedHeight, offsetX, offsetY;
+    
+    if (naturalRatio > containerRatio) {
+      // Bild ist breiter als Container → schwarze Ränder oben/unten
+      renderedWidth = imgRect.width;
+      renderedHeight = imgRect.width / naturalRatio;
+      offsetX = 0;
+      offsetY = (imgRect.height - renderedHeight) / 2;
+    } else {
+      // Bild ist höher als Container → schwarze Ränder links/rechts
+      renderedHeight = imgRect.height;
+      renderedWidth = imgRect.height * naturalRatio;
+      offsetX = (imgRect.width - renderedWidth) / 2;
+      offsetY = 0;
     }
+    
+    return {
+      x: imgRect.left + offsetX,
+      y: imgRect.top + offsetY,
+      width: renderedWidth,
+      height: renderedHeight,
+      valid: true
+    };
   },
   
   clearAllMarkers() {
