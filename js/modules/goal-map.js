@@ -486,6 +486,8 @@ App.goalMap = {
       
       // Touch Events
       img.addEventListener("touchstart", (ev) => {
+        ev.preventDefault();      // Prevent default touch behavior (zoom, scroll)
+        ev.stopPropagation();     // Stop event bubbling
         isLong = false;
         if (mouseHoldTimer) clearTimeout(mouseHoldTimer);
         mouseHoldTimer = setTimeout(() => {
@@ -495,9 +497,11 @@ App.goalMap = {
           placeMarker(pos, true);
           if (navigator.vibrate) navigator.vibrate(50);
         }, App.markerHandler.LONG_MARK_MS);
-      }, { passive: true });
+      }, { passive: false });
       
       img.addEventListener("touchend", (ev) => {
+        ev.preventDefault();      // Prevent default touch behavior and subsequent click events
+        ev.stopPropagation();     // Stop event bubbling to prevent premature navigation
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
@@ -514,15 +518,17 @@ App.goalMap = {
           lastTouchEnd = now;
         }
         isLong = false;
-      }, { passive: true });
+      }, { passive: false });
       
-      img.addEventListener("touchcancel", () => {
+      img.addEventListener("touchcancel", (ev) => {
+        ev.preventDefault();      // Prevent default touch behavior
+        ev.stopPropagation();     // Stop event bubbling
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
         }
         isLong = false;
-      }, { passive: true });
+      }, { passive: false });
     });
   },
   
