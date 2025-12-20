@@ -7,6 +7,9 @@ App.seasonMap = {
   playerFilter: null,
   // Vertical split threshold (Y-coordinate) that separates green zone (scored/upper) from red zone (conceded/lower)
   VERTICAL_SPLIT_THRESHOLD: 50,
+  // Heatmap configuration
+  HEATMAP_RENDER_DELAY: 150, // ms delay after marker rendering to ensure proper positioning
+  HEATMAP_RADIUS_FACTOR: 0.15, // Heatmap gradient radius as percentage of smaller dimension
   
   init() {
     this.timeTrackingBox = document.getElementById("seasonMapTimeTrackingBox");
@@ -425,7 +428,7 @@ App.seasonMap = {
     // Render heatmap after markers are positioned
     setTimeout(() => {
       this.renderHeatmap();
-    }, 150);
+    }, this.HEATMAP_RENDER_DELAY);
   },
   
   // -----------------------------
@@ -442,16 +445,6 @@ App.seasonMap = {
     // Create canvas overlay
     const canvas = document.createElement('canvas');
     canvas.className = 'heatmap-canvas';
-    canvas.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 5;
-      opacity: 0.4;
-    `;
     
     const img = fieldBox.querySelector('img');
     if (!img) return;
@@ -501,7 +494,7 @@ App.seasonMap = {
       const y = (marker.y / 100) * height;
       
       // Create radial gradient for each point
-      const radius = Math.min(width, height) * 0.15; // 15% of smaller dimension
+      const radius = Math.min(width, height) * App.seasonMap.HEATMAP_RADIUS_FACTOR;
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
       
       // Parse color and create gradient
