@@ -267,6 +267,9 @@ App.seasonMap = {
     
     // Update Momentum Graphic when goalie filter changes
     this.refreshMomentumGraphic();
+    
+    // Update heatmap after filter change
+    this.renderHeatmap();
   },
   
   applyGoalieTimeTrackingFilter(goalieNames) {
@@ -321,6 +324,9 @@ App.seasonMap = {
     
     // Update Momentum Graphic when player filter changes
     this.refreshMomentumGraphic();
+    
+    // Update heatmap after filter change
+    this.renderHeatmap();
   },
   
   // Apply player filter to time tracking
@@ -415,6 +421,98 @@ App.seasonMap = {
         App.markerHandler.repositionMarkers();
       }, 100);
     }
+    
+    // Render heatmap after markers are positioned
+    setTimeout(() => {
+      this.renderHeatmap();
+    }, 150);
+  },
+  
+  // -----------------------------
+  // Heatmap Rendering
+  // -----------------------------
+  renderHeatmap() {
+    const fieldBox = document.getElementById('seasonFieldBox');
+    if (!fieldBox) return;
+    
+    // Remove existing heatmap
+    const existingCanvas = fieldBox.querySelector('.heatmap-canvas');
+    if (existingCanvas) existingCanvas.remove();
+    
+    // Create canvas overlay
+    const canvas = document.createElement('canvas');
+    canvas.className = 'heatmap-canvas';
+    canvas.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0.4;
+    `;
+    
+    const img = fieldBox.querySelector('img');
+    if (!img) return;
+    
+    // Set canvas size to match image
+    const rect = img.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Get all markers
+    const markers = fieldBox.querySelectorAll('.marker-dot');
+    
+    // Separate markers by zone
+    const greenZoneMarkers = [];
+    const redZoneMarkers = [];
+    
+    markers.forEach(marker => {
+      // Skip hidden markers
+      if (marker.style.display === 'none') return;
+      
+      const yPct = parseFloat(marker.dataset.yPctImage) || 0;
+      const xPct = parseFloat(marker.dataset.xPctImage) || 0;
+      
+      if (yPct < 50) {
+        greenZoneMarkers.push({ x: xPct, y: yPct });
+      } else {
+        redZoneMarkers.push({ x: xPct, y: yPct });
+      }
+    });
+    
+    // Draw green heatmap (top half)
+    this.drawHeatmapZone(ctx, greenZoneMarkers, canvas.width, canvas.height, 'rgba(0, 255, 102, 0.6)');
+    
+    // Draw red heatmap (bottom half)
+    this.drawHeatmapZone(ctx, redZoneMarkers, canvas.width, canvas.height, 'rgba(255, 0, 0, 0.6)');
+    
+    fieldBox.appendChild(canvas);
+  },
+  
+  drawHeatmapZone(ctx, markers, width, height, color) {
+    if (markers.length === 0) return;
+    
+    markers.forEach(marker => {
+      const x = (marker.x / 100) * width;
+      const y = (marker.y / 100) * height;
+      
+      // Create radial gradient for each point
+      const radius = Math.min(width, height) * 0.15; // 15% of smaller dimension
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      
+      // Parse color and create gradient
+      gradient.addColorStop(0, color);
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    });
   },
   
   // -----------------------------
