@@ -78,6 +78,20 @@ App.markerHandler = {
         return (p.r >= rThreshold) && ((p.r - p.g) >= diff) && ((p.r - p.b) >= diff);
       };
       
+      sampler.isWhiteOrGrey = (xPct, yPct, minBrightness = 150, maxColorDiff = 40) => {
+        const p = getPixel(xPct, yPct);
+        if (!p || p.a === 0) return false;
+        
+        const maxC = Math.max(p.r, p.g, p.b);
+        const minC = Math.min(p.r, p.g, p.b);
+        const diff = maxC - minC;
+        
+        // Muss hell sein (mindestens ein Kanal >= minBrightness)
+        // UND neutral (Unterschied zwischen Kanälen <= maxColorDiff)
+        // Das blockiert hellgrün (G >> R,B) und hellrot (R >> G,B)
+        return maxC >= minBrightness && diff <= maxColorDiff;
+      };
+      
       this.samplerCache.set(imgEl, sampler);
       return sampler;
     } catch (err) {
@@ -86,7 +100,8 @@ App.markerHandler = {
         isWhiteAt: () => false,
         isNeutralWhiteAt: () => false,
         isGreenAt: () => false,
-        isRedAt: () => false
+        isRedAt: () => false,
+        isWhiteOrGrey: () => false
       };
       this.samplerCache.set(imgEl, fallback);
       return fallback;

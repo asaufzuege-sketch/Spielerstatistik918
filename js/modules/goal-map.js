@@ -100,6 +100,34 @@ App.goalMap = {
       box.style.position = box.style.position || "relative";
       App.markerHandler.createImageSampler(img);
       
+      // NEU: Für Goal-Boxen, erstelle Hit-Layer
+      let eventTarget = img;  // Default: Event-Handler auf img
+      
+      const isGoalBox = box.classList.contains("goal-img-box") ||
+                        box.id === "goalGreenBox" ||
+                        box.id === "goalRedBox";
+      
+      if (isGoalBox) {
+        // Erstelle Hit-Layer wenn noch nicht vorhanden
+        let hitLayer = box.querySelector('.hit-layer');
+        if (!hitLayer) {
+          hitLayer = document.createElement('div');
+          hitLayer.className = 'hit-layer';
+          hitLayer.style.cssText = `
+            position: absolute;
+            inset: 0;
+            pointer-events: auto;
+            cursor: crosshair;
+            z-index: 10;
+          `;
+          box.appendChild(hitLayer);
+          
+          // Bild soll keine Events abfangen
+          img.style.pointerEvents = 'none';
+        }
+        eventTarget = hitLayer;  // Event-Handler auf Hit-Layer
+      }
+      
       let mouseHoldTimer = null;
       let isLong = false;
       let lastMouseUp = 0;
@@ -248,13 +276,8 @@ App.goalMap = {
           const sampler = App.markerHandler.createImageSampler(img);
           if (!sampler || !sampler.valid) return;
           
-          if (box.id === "goalGreenBox") {
-            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 180)) return;  // War: 220
-          } else if (box.id === "goalRedBox") {
-            if (!sampler.isNeutralWhiteAt(pos.xPctImage, pos.yPctImage, 200, 30)) return;  // War: 235, 12
-          } else {
-            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 180)) return;  // War: 220
-          }
+          // Verwende isWhiteOrGrey für alle Torbilder - blockiert hellgrün/hellrot
+          if (!sampler.isWhiteOrGrey(pos.xPctImage, pos.yPctImage, 150, 40)) return;
           
           const color = neutralGrey;
           
@@ -308,9 +331,8 @@ App.goalMap = {
               // Set data-zone attribute for red zone shot
               setMarkerZone(box, 'red');
               
-              this.saveMarkers();
-              
               // NEU: Sofort zurück zu Game Data nach Shot
+              this.saveMarkers();  // Erst speichern!
               setTimeout(() => {
                 if (typeof App.showPage === 'function') {
                   App.showPage('stats');
@@ -405,6 +427,7 @@ App.goalMap = {
             // Note: addGoalMapPoint will call completeGoalMapWorkflow which removes overlay
             
             // Auto-navigate back to Game Data after short delay
+            this.saveMarkers();  // Erst speichern!
             setTimeout(() => {
               if (typeof App.showPage === 'function') {
                 App.showPage('stats');
@@ -430,6 +453,7 @@ App.goalMap = {
           
           // NEU: Nach Shot (kurzer Klick, KEIN Workflow) sofort zurück zu Game Data
           if (!workflowActive && !long) {
+            this.saveMarkers();  // Erst speichern!
             setTimeout(() => {
               if (typeof App.showPage === 'function') {
                 App.showPage('stats');
@@ -450,7 +474,7 @@ App.goalMap = {
       };
       
       // Mouse Events
-      img.addEventListener("mousedown", (ev) => {
+      eventTarget.addEventListener("mousedown", (ev) => {
         isLong = false;
         if (mouseHoldTimer) clearTimeout(mouseHoldTimer);
         mouseHoldTimer = setTimeout(() => {
@@ -460,7 +484,7 @@ App.goalMap = {
         }, App.markerHandler.LONG_MARK_MS);
       });
       
-      img.addEventListener("mouseup", (ev) => {
+      eventTarget.addEventListener("mouseup", (ev) => {
         // Ignoriere synthetischen Click nach Touch (Mobile/Tablet)
         if (Date.now() - lastTouchTime < 500) {
           ev.preventDefault();
@@ -496,7 +520,7 @@ App.goalMap = {
         isLong = false;
       });
       
-      img.addEventListener("mouseleave", () => {
+      eventTarget.addEventListener("mouseleave", () => {
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
@@ -505,7 +529,7 @@ App.goalMap = {
       });
       
       // Touch Events
-      img.addEventListener("touchstart", (ev) => {
+      eventTarget.addEventListener("touchstart", (ev) => {
         ev.preventDefault();      // Prevent default touch behavior (zoom, scroll)
         ev.stopPropagation();     // Stop event bubbling
         isLong = false;
@@ -520,7 +544,7 @@ App.goalMap = {
         }, App.markerHandler.LONG_MARK_MS);
       }, { passive: false });
       
-      img.addEventListener("touchend", (ev) => {
+      eventTarget.addEventListener("touchend", (ev) => {
         ev.preventDefault();      // Prevent default touch behavior and subsequent click events
         ev.stopPropagation();     // Stop event bubbling to prevent premature navigation
         lastTouchTime = Date.now();  // Store touch timestamp to block synthetic clicks
@@ -552,7 +576,7 @@ App.goalMap = {
         isLong = false;
       }, { passive: false });
       
-      img.addEventListener("touchcancel", (ev) => {
+      eventTarget.addEventListener("touchcancel", (ev) => {
         ev.preventDefault();      // Prevent default touch behavior
         ev.stopPropagation();     // Stop event bubbling
         if (mouseHoldTimer) {
@@ -1077,6 +1101,7 @@ App.goalMap = {
             
             // Nach grünem Workflow: Zurück zu Game Data
             if (workflowType === 'scored') {
+              App.goalMap.saveMarkers();  // Erst speichern!
               setTimeout(() => {
                 if (typeof App.showPage === 'function') {
                   App.showPage('stats');
