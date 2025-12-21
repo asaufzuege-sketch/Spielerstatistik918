@@ -286,12 +286,8 @@ const App = {
           }
         }
         if (page === "torbild" && this.goalMap) {
-          // Check if markers are missing in DOM but exist in localStorage
-          const markersInDOM = document.querySelectorAll("#torbildPage .marker-dot").length;
-          const savedMarkers = localStorage.getItem("goalMapMarkers");
-          
-          if (markersInDOM === 0 && savedMarkers) {
-            console.log('[Goal Map] Restoring markers from localStorage...');
+          // Nach dem Anzeigen der torbild-Seite, Marker wiederherstellen
+          if (typeof this.goalMap.restoreMarkers === 'function') {
             this.goalMap.restoreMarkers();
           }
           
