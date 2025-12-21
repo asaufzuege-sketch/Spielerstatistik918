@@ -310,12 +310,7 @@ App.goalMap = {
               
               this.saveMarkers();
               
-              // NEU: Sofort zurück zu Game Data nach Shot
-              setTimeout(() => {
-                if (typeof App.showPage === 'function') {
-                  App.showPage('stats');
-                }
-              }, this.AUTO_NAVIGATION_DELAY_MS); // Kurze Verzögerung damit der User den Punkt sieht
+              // Auto-Navigation entfernt - killt Workflow-Kontext
               
               return; // WICHTIG: Hier beenden, kein Workflow
             }
@@ -428,14 +423,7 @@ App.goalMap = {
           
           this.saveMarkers();
           
-          // NEU: Nach Shot (kurzer Klick, KEIN Workflow) sofort zurück zu Game Data
-          if (!workflowActive && !long) {
-            setTimeout(() => {
-              if (typeof App.showPage === 'function') {
-                App.showPage('stats');
-              }
-            }, this.AUTO_NAVIGATION_DELAY_MS);
-          }
+          // Auto-Navigation entfernt - killt Workflow-Kontext
           
           if (workflowActive) {
             App.addGoalMapPoint(
