@@ -430,6 +430,12 @@ const App = {
     
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
+    // Save workflow points directly from collectedPoints array before page navigation
+    // This prevents markers from being lost when DOM is cleared during page change
+    if (this.goalMap && typeof this.goalMap.saveWorkflowPoints === 'function') {
+      this.goalMap.saveWorkflowPoints(points, playerName);
+    }
+    
     // Reset workflow state
     this.goalMapWorkflow.active = false;
     this.goalMapWorkflow.playerName = null;
