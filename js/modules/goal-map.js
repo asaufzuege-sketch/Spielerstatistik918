@@ -130,6 +130,11 @@ App.goalMap = {
           if (insideImage) {
             xPctImage = Math.max(0, Math.min(1, (clientX - rendered.x) / (rendered.width || 1))) * 100;
             yPctImage = Math.max(0, Math.min(1, (clientY - rendered.y) / (rendered.height || 1))) * 100;
+          } else {
+            // BUGFIX: If click is outside rendered image bounds, still calculate relative coordinates
+            // This can happen with rounding/precision issues or when clicking near edges
+            xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
+            yPctImage = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
           }
         } else {
           insideImage = true;
@@ -137,6 +142,7 @@ App.goalMap = {
           yPctImage = yPctContainer;
         }
         
+        console.log('[getPosFromEvent] xPctImage:', xPctImage, 'yPctImage:', yPctImage, 'insideImage:', insideImage);
         return { xPctContainer, yPctContainer, xPctImage, yPctImage, insideImage };
       };
       
