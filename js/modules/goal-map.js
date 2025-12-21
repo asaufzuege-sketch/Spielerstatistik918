@@ -104,6 +104,7 @@ App.goalMap = {
       let isLong = false;
       let lastMouseUp = 0;
       let lastTouchEnd = 0;
+      let lastTouchTime = 0;
       
       const getPosFromEvent = (e) => {
         const boxRect = img.getBoundingClientRect();
@@ -459,6 +460,13 @@ App.goalMap = {
       });
       
       img.addEventListener("mouseup", (ev) => {
+        // Ignoriere synthetischen Click nach Touch (Mobile/Tablet)
+        if (Date.now() - lastTouchTime < 500) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return;
+        }
+        
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
@@ -502,6 +510,7 @@ App.goalMap = {
       img.addEventListener("touchend", (ev) => {
         ev.preventDefault();      // Prevent default touch behavior and subsequent click events
         ev.stopPropagation();     // Stop event bubbling to prevent premature navigation
+        lastTouchTime = Date.now();  // Store touch timestamp to block synthetic clicks
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
