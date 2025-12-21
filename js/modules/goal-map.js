@@ -121,18 +121,15 @@ App.goalMap = {
         let yPctImage = 0;
         
         if (rendered) {
+          // BUGFIX: Add small tolerance (2px) for edge clicks to handle rounding/precision issues
+          const tolerance = 2;
           insideImage = (
-            clientX >= rendered.x &&
-            clientX <= rendered.x + rendered.width && 
-            clientY >= rendered.y &&
-            clientY <= rendered.y + rendered.height
+            clientX >= rendered.x - tolerance &&
+            clientX <= rendered.x + rendered.width + tolerance && 
+            clientY >= rendered.y - tolerance &&
+            clientY <= rendered.y + rendered.height + tolerance
           );
           if (insideImage) {
-            xPctImage = Math.max(0, Math.min(1, (clientX - rendered.x) / (rendered.width || 1))) * 100;
-            yPctImage = Math.max(0, Math.min(1, (clientY - rendered.y) / (rendered.height || 1))) * 100;
-          } else {
-            // BUGFIX: If click is outside rendered image bounds, still calculate relative coordinates
-            // This can happen with rounding/precision issues or when clicking near edges
             xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
             yPctImage = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
           }
