@@ -873,29 +873,32 @@ App.goalMap = {
       // Determine zone based on point type and coordinates
       let zone = null;
       if (point.type === 'field' && point.boxId === 'fieldBox') {
-        // Field box: determine zone based on yPct
-        zone = point.yPct < 50 ? 'green' : 'red';
+        // Field box: determine zone based on yPct using VERTICAL_SPLIT_THRESHOLD
+        zone = point.yPct < this.VERTICAL_SPLIT_THRESHOLD ? 'green' : 'red';
       } else if (point.type === 'goal' && point.boxId === 'goalGreenBox') {
         zone = 'green';
       } else if (point.type === 'goal' && point.boxId === 'goalRedBox') {
         zone = 'red';
       }
       
-      const marker = {
-        xPct: point.xPct,
-        yPct: point.yPct,
-        color: point.color,
-        player: point.player || playerName,
-        zone: zone
-      };
-      
-      // Add to appropriate box array (fieldBox=0, goalGreenBox=1, goalRedBox=2)
-      if (point.type === 'field' && point.boxId === 'fieldBox') {
-        existingMarkers[0].push(marker);
-      } else if (point.type === 'goal' && point.boxId === 'goalGreenBox') {
-        existingMarkers[1].push(marker);
-      } else if (point.type === 'goal' && point.boxId === 'goalRedBox') {
-        existingMarkers[2].push(marker);
+      // Only save field and goal markers (time markers are handled separately)
+      if (point.type === 'field' || point.type === 'goal') {
+        const marker = {
+          xPct: point.xPct,
+          yPct: point.yPct,
+          color: point.color,
+          player: point.player || playerName,
+          zone: zone
+        };
+        
+        // Add to appropriate box array (fieldBox=0, goalGreenBox=1, goalRedBox=2)
+        if (point.type === 'field' && point.boxId === 'fieldBox') {
+          existingMarkers[0].push(marker);
+        } else if (point.type === 'goal' && point.boxId === 'goalGreenBox') {
+          existingMarkers[1].push(marker);
+        } else if (point.type === 'goal' && point.boxId === 'goalRedBox') {
+          existingMarkers[2].push(marker);
+        }
       }
     });
     
