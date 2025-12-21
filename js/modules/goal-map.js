@@ -149,6 +149,9 @@ App.goalMap = {
       };
       
       const placeMarker = (pos, long, forceGrey = false) => {
+        // NEU: Wenn Workflow aktiv ist UND dies ein Touch-Event war, 
+        // blockiere den nachfolgenden synthetischen Click
+        // (Der Touch-Handler hat den Marker bereits gesetzt)
         let workflowActive = App.goalMapWorkflow?.active;
         let eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
         let workflowType = App.goalMapWorkflow?.workflowType; // 'scored' | 'conceded' | null
@@ -248,11 +251,11 @@ App.goalMap = {
           if (!sampler || !sampler.valid) return;
           
           if (box.id === "goalGreenBox") {
-            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 220)) return;
+            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage)) return;
           } else if (box.id === "goalRedBox") {
-            if (!sampler.isNeutralWhiteAt(pos.xPctImage, pos.yPctImage, 235, 12)) return;
+            if (!sampler.isNeutralWhiteAt(pos.xPctImage, pos.yPctImage)) return;
           } else {
-            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 220)) return;
+            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage)) return;
           }
           
           const color = neutralGrey;
@@ -467,6 +470,14 @@ App.goalMap = {
           return;
         }
         
+        // NEU: Blockiere wenn Workflow kürzlich einen Marker gesetzt hat
+        if (App.goalMapWorkflow?.lastTouchMarkerTime && 
+            Date.now() - App.goalMapWorkflow.lastTouchMarkerTime < 500) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return;
+        }
+        
         if (mouseHoldTimer) {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
@@ -527,6 +538,11 @@ App.goalMap = {
           lastTouchEnd = now;
         }
         isLong = false;
+        
+        // Nach placeMarker() im touchend wenn Workflow aktiv
+        if (App.goalMapWorkflow?.active) {
+          App.goalMapWorkflow.lastTouchMarkerTime = Date.now();
+        }
       }, { passive: false });
       
       img.addEventListener("touchcancel", (ev) => {

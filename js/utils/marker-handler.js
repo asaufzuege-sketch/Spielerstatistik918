@@ -52,18 +52,18 @@ App.markerHandler = {
         }
       };
       
-      sampler.isWhiteAt = (xPct, yPct, threshold = 220) => {
+      sampler.isWhiteAt = (xPct, yPct, threshold = 180) => {
         const p = getPixel(xPct, yPct);
         if (!p || p.a === 0) return false;
         return p.r >= threshold && p.g >= threshold && p.b >= threshold;
       };
       
-      sampler.isNeutralWhiteAt = (xPct, yPct, threshold = 245, maxChannelDiff = 8) => {
+      sampler.isNeutralWhiteAt = (xPct, yPct, minBrightness = 200, maxColorDiff = 20) => {
         const p = getPixel(xPct, yPct);
         if (!p || p.a === 0) return false;
         const maxC = Math.max(p.r, p.g, p.b);
         const minC = Math.min(p.r, p.g, p.b);
-        return maxC >= threshold && (maxC - minC) <= maxChannelDiff;
+        return maxC >= minBrightness && (maxC - minC) <= maxColorDiff;
       };
       
       sampler.isGreenAt = (xPct, yPct, gThreshold = 110, diff = 30) => {

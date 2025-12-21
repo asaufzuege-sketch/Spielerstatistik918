@@ -496,6 +496,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 8px;
 }
 
+/* Torbild: Ganze Fläche klickbar machen */
+.goal-img-box {
+  pointer-events: auto;
+}
+
+.goal-img-box img {
+  pointer-events: none;
+}
+
 /* Season Map - Layout Höhe wie Goal Map */
 #seasonMapPage .torbild-layout {
   height: calc(100vh - 120px);  /* Gleiche Höhe wie Goal Map - beide haben gleiche HTML-Struktur */
