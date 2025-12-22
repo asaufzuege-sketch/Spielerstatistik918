@@ -1225,8 +1225,8 @@ App.goalMap = {
   },
   
   filterByGoalies(goalieNames) {
-    // Goalie filter does NOT hide markers - all markers remain visible
-    // The filter only controls which goalie gets credit for NEW manual markers
+    // Goalie filter does not hide markers - all markers remain visible
+    // The filter only controls which goalie gets credit for new manual markers
     // This ensures workflow markers remain visible regardless of filter setting
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
@@ -1234,7 +1234,7 @@ App.goalMap = {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
         // Show all markers regardless of filter
-        // Filter is only for attribution of NEW clicks, not for hiding existing markers
+        // Filter is only for attribution of new manual markers, not for hiding existing markers
         marker.style.display = '';
       });
     });
@@ -1274,8 +1274,8 @@ App.goalMap = {
       localStorage.removeItem("goalMapPlayerFilter");
     }
     
-    // Filter does NOT hide markers - all markers remain visible
-    // The filter only controls which player gets credit for NEW manual markers
+    // Filter does not hide markers - all markers remain visible
+    // The filter only controls which player gets credit for new manual markers
     // This ensures workflow markers remain visible regardless of filter setting
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
@@ -1283,7 +1283,7 @@ App.goalMap = {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
         // Show all markers regardless of filter
-        // Filter is only for attribution of NEW clicks, not for hiding existing markers
+        // Filter is only for attribution of new manual markers, not for hiding existing markers
         marker.style.display = '';
       });
     });
