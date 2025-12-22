@@ -431,7 +431,7 @@ const App = {
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
     // WICHTIG: Workflow-Punkte AUCH in goalMapMarkers speichern (für restoreMarkers)
-    const existingMarkers = JSON.parse(localStorage.getItem("goalMapMarkers")) || [[], [], []];
+    const existingMarkers = App.helpers.safeJSONParse("goalMapMarkers", null) || [[], [], []];
 
     points.forEach(point => {
       // Skip timeTrackingBox markers - they are not stored in goalMapMarkers
@@ -446,8 +446,9 @@ const App = {
       } else if (point.boxId === 'goalRedBox') {
         zone = 'red';
       } else if (point.boxId === 'fieldBox') {
-        // Use 50% threshold (matches VERTICAL_SPLIT_THRESHOLD from goal-map.js)
-        zone = point.yPct < 50 ? 'green' : 'red';
+        // Use VERTICAL_SPLIT_THRESHOLD from goal-map.js (defaults to 50%)
+        const threshold = (this.goalMap && this.goalMap.VERTICAL_SPLIT_THRESHOLD) || 50;
+        zone = point.yPct < threshold ? 'green' : 'red';
       }
       
       const markerData = {
