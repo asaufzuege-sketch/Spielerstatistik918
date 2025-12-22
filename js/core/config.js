@@ -434,12 +434,26 @@ const App = {
     const existingMarkers = JSON.parse(localStorage.getItem("goalMapMarkers")) || [[], [], []];
 
     points.forEach(point => {
+      // Determine zone based on boxId and position
+      let zone;
+      if (point.boxId === 'goalGreenBox') {
+        zone = 'green';
+      } else if (point.boxId === 'goalRedBox') {
+        zone = 'red';
+      } else if (point.boxId === 'fieldBox') {
+        // Use 50% threshold like VERTICAL_SPLIT_THRESHOLD
+        zone = point.yPct < 50 ? 'green' : 'red';
+      } else {
+        // timeTrackingBox or unknown - skip zone assignment
+        zone = null;
+      }
+      
       const markerData = {
         xPct: point.xPct,
         yPct: point.yPct,
         color: point.color,
         player: playerName,
-        zone: point.yPct < 33.33 ? 'green' : (point.yPct < 66.66 ? 'yellow' : 'red')
+        zone: zone
       };
       
       if (point.boxId === 'fieldBox') {
