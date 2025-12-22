@@ -1225,36 +1225,17 @@ App.goalMap = {
   },
   
   filterByGoalies(goalieNames) {
-    // Player and goalie filters operate independently on different zones
-    
-    // Detect if "All Goalies" is selected
-    const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
-    const allGoalieNames = allGoalies.map(g => g.name);
-    const isAllGoaliesFilter = (goalieNames.length === allGoalieNames.length && 
-                                 goalieNames.every(name => allGoalieNames.includes(name)));
+    // Goalie filter does NOT hide markers - all markers remain visible
+    // The filter only controls which goalie gets credit for NEW manual markers
+    // This ensures workflow markers remain visible regardless of filter setting
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
-        // Only filter RED ZONE markers
-        const isRedMarker = this.isRedZoneMarker(marker, box);
-        
-        if (isRedMarker) {
-          const playerName = marker.dataset.player;
-          
-          if (isAllGoaliesFilter) {
-            // "All Goalies" - show all red zone markers
-            marker.style.display = '';
-          } else if (playerName && goalieNames.includes(playerName)) {
-            // Marker belongs to selected goalie - show
-            marker.style.display = '';
-          } else {
-            // Marker doesn't belong to selected goalie - hide
-            marker.style.display = 'none';
-          }
-        }
-        // Green zone markers are not touched by this function
+        // Show all markers regardless of filter
+        // Filter is only for attribution of NEW clicks, not for hiding existing markers
+        marker.style.display = '';
       });
     });
     
@@ -1293,21 +1274,17 @@ App.goalMap = {
       localStorage.removeItem("goalMapPlayerFilter");
     }
     
+    // Filter does NOT hide markers - all markers remain visible
+    // The filter only controls which player gets credit for NEW manual markers
+    // This ensures workflow markers remain visible regardless of filter setting
+    
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
-        // Only filter GREEN ZONE markers
-        const isGreenMarker = this.isGreenZoneMarker(marker, box);
-        
-        if (isGreenMarker) {
-          if (this.playerFilter) {
-            marker.style.display = (marker.dataset.player === this.playerFilter) ? '' : 'none';
-          } else {
-            marker.style.display = '';
-          }
-        }
-        // Red zone markers are not touched by this function
+        // Show all markers regardless of filter
+        // Filter is only for attribution of NEW clicks, not for hiding existing markers
+        marker.style.display = '';
       });
     });
     
