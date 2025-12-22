@@ -434,6 +434,11 @@ const App = {
     const existingMarkers = JSON.parse(localStorage.getItem("goalMapMarkers")) || [[], [], []];
 
     points.forEach(point => {
+      // Skip timeTrackingBox markers - they are not stored in goalMapMarkers
+      if (point.boxId === 'timeTrackingBox') {
+        return;
+      }
+      
       // Determine zone based on boxId and position
       let zone;
       if (point.boxId === 'goalGreenBox') {
@@ -441,11 +446,8 @@ const App = {
       } else if (point.boxId === 'goalRedBox') {
         zone = 'red';
       } else if (point.boxId === 'fieldBox') {
-        // Use 50% threshold like VERTICAL_SPLIT_THRESHOLD
+        // Use 50% threshold (matches VERTICAL_SPLIT_THRESHOLD from goal-map.js)
         zone = point.yPct < 50 ? 'green' : 'red';
-      } else {
-        // timeTrackingBox or unknown - skip zone assignment
-        zone = null;
       }
       
       const markerData = {
@@ -463,7 +465,6 @@ const App = {
       } else if (point.boxId === 'goalRedBox') {
         existingMarkers[2].push(markerData);
       }
-      // timeTrackingBox markers are not stored in goalMapMarkers
     });
 
     localStorage.setItem("goalMapMarkers", JSON.stringify(existingMarkers));
