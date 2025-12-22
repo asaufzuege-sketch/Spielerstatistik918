@@ -1044,20 +1044,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-size: 11px;
 }
 
-/* Desktop: Torbilder je 30% der Viewport-Höhe */
-@media (min-width: 769px) {
-  #torbildPage .goal-img-box,
-  #seasonMapPage .goal-img-box {
-    min-height: 30vh;
-    flex: 0 0 30%;
-  }
-  
-  /* Spielfeld nimmt restlichen Platz */
-  #torbildPage .field-box,
-  #seasonMapPage .field-box {
-    flex: 1;
-  }
-}
+/* Removed problematic desktop media query that was breaking 1:1:1 proportions */
+/* All boxes now use flex: 1 for consistent sizing across all screen sizes */
 
 @media (max-width: 900px) {
   .torbild-layout { flex-direction: column; height: auto; }
