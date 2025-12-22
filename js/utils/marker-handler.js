@@ -78,6 +78,17 @@ App.markerHandler = {
         return (p.r >= rThreshold) && ((p.r - p.g) >= diff) && ((p.r - p.b) >= diff);
       };
       
+      // Relaxed neutral check for larger clickable area on goal images
+      // Accepts bright pixels (white/gray) with low saturation
+      sampler.isNeutralLightAt = (xPct, yPct, minBrightness = 190, maxChroma = 40) => {
+        const p = getPixel(xPct, yPct);
+        if (!p || p.a === 0) return false;
+        const brightness = (p.r + p.g + p.b) / 3;
+        const chroma = Math.max(p.r, p.g, p.b) - Math.min(p.r, p.g, p.b);
+        // Accept pixels that are bright AND have low saturation (neutral colors)
+        return brightness >= minBrightness && chroma <= maxChroma;
+      };
+      
       this.samplerCache.set(imgEl, sampler);
       return sampler;
     } catch (err) {
@@ -85,6 +96,7 @@ App.markerHandler = {
         valid: false,
         isWhiteAt: () => false,
         isNeutralWhiteAt: () => false,
+        isNeutralLightAt: () => false,
         isGreenAt: () => false,
         isRedAt: () => false
       };
@@ -154,10 +166,26 @@ App.markerHandler = {
     if (interactive) {
       dot.addEventListener("click", (ev) => {
         ev.stopPropagation();
+        
+        // Get marker data before removing
+        const markerXPct = parseFloat(dot.dataset.xPctImage) || 0;
+        const markerYPct = parseFloat(dot.dataset.yPctImage) || 0;
+        
+        // Determine box index
+        let boxIndex = -1;
+        if (container.id === 'fieldBox' || container.classList.contains('field-box')) {
+          boxIndex = 0;
+        } else if (container.id === 'goalGreenBox') {
+          boxIndex = 1;
+        } else if (container.id === 'goalRedBox') {
+          boxIndex = 2;
+        }
+        
         dot.remove();
-        // Save markers after removal
-        if (App.goalMap && typeof App.goalMap.saveMarkers === 'function') {
-          App.goalMap.saveMarkers();
+        
+        // Remove from in-memory store
+        if (boxIndex >= 0 && App.goalMap && typeof App.goalMap.removeMarkerFromStore === 'function') {
+          App.goalMap.removeMarkerFromStore(boxIndex, markerXPct, markerYPct);
         }
       });
     }

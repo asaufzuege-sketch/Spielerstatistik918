@@ -10,6 +10,9 @@ App.goalMap = {
   WORKFLOW_STEP_TIME: 2, // Third step: click time button
   AUTO_NAVIGATION_DELAY_MS: 300, // Delay before auto-navigating after workflow completion
   
+  // In-memory marker store - avoids DOM reading issues when page is hidden
+  markerStore: [[], [], []], // [fieldBox, goalGreenBox, goalRedBox]
+  
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
     
@@ -250,15 +253,11 @@ App.goalMap = {
           const sampler = App.markerHandler.createImageSampler(img);
           if (!sampler || !sampler.valid) return;
           
-          if (box.id === "goalGreenBox") {
-            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 180)) return;  // War: 220
-          } else if (box.id === "goalRedBox") {
-            if (!sampler.isNeutralWhiteAt(pos.xPctImage, pos.yPctImage, 200, 30)) return;  // War: 235, 12
-          } else {
-            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 180)) return;  // War: 220
-          }
+          // Relaxed neutral check for larger clickable area (bright + low saturation)
+          if (!sampler.isNeutralLightAt(pos.xPctImage, pos.yPctImage, 190, 40)) return;
           
           const color = neutralGrey;
+          const zone = box.id === 'goalRedBox' ? 'red' : 'green';
           
           App.markerHandler.createMarkerPercent(
             pos.xPctImage,
@@ -270,9 +269,17 @@ App.goalMap = {
           );
           
           // Set data-zone attribute for goal boxes
-          setMarkerZone(box, box.id === 'goalRedBox' ? 'red' : 'green');
+          setMarkerZone(box, zone);
           
-          this.saveMarkers();
+          // Add to in-memory store immediately
+          const boxIndex = box.id === 'fieldBox' ? 0 : (box.id === 'goalGreenBox' ? 1 : 2);
+          this.addMarkerToStore(boxIndex, {
+            xPct: pos.xPctImage,
+            yPct: pos.yPctImage,
+            color: color,
+            player: pointPlayer,
+            zone: zone
+          });
           
           if (workflowActive) {
             App.addGoalMapPoint(
@@ -301,18 +308,29 @@ App.goalMap = {
             
             // Kurzer Klick = Roter Punkt (Shot) - NUR bei kurzem Klick!
             if (!long) {
+              const color = "#ff0000";
+              const zone = 'red';
+              
               App.markerHandler.createMarkerPercent(
                 pos.xPctImage, pos.yPctImage,
-                "#ff0000", box, true,
+                color, box, true,
                 activeGoalie.name, null, 'conceded'
               );
               
               // Set data-zone attribute for red zone shot
-              setMarkerZone(box, 'red');
+              setMarkerZone(box, zone);
               
-              this.saveMarkers();
+              // Add to in-memory store immediately
+              this.addMarkerToStore(0, {
+                xPct: pos.xPctImage,
+                yPct: pos.yPctImage,
+                color: color,
+                player: activeGoalie.name,
+                zone: zone
+              });
               
               // Auto-Navigation entfernt - killt Workflow-Kontext
+              // KEIN App.showPage('stats') hier - zerstört Workflow-Kontext
               
               return; // WICHTIG: Hier beenden, kein Workflow
             }
@@ -376,6 +394,7 @@ App.goalMap = {
             
             // Force green color for shot workflow
             color = "#00ff66";
+            const zone = 'green';
             
             App.markerHandler.createMarkerPercent(
               pos.xPctImage,
@@ -387,9 +406,16 @@ App.goalMap = {
             );
             
             // Set data-zone attribute for shot workflow
-            setMarkerZone(box, 'green');
+            setMarkerZone(box, zone);
             
-            this.saveMarkers();
+            // Add to in-memory store immediately
+            this.addMarkerToStore(0, {
+              xPct: pos.xPctImage,
+              yPct: pos.yPctImage,
+              color: color,
+              player: pointPlayer,
+              zone: zone
+            });
             
             // Complete shot workflow immediately
             App.addGoalMapPoint(
@@ -401,12 +427,8 @@ App.goalMap = {
             );
             // Note: addGoalMapPoint will call completeGoalMapWorkflow which removes overlay
             
-            // Auto-navigate back to Game Data after short delay
-            setTimeout(() => {
-              if (typeof App.showPage === 'function') {
-                App.showPage('stats');
-              }
-            }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
+            // Auto-Navigation entfernt - wird von completeGoalMapWorkflow übernommen
+            // KEIN setTimeout hier - completeGoalMapWorkflow navigiert zurück
             
             return;
           }
@@ -421,9 +443,17 @@ App.goalMap = {
           );
           
           // Set data-zone attribute for normal field point
-          setMarkerZone(box, isRedZone ? 'red' : 'green');
+          const zone = isRedZone ? 'red' : 'green';
+          setMarkerZone(box, zone);
           
-          this.saveMarkers();
+          // Add to in-memory store immediately
+          this.addMarkerToStore(0, {
+            xPct: pos.xPctImage,
+            yPct: pos.yPctImage,
+            color: color,
+            player: pointPlayer,
+            zone: zone
+          });
           
           // Auto-Navigation entfernt - killt Workflow-Kontext
           
@@ -838,38 +868,56 @@ App.goalMap = {
     this.updateGoalieNameOverlay();
   },
   
-  // Save all markers to localStorage
-  saveMarkers() {
-    const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
-    const allMarkers = boxes.map(box => {
-      const markers = [];
-      box.querySelectorAll(".marker-dot").forEach(dot => {
-        // Save image-relative coordinates (from data attributes)
-        const xPctImage = parseFloat(dot.dataset.xPctImage) || 0;
-        const yPctImage = parseFloat(dot.dataset.yPctImage) || 0;
-        const bg = dot.style.backgroundColor || "";
-        const playerName = dot.dataset.player || null;
-        const zone = dot.dataset.zone || null;
-        markers.push({ xPct: xPctImage, yPct: yPctImage, color: bg, player: playerName, zone: zone });
-      });
-      return markers;
-    });
+  // Add marker to in-memory store and save immediately
+  addMarkerToStore(boxIndex, markerData) {
+    if (boxIndex < 0 || boxIndex >= 3) return;
     
-    localStorage.setItem("goalMapMarkers", JSON.stringify(allMarkers));
+    // Add to in-memory store
+    this.markerStore[boxIndex].push(markerData);
+    
+    // Save immediately to localStorage
+    localStorage.setItem("goalMapMarkers", JSON.stringify(this.markerStore));
+  },
+  
+  // Remove marker from store by finding matching coordinates
+  removeMarkerFromStore(boxIndex, xPct, yPct) {
+    if (boxIndex < 0 || boxIndex >= 3) return;
+    
+    const threshold = 0.1; // tolerance for floating point comparison
+    this.markerStore[boxIndex] = this.markerStore[boxIndex].filter(m => 
+      Math.abs(m.xPct - xPct) > threshold || Math.abs(m.yPct - yPct) > threshold
+    );
+    
+    // Save immediately to localStorage
+    localStorage.setItem("goalMapMarkers", JSON.stringify(this.markerStore));
+  },
+  
+  // Save all markers to localStorage (now uses in-memory store)
+  saveMarkers() {
+    // Just save the in-memory store - no DOM reading
+    localStorage.setItem("goalMapMarkers", JSON.stringify(this.markerStore));
   },
   
   // Restore markers from localStorage
   restoreMarkers() {
     const allMarkers = App.helpers.safeJSONParse("goalMapMarkers", null);
-    if (!allMarkers) return;
-      const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
-      
-      // Clear existing markers first to avoid duplicates (idempotent operation)
-      boxes.forEach(box => {
-        box.querySelectorAll(".marker-dot").forEach(dot => dot.remove());
-      });
-      
-      allMarkers.forEach((markers, boxIndex) => {
+    if (!allMarkers) {
+      // Initialize empty store if no saved markers
+      this.markerStore = [[], [], []];
+      return;
+    }
+    
+    // Load markers into in-memory store
+    this.markerStore = allMarkers;
+    
+    const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
+    
+    // Clear existing markers first to avoid duplicates (idempotent operation)
+    boxes.forEach(box => {
+      box.querySelectorAll(".marker-dot").forEach(dot => dot.remove());
+    });
+    
+    allMarkers.forEach((markers, boxIndex) => {
         if (boxIndex >= boxes.length) return;
         const box = boxes[boxIndex];
         
@@ -1497,6 +1545,9 @@ App.goalMap = {
     localStorage.removeItem("timeData");
     localStorage.removeItem("timeDataWithPlayers");
     localStorage.removeItem("goalMapMarkers");
+    
+    // Reset in-memory marker store
+    this.markerStore = [[], [], []];
     
     // Reset initialization flag to allow re-initialization
     this.timeTrackingInitialized = false;
