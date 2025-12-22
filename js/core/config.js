@@ -430,6 +430,31 @@ const App = {
     
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
+    // WICHTIG: Workflow-Punkte AUCH in goalMapMarkers speichern (für restoreMarkers)
+    const existingMarkers = JSON.parse(localStorage.getItem("goalMapMarkers")) || [[], [], []];
+
+    points.forEach(point => {
+      const markerData = {
+        xPct: point.xPct,
+        yPct: point.yPct,
+        color: point.color,
+        player: playerName,
+        zone: point.yPct < 33.33 ? 'green' : (point.yPct < 66.66 ? 'yellow' : 'red')
+      };
+      
+      if (point.boxId === 'fieldBox') {
+        existingMarkers[0].push(markerData);
+      } else if (point.boxId === 'goalGreenBox') {
+        existingMarkers[1].push(markerData);
+      } else if (point.boxId === 'goalRedBox') {
+        existingMarkers[2].push(markerData);
+      }
+      // timeTrackingBox markers are not stored in goalMapMarkers
+    });
+
+    localStorage.setItem("goalMapMarkers", JSON.stringify(existingMarkers));
+    console.log("[Workflow] Markers saved to goalMapMarkers:", existingMarkers);
+    
     // Reset workflow state
     this.goalMapWorkflow.active = false;
     this.goalMapWorkflow.playerName = null;
