@@ -541,11 +541,10 @@ App.seasonMap = {
     const allMarkers = boxes.map(box => {
       const markers = [];
       box.querySelectorAll(".marker-dot").forEach(dot => {
-        const left = dot.style.left || "";
-        const top = dot.style.top || "";
+        // Use image-relative coordinates instead of box-relative coordinates
+        const xPct = parseFloat(dot.dataset.xPctImage) || 0;
+        const yPct = parseFloat(dot.dataset.yPctImage) || 0;
         const bg = dot.style.backgroundColor || "";
-        const xPct = parseFloat(left.replace("%", "")) || 0;
-        const yPct = parseFloat(top.replace("%", "")) || 0;
         const playerName = dot.dataset.player || null;
         markers.push({ xPct, yPct, color: bg, player: playerName });
       });

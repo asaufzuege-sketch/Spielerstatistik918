@@ -518,6 +518,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonMapPage .time-tracking-box {
   flex: 1;
+  visibility: hidden;  /* Hide Time Box in Season Map but keep the space */
 }
 
 /* Mindesthöhe für Torbilder - Goal Map */
