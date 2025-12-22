@@ -214,6 +214,21 @@ App.markerHandler = {
     // Warte bis Bild geladen
     if (!naturalWidth || !naturalHeight) return null;
     
+    // Check object-fit style
+    const objectFit = window.getComputedStyle(img).objectFit || 'fill';
+    
+    // For object-fit: fill, image fills entire container
+    if (objectFit === 'fill') {
+      return {
+        x: imgRect.left,
+        y: imgRect.top,
+        width: imgRect.width,
+        height: imgRect.height,
+        valid: true
+      };
+    }
+    
+    // For object-fit: contain, calculate rendered size maintaining aspect ratio
     const naturalRatio = naturalWidth / naturalHeight;
     const containerRatio = imgRect.width / imgRect.height;
     

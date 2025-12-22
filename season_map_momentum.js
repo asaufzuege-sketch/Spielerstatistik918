@@ -344,7 +344,7 @@
   function renderSeasonMomentumGraphic() {
     const root = getSeasonMapRoot();
     if (!root) return;
-    hideTimeBox();
+    // Don't hide TimeBox - it should remain visible as part of the layout
 
     let container = root.querySelector('#seasonMapMomentum');
     if (!container) {
@@ -615,7 +615,7 @@
       return;
     }
 
-    hideTimeBox();
+    // Don't hide TimeBox - it should remain visible as part of the layout
     renderSeasonMomentumGraphic();
     
     // Setup field click handlers after a short delay to ensure DOM is ready

@@ -273,6 +273,9 @@ App.seasonMap = {
     
     // Update heatmap after filter change
     this.renderHeatmap();
+    
+    // Update goalie statistics
+    this.renderGoalAreaStats();
   },
   
   applyGoalieTimeTrackingFilter(goalieNames) {
@@ -330,6 +333,9 @@ App.seasonMap = {
     
     // Update heatmap after filter change
     this.renderHeatmap();
+    
+    // Update goalie statistics
+    this.renderGoalAreaStats();
   },
   
   // Apply player filter to time tracking
@@ -428,6 +434,8 @@ App.seasonMap = {
     // Render heatmap after markers are positioned
     setTimeout(() => {
       this.renderHeatmap();
+      // Render goalie statistics (5 zones with percentages and counts)
+      this.renderGoalAreaStats();
     }, this.HEATMAP_RENDER_DELAY);
   },
   
@@ -808,11 +816,28 @@ App.seasonMap = {
       
       box.querySelectorAll(".goal-area-label").forEach(el => el.remove());
       
+      // Filter markers based on box type
+      const isRedGoal = (id === "seasonGoalRedBox");
       const markers = Array.from(box.querySelectorAll(".marker-dot")).filter(m => {
-        if (this.playerFilter) {
-          return m.dataset.player === this.playerFilter && m.style.display !== 'none';
+        // Skip hidden markers
+        if (m.style.display === 'none') return false;
+        
+        // For red goal box (conceded), use goalie filter
+        if (isRedGoal) {
+          const savedGoalie = localStorage.getItem("seasonMapActiveGoalie");
+          if (savedGoalie && savedGoalie !== "") {
+            // Specific goalie selected - only show their markers
+            return m.dataset.player === savedGoalie;
+          }
+          // "All Goalies" - show all markers
+          return true;
         }
-        return m.style.display !== 'none';
+        
+        // For green goal box (scored), use player filter
+        if (this.playerFilter) {
+          return m.dataset.player === this.playerFilter;
+        }
+        return true;
       });
       const total = markers.length;
       
