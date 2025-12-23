@@ -5,6 +5,7 @@
 App.seasonMap = {
   timeTrackingBox: null,
   playerFilter: null,
+  isRendering: false, // Guard flag to prevent duplicate renders
   // Vertical split threshold (Y-coordinate) that separates green zone (scored/upper) from red zone (conceded/lower)
   VERTICAL_SPLIT_THRESHOLD: 50,
   // Heatmap configuration
@@ -373,74 +374,90 @@ App.seasonMap = {
   // Render: Marker aus Storage laden (READ ONLY)
   // -----------------------------
   render() {
-    const boxes = Array.from(document.querySelectorAll(App.selectors.seasonMapBoxes));
-    boxes.forEach(box => box.querySelectorAll(".marker-dot").forEach(d => d.remove()));
+    // Guard against duplicate render calls
+    if (this.isRendering) {
+      console.log('[Season Map] Render already in progress, skipping duplicate call');
+      return;
+    }
     
-    // CSS steuert die Bildgröße - kein JavaScript-Override mehr nötig
-    // Stelle sicher dass die Boxen relativ positioniert sind für Marker
-    boxes.forEach(box => {
-      box.style.position = 'relative';
-    });
+    // Set flag immediately to prevent any subsequent render calls
+    this.isRendering = true;
     
-    // Marker laden (werden NICHT neu gesetzt, nur angezeigt)
-    const allMarkers = App.helpers.safeJSONParse("seasonMapMarkers", null);
-    if (allMarkers) {
-      allMarkers.forEach((markersForBox, idx) => {
-        const box = boxes[idx];
-        if (!box || !Array.isArray(markersForBox)) return;
-          
-          markersForBox.forEach(m => {
-            // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
-            if (!m.xPct || !m.yPct || 
-                m.xPct < 0.1 || m.yPct < 0.1 ||
-                isNaN(m.xPct) || isNaN(m.yPct)) {
-              console.warn('[Season Map] Skipping marker with invalid coordinates:', m);
-              return;
-            }
+    try {
+      const boxes = Array.from(document.querySelectorAll(App.selectors.seasonMapBoxes));
+      
+      // CRITICAL: Remove ALL existing markers before creating new ones
+      boxes.forEach(box => box.querySelectorAll(".marker-dot").forEach(d => d.remove()));
+      
+      // CSS steuert die Bildgröße - kein JavaScript-Override mehr nötig
+      // Stelle sicher dass die Boxen relativ positioniert sind für Marker
+      boxes.forEach(box => {
+        box.style.position = 'relative';
+      });
+      
+      // Marker laden (werden NICHT neu gesetzt, nur angezeigt)
+      const allMarkers = App.helpers.safeJSONParse("seasonMapMarkers", null);
+      if (allMarkers) {
+        allMarkers.forEach((markersForBox, idx) => {
+          const box = boxes[idx];
+          if (!box || !Array.isArray(markersForBox)) return;
             
-            App.markerHandler.createMarkerPercent(
-              m.xPct,
-              m.yPct,
-              m.color || "#444444",
-              box,
-              false, // NICHT interaktiv (kein Entfernen per Klick)
-              m.player || null
-            );
-            
-            // Restore zone attribute
-            const dots = box.querySelectorAll(".marker-dot");
-            const lastDot = dots[dots.length - 1];
-            if (lastDot && m.zone) {
-              lastDot.dataset.zone = m.zone;
-            }
+            markersForBox.forEach(m => {
+              // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
+              if (!m.xPct || !m.yPct || 
+                  m.xPct < 0.1 || m.yPct < 0.1 ||
+                  isNaN(m.xPct) || isNaN(m.yPct)) {
+                console.warn('[Season Map] Skipping marker with invalid coordinates:', m);
+                return;
+              }
+              
+              App.markerHandler.createMarkerPercent(
+                m.xPct,
+                m.yPct,
+                m.color || "#444444",
+                box,
+                false, // NICHT interaktiv (kein Entfernen per Klick)
+                m.player || null
+              );
+              
+              // Restore zone attribute
+              const dots = box.querySelectorAll(".marker-dot");
+              const lastDot = dots[dots.length - 1];
+              if (lastDot && m.zone) {
+                lastDot.dataset.zone = m.zone;
+              }
+            });
           });
-        });
-    }
-    
-    // Apply filters after restoring
-    this.applyPlayerFilter(true); // Skip stats render - will be called after both filters applied
-    
-    const savedGoalie = localStorage.getItem("seasonMapActiveGoalie");
-    if (savedGoalie) {
-      this.filterByGoalies([savedGoalie], true); // Skip stats render - will be called after both filters applied
-    } else {
-      const allGoalies = this.getAllGoaliesFromData();
-      this.filterByGoalies(allGoalies, true); // Skip stats render - will be called after both filters applied
-    }
-    
-    // Reposition markers after rendering to ensure correct placement
-    if (App.markerHandler && typeof App.markerHandler.repositionMarkers === 'function') {
+      }
+      
+      // Apply filters after restoring
+      this.applyPlayerFilter(true); // Skip stats render - will be called after both filters applied
+      
+      const savedGoalie = localStorage.getItem("seasonMapActiveGoalie");
+      if (savedGoalie) {
+        this.filterByGoalies([savedGoalie], true); // Skip stats render - will be called after both filters applied
+      } else {
+        const allGoalies = this.getAllGoaliesFromData();
+        this.filterByGoalies(allGoalies, true); // Skip stats render - will be called after both filters applied
+      }
+      
+      // Reposition markers after rendering to ensure correct placement
+      if (App.markerHandler && typeof App.markerHandler.repositionMarkers === 'function') {
+        setTimeout(() => {
+          App.markerHandler.repositionMarkers();
+        }, 100);
+      }
+      
+      // Render heatmap after markers are positioned
       setTimeout(() => {
-        App.markerHandler.repositionMarkers();
-      }, 100);
+        this.renderHeatmap();
+        // Render goalie statistics (5 zones with percentages and counts)
+        this.renderGoalAreaStats();
+      }, this.HEATMAP_RENDER_DELAY);
+    } finally {
+      // Always reset the flag, even if an error occurs
+      this.isRendering = false;
     }
-    
-    // Render heatmap after markers are positioned
-    setTimeout(() => {
-      this.renderHeatmap();
-      // Render goalie statistics (5 zones with percentages and counts)
-      this.renderGoalAreaStats();
-    }, this.HEATMAP_RENDER_DELAY);
   },
   
   // -----------------------------
@@ -636,8 +653,10 @@ App.seasonMap = {
       localStorage.removeItem("timeDataWithPlayers");
     }
     
+    // Show the season map page
+    // Note: showPage() will automatically call render() if markers are missing from DOM
+    // This is the desired behavior since we just saved new data to localStorage
     App.showPage("seasonMap");
-    this.render();
     
     // Momentum-Grafik aktualisieren
     // Timeout benötigt, damit Page-Wechsel, Rendering und localStorage-Änderungen abgeschlossen sind
