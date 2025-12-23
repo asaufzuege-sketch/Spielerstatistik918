@@ -518,18 +518,29 @@ App.seasonMap = {
       if (xPct < 0.1 || yPct < 0.1 || xPct >= 100 || yPct >= 100) return;
       
       // Determine marker color from backgroundColor
+      // Extract RGB values to handle different color formats (rgb, rgba, hex, etc.)
       const bgColor = marker.style.backgroundColor || '';
       
-      // Check for green: rgb(0, 255, 102) or #00ff66
-      if (bgColor.includes('0, 255, 102') || bgColor.toLowerCase().includes('00ff66')) {
+      // Parse color to RGB values for robust comparison
+      let r = 0, g = 0, b = 0;
+      const rgbMatch = bgColor.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+      if (rgbMatch) {
+        r = parseInt(rgbMatch[1], 10);
+        g = parseInt(rgbMatch[2], 10);
+        b = parseInt(rgbMatch[3], 10);
+      }
+      
+      // Categorize by color with tolerance for slight variations
+      // Green: rgb(0, 255, 102) - scored goals
+      if (r < 50 && g > 200 && b > 50 && b < 150) {
         greenMarkers.push({ x: xPct, y: yPct });
       }
-      // Check for grey: rgb(68, 68, 68) or #444444
-      else if (bgColor.includes('68, 68, 68') || bgColor.toLowerCase().includes('444444')) {
+      // Grey: rgb(68, 68, 68) - missed shots
+      else if (r > 50 && r < 100 && g > 50 && g < 100 && b > 50 && b < 100 && Math.abs(r - g) < 20 && Math.abs(r - b) < 20) {
         greyMarkers.push({ x: xPct, y: yPct });
       }
-      // Check for red: rgb(255, 0, 0) or #ff0000
-      else if (bgColor.includes('255, 0, 0') || bgColor.toLowerCase().includes('ff0000') || bgColor.toLowerCase() === 'red') {
+      // Red: rgb(255, 0, 0) - conceded goals
+      else if (r > 200 && g < 50 && b < 50) {
         redMarkers.push({ x: xPct, y: yPct });
       }
     });
@@ -651,6 +662,10 @@ App.seasonMap = {
     });
     
     // ACCUMULATE: Merge new markers with existing ones for each box
+    // Note: No deduplication is performed intentionally, as:
+    // - Multiple games may legitimately place markers at the same coordinates
+    // - Users should export once per game, then clear Goal Map
+    // - If duplicates occur from accidental double-export, users can reset Season Map
     const mergedMarkers = existingMarkers.map((existingBoxMarkers, idx) => {
       const newBoxMarkers = newMarkers[idx] || [];
       // Combine existing and new markers for this box
