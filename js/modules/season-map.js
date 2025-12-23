@@ -518,10 +518,10 @@ App.seasonMap = {
       if (xPct < 0.1 || yPct < 0.1 || xPct >= 100 || yPct >= 100) return;
       
       // Determine marker color from backgroundColor
-      // Extract RGB values to handle different color formats (rgb, rgba, hex, etc.)
+      // Parse RGB values for robust comparison (handles rgb/rgba formats)
       const bgColor = marker.style.backgroundColor || '';
       
-      // Parse color to RGB values for robust comparison
+      // Parse color to RGB values
       let r = 0, g = 0, b = 0;
       const rgbMatch = bgColor.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
       if (rgbMatch) {
@@ -530,13 +530,22 @@ App.seasonMap = {
         b = parseInt(rgbMatch[3], 10);
       }
       
+      // Helper to check if color is grey (r ≈ g ≈ b within tolerance)
+      const isGreyColor = (r, g, b) => {
+        return r > 50 && r < 100 && 
+               g > 50 && g < 100 && 
+               b > 50 && b < 100 && 
+               Math.abs(r - g) < 20 && 
+               Math.abs(r - b) < 20;
+      };
+      
       // Categorize by color with tolerance for slight variations
       // Green: rgb(0, 255, 102) - scored goals
       if (r < 50 && g > 200 && b > 50 && b < 150) {
         greenMarkers.push({ x: xPct, y: yPct });
       }
       // Grey: rgb(68, 68, 68) - missed shots
-      else if (r > 50 && r < 100 && g > 50 && g < 100 && b > 50 && b < 100 && Math.abs(r - g) < 20 && Math.abs(r - b) < 20) {
+      else if (isGreyColor(r, g, b)) {
         greyMarkers.push({ x: xPct, y: yPct });
       }
       // Red: rgb(255, 0, 0) - conceded goals
