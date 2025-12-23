@@ -9,6 +9,7 @@ App.goalMap = {
   WORKFLOW_STEP_GOAL: 1, // Second step: click in goal
   WORKFLOW_STEP_TIME: 2, // Third step: click time button
   AUTO_NAVIGATION_DELAY_MS: 300, // Delay before auto-navigating after workflow completion
+  MARKER_POSITION_TOLERANCE: 0.01, // Tolerance for marker position comparison (absolute percentage points)
   
   init() {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
@@ -1425,11 +1426,32 @@ App.goalMap = {
     const existingSeasonMarkers = App.helpers.safeJSONParse("seasonMapMarkers", []);
     const mergedMarkers = [];
     
-    // Merge each box's markers
+    // Helper function to check if two markers are duplicates
+    const isDuplicate = (marker1, marker2) => {
+      return Math.abs(marker1.xPct - marker2.xPct) < this.MARKER_POSITION_TOLERANCE &&
+             Math.abs(marker1.yPct - marker2.yPct) < this.MARKER_POSITION_TOLERANCE &&
+             marker1.color === marker2.color &&
+             marker1.player === marker2.player &&
+             marker1.zone === marker2.zone;
+    };
+    
+    // Merge each box's markers with deduplication
     for (let i = 0; i < Math.max(allMarkers.length, existingSeasonMarkers.length); i++) {
       const currentMarkers = allMarkers[i] || [];
       const existingMarkers = existingSeasonMarkers[i] || [];
-      mergedMarkers[i] = [...existingMarkers, ...currentMarkers];
+      
+      // Start with existing markers
+      const combined = [...existingMarkers];
+      
+      // Add current markers only if they're not duplicates
+      currentMarkers.forEach(newMarker => {
+        const isAlreadyPresent = combined.some(existingMarker => isDuplicate(newMarker, existingMarker));
+        if (!isAlreadyPresent) {
+          combined.push(newMarker);
+        }
+      });
+      
+      mergedMarkers[i] = combined;
     }
     
     // ACCUMULATE time data (merge player times)

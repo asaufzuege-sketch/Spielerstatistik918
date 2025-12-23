@@ -11,6 +11,10 @@ App.seasonMap = {
   // Heatmap configuration
   HEATMAP_RENDER_DELAY: 150, // ms delay after marker rendering to ensure proper positioning
   HEATMAP_RADIUS_FACTOR: 0.15, // Heatmap gradient radius as percentage of smaller dimension
+  HEATMAP_MIN_OPACITY: 0.2, // Minimum opacity for low-density areas
+  HEATMAP_MAX_OPACITY: 0.95, // Maximum opacity for high-density areas
+  HEATMAP_DENSITY_POWER: 0.7, // Power function exponent for density scaling (< 1 for faster initial rise)
+  HEATMAP_GRADIENT_MIDPOINT_OPACITY: 0.6, // Opacity multiplier at gradient midpoint for smoother transitions
   
   init() {
     this.timeTrackingBox = document.getElementById("seasonMapTimeTrackingBox");
@@ -578,15 +582,26 @@ App.seasonMap = {
       const x = (marker.x / 100) * width;
       const y = (marker.y / 100) * height;
       
-      // Calculate opacity based on local density (0.3 to 0.8 range)
+      // Calculate opacity based on local density with improved scaling
+      // Use exponential scaling to create more dramatic differences
       const densityRatio = densities[idx] / maxDensity;
-      const opacity = 0.3 + (densityRatio * 0.5); // Scale from 0.3 (low density) to 0.8 (high density)
+      
+      // Enhanced opacity range for better visual contrast
+      // Apply power function for more dramatic increase in high-density areas
+      const opacityRange = this.HEATMAP_MAX_OPACITY - this.HEATMAP_MIN_OPACITY;
+      
+      // Apply power < 1 to create a curve that rises faster initially, then slower at high densities
+      // This makes medium-density areas more visible while still emphasizing high-density concentrations
+      const enhancedRatio = Math.pow(densityRatio, this.HEATMAP_DENSITY_POWER);
+      const opacity = this.HEATMAP_MIN_OPACITY + (enhancedRatio * opacityRange);
       
       // Create radial gradient for each point
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
       
       // Use density-adjusted opacity for more intense glow in dense areas
+      // Inner circle has full opacity, outer circle fades to transparent
       gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity})`);
+      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${opacity * this.HEATMAP_GRADIENT_MIDPOINT_OPACITY})`);
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       
       ctx.fillStyle = gradient;
