@@ -14,6 +14,7 @@ App.seasonMap = {
   HEATMAP_MIN_OPACITY: 0.2, // Minimum opacity for low-density areas
   HEATMAP_MAX_OPACITY: 0.95, // Maximum opacity for high-density areas
   HEATMAP_DENSITY_POWER: 0.7, // Power function exponent for density scaling (< 1 for faster initial rise)
+  HEATMAP_GRADIENT_MIDPOINT_OPACITY: 0.6, // Opacity multiplier at gradient midpoint for smoother transitions
   
   init() {
     this.timeTrackingBox = document.getElementById("seasonMapTimeTrackingBox");
@@ -600,7 +601,7 @@ App.seasonMap = {
       // Use density-adjusted opacity for more intense glow in dense areas
       // Inner circle has full opacity, outer circle fades to transparent
       gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity})`);
-      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`);
+      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${opacity * this.HEATMAP_GRADIENT_MIDPOINT_OPACITY})`);
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       
       ctx.fillStyle = gradient;
