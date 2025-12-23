@@ -1,11 +1,11 @@
 // Goal Map Modul – Verhalten wie in Repo 912, erweitert um Goal/Shot-Workflow + Spieler-Filter
 // Ziel: Feldpunkte wie bisher (grün/rot), alle Torpunkte (Workflow + manuell) identisch dunkelgrau & scharf
 App.goalMap = {
-  timeTrackingBox:  null,
+  timeTrackingBox: null,
   playerFilter: null,
   timeTrackingInitialized: false, // Flag to prevent duplicate initialization
   VERTICAL_SPLIT_THRESHOLD: 50, // y-percent threshold for green (top) vs red (bottom) half
-  WORKFLOW_STEP_FIELD: 0, // First step:  click in field
+  WORKFLOW_STEP_FIELD: 0, // First step: click in field
   WORKFLOW_STEP_GOAL: 1, // Second step: click in goal
   WORKFLOW_STEP_TIME: 2, // Third step: click time button
   AUTO_NAVIGATION_DELAY_MS: 300, // Delay before auto-navigating after workflow completion
@@ -15,7 +15,7 @@ App.goalMap = {
     this.timeTrackingBox = document.getElementById("timeTrackingBox");
     
     // Event Listener für Export (speichert Marker + Timeboxen + Spielerinfos)
-    document.getElementById("exportGoalMapBtn")?. addEventListener("click", () => {
+    document.getElementById("exportGoalMapBtn")?.addEventListener("click", () => {
       this.exportGoalMap();
     });
     
@@ -30,7 +30,7 @@ App.goalMap = {
     });
     
     // Marker Handler für Goal Map Boxen
-    this. attachMarkerHandlers();
+    this.attachMarkerHandlers();
     
     // Time Tracking initialisieren (916‑Logik mit Spielerzuordnung)
     this.initTimeTracking();
@@ -50,12 +50,12 @@ App.goalMap = {
     // Apply goalie filter for red zone
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
     const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
-    if (savedGoalie && goalieFilterSelect && goalieFilterSelect. value === savedGoalie) {
+    if (savedGoalie && goalieFilterSelect && goalieFilterSelect.value === savedGoalie) {
       // Specific goalie is selected, filter red zone
       this.filterByGoalies([savedGoalie]);
     } else if (goalieFilterSelect) {
       // "All Goalies" or no goalie - show all red zone markers
-      const allGoalies = (App.data.selectedPlayers || []).filter(p => p. position === "G");
+      const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
       const goalieNames = allGoalies.map(g => g.name);
       this.filterByGoalies(goalieNames);
     }
@@ -77,7 +77,7 @@ App.goalMap = {
     window.addEventListener("resize", this.resizeListener);
     
     // Initial repositioning after markers are restored
-    if (App.markerHandler && typeof App. markerHandler.repositionMarkers === 'function') {
+    if (App.markerHandler && typeof App.markerHandler.repositionMarkers === 'function') {
       // Small delay to ensure images are loaded
       setTimeout(() => {
         App.markerHandler.repositionMarkers();
@@ -99,7 +99,7 @@ App.goalMap = {
       if (!img) return;
       
       box.style.position = box.style.position || "relative";
-      App.markerHandler. createImageSampler(img);
+      App.markerHandler.createImageSampler(img);
       
       let mouseHoldTimer = null;
       let isLong = false;
@@ -110,13 +110,13 @@ App.goalMap = {
       
       const getPosFromEvent = (e) => {
         const boxRect = img.getBoundingClientRect();
-        const clientX = e.clientX !== undefined ? e.clientX : (e.touches? .[0]?.clientX);
-        const clientY = e.clientY !== undefined ? e. clientY : (e.touches?.[0]?.clientY);
+        const clientX = e.clientX !== undefined ? e.clientX : (e.touches?.[0]?.clientX);
+        const clientY = e.clientY !== undefined ? e.clientY : (e.touches?.[0]?.clientY);
         
-        const xPctContainer = Math.max(0, Math. min(1, (clientX - boxRect.left) / (boxRect.width || 1))) * 100;
-        const yPctContainer = Math.max(0, Math. min(1, (clientY - boxRect.top) / (boxRect.height || 1))) * 100;
+        const xPctContainer = Math.max(0, Math.min(1, (clientX - boxRect.left) / (boxRect.width || 1))) * 100;
+        const yPctContainer = Math.max(0, Math.min(1, (clientY - boxRect.top) / (boxRect.height || 1))) * 100;
         
-        const rendered = App.markerHandler. computeRenderedImageRect(img);
+        const rendered = App.markerHandler.computeRenderedImageRect(img);
         let insideImage = false;
         let xPctImage = 0;
         let yPctImage = 0;
@@ -131,8 +131,8 @@ App.goalMap = {
             clientY <= rendered.y + rendered.height + tolerance
           );
           if (insideImage) {
-            xPctImage = Math.max(0, Math. min(100, ((clientX - rendered. x) / (rendered.width || 1)) * 100));
-            yPctImage = Math. max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
+            xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
+            yPctImage = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
           }
         } else {
           insideImage = true;
@@ -145,7 +145,7 @@ App.goalMap = {
       
       // Helper function to set zone attribute on last created marker
       const setMarkerZone = (box, zone) => {
-        const markers = box.querySelectorAll(". marker-dot");
+        const markers = box.querySelectorAll(".marker-dot");
         const lastMarker = markers[markers.length - 1];
         if (lastMarker) {
           lastMarker.dataset.zone = zone;
@@ -153,7 +153,7 @@ App.goalMap = {
       };
       
       const placeMarker = (pos, long, forceGrey = false) => {
-        let workflowActive = App.goalMapWorkflow?. active;
+        let workflowActive = App.goalMapWorkflow?.active;
         let eventType = App.goalMapWorkflow?.eventType; // 'goal' | 'shot' | null
         let workflowType = App.goalMapWorkflow?.workflowType; // 'scored' | 'conceded' | null
         let isGoalWorkflow = workflowActive && eventType === 'goal';
@@ -172,9 +172,9 @@ App.goalMap = {
           box.id === "goalGreenBox" ||
           box.id === "goalRedBox";
         
-        if (! pos. insideImage) return;
+        if (!pos.insideImage) return;
         
-        // Shot Workflow:  Only allow clicks in field box (will be handled below)
+        // Shot Workflow: Only allow clicks in field box (will be handled below)
         if (isShotWorkflow) {
           const isFieldBox = box.classList.contains("field-box");
           if (!isFieldBox) {
@@ -183,7 +183,7 @@ App.goalMap = {
           }
         }
         
-        // Im Goal-Workflow:  Strenge Schritt-Kontrolle
+        // Im Goal-Workflow: Strenge Schritt-Kontrolle
         if (isGoalWorkflow) {
           const isFieldBox = box.classList.contains("field-box");
           const isGreenGoal = box.id === "goalGreenBox";
@@ -191,20 +191,20 @@ App.goalMap = {
           
           // Schritt 0: NUR Spielfeld erlaubt
           if (currentStep === this.WORKFLOW_STEP_FIELD) {
-            if (! isFieldBox) {
+            if (!isFieldBox) {
               console.log('[Goal Workflow] Step 1: Please click point in field first');
               return; // Blockiere alle anderen Bereiche
             }
             // Detect which half was clicked and set workflow type
-            if (isFieldBox && ! workflowType) {
-              // Use VERTICAL_SPLIT_THRESHOLD:  top half (y < 50%) = scored (green), bottom half (y >= 50%) = conceded (red)
+            if (isFieldBox && !workflowType) {
+              // Use VERTICAL_SPLIT_THRESHOLD: top half (y < 50%) = scored (green), bottom half (y >= 50%) = conceded (red)
               const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
               App.goalMapWorkflow.workflowType = isRedZone ? 'conceded' : 'scored';
               console.log(`[Goal Workflow] Detected ${App.goalMapWorkflow.workflowType} workflow at y=${pos.yPctImage}%`);
               
               // Update overlays
-              if (App.goalMap && typeof App.goalMap. updatePlayerNameOverlay === 'function') {
-                App.goalMap. updatePlayerNameOverlay();
+              if (App.goalMap && typeof App.goalMap.updatePlayerNameOverlay === 'function') {
+                App.goalMap.updatePlayerNameOverlay();
               }
               
               // Goalie should already be set by startGoalMapWorkflow
@@ -213,7 +213,7 @@ App.goalMap = {
           }
           // Schritt 1: Nur entsprechendes Tor erlaubt
           else if (currentStep === this.WORKFLOW_STEP_GOAL) {
-            if (isScoredWorkflow && ! isGreenGoal) {
+            if (isScoredWorkflow && !isGreenGoal) {
               console.log('[Goal Workflow] Step 2: Please click point in green goal');
               return;
             }
@@ -232,7 +232,7 @@ App.goalMap = {
         // ROTES TOR: Nur mit Workflow und im richtigen Schritt
         if (box.id === "goalRedBox") {
           const activeGoalie = this.getActiveGoalie();
-          if (! activeGoalie) {
+          if (!activeGoalie) {
             alert('Please select a goalie first');
             return;
           }
@@ -241,7 +241,7 @@ App.goalMap = {
             return;
           }
           // Im Workflow: Nur in Schritt 1 (nach Feldpunkt) und im conceded workflow erlaubt
-          if (! isConcededWorkflow || currentStep !== this.WORKFLOW_STEP_GOAL) {
+          if (!isConcededWorkflow || currentStep !== this.WORKFLOW_STEP_GOAL) {
             return;
           }
         }
@@ -249,19 +249,19 @@ App.goalMap = {
         // TOR-BOXEN: immer Graupunkt
         if (isGoalBox) {
           const sampler = App.markerHandler.createImageSampler(img);
-          if (! sampler || !sampler.valid) return;
+          if (!sampler || !sampler.valid) return;
           
           if (box.id === "goalGreenBox") {
-            if (! sampler.isWhiteAt(pos.xPctImage, pos. yPctImage, 180)) return;  // War:  220
+            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 180)) return;  // War: 220
           } else if (box.id === "goalRedBox") {
-            if (!sampler.isNeutralWhiteAt(pos. xPctImage, pos.yPctImage, 200, 30)) return;  // War: 235, 12
+            if (!sampler.isNeutralWhiteAt(pos.xPctImage, pos.yPctImage, 200, 30)) return;  // War: 235, 12
           } else {
-            if (!sampler.isWhiteAt(pos. xPctImage, pos.yPctImage, 180)) return;  // War: 220
+            if (!sampler.isWhiteAt(pos.xPctImage, pos.yPctImage, 180)) return;  // War: 220
           }
           
           const color = neutralGrey;
           
-          App.markerHandler. createMarkerPercent(
+          App.markerHandler.createMarkerPercent(
             pos.xPctImage,
             pos.yPctImage,
             color,
@@ -278,7 +278,7 @@ App.goalMap = {
           if (workflowActive) {
             App.addGoalMapPoint(
               "goal",
-              pos. xPctImage,
+              pos.xPctImage,
               pos.yPctImage,
               color,
               box.id
@@ -289,23 +289,23 @@ App.goalMap = {
         
         // FELD-BOX: grün/rot oder grau je nach Kontext
         if (box.classList.contains("field-box")) {
-          const isRedZone = pos. yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
+          const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
           
           // ROTE ZONE - Goalie muss ausgewählt sein
-          if (! workflowActive && isRedZone) {
+          if (!workflowActive && isRedZone) {
             const activeGoalie = this.getActiveGoalie();
             
-            if (! activeGoalie) {
+            if (!activeGoalie) {
               alert('Please select a goalie first');
               return;
             }
             
-            // Kurzer Klick = Roter Punkt (Shot) - NUR bei kurzem Klick! 
-            if (! long) {
+            // Kurzer Klick = Roter Punkt (Shot) - NUR bei kurzem Klick!
+            if (!long) {
               App.markerHandler.createMarkerPercent(
                 pos.xPctImage, pos.yPctImage,
                 "#ff0000", box, true,
-                activeGoalie. name, null, 'conceded'
+                activeGoalie.name, null, 'conceded'
               );
               
               // Set data-zone attribute for red zone shot
@@ -319,7 +319,7 @@ App.goalMap = {
             }
             
             // Langer Klick = DIREKT Workflow starten mit grauem Punkt
-            // KEIN roter Punkt hier! 
+            // KEIN roter Punkt hier!
             if (long) {
               App.goalMapWorkflow.active = true;
               App.goalMapWorkflow.eventType = 'goal';
@@ -327,7 +327,7 @@ App.goalMap = {
               App.goalMapWorkflow.playerName = activeGoalie.name;
               App.goalMapWorkflow.requiredPoints = 3;
               App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
-              App. goalMapWorkflow. collectedPoints = [];
+              App.goalMapWorkflow.collectedPoints = [];
               App.goalMapWorkflow.sessionId = 'wf_' + Date.now();
               
               // Update workflow indicator
@@ -359,13 +359,13 @@ App.goalMap = {
           if (isGoalWorkflow) {
             color = neutralGrey;
           }
-          // Longpress in green zone or erzwungen grau (z.B.  Doppelklick)
+          // Longpress in green zone or erzwungen grau (z.B. Doppelklick)
           else if ((long && !isRedZone) || forceGrey) {
             color = neutralGrey;
           }
-          // Normaler manueller Klick:  oben grün, unten rot
+          // Normaler manueller Klick: oben grün, unten rot
           else {
-            color = pos.yPctImage > this.VERTICAL_SPLIT_THRESHOLD ?  "#ff0000" :  "#00ff66";
+            color = pos.yPctImage > this.VERTICAL_SPLIT_THRESHOLD ? "#ff0000" : "#00ff66";
           }
           
           // SHOT WORKFLOW: Only allow green zone (top half)
@@ -378,8 +378,8 @@ App.goalMap = {
             // Force green color for shot workflow
             color = "#00ff66";
             
-            App.markerHandler. createMarkerPercent(
-              pos. xPctImage,
+            App.markerHandler.createMarkerPercent(
+              pos.xPctImage,
               pos.yPctImage,
               color,
               box,
@@ -390,12 +390,12 @@ App.goalMap = {
             // Set data-zone attribute for shot workflow
             setMarkerZone(box, 'green');
             
-            this. saveMarkers();
+            this.saveMarkers();
             
             // Complete shot workflow immediately
             App.addGoalMapPoint(
               "field",
-              pos. xPctImage,
+              pos.xPctImage,
               pos.yPctImage,
               color,
               box.id
@@ -405,15 +405,15 @@ App.goalMap = {
             // Auto-navigate back to Game Data after short delay
             setTimeout(() => {
               if (typeof App.showPage === 'function') {
-                App. showPage('stats');
+                App.showPage('stats');
               }
             }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
             
             return;
           }
           
-          App.markerHandler. createMarkerPercent(
-            pos. xPctImage,
+          App.markerHandler.createMarkerPercent(
+            pos.xPctImage,
             pos.yPctImage,
             color,
             box,
@@ -431,7 +431,7 @@ App.goalMap = {
           if (workflowActive) {
             App.addGoalMapPoint(
               "field",
-              pos. xPctImage,
+              pos.xPctImage,
               pos.yPctImage,
               color,
               box.id
@@ -451,7 +451,7 @@ App.goalMap = {
         }, App.markerHandler.LONG_MARK_MS);
       });
       
-      img. addEventListener("mouseup", (ev) => {
+      img.addEventListener("mouseup", (ev) => {
         // Ignoriere synthetischen Click nach Touch (Mobile/Tablet)
         if (Date.now() - lastTouchTime < 500) {
           ev.preventDefault();
@@ -474,12 +474,12 @@ App.goalMap = {
         const pos = getPosFromEvent(ev);
         
         if (now - lastMouseUp < 300) {
-          lastMarkerPlacedTime = Date.now();  // NEU:  Setze Flag VOR placeMarker
+          lastMarkerPlacedTime = Date.now();  // NEU: Setze Flag VOR placeMarker
           placeMarker(pos, true, true);
           lastMouseUp = 0;
         } else {
-          if (! isLong) {
-            lastMarkerPlacedTime = Date.now();  // NEU:  Setze Flag VOR placeMarker
+          if (!isLong) {
+            lastMarkerPlacedTime = Date.now();  // NEU: Setze Flag VOR placeMarker
             placeMarker(pos, false);
           }
           lastMouseUp = now;
@@ -496,7 +496,7 @@ App.goalMap = {
       });
       
       // Touch Events
-      img. addEventListener("touchstart", (ev) => {
+      img.addEventListener("touchstart", (ev) => {
         ev.preventDefault();      // Prevent default touch behavior (zoom, scroll)
         ev.stopPropagation();     // Stop event bubbling
         isLong = false;
@@ -505,16 +505,16 @@ App.goalMap = {
           isLong = true;
           const touch = ev.touches[0];
           const pos = getPosFromEvent(touch);
-          lastMarkerPlacedTime = Date.now();  // NEU:  Setze Flag VOR placeMarker
+          lastMarkerPlacedTime = Date.now();  // NEU: Setze Flag VOR placeMarker
           placeMarker(pos, true);
           if (navigator.vibrate) navigator.vibrate(50);
         }, App.markerHandler.LONG_MARK_MS);
       }, { passive: false });
       
       img.addEventListener("touchend", (ev) => {
-        ev. preventDefault();      // Prevent default touch behavior and subsequent click events
+        ev.preventDefault();      // Prevent default touch behavior and subsequent click events
         ev.stopPropagation();     // Stop event bubbling to prevent premature navigation
-        lastTouchTime = Date. now();  // Store touch timestamp to block synthetic clicks
+        lastTouchTime = Date.now();  // Store touch timestamp to block synthetic clicks
         
         // NEU: Blockiere wenn kürzlich ein Marker gesetzt wurde (verhindert Doppelmarker)
         if (Date.now() - lastMarkerPlacedTime < 500) {
@@ -525,17 +525,17 @@ App.goalMap = {
           clearTimeout(mouseHoldTimer);
           mouseHoldTimer = null;
         }
-        const now = Date. now();
+        const now = Date.now();
         const touch = ev.changedTouches[0];
         const pos = getPosFromEvent(touch);
         
         if (now - lastTouchEnd < 300) {
-          lastMarkerPlacedTime = Date.now();  // NEU:  Setze Flag VOR placeMarker
+          lastMarkerPlacedTime = Date.now();  // NEU: Setze Flag VOR placeMarker
           placeMarker(pos, true, true);
           lastTouchEnd = 0;
         } else {
           if (!isLong) {
-            lastMarkerPlacedTime = Date.now();  // NEU:  Setze Flag VOR placeMarker
+            lastMarkerPlacedTime = Date.now();  // NEU: Setze Flag VOR placeMarker
             placeMarker(pos, false);
           }
           lastTouchEnd = now;
@@ -558,7 +558,7 @@ App.goalMap = {
   // Get currently active goalie - simple dropdown check only
   getActiveGoalie() {
     const goalieDropdown = document.getElementById('goalMapGoalieFilter');
-    const value = goalieDropdown ?  goalieDropdown. value : '';
+    const value = goalieDropdown ? goalieDropdown.value : '';
     // Explicitly check for empty value or "All Goalies"
     if (value && value !== "" && value !== "All Goalies") {
       return { name: value, position: 'G' };
@@ -566,7 +566,7 @@ App.goalMap = {
     return null;
   },
   
-  // Helper:  Check if marker is in GREEN zone (top field half + green goal)
+  // Helper: Check if marker is in GREEN zone (top field half + green goal)
   isGreenZoneMarker(marker, box) {
     // Green goal box = always green zone
     if (box.id === 'goalGreenBox') return true;
@@ -574,30 +574,30 @@ App.goalMap = {
     // Red goal box = never green zone
     if (box.id === 'goalRedBox') return false;
     
-    // For field box:  check data-zone attribute first (most reliable)
+    // For field box: check data-zone attribute first (most reliable)
     if (marker.dataset.zone) {
       return marker.dataset.zone === 'green';
     }
     
-    // FALLBACK for old markers without data-zone attribute: 
-    const color = marker.style. backgroundColor || '';
+    // FALLBACK for old markers without data-zone attribute:
+    const color = marker.style.backgroundColor || '';
     
     // Green markers (#00ff66 / rgb(0, 255, 102)) = always green zone
-    const isGreenColor = color. includes('0, 255, 102') || color.includes('00ff66') || color === 'rgb(0, 255, 102)';
+    const isGreenColor = color.includes('0, 255, 102') || color.includes('00ff66') || color === 'rgb(0, 255, 102)';
     if (isGreenColor) {
       return true;
     }
     
     // Grey markers = check position (inverse of red zone check)
-    const isGreyColor = color. includes('68, 68, 68') || color. includes('444444') || color === 'rgb(68, 68, 68)';
+    const isGreyColor = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
     if (isGreyColor) {
       const yPctImage = parseFloat(marker.dataset.yPctImage);
-      if (! isNaN(yPctImage) && yPctImage > 0) {
+      if (!isNaN(yPctImage) && yPctImage > 0) {
         return yPctImage < this.VERTICAL_SPLIT_THRESHOLD;  // < 50% = green zone
       }
       
       const topStr = marker.style.top || '0';
-      const top = parseFloat(topStr. replace('%', '')) || 0;
+      const top = parseFloat(topStr.replace('%', '')) || 0;
       return top < this.VERTICAL_SPLIT_THRESHOLD;
     }
     
@@ -623,7 +623,7 @@ App.goalMap = {
     const color = marker.style.backgroundColor || '';
     
     // Red markers (#ff0000 / rgb(255, 0, 0)) = always red zone (shots)
-    const isRedColor = color. includes('255, 0, 0') || color.includes('ff0000') || color === 'rgb(255, 0, 0)';
+    const isRedColor = color.includes('255, 0, 0') || color.includes('ff0000') || color === 'rgb(255, 0, 0)';
     if (isRedColor) {
       return true;
     }
@@ -632,7 +632,7 @@ App.goalMap = {
     const isGreyColor = color.includes('68, 68, 68') || color.includes('444444') || color === 'rgb(68, 68, 68)';
     if (isGreyColor) {
       // Try to get image-relative Y position from data attribute
-      const yPctImage = parseFloat(marker.dataset. yPctImage);
+      const yPctImage = parseFloat(marker.dataset.yPctImage);
       if (!isNaN(yPctImage) && yPctImage > 0) {
         return yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;  // >= 50% = red zone
       }
@@ -640,7 +640,7 @@ App.goalMap = {
       // Last resort: use style.top (box-relative, less accurate but better than nothing)
       const topStr = marker.style.top || '0';
       const top = parseFloat(topStr.replace('%', '')) || 0;
-      return top >= this. VERTICAL_SPLIT_THRESHOLD;
+      return top >= this.VERTICAL_SPLIT_THRESHOLD;
     }
     
     // Green markers = never red zone
@@ -650,7 +650,7 @@ App.goalMap = {
   // Update goalie button title to show neon-pulse when active
   updateGoalieButtonTitle() {
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
-    if (! goalieFilterSelect) return;
+    if (!goalieFilterSelect) return;
     
     // KRITISCH: Prüfe ob ein ECHTER Goalie ausgewählt ist (nicht "All Goalies")
     const selectedValue = goalieFilterSelect.value;
@@ -659,7 +659,7 @@ App.goalMap = {
     if (hasActiveGoalie) {
       goalieFilterSelect.classList.add("active");
     } else {
-      goalieFilterSelect. classList.remove("active");
+      goalieFilterSelect.classList.remove("active");
     }
   },
   
@@ -671,7 +671,7 @@ App.goalMap = {
     if (!goalieName) return;
     
     // Extract last name
-    const lastName = goalieName. split(' ').pop().toUpperCase();
+    const lastName = goalieName.split(' ').pop().toUpperCase();
     
     // Overlay in field (red half) - TRANSPARENT
     const fieldBox = document.getElementById('fieldBox');
@@ -679,7 +679,7 @@ App.goalMap = {
       const overlay = document.createElement('div');
       overlay.className = 'goalie-name-overlay';
       overlay.textContent = lastName;
-      overlay. style.cssText = `
+      overlay.style.cssText = `
         position: absolute;
         bottom: 25%;
         left: 50%;
@@ -700,17 +700,17 @@ App.goalMap = {
     if (goalRedBox) {
       const overlay = document.createElement('div');
       overlay.className = 'goalie-name-goal';
-      overlay. textContent = lastName;
+      overlay.textContent = lastName;
       overlay.style.cssText = `
         position: absolute;
-        top:  50%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 1.5rem;
-        font-weight:  bold;
+        font-weight: bold;
         color: rgba(255, 0, 0, 0.2);
         pointer-events: none;
-        z-index:  5;
+        z-index: 5;
         text-transform: uppercase;
       `;
       goalRedBox.appendChild(overlay);
@@ -726,16 +726,16 @@ App.goalMap = {
       this.showGoalieNameOverlay(goalie.name);
     } else {
       // If no goalie, remove overlays
-      document. querySelectorAll('. goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
+      document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
     }
   },
   
   // Show player name overlay in GREEN field area during scored workflow
   showPlayerNameOverlay(playerName) {
     // Remove old player overlays
-    document. querySelectorAll('. player-name-overlay').forEach(el => el.remove());
+    document.querySelectorAll('.player-name-overlay').forEach(el => el.remove());
     
-    if (! playerName) return;
+    if (!playerName) return;
     
     // Extract last name
     const lastName = playerName.split(' ').pop().toUpperCase();
@@ -749,13 +749,13 @@ App.goalMap = {
       overlay.style.cssText = `
         position: absolute;
         top: 25%;
-        left:  50%;
+        left: 50%;
         transform: translateX(-50%);
         font-size: 3rem;
         font-weight: bold;
         color: rgba(0, 255, 102, 0.15);
         pointer-events: none;
-        z-index:  5;
+        z-index: 5;
         text-transform: uppercase;
         letter-spacing: 0.2em;
       `;
@@ -767,14 +767,14 @@ App.goalMap = {
   updatePlayerNameOverlay() {
     const workflow = App.goalMapWorkflow;
     
-    if (workflow?. active && workflow?. playerName) {
+    if (workflow?.active && workflow?.playerName) {
       // Show player name for shot workflow OR scored goal workflow
       if (workflow.eventType === 'shot' || 
-          (workflow. eventType === 'goal' && workflow.workflowType === 'scored')) {
+          (workflow.eventType === 'goal' && workflow.workflowType === 'scored')) {
         this.showPlayerNameOverlay(workflow.playerName);
       } else {
         // For other workflows (conceded), remove player overlays
-        document. querySelectorAll('. player-name-overlay').forEach(el => el.remove());
+        document.querySelectorAll('.player-name-overlay').forEach(el => el.remove());
       }
     } else {
       // If no workflow, remove overlays
@@ -787,9 +787,9 @@ App.goalMap = {
     const savedFilter = localStorage.getItem("goalMapPlayerFilter");
     if (savedFilter) {
       this.playerFilter = savedFilter;
-      const filterSelect = document. getElementById("goalMapPlayerFilter");
+      const filterSelect = document.getElementById("goalMapPlayerFilter");
       if (filterSelect) {
-        filterSelect. value = savedFilter;
+        filterSelect.value = savedFilter;
       }
       this.applyPlayerFilter();
     }
@@ -799,24 +799,24 @@ App.goalMap = {
       const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
       if (goalieFilterSelect) {
         // Check if saved goalie still exists as option in dropdown
-        const goalies = (App.data.selectedPlayers || []).filter(p => p. position === "G");
-        const goalieNames = goalies.map(g => g. name);
+        const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+        const goalieNames = goalies.map(g => g.name);
         
         if (goalieNames.includes(savedGoalie)) {
           // Goalie exists, restore it
           goalieFilterSelect.value = savedGoalie;
           
           // KRITISCH: Verify the value was actually set (option must exist in DOM)
-          if (goalieFilterSelect. value === savedGoalie) {
+          if (goalieFilterSelect.value === savedGoalie) {
             goalieFilterSelect.classList.add("active");
             this.filterByGoalies([savedGoalie]);
           } else {
             // Value couldn't be set, clean up
             localStorage.removeItem("goalMapActiveGoalie");
-            goalieFilterSelect. value = ""; // Set to "All Goalies"
+            goalieFilterSelect.value = ""; // Set to "All Goalies"
             goalieFilterSelect.classList.remove("active");
             // Remove overlays
-            document. querySelectorAll('. goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
+            document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
           }
         } else {
           // Goalie doesn't exist anymore, clean up
@@ -841,17 +841,17 @@ App.goalMap = {
   
   // Save all markers to localStorage
   saveMarkers() {
-    const boxes = Array.from(document. querySelectorAll(App.selectors.torbildBoxes));
-    const allMarkers = boxes. map(box => {
+    const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
+    const allMarkers = boxes.map(box => {
       const markers = [];
-      box.querySelectorAll(". marker-dot").forEach(dot => {
+      box.querySelectorAll(".marker-dot").forEach(dot => {
         // Save image-relative coordinates (from data attributes)
         const xPctImage = parseFloat(dot.dataset.xPctImage) || 0;
         const yPctImage = parseFloat(dot.dataset.yPctImage) || 0;
         const bg = dot.style.backgroundColor || "";
         const playerName = dot.dataset.player || null;
-        const zone = dot.dataset. zone || null;
-        markers.push({ xPct: xPctImage, yPct:  yPctImage, color: bg, player:  playerName, zone:  zone });
+        const zone = dot.dataset.zone || null;
+        markers.push({ xPct: xPctImage, yPct: yPctImage, color: bg, player: playerName, zone: zone });
       });
       return markers;
     });
@@ -863,7 +863,7 @@ App.goalMap = {
   restoreMarkers() {
     const allMarkers = App.helpers.safeJSONParse("goalMapMarkers", null);
     if (!allMarkers) return;
-      const boxes = Array.from(document.querySelectorAll(App. selectors.torbildBoxes));
+      const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
       
       // Clear existing markers first to avoid duplicates (idempotent operation)
       boxes.forEach(box => {
@@ -877,14 +877,14 @@ App.goalMap = {
         markers.forEach(marker => {
           // Skip markers with invalid coordinates (0, 0, undefined, null, or very small values)
           if (!marker.xPct || !marker.yPct || 
-              marker.xPct < 0.1 || marker. yPct < 0.1 ||
-              isNaN(marker. xPct) || isNaN(marker.yPct)) {
+              marker.xPct < 0.1 || marker.yPct < 0.1 ||
+              isNaN(marker.xPct) || isNaN(marker.yPct)) {
             console.warn('[Goal Map] Skipping marker with invalid coordinates:', marker);
             return;
           }
           
-          App.markerHandler. createMarkerPercent(
-            marker. xPct,
+          App.markerHandler.createMarkerPercent(
+            marker.xPct,
             marker.yPct,
             marker.color,
             box,
@@ -896,27 +896,27 @@ App.goalMap = {
           const dots = box.querySelectorAll(".marker-dot");
           const lastDot = dots[dots.length - 1];
           
-          if (! lastDot) return; // Safety check
+          if (!lastDot) return; // Safety check
           
           // Restore zone attribute or migrate old markers
           if (marker.zone) {
             // Marker has zone attribute - restore it
-            lastDot.dataset.zone = marker. zone;
+            lastDot.dataset.zone = marker.zone;
           } else {
             // Migration: Calculate zone for old markers without zone attribute
             if (box.id === 'goalRedBox') {
-              lastDot.dataset. zone = 'red';
+              lastDot.dataset.zone = 'red';
             } else if (box.id === 'goalGreenBox') {
-              lastDot. dataset.zone = 'green';
+              lastDot.dataset.zone = 'green';
             } else if (box.classList.contains('field-box')) {
-              // For field box:  use saved yPct (image coordinates) if available
+              // For field box: use saved yPct (image coordinates) if available
               if (marker.yPct && marker.yPct > 0) {
-                lastDot. dataset.zone = marker.yPct >= this.VERTICAL_SPLIT_THRESHOLD ? 'red' : 'green';
+                lastDot.dataset.zone = marker.yPct >= this.VERTICAL_SPLIT_THRESHOLD ? 'red' : 'green';
               } else {
                 // Fallback: calculate from rendered position
-                const topStr = lastDot.style. top || '0';
+                const topStr = lastDot.style.top || '0';
                 const top = parseFloat(topStr.replace('%', '')) || 0;
-                lastDot.dataset.zone = top >= this. VERTICAL_SPLIT_THRESHOLD ? 'red' : 'green';
+                lastDot.dataset.zone = top >= this.VERTICAL_SPLIT_THRESHOLD ? 'red' : 'green';
               }
             }
           }
@@ -930,11 +930,11 @@ App.goalMap = {
       this.applyPlayerFilter(); // Green zone
       
       // Apply goalie filter for red zone
-      const savedGoalie = localStorage. getItem("goalMapActiveGoalie");
+      const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
       if (savedGoalie) {
         const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
         const goalieNames = goalies.map(g => g.name);
-        if (goalieNames. includes(savedGoalie)) {
+        if (goalieNames.includes(savedGoalie)) {
           this.filterByGoalies([savedGoalie]);
         } else {
           // Goalie doesn't exist, show all red zone markers
@@ -980,7 +980,7 @@ App.goalMap = {
         
         // KRITISCH: Button komplett ersetzen um ALLE alten Listener zu entfernen
         const newBtn = btn.cloneNode(true);
-        newBtn. textContent = displayValue;
+        newBtn.textContent = displayValue;
         btn.parentNode.replaceChild(newBtn, btn);
         
         // Jetzt neuen Listener auf den NEUEN Button
@@ -989,11 +989,11 @@ App.goalMap = {
         
         const updateValue = (delta) => {
           const playerName =
-            (App.goalMapWorkflow?.active && App.goalMapWorkflow?. playerName)
-              ? App. goalMapWorkflow. playerName
-              :  (this.playerFilter || '_anonymous');
+            (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName)
+              ? App.goalMapWorkflow.playerName
+              : (this.playerFilter || '_anonymous');
           
-          if (! timeDataWithPlayers[key]) timeDataWithPlayers[key] = {};
+          if (!timeDataWithPlayers[key]) timeDataWithPlayers[key] = {};
           if (!timeDataWithPlayers[key][playerName]) timeDataWithPlayers[key][playerName] = 0;
           
           const current = Number(timeDataWithPlayers[key][playerName]);
@@ -1011,45 +1011,45 @@ App.goalMap = {
           }
           newBtn.textContent = displayVal;
           
-          if (! timeData[periodNum]) timeData[periodNum] = {};
+          if (!timeData[periodNum]) timeData[periodNum] = {};
           timeData[periodNum][idx] = displayVal;
           localStorage.setItem("timeData", JSON.stringify(timeData));
           
           if (delta > 0 && App.goalMapWorkflow?.active) {
             const btnRect = newBtn.getBoundingClientRect();
-            const boxRect = this.timeTrackingBox. getBoundingClientRect();
+            const boxRect = this.timeTrackingBox.getBoundingClientRect();
             const xPct = ((btnRect.left + btnRect.width / 2 - boxRect.left) / boxRect.width) * 100;
-            const yPct = ((btnRect.top + btnRect.height / 2 - boxRect. top) / boxRect.height) * 100;
+            const yPct = ((btnRect.top + btnRect.height / 2 - boxRect.top) / boxRect.height) * 100;
             
             App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
           }
         };
         
         newBtn.addEventListener("click", () => {
-          // Shot-Workflow:  KEINE Timebox-Buttons erlaubt
-          if (App.goalMapWorkflow?.active && App. goalMapWorkflow?. eventType === 'shot') {
+          // Shot-Workflow: KEINE Timebox-Buttons erlaubt
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'shot') {
             console.log('[Shot Workflow] Timebox buttons not allowed during shot workflow');
             return; // Blockiere ALLE Buttons
           }
           
           // Am Anfang des click handlers - ROTE BUTTONS blockieren
           const isTopRow = newBtn.closest('.period-buttons')?.classList.contains('top-row');
-          const isBottomRow = newBtn.closest('. period-buttons')?.classList.contains('bottom-row');
+          const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
           
-          // Im Goal-Workflow:  Strikte Button-Kontrolle
+          // Im Goal-Workflow: Strikte Button-Kontrolle
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
-            const currentStep = App.goalMapWorkflow.collectedPoints?. length || 0;
-            const workflowType = App.goalMapWorkflow?. workflowType;
+            const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
+            const workflowType = App.goalMapWorkflow?.workflowType;
             
             // Nur im Schritt 2 (nach Feld + Tor) sind Timeboxen erlaubt
             if (currentStep !== App.goalMap.WORKFLOW_STEP_TIME) {
-              console. log('[Goal Workflow] Timebox only after field and goal');
+              console.log('[Goal Workflow] Timebox only after field and goal');
               return;
             }
             
             // GRÜNER Workflow (scored): NUR obere Reihe (grüne Buttons) erlaubt
             if (workflowType === 'scored') {
-              if (! isTopRow) {
+              if (!isTopRow) {
                 console.log('[Goal Workflow] Only GREEN time buttons (top row) allowed for scored goals');
                 return; // Blockiere rote Buttons komplett
               }
@@ -1081,7 +1081,7 @@ App.goalMap = {
           // ROTE BUTTONS ohne Workflow: Goalie muss ausgewählt sein
           if (isBottomRow) {
             const activeGoalie = App.goalMap.getActiveGoalie();
-            if (! activeGoalie) {
+            if (!activeGoalie) {
               alert('Please select a goalie first');
               return;
             }
@@ -1115,29 +1115,29 @@ App.goalMap = {
   
   // Player Filter Dropdown
   initPlayerFilter() {
-    const filterSelect = document. getElementById("goalMapPlayerFilter");
+    const filterSelect = document.getElementById("goalMapPlayerFilter");
     if (!filterSelect) return;
     
     filterSelect.innerHTML = '<option value="">All Players</option>';
     // Nur Spieler ohne Goalie-Position (G) in die Liste aufnehmen
     (App.data.selectedPlayers || [])
-      .filter(player => player.position !== "G" && ! player.isGoalie)
+      .filter(player => player.position !== "G" && !player.isGoalie)
       .forEach(player => {
         const option = document.createElement("option");
-        option.value = player. name;
+        option.value = player.name;
         option.textContent = player.name;
         filterSelect.appendChild(option);
       });
     
     filterSelect.addEventListener("change", () => {
-      this.playerFilter = filterSelect. value || null;
-      this. applyPlayerFilter();
+      this.playerFilter = filterSelect.value || null;
+      this.applyPlayerFilter();
       
-      // NEU:  Pulsieren aktivieren/deaktivieren
-      if (this. playerFilter) {
+      // NEU: Pulsieren aktivieren/deaktivieren
+      if (this.playerFilter) {
         filterSelect.classList.add("active");
       } else {
-        filterSelect.classList. remove("active");
+        filterSelect.classList.remove("active");
       }
     });
     
@@ -1153,8 +1153,8 @@ App.goalMap = {
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
     if (goalieFilterSelect) {
       goalieFilterSelect.innerHTML = '<option value="">All Goalies</option>';
-      const goalies = (App.data.selectedPlayers || []).filter(p => p. position === "G");
-      goalies. forEach(goalie => {
+      const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+      goalies.forEach(goalie => {
         const option = document.createElement("option");
         option.value = goalie.name;
         option.textContent = goalie.name;
@@ -1166,11 +1166,11 @@ App.goalMap = {
         
         // Save to localStorage or remove if "All Goalies"
         if (selectedGoalie && selectedGoalie !== "") {
-          localStorage. setItem("goalMapActiveGoalie", selectedGoalie);
+          localStorage.setItem("goalMapActiveGoalie", selectedGoalie);
           goalieFilterSelect.classList.add("active"); // Pulsieren AN
         } else {
           // "All Goalies" selected - remove localStorage and overlays
-          localStorage. removeItem("goalMapActiveGoalie");
+          localStorage.removeItem("goalMapActiveGoalie");
           goalieFilterSelect.classList.remove("active"); // Pulsieren AUS
           // Remove any existing goalie name overlays
           document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
@@ -1186,7 +1186,7 @@ App.goalMap = {
           this.filterByGoalies([selectedGoalie]);
         } else {
           // Show all goalies
-          const goalieNames = goalies. map(g => g.name);
+          const goalieNames = goalies.map(g => g.name);
           this.filterByGoalies(goalieNames);
         }
       });
@@ -1195,9 +1195,9 @@ App.goalMap = {
       const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
       if (savedGoalie) {
         // Check if saved goalie still exists as option in dropdown
-        const goalieNames = goalies. map(g => g.name);
+        const goalieNames = goalies.map(g => g.name);
         
-        if (goalieNames. includes(savedGoalie)) {
+        if (goalieNames.includes(savedGoalie)) {
           // Goalie exists, restore it
           goalieFilterSelect.value = savedGoalie;
           
@@ -1220,7 +1220,7 @@ App.goalMap = {
         }
       } else {
         // No saved goalie = no pulsing
-        goalieFilterSelect. classList.remove("active");
+        goalieFilterSelect.classList.remove("active");
       }
     }
   },
@@ -1230,9 +1230,9 @@ App.goalMap = {
     
     // Detect if "All Goalies" is selected
     const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
-    const allGoalieNames = allGoalies. map(g => g.name);
-    const isAllGoaliesFilter = (goalieNames. length === allGoalieNames. length && 
-                                 goalieNames.every(name => allGoalieNames. includes(name)));
+    const allGoalieNames = allGoalies.map(g => g.name);
+    const isAllGoaliesFilter = (goalieNames.length === allGoalieNames.length && 
+                                 goalieNames.every(name => allGoalieNames.includes(name)));
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
@@ -1242,14 +1242,14 @@ App.goalMap = {
         const isRedMarker = this.isRedZoneMarker(marker, box);
         
         if (isRedMarker) {
-          const playerName = marker. dataset.player;
+          const playerName = marker.dataset.player;
           
           if (isAllGoaliesFilter) {
             // "All Goalies" - show all red zone markers
             marker.style.display = '';
           } else if (playerName && goalieNames.includes(playerName)) {
             // Marker belongs to selected goalie - show
-            marker.style. display = '';
+            marker.style.display = '';
           } else {
             // Marker doesn't belong to selected goalie - hide
             marker.style.display = 'none';
@@ -1281,7 +1281,7 @@ App.goalMap = {
         
         // Sum up time for all goalies
         let displayVal = 0;
-        goalieNames. forEach(goalieName => {
+        goalieNames.forEach(goalieName => {
           displayVal += Number(playerData[goalieName]) || 0;
         });
         
@@ -1297,7 +1297,7 @@ App.goalMap = {
       localStorage.removeItem("goalMapPlayerFilter");
     }
     
-    const boxes = document.querySelectorAll(App. selectors.torbildBoxes);
+    const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
     boxes.forEach(box => {
       const markers = box.querySelectorAll(".marker-dot");
       markers.forEach(marker => {
@@ -1321,10 +1321,10 @@ App.goalMap = {
   applyTimeTrackingFilter() {
     if (!this.timeTrackingBox) return;
     
-    const timeDataWithPlayers = App. helpers.safeJSONParse("timeDataWithPlayers", {});
+    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
-      const periodNum = period.dataset. period || `p${pIdx}`;
+      const periodNum = period.dataset.period || `p${pIdx}`;
       const buttons = period.querySelectorAll(".time-btn");
       
       buttons.forEach((btn, idx) => {
@@ -1338,10 +1338,10 @@ App.goalMap = {
         if (this.playerFilter) {
           displayVal = Number(playerData[this.playerFilter]) || 0;
         } else {
-          displayVal = Object. values(playerData).reduce((sum, val) => sum + (Number(val) || 0), 0);
+          displayVal = Object.values(playerData).reduce((sum, val) => sum + (Number(val) || 0), 0);
         }
         
-        btn. textContent = displayVal;
+        btn.textContent = displayVal;
       });
     });
   },
@@ -1349,16 +1349,16 @@ App.goalMap = {
   updateWorkflowIndicator() {
     const indicator = document.getElementById("workflowStatusIndicator");
     const textEl = document.getElementById("workflowStatusText");
-    if (! indicator || !textEl) return;
+    if (!indicator || !textEl) return;
     
     // Body-Klassen für CSS-Styling (für Timebox-Button-Blocking)
-    document.body.classList. remove('workflow-scored', 'workflow-conceded');
+    document.body.classList.remove('workflow-scored', 'workflow-conceded');
     if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.workflowType) {
-      document.body.classList. add('workflow-' + App.goalMapWorkflow.workflowType);
+      document.body.classList.add('workflow-' + App.goalMapWorkflow.workflowType);
     }
     
     if (App.goalMapWorkflow?.active) {
-      const collected = App.goalMapWorkflow.collectedPoints. length;
+      const collected = App.goalMapWorkflow.collectedPoints.length;
       const required = App.goalMapWorkflow.requiredPoints;
       const eventType = App.goalMapWorkflow.eventType;
       const playerName = App.goalMapWorkflow.playerName;
@@ -1377,7 +1377,7 @@ App.goalMap = {
       textEl.textContent = '';
       
       const strong = document.createElement('strong');
-      const eventTypeText = eventType ? eventType. toUpperCase() : '';
+      const eventTypeText = eventType ? eventType.toUpperCase() : '';
       const workflowText = workflowDesc ? ' - ' + workflowDesc : '';
       const playerText = playerName ? ' - ' + playerName : '';
       strong.textContent = eventTypeText + workflowText + playerText;
@@ -1387,9 +1387,9 @@ App.goalMap = {
       textEl.appendChild(document.createTextNode(`Punkte: ${collected}/${required}`));
       
       if (eventType === 'goal') {
-        textEl.appendChild(document.createTextNode(' • 1.  Field, 2. Goal, 3. Time'));
+        textEl.appendChild(document.createTextNode(' • 1. Field, 2. Goal, 3. Time'));
       } else {
-        textEl. appendChild(document.createTextNode(' • 1. Click field'));
+        textEl.appendChild(document.createTextNode(' • 1. Click field'));
       }
     } else {
       indicator.style.display = 'none';
@@ -1400,33 +1400,107 @@ App.goalMap = {
     this.updatePlayerNameOverlay();
   },
   
-  // =====================================================
-  // FIXED EXPORT FUNCTION - Uses style.left/top instead of dataset
-  // =====================================================
   exportGoalMap() {
     if (!confirm("In Season Map exportieren?")) return;
     
-    const boxes = Array.from(document. querySelectorAll(App.selectors. torbildBoxes));
-    const allMarkers = boxes. map(box => {
+    const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
+    const allMarkers = boxes.map(box => {
       const markers = [];
       box.querySelectorAll(".marker-dot").forEach(dot => {
-        // FIX: Read from style.left/top (actual rendered position) instead of dataset
-        const left = dot.style. left || "";
+        const left = dot.style.left || "";
         const top = dot.style.top || "";
-        const bg = dot.style. backgroundColor || "";
+        const bg = dot.style.backgroundColor || "";
         const xPct = parseFloat(left.replace("%", "")) || 0;
         const yPct = parseFloat(top.replace("%", "")) || 0;
         const playerName = dot.dataset.player || null;
-        markers.push({ xPct, yPct, color: bg, player:  playerName });
+        markers.push({ xPct, yPct, color: bg, player: playerName });
       });
       return markers;
     });
     
-    // OVERWRITE Season Map data (no complicated merge)
     localStorage.setItem("seasonMapMarkers", JSON.stringify(allMarkers));
     
-    // Also save to goalMapMarkers
-    localStorage. setItem("goalMapMarkers", JSON. stringify(allMarkers));
-    
     // Player-bezogene Zeitdaten übernehmen
-    const
+    const timeDataWithPlayers = JSON.parse(localStorage.getItem("timeDataWithPlayers")) || {};
+    console.log('[Goal Map Export] timeDataWithPlayers:', timeDataWithPlayers);
+    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
+    
+    // Flache Zeitdaten für Momentum-Graph aus timeDataWithPlayers berechnen
+    const momentumData = {};
+    const periods = ['p1', 'p2', 'p3'];
+    
+    periods.forEach(periodNum => {
+      const periodValues = [];
+      for (let btnIdx = 0; btnIdx < 8; btnIdx++) {
+        const key = `${periodNum}_${btnIdx}`;
+        const playerData = timeDataWithPlayers[key] || {};
+        const total = Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
+        periodValues.push(total);
+      }
+      momentumData[periodNum] = periodValues;
+    });
+    
+    console.log('[Goal Map Export] momentumData:', momentumData);
+    localStorage.setItem("seasonMapTimeData", JSON.stringify(momentumData));
+    
+    // Alte timeData ebenfalls aktualisieren
+    const timeData = this.readTimeTrackingFromBox();
+    localStorage.setItem("timeData", JSON.stringify(timeData));
+    
+    const keep = confirm("Game exported to Season Map. Keep data in Goal Map? (OK = Yes)");
+    if (!keep) {
+      document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
+      document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
+      localStorage.removeItem("timeData");
+      localStorage.removeItem("timeDataWithPlayers");
+      localStorage.removeItem("goalMapMarkers");
+    }
+    
+    App.showPage("seasonMap");
+    
+    // Render Season Map
+    if (App.seasonMap && typeof App.seasonMap.render === 'function') {
+      App.seasonMap.render();
+    }
+    
+    // Momentum-Grafik aktualisieren
+    if (typeof window.renderSeasonMomentumGraphic === 'function') {
+      setTimeout(() => {
+        window.renderSeasonMomentumGraphic();
+      }, 100);
+    }
+  },
+  
+  readTimeTrackingFromBox() {
+    const result = {};
+    if (!this.timeTrackingBox) return result;
+    
+    this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
+      const key = period.dataset.period || (`p${pIdx}`);
+      result[key] = [];
+      period.querySelectorAll(".time-btn").forEach(btn => {
+        result[key].push(Number(btn.textContent) || 0);
+      });
+    });
+    return result;
+  },
+  
+  reset() {
+    if (!confirm("⚠️ Goal Map zurücksetzen (Marker + Timeboxen)?")) return;
+    
+    document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
+    document.querySelectorAll("#torbildPage .time-btn").forEach(b => b.textContent = "0");
+    
+    localStorage.removeItem("timeData");
+    localStorage.removeItem("timeDataWithPlayers");
+    localStorage.removeItem("goalMapMarkers");
+    
+    // Reset initialization flag to allow re-initialization
+    this.timeTrackingInitialized = false;
+    
+    // KRITISCH: Buttons neu initialisieren damit Closures neue leere Daten haben!
+    this.initTimeTracking();
+    
+    alert("Goal Map reset.");
+  }
+};
