@@ -502,9 +502,10 @@ App.seasonMap = {
     // Get all markers
     const markers = fieldBox.querySelectorAll('.marker-dot');
     
-    // Separate markers by zone
-    const greenZoneMarkers = [];
-    const redZoneMarkers = [];
+    // Separate markers by ACTUAL COLOR instead of zone
+    const greenMarkers = []; // Green markers: Tore erzielt (scored goals)
+    const greyMarkers = [];  // Grey markers: Schüsse daneben (missed shots)
+    const redMarkers = [];   // Red markers: Gegentore (conceded goals)
     
     markers.forEach(marker => {
       // Skip hidden markers
@@ -516,18 +517,32 @@ App.seasonMap = {
       // Skip markers with invalid coordinates (0,0 or out of bounds)
       if (xPct < 0.1 || yPct < 0.1 || xPct >= 100 || yPct >= 100) return;
       
-      if (yPct < this.VERTICAL_SPLIT_THRESHOLD) {
-        greenZoneMarkers.push({ x: xPct, y: yPct });
-      } else {
-        redZoneMarkers.push({ x: xPct, y: yPct });
+      // Determine marker color from backgroundColor
+      const bgColor = marker.style.backgroundColor || '';
+      
+      // Check for green: rgb(0, 255, 102) or #00ff66
+      if (bgColor.includes('0, 255, 102') || bgColor.toLowerCase().includes('00ff66')) {
+        greenMarkers.push({ x: xPct, y: yPct });
+      }
+      // Check for grey: rgb(68, 68, 68) or #444444
+      else if (bgColor.includes('68, 68, 68') || bgColor.toLowerCase().includes('444444')) {
+        greyMarkers.push({ x: xPct, y: yPct });
+      }
+      // Check for red: rgb(255, 0, 0) or #ff0000
+      else if (bgColor.includes('255, 0, 0') || bgColor.toLowerCase().includes('ff0000') || bgColor.toLowerCase() === 'red') {
+        redMarkers.push({ x: xPct, y: yPct });
       }
     });
     
-    // Draw green heatmap (top half)
-    this.drawHeatmapZone(ctx, greenZoneMarkers, canvas.width, canvas.height, 'rgba(0, 255, 102, 0.6)');
+    // Draw heatmaps for each color type
+    // Green markers (scored goals) → green glow
+    this.drawHeatmapZone(ctx, greenMarkers, canvas.width, canvas.height, 'rgba(0, 255, 102, 0.6)');
     
-    // Draw red heatmap (bottom half)
-    this.drawHeatmapZone(ctx, redZoneMarkers, canvas.width, canvas.height, 'rgba(255, 0, 0, 0.6)');
+    // Grey markers (missed shots) → grey glow
+    this.drawHeatmapZone(ctx, greyMarkers, canvas.width, canvas.height, 'rgba(68, 68, 68, 0.6)');
+    
+    // Red markers (conceded goals) → red glow
+    this.drawHeatmapZone(ctx, redMarkers, canvas.width, canvas.height, 'rgba(255, 0, 0, 0.6)');
     
     fieldBox.appendChild(canvas);
   },
@@ -617,8 +632,11 @@ App.seasonMap = {
   exportFromGoalMap() {
     if (!confirm("In Season Map exportieren?")) return;
     
+    // Read existing season map data to ACCUMULATE instead of replace
+    const existingMarkers = App.helpers.safeJSONParse("seasonMapMarkers", []);
+    
     const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
-    const allMarkers = boxes.map(box => {
+    const newMarkers = boxes.map(box => {
       const markers = [];
       box.querySelectorAll(".marker-dot").forEach(dot => {
         // Use image-relative coordinates instead of box-relative coordinates
@@ -626,19 +644,48 @@ App.seasonMap = {
         const yPct = parseFloat(dot.dataset.yPctImage) || 0;
         const bg = dot.style.backgroundColor || "";
         const playerName = dot.dataset.player || null;
-        markers.push({ xPct, yPct, color: bg, player: playerName });
+        const zone = dot.dataset.zone || null;
+        markers.push({ xPct, yPct, color: bg, player: playerName, zone: zone });
       });
       return markers;
     });
     
-    localStorage.setItem("seasonMapMarkers", JSON.stringify(allMarkers));
+    // ACCUMULATE: Merge new markers with existing ones for each box
+    const mergedMarkers = existingMarkers.map((existingBoxMarkers, idx) => {
+      const newBoxMarkers = newMarkers[idx] || [];
+      // Combine existing and new markers for this box
+      return [...(existingBoxMarkers || []), ...newBoxMarkers];
+    });
     
-    // Player-bezogene Zeitdaten übernehmen
-    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
-    console.log('[Season Map Export] timeDataWithPlayers:', timeDataWithPlayers);
-    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
+    // If existingMarkers had fewer boxes than newMarkers, add the remaining boxes
+    for (let i = existingMarkers.length; i < newMarkers.length; i++) {
+      mergedMarkers.push(newMarkers[i]);
+    }
     
-    // Flache Zeitdaten für Momentum-Graph aus timeDataWithPlayers berechnen
+    localStorage.setItem("seasonMapMarkers", JSON.stringify(mergedMarkers));
+    
+    // ACCUMULATE time data: merge with existing seasonMapTimeDataWithPlayers
+    const existingTimeData = App.helpers.safeJSONParse("seasonMapTimeDataWithPlayers", {});
+    const newTimeData = App.helpers.safeJSONParse("timeDataWithPlayers", {});
+    console.log('[Season Map Export] Existing timeData:', existingTimeData);
+    console.log('[Season Map Export] New timeData:', newTimeData);
+    
+    // Merge time data - add new counts to existing counts for each key/player
+    const mergedTimeData = { ...existingTimeData };
+    Object.keys(newTimeData).forEach(key => {
+      if (!mergedTimeData[key]) {
+        mergedTimeData[key] = {};
+      }
+      Object.keys(newTimeData[key]).forEach(player => {
+        const existingCount = mergedTimeData[key][player] || 0;
+        const newCount = newTimeData[key][player] || 0;
+        mergedTimeData[key][player] = existingCount + newCount;
+      });
+    });
+    
+    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(mergedTimeData));
+    
+    // Flache Zeitdaten für Momentum-Graph aus mergedTimeData berechnen
     // Format: { "p1": [button0, button1, ..., button7], "p2": [...], "p3": [...] }
     const momentumData = {};
     const periods = ['p1', 'p2', 'p3'];
@@ -648,14 +695,14 @@ App.seasonMap = {
       // 8 Buttons pro Period (0-3 top-row/scored, 4-7 bottom-row/conceded)
       for (let btnIdx = 0; btnIdx < 8; btnIdx++) {
         const key = `${periodNum}_${btnIdx}`;
-        const playerData = timeDataWithPlayers[key] || {};
+        const playerData = mergedTimeData[key] || {};
         const total = Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
         periodValues.push(total);
       }
       momentumData[periodNum] = periodValues;
     });
     
-    console.log('[Season Map Export] momentumData:', momentumData);
+    console.log('[Season Map Export] Accumulated momentumData:', momentumData);
     
     // Speichere für Momentum-Graph
     localStorage.setItem("seasonMapTimeData", JSON.stringify(momentumData));
