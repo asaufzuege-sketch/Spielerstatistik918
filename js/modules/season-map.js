@@ -8,6 +8,8 @@ App.seasonMap = {
   isRendering: false, // Guard flag to prevent duplicate renders
   // Vertical split threshold (Y-coordinate) that separates green zone (scored/upper) from red zone (conceded/lower)
   VERTICAL_SPLIT_THRESHOLD: 50,
+  // Duplicate detection tolerance for marker coordinates (in percentage points)
+  DUPLICATE_COORDINATE_TOLERANCE: 0.5,
   // Heatmap configuration
   HEATMAP_RENDER_DELAY: 150, // ms delay after marker rendering to ensure proper positioning
   HEATMAP_RADIUS_FACTOR: 0.15, // Heatmap gradient radius as percentage of smaller dimension
@@ -683,8 +685,8 @@ App.seasonMap = {
     // ACCUMULATE: Merge new markers with existing ones for each box
     // Use improved deduplication based on coordinate + zone + player
     const isDuplicate = (a, b) =>
-      Math.abs(a.xPct - b.xPct) < 0.5 &&
-      Math.abs(a.yPct - b.yPct) < 0.5 &&
+      Math.abs(a.xPct - b.xPct) < this.DUPLICATE_COORDINATE_TOLERANCE &&
+      Math.abs(a.yPct - b.yPct) < this.DUPLICATE_COORDINATE_TOLERANCE &&
       (a.zone || "") === (b.zone || "") &&
       (a.player || "") === (b.player || "");
     
@@ -1020,7 +1022,8 @@ App.seasonMap = {
       const uniq = markers.filter(m => {
         const left = Math.round(parseFloat(m.style.left) || 0);
         const top  = Math.round(parseFloat(m.style.top)  || 0);
-        const key = `${left}:${top}:${m.dataset.player || ''}:${box.id}`;
+        // Use null character as separator to avoid conflicts with player names containing colons
+        const key = `${left}\0${top}\0${m.dataset.player || ''}\0${box.id}`;
         if (seen.has(key)) return false;
         seen.add(key);
         return true;
