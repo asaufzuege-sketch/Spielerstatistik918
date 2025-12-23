@@ -528,7 +528,7 @@ App.seasonMap = {
         
         const otherX = (otherMarker.x / 100) * width;
         const otherY = (otherMarker.y / 100) * height;
-        const distance = Math.sqrt(Math.pow(x - otherX, 2) + Math.pow(y - otherY, 2));
+        const distance = Math.hypot(x - otherX, y - otherY);
         
         // Count markers within 2x radius as contributing to density
         return distance <= (radius * 2) ? count + 1 : count;
@@ -542,11 +542,20 @@ App.seasonMap = {
     
     // Parse base color to extract RGB values
     const baseColorMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (!baseColorMatch) return;
+    if (!baseColorMatch) {
+      console.warn('[Season Map] Invalid color format for heatmap:', color);
+      return;
+    }
     
-    const r = parseInt(baseColorMatch[1]);
-    const g = parseInt(baseColorMatch[2]);
-    const b = parseInt(baseColorMatch[3]);
+    const r = parseInt(baseColorMatch[1], 10);
+    const g = parseInt(baseColorMatch[2], 10);
+    const b = parseInt(baseColorMatch[3], 10);
+    
+    // Validate RGB values are in valid range
+    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+      console.warn('[Season Map] Invalid RGB values for heatmap:', { r, g, b });
+      return;
+    }
     
     markers.forEach((marker, idx) => {
       const x = (marker.x / 100) * width;
