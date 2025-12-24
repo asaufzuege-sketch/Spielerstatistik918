@@ -9,11 +9,22 @@ App.seasonMap = {
   VERTICAL_SPLIT_THRESHOLD: 50,
   // Heatmap configuration
   HEATMAP_RENDER_DELAY: 150, // ms delay after marker rendering to ensure proper positioning
-  HEATMAP_RADIUS_FACTOR: 0.15, // Heatmap gradient radius as percentage of smaller dimension
+  HEATMAP_RADIUS_FACTOR: 0.15, // Heatmap gradient radius as percentage of smaller dimension (desktop)
+  HEATMAP_RADIUS_FACTOR_MOBILE: 0.08, // Smaller radius for mobile devices
   HEATMAP_MIN_OPACITY: 0.2, // Minimum opacity for low-density areas
   HEATMAP_MAX_OPACITY: 0.95, // Maximum opacity for high-density areas
   HEATMAP_DENSITY_POWER: 0.7, // Power function exponent for density scaling (< 1 for faster initial rise)
   HEATMAP_GRADIENT_MIDPOINT_OPACITY: 0.6, // Opacity multiplier at gradient midpoint for smoother transitions
+  
+  // Helper to detect mobile viewport
+  isMobileView() {
+    return window.innerWidth <= 768;
+  },
+  
+  // Get appropriate heatmap radius factor based on viewport
+  getHeatmapRadiusFactor() {
+    return this.isMobileView() ? this.HEATMAP_RADIUS_FACTOR_MOBILE : this.HEATMAP_RADIUS_FACTOR;
+  },
   
   init() {
     this.timeTrackingBox = document.getElementById("seasonMapTimeTrackingBox");
@@ -50,6 +61,8 @@ App.seasonMap = {
         if (App.markerHandler && typeof App.markerHandler.repositionMarkers === 'function') {
           App.markerHandler.repositionMarkers();
         }
+        // Re-render heatmap when switching between mobile/desktop views
+        this.renderHeatmap();
       }, 100);
     };
     window.addEventListener("resize", this.resizeListener);
@@ -555,8 +568,9 @@ App.seasonMap = {
   drawHeatmapZone(ctx, markers, width, height, color) {
     if (markers.length === 0) return;
     
-    // Calculate radius once for all markers in this zone
-    const radius = Math.min(width, height) * this.HEATMAP_RADIUS_FACTOR;
+    // Calculate radius once for all markers in this zone, using mobile-aware radius factor
+    const radiusFactor = this.getHeatmapRadiusFactor();
+    const radius = Math.min(width, height) * radiusFactor;
     
     // Calculate local density for each marker (how many markers are nearby)
     const densities = markers.map((marker, idx) => {
