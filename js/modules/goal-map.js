@@ -109,14 +109,24 @@ App.goalMap = {
       let lastMarkerPlacedTime = 0;  // NEU: Flag für letzten Marker
       
       const getPosFromEvent = (e) => {
+        // Robust: Touch UND Mouse unterstützen
+        const touch = e.changedTouches?.[0] || e.touches?.[0];
+        const clientX = touch?.clientX ?? e.clientX;
+        const clientY = touch?.clientY ?? e.clientY;
+        
+        // Validierung
+        if (clientX == null || clientY == null) {
+          console.warn('[Goal Map] Invalid touch coordinates');
+          return { insideImage: false, xPctImage: 0, yPctImage: 0, xPctContainer: 0, yPctContainer: 0 };
+        }
+        
+        // Frisches getBoundingClientRect() bei jedem Event
         const boxRect = img.getBoundingClientRect();
-        const clientX = e.clientX !== undefined ? e.clientX : (e.touches? .[0]?.clientX);
-        const clientY = e.clientY !== undefined ? e. clientY : (e.touches?.[0]?.clientY);
         
-        const xPctContainer = Math.max(0, Math. min(1, (clientX - boxRect.left) / (boxRect.width || 1))) * 100;
-        const yPctContainer = Math.max(0, Math. min(1, (clientY - boxRect.top) / (boxRect.height || 1))) * 100;
+        const xPctContainer = Math.max(0, Math.min(1, (clientX - boxRect.left) / (boxRect.width || 1))) * 100;
+        const yPctContainer = Math.max(0, Math.min(1, (clientY - boxRect.top) / (boxRect.height || 1))) * 100;
         
-        const rendered = App.markerHandler. computeRenderedImageRect(img);
+        const rendered = App.markerHandler.computeRenderedImageRect(img);
         let insideImage = false;
         let xPctImage = 0;
         let yPctImage = 0;
@@ -131,8 +141,8 @@ App.goalMap = {
             clientY <= rendered.y + rendered.height + tolerance
           );
           if (insideImage) {
-            xPctImage = Math.max(0, Math. min(100, ((clientX - rendered. x) / (rendered.width || 1)) * 100));
-            yPctImage = Math. max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
+            xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
+            yPctImage = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
           }
         } else {
           insideImage = true;

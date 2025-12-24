@@ -610,9 +610,17 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .time-cell,
 .stat-cell,
 [data-stat],
+.marker-dot,
 .lineup-position,
-.player-row {
+.player-row,
+.goal-img-box,
+.field-box,
+.field-box img,
+.goal-img-box img {
   touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Kein Scale-Effekt beim Klicken auf Feld/Tor */
