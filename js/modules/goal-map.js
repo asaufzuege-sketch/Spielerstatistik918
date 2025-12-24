@@ -1,5 +1,5 @@
-// Goal Map Modul – Verhalten wie in Repo 912, erweitert um Goal/Shot-Workflow + Spieler-Filter
-// Ziel: Feldpunkte wie bisher (grün/rot), alle Torpunkte (Workflow + manuell) identisch dunkelgrau & scharf
+// Goal Map Modul - Version 2025-12-24 - Deploy Fix
+// Verhalten wie in Repo 912, erweitert um Goal/Shot-Workflow + Spieler-Filter
 App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,
