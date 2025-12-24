@@ -7,6 +7,8 @@ App.seasonMap = {
   playerFilter: null,
   // Vertical split threshold (Y-coordinate) that separates green zone (scored/upper) from red zone (conceded/lower)
   VERTICAL_SPLIT_THRESHOLD: 50,
+  // Mobile breakpoint for responsive behavior
+  MOBILE_BREAKPOINT: 768,
   // Heatmap configuration
   HEATMAP_RENDER_DELAY: 150, // ms delay after marker rendering to ensure proper positioning
   HEATMAP_RADIUS_FACTOR: 0.15, // Heatmap gradient radius as percentage of smaller dimension (desktop)
@@ -18,7 +20,7 @@ App.seasonMap = {
   
   // Helper to detect mobile viewport
   isMobileView() {
-    return window.innerWidth <= 768;
+    return window.innerWidth <= this.MOBILE_BREAKPOINT;
   },
   
   // Get appropriate heatmap radius factor based on viewport

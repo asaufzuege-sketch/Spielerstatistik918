@@ -2246,7 +2246,7 @@ tr[data-player].dragging {
     font-size: 0.75rem;
   }
   
-  /* Season Map Mobile Fixes */
+  /* Season Map Mobile Fixes - Prevents goal overflow and arranges elements vertically */
   #seasonMapPage .torbild-layout {
     flex-direction: column;
     height: auto;
