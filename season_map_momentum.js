@@ -41,7 +41,25 @@
     try {
       const saved = localStorage.getItem('seasonMapMarkers');
       if (saved) {
-        goalMarkers = JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        
+        // Handle migration from old format (x, y in pixels) to new format (xPct, yPct in percentages)
+        // Check if we have old-format markers (array with x/y) or new-format (xPct/yPct)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const firstMarker = parsed[0];
+          
+          // If first marker has 'x' or 'y' but not 'xPct' or 'yPct', it's old format
+          if ((firstMarker.x !== undefined || firstMarker.y !== undefined) && 
+              (firstMarker.xPct === undefined && firstMarker.yPct === undefined)) {
+            console.warn('[Season Map Momentum] Old marker format detected (x, y). Clearing incompatible markers.');
+            // Clear old format markers as they can't be reliably converted without knowing the container dimensions
+            goalMarkers = [];
+            localStorage.removeItem('seasonMapMarkers');
+            return;
+          }
+        }
+        
+        goalMarkers = parsed;
       }
     } catch (e) {
       console.warn('Failed to load goal markers:', e);
