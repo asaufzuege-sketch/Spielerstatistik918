@@ -2245,6 +2245,36 @@ tr[data-player].dragging {
     min-width: 90px;
     font-size: 0.75rem;
   }
+  
+  /* Season Map Mobile Fixes - Prevents goal overflow and arranges elements vertically */
+  #seasonMapPage .torbild-layout {
+    flex-direction: column;
+    height: auto;
+    gap: 15px;
+  }
+  
+  #seasonMapPage .field-column,
+  #seasonMapPage .goal-column {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  #seasonMapPage .goal-column {
+    gap: 15px;
+  }
+  
+  #seasonMapPage .img-box,
+  #seasonMapPage .field-box,
+  #seasonMapPage .goal-img-box {
+    max-height: 400px;
+    width: 100%;
+  }
+  
+  /* Heatmap canvas - mobile specific sizing */
+  #seasonMapPage .heatmap-canvas {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 /* ==================== */
