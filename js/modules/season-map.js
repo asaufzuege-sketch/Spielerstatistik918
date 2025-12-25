@@ -12,7 +12,7 @@ App.seasonMap = {
   // Heatmap configuration
   HEATMAP_RENDER_DELAY: 150, // ms delay after marker rendering to ensure proper positioning
   HEATMAP_RADIUS_FACTOR: 0.15, // Heatmap gradient radius as percentage of smaller dimension (desktop)
-  HEATMAP_RADIUS_FACTOR_MOBILE: 0.08, // Smaller radius for mobile devices
+  HEATMAP_RADIUS_FACTOR_MOBILE: 0.04, // MUCH smaller radius for mobile devices (was 0.08, now 0.04)
   HEATMAP_MIN_OPACITY: 0.2, // Minimum opacity for low-density areas
   HEATMAP_MAX_OPACITY: 0.95, // Maximum opacity for high-density areas
   HEATMAP_DENSITY_POWER: 0.7, // Power function exponent for density scaling (< 1 for faster initial rise)
