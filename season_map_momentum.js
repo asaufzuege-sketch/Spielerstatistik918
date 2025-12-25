@@ -43,18 +43,22 @@
       if (saved) {
         const parsed = JSON.parse(saved);
         
-        // Handle migration from old format (x, y in pixels) to new format (xPct, yPct in percentages)
-        // Check if we have old-format markers (array with x/y) or new-format (xPct/yPct)
+        // Only load if it's our internal format (flat array with fieldId)
+        // Goal Map export format (array of arrays) is loaded by season-map.js, not here
         if (Array.isArray(parsed) && parsed.length > 0) {
+          // If first element is an array, it's not our format
+          if (Array.isArray(parsed[0])) {
+            goalMarkers = [];
+            return;
+          }
+          
           const firstMarker = parsed[0];
           
-          // If first marker has 'x' or 'y' but not 'xPct' or 'yPct', it's old format
+          // If marker has old format (x, y), clear it - can't convert reliably
           if ((firstMarker.x !== undefined || firstMarker.y !== undefined) && 
-              (firstMarker.xPct === undefined && firstMarker.yPct === undefined)) {
-            console.warn('[Season Map Momentum] Old marker format detected (x, y). Clearing incompatible markers.');
-            // Clear old format markers as they can't be reliably converted without knowing the container dimensions
+              firstMarker.xPct === undefined && firstMarker.yPct === undefined) {
+            console.warn('[Season Map Momentum] Old marker format detected. Clearing incompatible markers.');
             goalMarkers = [];
-            localStorage.removeItem('seasonMapMarkers');
             return;
           }
         }
