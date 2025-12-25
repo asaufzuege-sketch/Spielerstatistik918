@@ -662,15 +662,15 @@ App.seasonMap = {
       if (!box) return markers;
       
       box.querySelectorAll(".marker-dot").forEach(dot => {
-        // Read from style.left/top (actual rendered position) instead of dataset
-        const left = dot.style.left || "";
-        const top = dot.style.top || "";
+        // CRITICAL FIX: Read from dataset (image-relative coordinates) instead of style
+        // This ensures we export the exact percentages that heatmap uses
+        const xPct = parseFloat(dot.dataset.xPctImage) || 0;
+        const yPct = parseFloat(dot.dataset.yPctImage) || 0;
         const bg = dot.style.backgroundColor || "";
-        const xPct = parseFloat(left.replace("%", ""));
-        const yPct = parseFloat(top.replace("%", ""));
         
-        // Validate parsed coordinates - skip invalid markers (0, 0, NaN, or undefined)
-        if (!xPct || !yPct || isNaN(xPct) || isNaN(yPct) || xPct < 0.1 || yPct < 0.1) {
+        // Validate parsed coordinates - skip invalid markers (NaN, undefined, or very small values close to 0)
+        // The < 0.1 check handles both zero and very small values that are likely invalid
+        if (isNaN(xPct) || isNaN(yPct) || xPct < 0.1 || yPct < 0.1) {
           console.warn('[Season Map Export] Skipping marker with invalid coordinates:', { xPct, yPct });
           return;
         }

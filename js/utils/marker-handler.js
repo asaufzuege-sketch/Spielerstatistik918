@@ -114,36 +114,12 @@ App.markerHandler = {
     dot.dataset.xPctImage = xPct;
     dot.dataset.yPctImage = yPct;
     
-    // Calculate position relative to rendered image
-    const img = container.querySelector("img");
-    if (img) {
-      const rendered = this.computeRenderedImageRect(img);
-      if (rendered) {
-        const containerRect = container.getBoundingClientRect();
-        
-        // Offset of image within the box
-        const imgOffsetX = rendered.x - containerRect.left;
-        const imgOffsetY = rendered.y - containerRect.top;
-        
-        // Position in pixels relative to box
-        const pixelX = imgOffsetX + (xPct / 100) * rendered.width;
-        const pixelY = imgOffsetY + (yPct / 100) * rendered.height;
-        
-        // Back to percentage relative to box
-        const boxPctX = (pixelX / containerRect.width) * 100;
-        const boxPctY = (pixelY / containerRect.height) * 100;
-        
-        dot.style.left = `${boxPctX}%`;
-        dot.style.top = `${boxPctY}%`;
-      } else {
-        // Fallback
-        dot.style.left = `${xPct}%`;
-        dot.style.top = `${yPct}%`;
-      }
-    } else {
-      dot.style.left = `${xPct}%`;
-      dot.style.top = `${yPct}%`;
-    }
+    // CRITICAL FIX: Use EXACT same coordinates as heatmap
+    // Heatmap uses xPct and yPct directly (0-100%)
+    // Dots must use the SAME values for perfect synchronization
+    // No transformation, no calculation - just use the stored percentage values 1:1
+    dot.style.left = `${xPct}%`;
+    dot.style.top = `${yPct}%`;
     
     dot.style.backgroundColor = color;
     
@@ -172,34 +148,21 @@ App.markerHandler = {
    * Reposition all markers when window is resized
    */
   repositionMarkers() {
-    // Use combined selector to work for both goal map and season map pages
+    // CRITICAL FIX: Use EXACT same coordinates as heatmap
+    // Markers should use image-relative percentages directly, not transformed box-relative percentages
+    // This ensures perfect synchronization between dots and heatmap across all browsers
     const boxes = document.querySelectorAll(`${App.selectors.torbildBoxes}, ${App.selectors.seasonMapBoxes}`);
     boxes.forEach(box => {
-      const img = box.querySelector("img");
-      if (!img) return;
-      
-      const rendered = this.computeRenderedImageRect(img);
-      if (!rendered) return;
-      
-      const containerRect = box.getBoundingClientRect();
-      const imgOffsetX = rendered.x - containerRect.left;
-      const imgOffsetY = rendered.y - containerRect.top;
-      
       box.querySelectorAll(".marker-dot").forEach(dot => {
         const xPctImage = parseFloat(dot.dataset.xPctImage);
         const yPctImage = parseFloat(dot.dataset.yPctImage);
         
-        // Skip if no image-relative coordinates stored (shouldn't happen after migration)
+        // Skip if no image-relative coordinates stored
         if (isNaN(xPctImage) || isNaN(yPctImage)) return;
         
-        const pixelX = imgOffsetX + (xPctImage / 100) * rendered.width;
-        const pixelY = imgOffsetY + (yPctImage / 100) * rendered.height;
-        
-        const boxPctX = (pixelX / containerRect.width) * 100;
-        const boxPctY = (pixelY / containerRect.height) * 100;
-        
-        dot.style.left = `${boxPctX}%`;
-        dot.style.top = `${boxPctY}%`;
+        // Use the stored percentage values directly - same as heatmap
+        dot.style.left = `${xPctImage}%`;
+        dot.style.top = `${yPctImage}%`;
       });
     });
   },
