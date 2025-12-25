@@ -194,7 +194,7 @@ App.seasonTable = {
       let goalValue = "";
       try {
         if (App.goalValue && typeof App.goalValue.computeValueForPlayer === "function") {
-          goalValue = App.goalValue.computeValueForPlayer(d.name) || Number(d.goalValue || 0);
+          goalValue = App.goalValue.computeValueForPlayer(d.name) ?? Number(d.goalValue || 0);
         } else {
           goalValue = Number(d.goalValue || 0);
         }
@@ -507,7 +507,7 @@ App.seasonTable = {
 
       try {
         if (App.goalValue && typeof App.goalValue.computeValueForPlayer === "function") {
-          sd.goalValue = App.goalValue.computeValueForPlayer(name) || sd.goalValue || 0;
+          sd.goalValue = App.goalValue.computeValueForPlayer(name) ?? (sd.goalValue || 0);
         } else {
           sd.goalValue = sd.goalValue || 0;
         }
@@ -587,7 +587,7 @@ App.seasonTable = {
         let goalValue = 0;
         try {
           if (App.goalValue && typeof App.goalValue.computeValueForPlayer === "function") {
-            goalValue = Number(App.goalValue.computeValueForPlayer(name) || 0);
+            goalValue = Number(App.goalValue.computeValueForPlayer(name) ?? 0);
           } else {
             goalValue = Number(d.goalValue || 0);
           }
