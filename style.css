@@ -1064,100 +1064,61 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
    - Percentage positioning of markers works correctly
 */
 @media (min-width: 769px) and (max-width: 1024px) {
-  /* Goal Map: Maintain horizontal layout but adjust proportions for tablet */
-  #torbildPage .torbild-layout {
-    flex-direction: row !important;
-    height: auto !important;
+  /* Override 900px breakpoint: maintain horizontal layout for Goal Map and Season Map in tablet mode */
+  #torbildPage .torbild-layout,
+  #seasonMapPage .torbild-layout {
+    flex-direction: row;
+    height: auto;
     min-height: 600px;
     align-items: stretch;
   }
   
   /* Field column: Give more space to ensure field fills properly */
-  #torbildPage .field-column {
-    flex: 1.2;
-    min-width: 0;
-  }
-  
-  /* Goal column: Prevent squeezing of goal images and time box */
-  #torbildPage .goal-column {
-    flex: 0.8;
-    min-width: 0;
-    gap: 20px;
-  }
-  
-  /* Playing field: Ensure it fills container width for proper marker positioning */
-  #torbildPage .field-box {
-    width: 100%;
-    height: 100%;
-  }
-  
-  #torbildPage .field-box img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain;
-  }
-  
-  /* Goal images: Ensure they have sufficient height and are not squeezed */
-  #torbildPage .goal-img-box {
-    flex: 1;
-    min-height: 180px;
-    height: auto;
-  }
-  
-  #torbildPage .goal-img-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-  }
-  
-  /* Time tracking box: Match goal image sizing */
-  #torbildPage .time-tracking-box {
-    flex: 1;
-    min-height: 180px;
-  }
-  
-  /* Season Map: Apply same fixes for consistency */
-  #seasonMapPage .torbild-layout {
-    flex-direction: row !important;
-    height: auto !important;
-    min-height: 600px;
-    align-items: stretch;
-  }
-  
+  #torbildPage .field-column,
   #seasonMapPage .field-column {
     flex: 1.2;
     min-width: 0;
   }
   
+  /* Goal column: Prevent squeezing of goal images and time box */
+  #torbildPage .goal-column,
   #seasonMapPage .goal-column {
     flex: 0.8;
     min-width: 0;
     gap: 20px;
   }
   
+  /* Playing field: Ensure it fills container width for proper marker positioning */
+  #torbildPage .field-box,
   #seasonMapPage .field-box {
     width: 100%;
     height: 100%;
   }
   
+  #torbildPage .field-box img,
   #seasonMapPage .field-box img {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
   }
   
+  /* Goal images: Ensure they have sufficient height and are not squeezed */
+  #torbildPage .goal-img-box,
   #seasonMapPage .goal-img-box {
     flex: 1;
     min-height: 180px;
     height: auto;
   }
   
+  #torbildPage .goal-img-box img,
   #seasonMapPage .goal-img-box img {
     width: 100%;
     height: 100%;
     object-fit: fill;
   }
   
+  /* Time tracking box: Match goal image sizing */
+  #torbildPage .time-tracking-box,
   #seasonMapPage .time-tracking-box {
     flex: 1;
     min-height: 180px;
