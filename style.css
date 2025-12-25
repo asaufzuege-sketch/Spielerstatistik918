@@ -2248,8 +2248,8 @@ tr[data-player].dragging {
   
   /* Season Map Mobile Fixes - Prevents goal overflow and arranges elements vertically */
   #seasonMapPage .torbild-layout {
-    flex-direction: column;
-    height: auto;
+    flex-direction: column !important;
+    height: auto !important;
     gap: 15px;
   }
   
@@ -2274,6 +2274,50 @@ tr[data-player].dragging {
   #seasonMapPage .heatmap-canvas {
     max-width: 100%;
     height: auto;
+  }
+  
+  /* Goal Map Mobile Layout - Same as Season Map */
+  #torbildPage .torbild-layout {
+    flex-direction: column !important;
+    height: auto !important;
+    gap: 15px;
+  }
+  
+  #torbildPage .field-column,
+  #torbildPage .goal-column {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  #torbildPage .goal-column {
+    gap: 15px;
+  }
+  
+  #torbildPage .img-box,
+  #torbildPage .field-box,
+  #torbildPage .goal-img-box {
+    max-height: 400px;
+    width: 100%;
+  }
+  
+  /* Mobile: Top Bar Button Wrapping - CRITICAL FIX for cut-off buttons */
+  #seasonMapPage .top-bar,
+  #torbildPage .top-bar {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    gap: 8px;
+  }
+  
+  #seasonMapPage .top-bar .top-btn,
+  #seasonMapPage .top-bar .player-filter-btn,
+  #torbildPage .top-bar .top-btn,
+  #torbildPage .top-bar .player-filter-btn {
+    flex: 0 1 auto !important;
+    min-width: 110px !important;
+    max-width: none !important;
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
   }
 }
 
