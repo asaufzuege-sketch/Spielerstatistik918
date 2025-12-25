@@ -49,8 +49,8 @@
     }
   }
   
-  function addGoalMarker(x, y, fieldId = 'field') {
-    const marker = { x, y, fieldId, id: Date.now() };
+  function addGoalMarker(xPct, yPct, fieldId = 'field') {
+    const marker = { xPct, yPct, fieldId, id: Date.now() };
     goalMarkers.push(marker);
     saveGoalMarkers();
     renderGoalMarkers();
@@ -74,8 +74,8 @@
       const dot = document.createElement('div');
       dot.className = 'goal-marker marker-dot';
       dot.style.position = 'absolute';
-      dot.style.left = `${marker.x}px`;
-      dot.style.top = `${marker.y}px`;
+      dot.style.left = `${marker.xPct}%`;
+      dot.style.top = `${marker.yPct}%`;
       dot.style.width = '14px';
       dot.style.height = '14px';
       dot.style.borderRadius = '50%';
@@ -111,7 +111,9 @@
             const rect = field.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            addGoalMarker(x, y, field.id || 'field');
+            const xPct = (x / rect.width) * 100;
+            const yPct = (y / rect.height) * 100;
+            addGoalMarker(xPct, yPct, field.id || 'field');
             
             // Vibrationseffekt falls verfügbar
             if (navigator.vibrate) {
@@ -148,7 +150,9 @@
             const touch = e.touches[0];
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            addGoalMarker(x, y, field.id || 'field');
+            const xPct = (x / rect.width) * 100;
+            const yPct = (y / rect.height) * 100;
+            addGoalMarker(xPct, yPct, field.id || 'field');
             
             if (navigator.vibrate) {
               navigator.vibrate(100);
