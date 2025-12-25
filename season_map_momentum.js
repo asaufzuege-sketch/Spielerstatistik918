@@ -41,7 +41,29 @@
     try {
       const saved = localStorage.getItem('seasonMapMarkers');
       if (saved) {
-        goalMarkers = JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        
+        // Only load if it's our internal format (flat array with fieldId)
+        // Goal Map export format (array of arrays) is loaded by season-map.js, not here
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // If first element is an array, it's not our format
+          if (Array.isArray(parsed[0])) {
+            goalMarkers = [];
+            return;
+          }
+          
+          const firstMarker = parsed[0];
+          
+          // If marker has old format (x, y), clear it - can't convert reliably
+          if ((firstMarker.x !== undefined || firstMarker.y !== undefined) && 
+              firstMarker.xPct === undefined && firstMarker.yPct === undefined) {
+            console.warn('[Season Map Momentum] Old marker format detected. Clearing incompatible markers.');
+            goalMarkers = [];
+            return;
+          }
+        }
+        
+        goalMarkers = parsed;
       }
     } catch (e) {
       console.warn('Failed to load goal markers:', e);
@@ -49,8 +71,8 @@
     }
   }
   
-  function addGoalMarker(x, y, fieldId = 'field') {
-    const marker = { x, y, fieldId, id: Date.now() };
+  function addGoalMarker(xPct, yPct, fieldId = 'field') {
+    const marker = { xPct, yPct, fieldId, id: Date.now() };
     goalMarkers.push(marker);
     saveGoalMarkers();
     renderGoalMarkers();
@@ -74,8 +96,8 @@
       const dot = document.createElement('div');
       dot.className = 'goal-marker marker-dot';
       dot.style.position = 'absolute';
-      dot.style.left = `${marker.x}px`;
-      dot.style.top = `${marker.y}px`;
+      dot.style.left = `${marker.xPct}%`;
+      dot.style.top = `${marker.yPct}%`;
       dot.style.width = '14px';
       dot.style.height = '14px';
       dot.style.borderRadius = '50%';
@@ -111,7 +133,9 @@
             const rect = field.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            addGoalMarker(x, y, field.id || 'field');
+            const xPct = (x / rect.width) * 100;
+            const yPct = (y / rect.height) * 100;
+            addGoalMarker(xPct, yPct, field.id || 'field');
             
             // Vibrationseffekt falls verfügbar
             if (navigator.vibrate) {
@@ -148,7 +172,9 @@
             const touch = e.touches[0];
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            addGoalMarker(x, y, field.id || 'field');
+            const xPct = (x / rect.width) * 100;
+            const yPct = (y / rect.height) * 100;
+            addGoalMarker(xPct, yPct, field.id || 'field');
             
             if (navigator.vibrate) {
               navigator.vibrate(100);
