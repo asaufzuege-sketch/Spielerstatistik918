@@ -1056,14 +1056,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* ==================== */
-/* TABLET MODE FIX: 769px - 1024px */
+/* TABLET MODE FIX: 901px - 1024px */
 /* ==================== */
 /* Fix for Goal Map layout in tablet mode:
    - Goal images (Tor-Bilder) get proper spacing and are not squeezed
    - Playing field fills container to ensure marker dots stay within boundaries
    - Percentage positioning of markers works correctly
 */
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 901px) and (max-width: 1024px) {
   /* Override 900px breakpoint: maintain horizontal layout for Goal Map and Season Map in tablet mode */
   #torbildPage .torbild-layout,
   #seasonMapPage .torbild-layout {
