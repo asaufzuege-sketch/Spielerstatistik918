@@ -662,12 +662,11 @@ App.seasonMap = {
       if (!box) return markers;
       
       box.querySelectorAll(".marker-dot").forEach(dot => {
-        // Read from style.left/top (actual rendered position) instead of dataset
-        const left = dot.style.left || "";
-        const top = dot.style.top || "";
+        // CRITICAL FIX: Read from dataset (image-relative coordinates) instead of style
+        // This ensures we export the exact percentages that heatmap uses
+        const xPct = parseFloat(dot.dataset.xPctImage) || 0;
+        const yPct = parseFloat(dot.dataset.yPctImage) || 0;
         const bg = dot.style.backgroundColor || "";
-        const xPct = parseFloat(left.replace("%", ""));
-        const yPct = parseFloat(top.replace("%", ""));
         
         // Validate parsed coordinates - skip invalid markers (0, 0, NaN, or undefined)
         if (!xPct || !yPct || isNaN(xPct) || isNaN(yPct) || xPct < 0.1 || yPct < 0.1) {
