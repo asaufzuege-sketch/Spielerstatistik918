@@ -668,8 +668,9 @@ App.seasonMap = {
         const yPct = parseFloat(dot.dataset.yPctImage) || 0;
         const bg = dot.style.backgroundColor || "";
         
-        // Validate parsed coordinates - skip invalid markers (0, 0, NaN, or undefined)
-        if (!xPct || !yPct || isNaN(xPct) || isNaN(yPct) || xPct < 0.1 || yPct < 0.1) {
+        // Validate parsed coordinates - skip invalid markers (NaN, undefined, or very small values close to 0)
+        // The < 0.1 check handles both zero and very small values that are likely invalid
+        if (isNaN(xPct) || isNaN(yPct) || xPct < 0.1 || yPct < 0.1) {
           console.warn('[Season Map Export] Skipping marker with invalid coordinates:', { xPct, yPct });
           return;
         }

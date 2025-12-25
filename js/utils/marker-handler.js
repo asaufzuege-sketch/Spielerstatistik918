@@ -157,7 +157,7 @@ App.markerHandler = {
         const xPctImage = parseFloat(dot.dataset.xPctImage);
         const yPctImage = parseFloat(dot.dataset.yPctImage);
         
-        // Skip if no image-relative coordinates stored (shouldn't happen after migration)
+        // Skip if no image-relative coordinates stored
         if (isNaN(xPctImage) || isNaN(yPctImage)) return;
         
         // Use the stored percentage values directly - same as heatmap
