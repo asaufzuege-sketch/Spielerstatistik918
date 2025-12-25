@@ -170,7 +170,7 @@ App.lineUp = {
       let goalValue = 0;
       try {
         if (App.goalValue && typeof App.goalValue.computeValueForPlayer === 'function') {
-          goalValue = App.goalValue.computeValueForPlayer(playerName) || Number(seasonData.goalValue || 0);
+          goalValue = App.goalValue.computeValueForPlayer(playerName) ?? Number(seasonData.goalValue || 0);
         } else {
           goalValue = Number(seasonData.goalValue || 0);
         }
@@ -1034,7 +1034,7 @@ App.lineUp = {
         let goalValue = 0;
         try {
           if (App.goalValue && typeof App.goalValue.computeValueForPlayer === "function") {
-            goalValue = App.goalValue.computeValueForPlayer(player.name) || Number(seasonData.goalValue || 0);
+            goalValue = App.goalValue.computeValueForPlayer(player.name) ?? Number(seasonData.goalValue || 0);
           } else {
             goalValue = Number(seasonData.goalValue || 0);
           }
