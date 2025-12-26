@@ -121,6 +121,9 @@
   function setupFieldClickHandlers() {
     const fields = document.querySelectorAll('.field-box, #field');
     
+    // Tolerance for edge click detection (in pixels)
+    const CLICK_TOLERANCE = 2;
+    
     fields.forEach(field => {
       let clickCount = 0;
       let clickTimer = null;
@@ -134,12 +137,11 @@
           const rendered = App.markerHandler.computeRenderedImageRect(img);
           if (rendered && rendered.width > 0 && rendered.height > 0) {
             // Check if click is inside rendered image
-            const tolerance = 2;
             const insideImage = (
-              clientX >= rendered.x - tolerance &&
-              clientX <= rendered.x + rendered.width + tolerance && 
-              clientY >= rendered.y - tolerance &&
-              clientY <= rendered.y + rendered.height + tolerance
+              clientX >= rendered.x - CLICK_TOLERANCE &&
+              clientX <= rendered.x + rendered.width + CLICK_TOLERANCE && 
+              clientY >= rendered.y - CLICK_TOLERANCE &&
+              clientY <= rendered.y + rendered.height + CLICK_TOLERANCE
             );
             
             if (insideImage) {
@@ -150,7 +152,7 @@
           }
         }
         
-        return null; // Block clicks if image rect cannot be computed
+        return null; // Block clicks if image rect cannot be computed or click is outside
       };
       
       field.addEventListener('mousedown', (e) => {

@@ -131,13 +131,9 @@ App.goalMap = {
             xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
             yPctImage = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
           }
-        } else {
-          // If rendered image rect cannot be computed, block clicks to prevent misalignment
-          // This prevents placing markers with incorrect coordinates
-          insideImage = false;
-          xPctImage = 0;
-          yPctImage = 0;
         }
+        // If rendered image rect cannot be computed, insideImage remains false
+        // which will block the click in placeMarker
         
         return { xPctImage, yPctImage, insideImage };
       };
