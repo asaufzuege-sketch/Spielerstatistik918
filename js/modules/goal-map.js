@@ -113,9 +113,6 @@ App.goalMap = {
         const clientX = e.clientX !== undefined ? e.clientX : (e.touches?.[0]?.clientX);
         const clientY = e.clientY !== undefined ? e.clientY : (e.touches?.[0]?.clientY);
         
-        const xPctContainer = Math.max(0, Math.min(1, (clientX - boxRect.left) / (boxRect.width || 1))) * 100;
-        const yPctContainer = Math.max(0, Math.min(1, (clientY - boxRect.top) / (boxRect.height || 1))) * 100;
-        
         const rendered = App.markerHandler.computeRenderedImageRect(img);
         let insideImage = false;
         let xPctImage = 0;
@@ -134,13 +131,11 @@ App.goalMap = {
             xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
             yPctImage = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
           }
-        } else {
-          insideImage = true;
-          xPctImage = xPctContainer;
-          yPctImage = yPctContainer;
         }
+        // If rendered image rect cannot be computed, insideImage remains false
+        // which will block the click in placeMarker
         
-        return { xPctContainer, yPctContainer, xPctImage, yPctImage, insideImage };
+        return { xPctImage, yPctImage, insideImage };
       };
       
       // Helper function to set zone attribute on last created marker
