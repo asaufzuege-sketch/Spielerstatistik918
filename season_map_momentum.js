@@ -132,7 +132,7 @@
         // Use computeRenderedImageRect if available (from marker-handler.js)
         if (App.markerHandler && typeof App.markerHandler.computeRenderedImageRect === 'function') {
           const rendered = App.markerHandler.computeRenderedImageRect(img);
-          if (rendered) {
+          if (rendered && rendered.width > 0 && rendered.height > 0) {
             // Check if click is inside rendered image
             const tolerance = 2;
             const insideImage = (
@@ -143,8 +143,8 @@
             );
             
             if (insideImage) {
-              const xPct = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
-              const yPct = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
+              const xPct = Math.max(0, Math.min(100, ((clientX - rendered.x) / rendered.width) * 100));
+              const yPct = Math.max(0, Math.min(100, ((clientY - rendered.y) / rendered.height) * 100));
               return { xPct, yPct };
             }
           }
