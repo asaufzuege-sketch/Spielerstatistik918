@@ -125,21 +125,49 @@
       let clickCount = 0;
       let clickTimer = null;
       
+      // Helper function to get image-relative position
+      const getImageRelativePos = (clientX, clientY, img) => {
+        if (!img) return null;
+        
+        // Use computeRenderedImageRect if available (from marker-handler.js)
+        if (App.markerHandler && typeof App.markerHandler.computeRenderedImageRect === 'function') {
+          const rendered = App.markerHandler.computeRenderedImageRect(img);
+          if (rendered) {
+            // Check if click is inside rendered image
+            const tolerance = 2;
+            const insideImage = (
+              clientX >= rendered.x - tolerance &&
+              clientX <= rendered.x + rendered.width + tolerance && 
+              clientY >= rendered.y - tolerance &&
+              clientY <= rendered.y + rendered.height + tolerance
+            );
+            
+            if (insideImage) {
+              const xPct = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
+              const yPct = Math.max(0, Math.min(100, ((clientY - rendered.y) / (rendered.height || 1)) * 100));
+              return { xPct, yPct };
+            }
+          }
+        }
+        
+        return null; // Block clicks if image rect cannot be computed
+      };
+      
       field.addEventListener('mousedown', (e) => {
         // Langer Klick für Tor (graue Punkte)
         longPressTarget = e.target;
         longPressTimer = setTimeout(() => {
           if (longPressTarget === e.target) {
-            const rect = field.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const xPct = (x / rect.width) * 100;
-            const yPct = (y / rect.height) * 100;
-            addGoalMarker(xPct, yPct, field.id || 'field');
+            const img = field.querySelector('img');
+            const pos = getImageRelativePos(e.clientX, e.clientY, img);
             
-            // Vibrationseffekt falls verfügbar
-            if (navigator.vibrate) {
-              navigator.vibrate(100);
+            if (pos) {
+              addGoalMarker(pos.xPct, pos.yPct, field.id || 'field');
+              
+              // Vibrationseffekt falls verfügbar
+              if (navigator.vibrate) {
+                navigator.vibrate(100);
+              }
             }
           }
           longPressTimer = null;
@@ -168,16 +196,16 @@
         longPressTarget = e.target;
         longPressTimer = setTimeout(() => {
           if (longPressTarget === e.target) {
-            const rect = field.getBoundingClientRect();
+            const img = field.querySelector('img');
             const touch = e.touches[0];
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            const xPct = (x / rect.width) * 100;
-            const yPct = (y / rect.height) * 100;
-            addGoalMarker(xPct, yPct, field.id || 'field');
+            const pos = getImageRelativePos(touch.clientX, touch.clientY, img);
             
-            if (navigator.vibrate) {
-              navigator.vibrate(100);
+            if (pos) {
+              addGoalMarker(pos.xPct, pos.yPct, field.id || 'field');
+              
+              if (navigator.vibrate) {
+                navigator.vibrate(100);
+              }
             }
           }
           longPressTimer = null;
