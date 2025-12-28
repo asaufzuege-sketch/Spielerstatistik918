@@ -1125,6 +1125,70 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   }
 }
 
+/* ==================== */
+/* DESKTOP MODE: > 1024px */
+/* ==================== */
+/* Desktop-specific layout fixes to ensure proper sizing of field and goal images */
+@media (min-width: 1025px) {
+  /* Main layout: Ensure proper height */
+  #torbildPage .torbild-layout,
+  #seasonMapPage .torbild-layout {
+    height: calc(100vh - 120px);
+    align-items: stretch;
+  }
+  
+  /* Field column: Give more space for better proportions */
+  #torbildPage .field-column,
+  #seasonMapPage .field-column {
+    flex: 1.5;
+    min-width: 0;
+  }
+  
+  /* Goal column: Proper sizing */
+  #torbildPage .goal-column,
+  #seasonMapPage .goal-column {
+    flex: 1;
+    min-width: 0;
+    gap: 15px;
+  }
+  
+  /* Playing field: Ensure it fills container properly */
+  #torbildPage .field-box,
+  #seasonMapPage .field-box {
+    width: 100%;
+    height: 100%;
+  }
+  
+  #torbildPage .field-box img,
+  #seasonMapPage .field-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  /* Goal images: Each takes 1/3 of goal-column height */
+  #torbildPage .goal-img-box,
+  #seasonMapPage .goal-img-box {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
+  
+  #torbildPage .goal-img-box img,
+  #seasonMapPage .goal-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+  
+  /* Time tracking box: Match goal image sizing (1/3 of height) */
+  #torbildPage .time-tracking-box,
+  #seasonMapPage .time-tracking-box {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
 #statsPage .total-row td {
   background: var(--header-bg) !important;
   color: #ffffff !important;
