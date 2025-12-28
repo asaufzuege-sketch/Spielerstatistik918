@@ -482,16 +482,33 @@ App.seasonMap = {
     const img = fieldBox.querySelector('img');
     if (!img) return;
     
-    // Set canvas size to match image
-    const rect = img.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+    // Compute rendered image rectangle (accounting for object-fit: contain)
+    const renderedImageRect = App.markerHandler.computeRenderedImageRect(img);
+    if (!renderedImageRect || !renderedImageRect.valid) {
+      console.warn('[Season Map] Cannot render heatmap: image rect not available');
+      return;
+    }
+    
+    // Set canvas size to match the RENDERED image size (not container)
+    canvas.width = renderedImageRect.width;
+    canvas.height = renderedImageRect.height;
     
     // Validate canvas dimensions
     if (canvas.width === 0 || canvas.height === 0) {
       console.warn('[Season Map] Cannot render heatmap: image not loaded or has zero dimensions');
       return;
     }
+    
+    // Position canvas to overlay the rendered image (not fill container)
+    const containerRect = fieldBox.getBoundingClientRect();
+    const offsetX = renderedImageRect.x - containerRect.left;
+    const offsetY = renderedImageRect.y - containerRect.top;
+    
+    // Override default positioning to match image location within container
+    canvas.style.left = `${offsetX}px`;
+    canvas.style.top = `${offsetY}px`;
+    canvas.style.width = `${renderedImageRect.width}px`;
+    canvas.style.height = `${renderedImageRect.height}px`;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) {
