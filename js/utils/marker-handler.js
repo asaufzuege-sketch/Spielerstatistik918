@@ -114,12 +114,34 @@ App.markerHandler = {
     dot.dataset.xPctImage = xPct;
     dot.dataset.yPctImage = yPct;
     
-    // CRITICAL FIX: Use EXACT same coordinates as heatmap
-    // Heatmap uses xPct and yPct directly (0-100%)
-    // Dots must use the SAME values for perfect synchronization
-    // No transformation, no calculation - just use the stored percentage values 1:1
-    dot.style.left = `${xPct}%`;
-    dot.style.top = `${yPct}%`;
+    // Transform image-relative percentages to container-relative percentages
+    // This fixes the issue where markers were misaligned on desktop with object-fit: contain
+    const img = container.querySelector('img');
+    if (img) {
+      const rendered = this.computeRenderedImageRect(img);
+      const containerRect = container.getBoundingClientRect();
+      
+      if (rendered && rendered.valid && containerRect.width > 0 && containerRect.height > 0) {
+        // Calculate absolute position based on image-relative percentage
+        const absoluteX = rendered.x + (xPct / 100) * rendered.width;
+        const absoluteY = rendered.y + (yPct / 100) * rendered.height;
+        
+        // Convert to container-relative percentage
+        const containerXPct = ((absoluteX - containerRect.left) / containerRect.width) * 100;
+        const containerYPct = ((absoluteY - containerRect.top) / containerRect.height) * 100;
+        
+        dot.style.left = `${containerXPct}%`;
+        dot.style.top = `${containerYPct}%`;
+      } else {
+        // Fallback: use image percentages directly (for backwards compatibility)
+        dot.style.left = `${xPct}%`;
+        dot.style.top = `${yPct}%`;
+      }
+    } else {
+      // No image found, use percentages directly
+      dot.style.left = `${xPct}%`;
+      dot.style.top = `${yPct}%`;
+    }
     
     dot.style.backgroundColor = color;
     
@@ -148,11 +170,16 @@ App.markerHandler = {
    * Reposition all markers when window is resized
    */
   repositionMarkers() {
-    // CRITICAL FIX: Use EXACT same coordinates as heatmap
-    // Markers should use image-relative percentages directly, not transformed box-relative percentages
-    // This ensures perfect synchronization between dots and heatmap across all browsers
+    // Transform image-relative percentages to container-relative percentages
+    // This ensures markers align correctly with clicks even with object-fit: contain
     const boxes = document.querySelectorAll(`${App.selectors.torbildBoxes}, ${App.selectors.seasonMapBoxes}`);
     boxes.forEach(box => {
+      const img = box.querySelector('img');
+      if (!img) return;
+      
+      const rendered = this.computeRenderedImageRect(img);
+      const containerRect = box.getBoundingClientRect();
+      
       box.querySelectorAll(".marker-dot").forEach(dot => {
         const xPctImage = parseFloat(dot.dataset.xPctImage);
         const yPctImage = parseFloat(dot.dataset.yPctImage);
@@ -160,9 +187,23 @@ App.markerHandler = {
         // Skip if no image-relative coordinates stored
         if (isNaN(xPctImage) || isNaN(yPctImage)) return;
         
-        // Use the stored percentage values directly - same as heatmap
-        dot.style.left = `${xPctImage}%`;
-        dot.style.top = `${yPctImage}%`;
+        // Transform image-relative to container-relative percentages
+        if (rendered && rendered.valid && containerRect.width > 0 && containerRect.height > 0) {
+          // Calculate absolute position based on image-relative percentage
+          const absoluteX = rendered.x + (xPctImage / 100) * rendered.width;
+          const absoluteY = rendered.y + (yPctImage / 100) * rendered.height;
+          
+          // Convert to container-relative percentage
+          const containerXPct = ((absoluteX - containerRect.left) / containerRect.width) * 100;
+          const containerYPct = ((absoluteY - containerRect.top) / containerRect.height) * 100;
+          
+          dot.style.left = `${containerXPct}%`;
+          dot.style.top = `${containerYPct}%`;
+        } else {
+          // Fallback: use image percentages directly
+          dot.style.left = `${xPctImage}%`;
+          dot.style.top = `${yPctImage}%`;
+        }
       });
     });
   },
