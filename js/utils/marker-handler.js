@@ -78,6 +78,10 @@ App.markerHandler = {
         return (p.r >= rThreshold) && ((p.r - p.g) >= diff) && ((p.r - p.b) >= diff);
       };
       
+      sampler.isGreenOrRedAt = (xPct, yPct) => {
+        return sampler.isGreenAt(xPct, yPct) || sampler.isRedAt(xPct, yPct);
+      };
+      
       this.samplerCache.set(imgEl, sampler);
       return sampler;
     } catch (err) {
@@ -86,7 +90,8 @@ App.markerHandler = {
         isWhiteAt: () => false,
         isNeutralWhiteAt: () => false,
         isGreenAt: () => false,
-        isRedAt: () => false
+        isRedAt: () => false,
+        isGreenOrRedAt: () => false
       };
       this.samplerCache.set(imgEl, fallback);
       return fallback;

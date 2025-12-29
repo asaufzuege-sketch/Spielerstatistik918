@@ -442,7 +442,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   height: calc(100vh - 120px);
   margin-top: 20px;
 }
-.field-column { flex: 1; display: flex; justify-content: center; }
+.field-column { flex: 0.7; display: flex; justify-content: center; }  /* Narrower to make field-box HIGHER */
 .field-box, .img-box {
   background: var(--img-box-bg);
   border: 2px solid #333;

@@ -283,6 +283,16 @@ App.goalMap = {
         
         // FELD-BOX: grün/rot oder grau je nach Kontext
         if (box.classList.contains("field-box")) {
+          // Mobile/Tablet: Validate click is on green or red area (not black corners)
+          const sampler = App.markerHandler.createImageSampler(img);
+          if (sampler && sampler.valid) {
+            const isValidArea = sampler.isGreenOrRedAt(pos.xPctImage, pos.yPctImage);
+            if (!isValidArea) {
+              console.log('[Field Box] Click blocked: not on green/red area (black corner/edge)');
+              return; // Block clicks on black areas
+            }
+          }
+          
           const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
           
           // ROTE ZONE - Goalie muss ausgewählt sein
