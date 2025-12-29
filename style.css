@@ -1133,21 +1133,21 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* Main layout: Increased height for better spacing (Desktop only) */
   #torbildPage .torbild-layout,
   #seasonMapPage .torbild-layout {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 100px);  /* Taller layout for better field visibility */
     align-items: stretch;
   }
   
-  /* Field column: Give more space for better proportions */
+  /* Field column: Give MORE space for better proportions (field should be bigger) */
   #torbildPage .field-column,
   #seasonMapPage .field-column {
-    flex: 1.5;
+    flex: 2;  /* Increased from 1.5 to 2 - field takes more space */
     min-width: 0;
   }
   
-  /* Goal column: Proper sizing */
+  /* Goal column: Smaller proportion to give field more room */
   #torbildPage .goal-column,
   #seasonMapPage .goal-column {
-    flex: 1;
+    flex: 1;  /* Goal column stays at 1, creating 2:1 ratio with field */
     min-width: 0;
     gap: 15px;
   }
@@ -1157,7 +1157,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   #seasonMapPage .field-box {
     width: 100%;
     height: 100%;
-    min-height: 450px;
+    min-height: 500px;  /* Increased from 450px to 500px for taller field */
   }
   
   #torbildPage .field-box img,
@@ -1170,7 +1170,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* Goal images: Each takes 1/3 of goal-column height */
   #torbildPage .goal-img-box,
   #seasonMapPage .goal-img-box {
-    flex: 1;
+    flex: 1;  /* 1/3 of goal column height */
     min-height: 0;
     height: auto;
   }
@@ -1182,11 +1182,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
     object-fit: fill;
   }
   
-  /* Time tracking box: Match goal image sizing (1/3 of height) */
+  /* Time tracking box: Match goal image sizing (1/3 of height) with period boxes inside */
   #torbildPage .time-tracking-box,
   #seasonMapPage .time-tracking-box {
-    flex: 1;
+    flex: 1;  /* 1/3 of goal column height - same as goal images */
     min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;  /* Period boxes stay at bottom */
   }
 }
 
