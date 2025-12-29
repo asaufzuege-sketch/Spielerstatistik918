@@ -122,9 +122,9 @@ App.goalMap = {
           // Strict boundary check - no tolerance to prevent clicks outside image (in black corners)
           insideImage = (
             clientX >= rendered.x &&
-            clientX <= rendered.x + rendered.width && 
+            clientX < rendered.x + rendered.width && 
             clientY >= rendered.y &&
-            clientY <= rendered.y + rendered.height
+            clientY < rendered.y + rendered.height
           );
           if (insideImage) {
             xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
