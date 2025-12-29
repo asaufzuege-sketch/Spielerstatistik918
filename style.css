@@ -1133,14 +1133,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* Main layout: Increased height for better spacing (Desktop only) */
   #torbildPage .torbild-layout,
   #seasonMapPage .torbild-layout {
-    height: calc(100vh - 100px);  /* Taller layout for better field visibility */
+    height: calc(100vh - 60px);  /* Taller layout - reduced margin from 80px to 60px for more vertical space */
     align-items: stretch;
   }
   
-  /* Field column: Give MORE space for better proportions (field should be bigger) */
+  /* Field column: Give MORE proportional space for better field visibility */
   #torbildPage .field-column,
   #seasonMapPage .field-column {
-    flex: 2;  /* Increased from 1.5 to 2 - field takes more space */
+    flex: 2;  /* Increased from 1.5 to 2 - field takes proportionally more space (2/3 vs 1/3) */
     min-width: 0;
   }
   
