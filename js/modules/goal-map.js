@@ -119,13 +119,12 @@ App.goalMap = {
         let yPctImage = 0;
         
         if (rendered) {
-          // BUGFIX: Add small tolerance (2px) for edge clicks to handle rounding/precision issues
-          const tolerance = 2;
+          // Strict boundary check - no tolerance to prevent clicks outside image (in black corners)
           insideImage = (
-            clientX >= rendered.x - tolerance &&
-            clientX <= rendered.x + rendered.width + tolerance && 
-            clientY >= rendered.y - tolerance &&
-            clientY <= rendered.y + rendered.height + tolerance
+            clientX >= rendered.x &&
+            clientX < rendered.x + rendered.width && 
+            clientY >= rendered.y &&
+            clientY < rendered.y + rendered.height
           );
           if (insideImage) {
             xPctImage = Math.max(0, Math.min(100, ((clientX - rendered.x) / (rendered.width || 1)) * 100));
