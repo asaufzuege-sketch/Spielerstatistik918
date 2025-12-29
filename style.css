@@ -1140,14 +1140,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* Field column: Give MORE proportional space for better field visibility */
   #torbildPage .field-column,
   #seasonMapPage .field-column {
-    flex: 2;  /* Increased from 1.5 to 2 - field takes proportionally more space (2/3 vs 1/3) */
+    flex: 2;  /* Increased from 1.5 to 2 - field takes 2/3 of space (goal takes remaining 1/3) */
     min-width: 0;
   }
   
   /* Goal column: Smaller proportion to give field more room */
   #torbildPage .goal-column,
   #seasonMapPage .goal-column {
-    flex: 1;  /* Goal column stays at 1, creating 2:1 ratio with field */
+    flex: 1;  /* Takes 1/3 of horizontal space, creating 2:1 ratio with field */
     min-width: 0;
     gap: 15px;
   }
