@@ -625,7 +625,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .time-tracking-box {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   background: var(--time-box-bg); /* NEU: Variable für Hintergrund */
   border: 2px solid #333;
   border-radius: 10px;
@@ -649,6 +649,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 8px;
   color: var(--period-text); /* NEU: Schriftfarbe weiß erzwingen */
+  flex-shrink: 1;
+  min-height: 0;
 }
 .period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
 .period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
