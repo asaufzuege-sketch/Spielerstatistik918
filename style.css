@@ -625,7 +625,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .time-tracking-box {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   background: var(--time-box-bg); /* NEU: Variable für Hintergrund */
   border: 2px solid #333;
   border-radius: 10px;
