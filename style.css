@@ -624,55 +624,45 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .time-tracking-box {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  justify-content: flex-end;
   background: var(--time-box-bg);
-  border: 1px solid #3b3b3b;
-  border-radius: 12px;
-  padding: 12px 14px;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 10px 14px;
   color: var(--time-box-text);
   font-size: 0.95rem;
   height: 100%;
-  overflow: hidden;
+  gap: 10px;
 }
 
 /* Period-Panel */
 .period {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: var(--period-bg);
-  border: 1px solid #3b3b3b;
-  border-radius: 12px;
-  padding: 12px;
-  color: var(--period-text);
-  flex-shrink: 1;
-  min-height: 0;
-}
-
-.period-title {
-  margin: 0;
-  text-align: center;
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.period-buttons,
-.period-numbers {
   display: grid;
-  grid-template-columns: repeat(4, minmax(60px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto minmax(1.4em, auto) auto;
+  align-items: center;
+  justify-items: center;
+  row-gap: 2px;
+  column-gap: 12px;
+  padding: 6px 10px;
+  background: var(--period-bg);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  color: var(--period-text);
 }
+
+.period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
+.period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
+.period-numbers span { color: #ccc; font-size: 0.8rem; line-height:1; }
 
 /* Buttons */
 .time-btn {
   width: 100%;
-  height: 32px;
+  height: 20px;
   border: none;
-  border-radius: 12px;
+  border-radius: 6px;
   font-weight: 600;
-  font-size: 14px;
-  line-height: 32px;
-  text-align: center;
+  font-size: 12px;
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
 }
@@ -683,20 +673,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period-buttons.top-row .time-btn:hover { background-color: #b2f0b2; }
 .period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
 .time-btn:active { transform: scale(1.05); }
-
-/* Mittlere Reihe */
-.period-numbers span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 24px;
-  border-radius: 12px;
-  background: transparent;
-  color: #9ea0a6;
-  font-weight: 600;
-  font-size: 14px;
-}
 
 /* Disabled-State */
 .time-btn[disabled],
