@@ -661,7 +661,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-size: 18px;
 }
 
-/* Drei Reihen: top, meta, bottom bleiben Grid-Kinder */
+/* Drei logische Gruppen (top, meta, bottom) bleiben Grid-Kinder via display: contents */
 .period-buttons.top-row,
 .period-buttons.bottom-row,
 .period-numbers { display: contents; }
