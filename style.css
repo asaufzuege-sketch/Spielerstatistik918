@@ -429,8 +429,6 @@ th, td {
 td[data-player] { cursor: pointer; transition: transform 0.08s, background 0.08s; }
 td[data-player]:active { transform: scale(1.12); background: #222; }
 
-.time-btn[disabled], .time-btn.disabled-readonly { opacity: 0.7; cursor: default; pointer-events: none; filter: brightness(0.95); }
-
 th.sortable { user-select: none; }
 th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
@@ -622,6 +620,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   transition: none;
 }
 
+/* Timebox-Container */
 .time-tracking-box {
   display: flex;
   flex-direction: column;
@@ -635,13 +634,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   height: 100%;
   overflow: hidden;
 }
+
+/* Period-Panel */
 .period {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto auto auto;
   align-items: center;
   justify-items: center;
-  row-gap: 10px;
+  row-gap: 6px;
   column-gap: 10px;
   background: var(--period-bg);
   border: 1px solid #3b3b3b;
@@ -651,6 +652,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   flex-shrink: 1;
   min-height: 0;
 }
+
 .period-title {
   grid-column: 1 / -1;
   margin: 0 0 6px;
@@ -658,37 +660,55 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 700;
   font-size: 18px;
 }
-.period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
-.period-numbers span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 40px;
-  border-radius: 12px;
-  background: transparent;
-  color: #9ea0a6;
-  font-weight: 600;
-  font-size: 16px;
-}
 
+/* Drei logische Gruppen (top, meta, bottom) bleiben Grid-Kinder via display: contents */
+.period-buttons.top-row,
+.period-buttons.bottom-row,
+.period-numbers { display: contents; }
+
+/* Buttons */
 .time-btn {
   width: 100%;
-  height: 40px;
+  height: 32px;
   border: none;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 16px;
-  line-height: 40px;
+  font-size: 14px;
+  line-height: 32px;
   text-align: center;
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
 }
+
+/* Farben bleiben */
 .period-buttons.top-row .time-btn { background: var(--btn-top-bg); }
 .period-buttons.bottom-row .time-btn { background: var(--btn-bottom-bg); }
 .period-buttons.top-row .time-btn:hover { background-color: #b2f0b2; }
 .period-buttons.bottom-row .time-btn:hover { background-color: #ffd3d3; }
 .time-btn:active { transform: scale(1.05); }
+
+/* Mittlere Reihe */
+.period-numbers span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 24px;
+  border-radius: 12px;
+  background: transparent;
+  color: #9ea0a6;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Disabled-State */
+.time-btn[disabled],
+.time-btn.disabled-readonly {
+  opacity: 0.7;
+  cursor: default;
+  pointer-events: none;
+  filter: brightness(0.95);
+}
 
 /* ====================== */
 /* SEASON PAGE (Scroll wie Goal Value) */
