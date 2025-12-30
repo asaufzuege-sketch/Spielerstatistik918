@@ -1186,7 +1186,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   }
   
   /* Time tracking box: Match goal image sizing (1/3 of height) */
-  /* Period boxes are kept inside by base CSS (display: flex; flex-direction: column; justify-content: flex-end) */
+  /* Period boxes are kept inside by base CSS (display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden) */
   #torbildPage .time-tracking-box,
   #seasonMapPage .time-tracking-box {
     flex: 1;  /* 1/3 of goal column height - same as goal images */
