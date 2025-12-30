@@ -634,6 +634,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-size: 0.95rem;
   height: 100%;
   gap: 10px;
+  overflow: hidden;  /* Prevent period boxes from overflowing */
 }
 .period {
   display: grid;
@@ -1137,17 +1138,17 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
     align-items: stretch;
   }
   
-  /* Field column: Give MORE proportional space for better field visibility */
+  /* Field column: 50% width for balanced layout */
   #torbildPage .field-column,
   #seasonMapPage .field-column {
-    flex: 2;  /* Increased from 1.5 to 2 - field takes 2/3 of space (goal takes remaining 1/3) */
+    flex: 1;  /* 50% of horizontal space */
     min-width: 0;
   }
   
-  /* Goal column: Smaller proportion to give field more room */
+  /* Goal column: 50% width for balanced layout */
   #torbildPage .goal-column,
   #seasonMapPage .goal-column {
-    flex: 1;  /* Takes 1/3 of horizontal space, creating 2:1 ratio with field */
+    flex: 1;  /* 50% of horizontal space */
     min-width: 0;
     gap: 15px;
   }
@@ -1188,6 +1189,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   #seasonMapPage .time-tracking-box {
     flex: 1;  /* 1/3 of goal column height - same as goal images */
     min-height: 0;
+    overflow: hidden;  /* Prevent period boxes from overflowing outside TimeBox */
   }
 }
 
