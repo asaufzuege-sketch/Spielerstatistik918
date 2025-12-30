@@ -637,13 +637,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Period-Panel */
 .period {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto auto auto;
-  align-items: center;
-  justify-items: center;
-  row-gap: 6px;
-  column-gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   background: var(--period-bg);
   border: 1px solid #3b3b3b;
   border-radius: 12px;
@@ -654,17 +650,18 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .period-title {
-  grid-column: 1 / -1;
-  margin: 0 0 6px;
+  margin: 0;
   text-align: center;
   font-weight: 700;
   font-size: 18px;
 }
 
-/* Drei logische Gruppen (top, meta, bottom) bleiben Grid-Kinder via display: contents */
-.period-buttons.top-row,
-.period-buttons.bottom-row,
-.period-numbers { display: contents; }
+.period-buttons,
+.period-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(60px, 1fr));
+  gap: 10px;
+}
 
 /* Buttons */
 .time-btn {
