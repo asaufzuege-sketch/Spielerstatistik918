@@ -643,9 +643,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   grid-template-rows: auto minmax(0, auto) auto;
   align-items: center;
   justify-items: center;
-  row-gap: 2px;
+  row-gap: clamp(2px, 0.5vh, 6px);
   column-gap: 12px;
-  padding: 6px 10px;
+  padding: clamp(4px, 0.8vh, 8px) 10px;
   background: var(--period-bg);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 8px;
@@ -655,9 +655,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   overflow: hidden;
 }
 
-.period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 2px; font-size: clamp(0.7rem, 1vw, 0.85rem); }
+.period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: clamp(1px, 0.3vh, 4px); font-size: clamp(0.65rem, 0.9vw, 0.85rem); line-height: 1.1; }
 .period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
-.period-numbers span { color: #ccc; font-size: clamp(0.65rem, 0.9vw, 0.8rem); line-height: 1; }
+.period-numbers span { color: #ccc; font-size: clamp(0.6rem, 0.8vw, 0.75rem); line-height: 1; position: relative; z-index: 1; }
 
 /* Buttons */
 .time-btn {
