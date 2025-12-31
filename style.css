@@ -640,7 +640,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto minmax(1.4em, auto) auto;
+  grid-template-rows: auto minmax(0, auto) auto;
   align-items: center;
   justify-items: center;
   row-gap: 2px;
@@ -650,22 +650,28 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 8px;
   color: var(--period-text);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
+.period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 2px; font-size: clamp(0.7rem, 1vw, 0.85rem); }
 .period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
-.period-numbers span { color: #ccc; font-size: 0.8rem; line-height:1; }
+.period-numbers span { color: #ccc; font-size: clamp(0.65rem, 0.9vw, 0.8rem); line-height: 1; }
 
 /* Buttons */
 .time-btn {
   width: 100%;
-  height: 20px;
+  min-height: 16px;
+  height: auto;
+  padding: 2px 4px;
   border: none;
   border-radius: 6px;
   font-weight: 600;
-  font-size: 12px;
+  font-size: clamp(10px, 1.2vw, 12px);
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
+  box-sizing: border-box;
 }
 
 /* Farben bleiben */
