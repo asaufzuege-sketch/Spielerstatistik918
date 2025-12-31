@@ -640,18 +640,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .period {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto auto auto;
+  grid-template-rows: auto minmax(1.4em, auto) auto;
   align-items: center;
   justify-items: center;
   row-gap: 2px;
-  column-gap: 8px;
-  padding: 4px 8px;
+  column-gap: 12px;
+  padding: 6px 10px;
   background: var(--period-bg);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 8px;
   color: var(--period-text);
-  flex: 1;
-  min-height: 0;
 }
 
 .period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
