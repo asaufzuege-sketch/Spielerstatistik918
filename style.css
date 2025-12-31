@@ -437,7 +437,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   justify-content: space-between;
   align-items: stretch;
   gap: 20px;
-  height: calc(100vh - 80px);
+  height: 100vh;
   margin-top: 20px;
 }
 .field-column { flex: 0.7; display: flex; justify-content: center; }  /* Narrower to make field-box HIGHER */
@@ -496,7 +496,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Season Map - Layout Höhe wie Goal Map */
 #seasonMapPage .torbild-layout {
-  height: calc(100vh - 80px);  /* Gleiche Höhe wie Goal Map - beide haben gleiche HTML-Struktur */
+  height: 100vh;  /* Gleiche Höhe wie Goal Map - beide haben gleiche HTML-Struktur */
   margin-bottom: 32px;  /* Abstand nach unten zur Momentum-Grafik */
 }
 
