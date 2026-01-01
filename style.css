@@ -2857,32 +2857,79 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   border-color: #444;
 }
 
-/* ===== DESKTOP >= 1025px: GOAL MAP FIX - RESTORE 916 LAYOUT ===== */
-/* This override neutralizes the 16:9 aspect-ratio and aggressive flex-sizing */
-/* Tablet/Mobile (<=1024px) remains unchanged */
+/* ===== GOAL MAP LAYOUT FIX - OVERRIDES ===== */
+/* These must be at the END of the file to have highest specificity */
+
+/* Desktop: 50/50 split, no 16:9 constraint */
 @media (min-width: 1025px) {
   #torbildPage .torbild-layout {
     flex-direction: row;
+    gap: 20px;
     height: auto;
     min-height: unset;
     max-height: unset;
-    aspect-ratio: unset;        /* Remove 16:9 constraint */
-    gap: 20px;
-    align-items: stretch;
+    aspect-ratio: unset;
   }
-
-  /* Desktop: Field 50%, right column 50% */
   #torbildPage .field-column { flex: 1 1 50%; min-width: 0; }
   #torbildPage .goal-column  { flex: 1 1 50%; min-width: 0; gap: 15px; }
 
-  /* Boxes should stretch to available height, not cut off */
+  /* Boxes should fill available space, but not clip content */
   #torbildPage .field-box,
   #torbildPage .goal-img-box,
   #torbildPage .time-tracking-box {
     height: 100%;
     min-height: 0;
+    overflow: visible; /* Important for Timebox - shows all periods */
+  }
+}
+
+/* Tablet: row layout, moderate height, no aspect-ratio constraints */
+@media (min-width: 901px) and (max-width: 1024px) {
+  #torbildPage .torbild-layout {
+    flex-direction: row;
+    gap: 16px;
+    height: auto;
+    min-height: unset;
+    max-height: unset;
+    aspect-ratio: unset;
+  }
+  #torbildPage .field-column { flex: 1 1 50%; min-width: 0; }
+  #torbildPage .goal-column  { flex: 1 1 50%; min-width: 0; gap: 12px; }
+
+  #torbildPage .field-box,
+  #torbildPage .goal-img-box,
+  #torbildPage .time-tracking-box {
+    height: 100%;
+    min-height: 0;
+    overflow: visible; /* Don't clip Timebox */
+  }
+}
+
+/* Mobile: column layout maintained, but nothing clipped */
+@media (max-width: 900px) {
+  #torbildPage .torbild-layout {
+    flex-direction: column;
+    gap: 12px;
+    height: auto;
+    min-height: unset;
+    max-height: unset;
+    aspect-ratio: unset;
   }
 
-  /* Timebox content must NOT be cut off */
-  #torbildPage .time-tracking-box { overflow: visible; }
+  #torbildPage .field-box,
+  #torbildPage .goal-img-box,
+  #torbildPage .time-tracking-box {
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    overflow: visible; /* All periods visible */
+  }
+}
+
+/* Shared image rules: Images should fill boxes without clipping */
+#torbildPage .goal-img-box img,
+#torbildPage .field-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
