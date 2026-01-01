@@ -2871,9 +2871,9 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
     align-items: stretch;
   }
 
-  /* Ratio like in 916: Field wider than Goals/Timebox */
-  #torbildPage .field-column { flex: 0.65; min-width: 0; }
-  #torbildPage .goal-column  { flex: 0.35; min-width: 0; gap: 15px; }
+  /* Desktop: Field 50%, right column 50% */
+  #torbildPage .field-column { flex: 1 1 50%; min-width: 0; }
+  #torbildPage .goal-column  { flex: 1 1 50%; min-width: 0; gap: 15px; }
 
   /* Boxes should stretch to available height, not cut off */
   #torbildPage .field-box,
