@@ -437,7 +437,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   justify-content: space-between;
   align-items: stretch;
   gap: 20px;
-  height: 100vh;
+  height: auto;
+  min-height: 600px;
+  max-height: 90vh;
+  aspect-ratio: 16 / 9;
   margin-top: 20px;
 }
 .field-column { flex: 0.7; display: flex; justify-content: center; }  /* Narrower to make field-box HIGHER */
@@ -462,12 +465,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 #torbildPage .goal-img-box {
-  flex: 1;  /* Gleiche Größe wie andere Elemente */
+  flex: 0.9;  /* Slightly less than timebox */
   min-height: 0;  /* Überschreibt vorherige min-height */
 }
 
 #torbildPage .time-tracking-box {
-  flex: 1;  /* Gleiche Größe wie Torbilder */
+  flex: 1.1;  /* Slightly more flex space than goalie images */
 }
 
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
@@ -490,13 +493,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #torbildPage .goal-img-box img {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
   border-radius: 8px;
 }
 
 /* Season Map - Layout Höhe wie Goal Map */
 #seasonMapPage .torbild-layout {
-  height: 100vh;  /* Gleiche Höhe wie Goal Map - beide haben gleiche HTML-Struktur */
+  height: auto;  /* Match Goal Map layout fix */
+  min-height: 600px;
+  max-height: 90vh;
+  aspect-ratio: 16 / 9;
   margin-bottom: 32px;  /* Abstand nach unten zur Momentum-Grafik */
 }
 
@@ -509,13 +515,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Season Map: Gleiche Größe wie Goal Map */
 #seasonMapPage .goal-img-box {
-  flex: 1;
+  flex: 0.9;  /* Match Goal Map - slightly less than timebox */
   min-height: 0;
   position: relative;
 }
 
 #seasonMapPage .time-tracking-box {
-  flex: 1;
+  flex: 1.1;  /* Match Goal Map - slightly more flex space */
   visibility: hidden;  /* Hide Time Box in Season Map but keep the space */
 }
 
@@ -571,7 +577,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #seasonMapPage .goal-img-box img {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
 }
 
 /* Marker-Punkte korrekt positionieren */
@@ -632,8 +638,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   color: var(--time-box-text);
   font-size: 0.95rem;
   height: 100%;
-  gap: 8px;
-  overflow: hidden;
+  gap: 10px;
+  overflow: visible;
 }
 
 /* Period-Panel */
@@ -643,32 +649,32 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   grid-template-rows: auto minmax(0, auto) auto;
   align-items: center;
   justify-items: center;
-  row-gap: clamp(1px, 0.4vh, 6px);
+  row-gap: clamp(8px, 1vh, 12px);
   column-gap: 12px;
-  padding: clamp(4px, 0.8vh, 8px) 10px;
+  padding: clamp(8px, 1.2vh, 12px) 10px;
   background: var(--period-bg);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 8px;
   color: var(--period-text);
   flex: 1;
-  min-height: 0;
-  overflow: hidden;
+  min-height: 90px;
+  overflow: visible;
 }
 
-.period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: clamp(0px, 0.2vh, 4px); font-size: clamp(0.5rem, 0.7vw, 0.85rem); line-height: 1; }
+.period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: clamp(4px, 0.5vh, 6px); font-size: clamp(0.65rem, 0.8vw, 0.9rem); line-height: 1.2; }
 .period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
-.period-numbers span { color: #ccc; font-size: clamp(0.45rem, 0.6vw, 0.75rem); line-height: 1; position: relative; z-index: 1; }
+.period-numbers span { color: #ccc; font-size: clamp(0.55rem, 0.7vw, 0.8rem); line-height: 1.3; position: relative; z-index: 1; margin: 4px 0; }
 
 /* Buttons */
 .time-btn {
   width: 100%;
-  min-height: 16px;
+  min-height: 20px;
   height: auto;
-  padding: 2px 4px;
+  padding: 4px 6px;
   border: none;
   border-radius: 6px;
   font-weight: 600;
-  font-size: clamp(10px, 1.2vw, 12px);
+  font-size: clamp(11px, 1.2vw, 13px);
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
   box-sizing: border-box;
@@ -1091,22 +1097,24 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
     flex-direction: row;
     height: auto;
     min-height: 600px;
+    max-height: 90vh;
+    aspect-ratio: 16 / 9;
     align-items: stretch;
   }
   
-  /* Field column: Give more space to ensure field fills properly */
+  /* Field column: Balanced with goal column */
   #torbildPage .field-column,
   #seasonMapPage .field-column {
-    flex: 1.2;
+    flex: 1;
     min-width: 0;
   }
   
-  /* Goal column: Prevent squeezing of goal images and time box */
+  /* Goal column: Balanced with field column */
   #torbildPage .goal-column,
   #seasonMapPage .goal-column {
-    flex: 0.8;
+    flex: 1;
     min-width: 0;
-    gap: 20px;
+    gap: 15px;
   }
   
   /* Playing field: Ensure it fills container width for proper marker positioning */
@@ -1123,11 +1131,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
     object-fit: contain;
   }
   
-  /* Goal images: Ensure they have sufficient height and are not squeezed */
+  /* Goal images: Use flex from base CSS (0.9) and contain for proper proportions */
   #torbildPage .goal-img-box,
   #seasonMapPage .goal-img-box {
-    flex: 1;
-    min-height: 180px;
+    flex: 0.9;
+    min-height: 0;
     height: auto;
   }
   
@@ -1135,14 +1143,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   #seasonMapPage .goal-img-box img {
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    object-fit: contain;
   }
   
-  /* Time tracking box: Match goal image sizing */
+  /* Time tracking box: Use flex from base CSS (1.1) */
   #torbildPage .time-tracking-box,
   #seasonMapPage .time-tracking-box {
-    flex: 1;
-    min-height: 180px;
+    flex: 1.1;
+    min-height: 0;
   }
 }
 
@@ -1151,21 +1159,24 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* ==================== */
 /* Desktop-specific layout fixes to ensure proper sizing of field and goal images */
 @media (min-width: 1025px) {
-  /* Main layout: Increased height for better spacing (Desktop only) */
+  /* Main layout: Use auto height with constraints for consistency at all zoom levels */
   #torbildPage .torbild-layout,
   #seasonMapPage .torbild-layout {
-    height: calc(100vh - 60px);  /* Increased available height by reducing reserved space from 80px to 60px */
+    height: auto;
+    min-height: 600px;
+    max-height: 90vh;
+    aspect-ratio: 16 / 9;
     align-items: stretch;
   }
   
-  /* Field column: 50% width for balanced layout */
+  /* Field column: Balanced with goal column */
   #torbildPage .field-column,
   #seasonMapPage .field-column {
     flex: 1;  /* 50% of horizontal space */
     min-width: 0;
   }
   
-  /* Goal column: 50% width for balanced layout */
+  /* Goal column: Balanced with field column */
   #torbildPage .goal-column,
   #seasonMapPage .goal-column {
     flex: 1;  /* 50% of horizontal space */
@@ -1173,12 +1184,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
     gap: 15px;
   }
   
-  /* Playing field: Ensure it fills container properly with increased height */
+  /* Playing field: Ensure it fills container properly */
   #torbildPage .field-box,
   #seasonMapPage .field-box {
     width: 100%;
     height: 100%;
-    min-height: 500px;  /* Increased from 450px to 500px for taller field */
+    min-height: 0;
   }
   
   #torbildPage .field-box img,
@@ -1188,10 +1199,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
     object-fit: contain;
   }
   
-  /* Goal images: Each takes 1/3 of goal-column height */
+  /* Goal images: Use flex from base CSS (0.9) and contain for proper proportions */
   #torbildPage .goal-img-box,
   #seasonMapPage .goal-img-box {
-    flex: 1;  /* 1/3 of goal column height */
+    flex: 0.9;  /* Slightly less than timebox */
     min-height: 0;
     height: auto;
   }
@@ -1200,16 +1211,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   #seasonMapPage .goal-img-box img {
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    object-fit: contain;
   }
   
-  /* Time tracking box: Match goal image sizing (1/3 of height) */
-  /* Period boxes are kept inside by base CSS (display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden) */
+  /* Time tracking box: Use flex from base CSS (1.1) for slightly more space */
   #torbildPage .time-tracking-box,
   #seasonMapPage .time-tracking-box {
-    flex: 1;  /* 1/3 of goal column height - same as goal images */
+    flex: 1.1;  /* Slightly more than goal images */
     min-height: 0;
-    overflow: hidden;  /* Prevent period boxes from overflowing outside TimeBox */
+    overflow: visible;  /* Allow period boxes to be visible */
   }
 }
 
