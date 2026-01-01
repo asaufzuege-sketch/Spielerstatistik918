@@ -455,13 +455,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 .field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 /* Goal Map - Aligned with Season Map layout */
-#torbildPage .torbild-layout {
-  height: auto;
-  min-height: 600px;
-  max-height: 90vh;
-  aspect-ratio: 16 / 9;
-  margin-top: 20px;
-}
 
 #torbildPage .goal-column {
   display: flex;
@@ -477,7 +470,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #torbildPage .time-tracking-box {
   flex: 1;
-  overflow: hidden; /* Contain period boxes within timebox */
 }
 
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
@@ -500,16 +492,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #torbildPage .goal-img-box img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: fill;
   border-radius: 8px;
 }
 
 /* Season Map - Same layout structure as Goal Map */
 #seasonMapPage .torbild-layout {
-  height: auto;
-  min-height: 600px;
-  max-height: 90vh;
-  aspect-ratio: 16 / 9;
+  height: calc(100vh - 120px);
   margin-bottom: 32px;  /* Abstand nach unten zur Momentum-Grafik */
 }
 
@@ -527,7 +516,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonMapPage .time-tracking-box {
   flex: 1;
-  overflow: hidden; /* Contain period boxes within timebox */
   visibility: hidden;  /* Hide Time Box in Season Map but keep the space */
 }
 
