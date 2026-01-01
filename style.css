@@ -665,7 +665,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .period-title { grid-column: 1 / -1; font-weight: bold; text-align: center; margin-bottom: 4px; font-size: 0.85rem; }
 .period-buttons.top-row, .period-buttons.bottom-row, .period-numbers { display: contents; }
-.period-numbers span { color: #ccc; font-size: 0.8rem; line-height:1; }
+.period-numbers span { color: #ccc; font-size: 0.8rem; line-height: 1; }
 
 /* Buttons */
 .time-btn {
