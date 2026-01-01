@@ -457,7 +457,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   overflow: hidden;
 }
 .field-box img, .img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
-/* Goal Map - Torbilder und TimeBox gleich groß (je 1/3) */
+/* Goal Map - Aligned with Season Map layout */
+#torbildPage .torbild-layout {
+  height: auto;
+  min-height: 600px;
+  max-height: 90vh;
+  aspect-ratio: 16 / 9;
+  margin-top: 20px;
+}
+
 #torbildPage .goal-column {
   display: flex;
   flex-direction: column;
@@ -467,10 +475,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #torbildPage .goal-img-box {
   flex: 1;
   min-height: 0;
+  position: relative;
 }
 
 #torbildPage .time-tracking-box {
   flex: 1;
+  overflow: hidden; /* Contain period boxes within timebox */
 }
 
 .goal-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
@@ -497,23 +507,21 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 8px;
 }
 
-/* Season Map - Layout Höhe wie Goal Map */
+/* Season Map - Same layout structure as Goal Map */
 #seasonMapPage .torbild-layout {
-  height: auto;  /* Match Goal Map layout fix */
+  height: auto;
   min-height: 600px;
   max-height: 90vh;
   aspect-ratio: 16 / 9;
   margin-bottom: 32px;  /* Abstand nach unten zur Momentum-Grafik */
 }
 
-/* Season Map - gleiche Logik */
 #seasonMapPage .goal-column {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Season Map: Gleiche Größe wie Goal Map */
 #seasonMapPage .goal-img-box {
   flex: 1;
   min-height: 0;
@@ -522,6 +530,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonMapPage .time-tracking-box {
   flex: 1;
+  overflow: hidden; /* Contain period boxes within timebox */
   visibility: hidden;  /* Hide Time Box in Season Map but keep the space */
 }
 
