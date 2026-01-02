@@ -938,7 +938,6 @@ App.goalMap = {
       this.applyPlayerFilter(); // Green zone
       
       // Apply goalie filter for red zone
-      const teamId = App.helpers.getCurrentTeamId();
       const savedGoalie = localStorage.getItem(`goalMapActiveGoalie_${teamId}`);
       if (savedGoalie) {
         const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
