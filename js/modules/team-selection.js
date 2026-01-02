@@ -134,6 +134,9 @@ App.teamSelection = (function() {
         localStorage.setItem('currentTeamId', teamId);
         updateButtonStates();
         
+        // Reload team-specific data for the new team
+        App.storage.load();
+        
         // Navigate to player selection
         if (App.showPage) {
             App.showPage('selection');
