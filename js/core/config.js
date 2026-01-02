@@ -269,7 +269,7 @@ const App = {
         if (page === "seasonMap" && this.seasonMap && typeof this.seasonMap.render === 'function') {
           // Check if markers are missing in DOM but exist in localStorage
           const markersInDOM = document.querySelectorAll("#seasonMapPage .marker-dot").length;
-          const teamId = this.teamSelection ? this.teamSelection.getCurrentTeamInfo().id : 'team1';
+          const teamId = App.helpers.getCurrentTeamId();
           const savedMarkers = localStorage.getItem(`seasonMapMarkers_${teamId}`);
           
           if (markersInDOM === 0 && savedMarkers) {
@@ -299,7 +299,7 @@ const App = {
           this.goalMap.applyPlayerFilter();
           
           // Goalie Filter anwenden
-          const teamId = this.teamSelection ? this.teamSelection.getCurrentTeamInfo().id : 'team1';
+          const teamId = App.helpers.getCurrentTeamId();
           const savedGoalie = localStorage.getItem(`goalMapActiveGoalie_${teamId}`);
           if (savedGoalie) {
             this.goalMap.filterByGoalies([savedGoalie]);
@@ -436,7 +436,7 @@ const App = {
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
     // WICHTIG: Workflow-Punkte AUCH in goalMapMarkers speichern (für restoreMarkers)
-    const teamId = this.teamSelection ? this.teamSelection.getCurrentTeamInfo().id : 'team1';
+    const teamId = App.helpers.getCurrentTeamId();
     const existingMarkers = App.helpers.safeJSONParse(`goalMapMarkers_${teamId}`, null) || [[], [], []];
 
     points.forEach(point => {
