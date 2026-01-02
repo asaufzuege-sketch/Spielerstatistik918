@@ -715,7 +715,7 @@ App.seasonMap = {
     localStorage.setItem(`seasonMapMarkers_${teamId}`, JSON.stringify(allMarkers));
     
     // Time data: OVERWRITE with current game data
-    const newTimeData = App.helpers.safeJSONParse("timeDataWithPlayers", {});
+    const newTimeData = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
     localStorage.setItem(`seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(newTimeData));
     
     // Flache Zeitdaten für Momentum-Graph
@@ -742,8 +742,8 @@ App.seasonMap = {
     if (!keep) {
       document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
       document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
-      localStorage.removeItem("timeData");
-      localStorage.removeItem("timeDataWithPlayers");
+      localStorage.removeItem(`timeData_${teamId}`);
+      localStorage.removeItem(`timeDataWithPlayers_${teamId}`);
     }
     
     // Show the season map page
