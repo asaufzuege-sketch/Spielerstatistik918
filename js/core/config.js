@@ -496,8 +496,8 @@ const App = {
       this.goalMap.updatePlayerNameOverlay();
     }
     
-    // REMOVED: Auto-navigation killed workflow context and caused timebox buttons to disappear
-    // User navigates manually after workflow completion
+    // REMOVED: Auto-navigation destroyed Goal Map DOM before timebox values were saved to localStorage,
+    // and timeTrackingInitialized flag prevented re-initialization. User navigates manually after workflow.
     // setTimeout(() => {
     //   this.showPage('stats');
     // }, 300);
