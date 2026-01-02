@@ -18,11 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
     lineUp: document.getElementById("lineUpPage")
   };
   
-  // 3. Daten aus LocalStorage laden
+  // 3. Team Selection initialisieren (MUSS VOR storage.load() sein!)
+  App.teamSelection.init();
+  
+  // 4. Daten aus LocalStorage laden (benötigt teamSelection.getCurrentTeamInfo())
   App.storage.load();
   
-  // 4. Alle Module initialisieren
-  App.teamSelection.init();
+  // 5. Alle anderen Module initialisieren
   App.timer.init();
   App.csvHandler.init();
   App.playerSelection.init();
@@ -33,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   App.goalValue.init();
   App.lineUp.init();
   
-  // 5. Navigation Event Listeners
+  // 6. Navigation Event Listeners
   document.getElementById("selectPlayersBtn")?.addEventListener("click", () => {
     App.showPage("selection");
   });
@@ -82,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("lineUp");
   });
   
-  // 6. Delegierte Back-Button Handler
+  // 7. Delegierte Back-Button Handler
   document.addEventListener("click", (e) => {
     try {
       const btn = e.target.closest("button");
@@ -111,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, true);
   
-  // 7. Initiale Seite anzeigen
+  // 8. Initiale Seite anzeigen
   // NEU: benutze getCurrentTeamInfo() statt getCurrentTeam()
   const teamInfo = App.teamSelection.getCurrentTeamInfo();
   const currentTeam = teamInfo?.id; // z.B. "team1"
@@ -129,10 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
   App.showPage(initialPage);
   
-  // 8. Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
+  // 9. Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
   App.restoreActiveTimers();
   
-  // 9. Daten vor Seitenabschluss speichern
+  // 10. Daten vor Seitenabschluss speichern
   window.addEventListener("beforeunload", () => {
     try {
       App.storage.saveAll();
@@ -143,16 +145,17 @@ document.addEventListener("DOMContentLoaded", () => {
       App.saveActiveTimersState(); // Timer State speichern
       localStorage.setItem("timerSeconds", String(App.timer.seconds));
       if (App.goalValue) {
-        localStorage.setItem("goalValueOpponents", JSON.stringify(App.goalValue.getOpponents()));
-        localStorage.setItem("goalValueData", JSON.stringify(App.goalValue.getData()));
-        localStorage.setItem("goalValueBottom", JSON.stringify(App.goalValue.getBottom()));
+        const teamId = App.helpers.getCurrentTeamId();
+        localStorage.setItem(`goalValueOpponents_${teamId}`, JSON.stringify(App.goalValue.getOpponents()));
+        localStorage.setItem(`goalValueData_${teamId}`, JSON.stringify(App.goalValue.getData()));
+        localStorage.setItem(`goalValueBottom_${teamId}`, JSON.stringify(App.goalValue.getBottom()));
       }
     } catch (e) {
       console.warn("Save on unload failed:", e);
     }
   });
   
-  // 10. Page Visibility API - Timer bei Tab-Wechsel beibehalten
+  // 11. Page Visibility API - Timer bei Tab-Wechsel beibehalten
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       App.saveActiveTimersState();

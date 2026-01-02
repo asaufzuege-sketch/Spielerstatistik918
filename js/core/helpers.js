@@ -1,5 +1,15 @@
 // Helper-Funktionen
 App.helpers = {
+  /**
+   * Get the current team ID from team selection.
+   * Used for team-specific localStorage keys (seasonData, goalValue, etc.).
+   * @returns {string} Team ID ('team1', 'team2', or 'team3'). Defaults to 'team1' if no team is selected.
+   */
+  getCurrentTeamId() {
+    const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+    return teamInfo?.id || 'team1';
+  },
+  
   escapeHtml(s) {
     return String(s || "").replace(/[&<>"']/g, c => ({
       '&':'&amp;',

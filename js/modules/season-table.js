@@ -726,7 +726,8 @@ App.seasonTable = {
     if (!confirm("Delete Season data?")) return;
 
     App.data.seasonData = {};
-    localStorage.removeItem("seasonData");
+    const teamId = App.helpers.getCurrentTeamId();
+    localStorage.removeItem(`seasonData_${teamId}`);
     this.render();
     alert("Season data deleted.");
   },

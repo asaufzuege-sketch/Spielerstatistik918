@@ -4,7 +4,8 @@ App.storage = {
     App.data.selectedPlayers = JSON.parse(localStorage.getItem("selectedPlayers")) || [];
     App.data.statsData = JSON.parse(localStorage.getItem("statsData")) || {};
     App.data.playerTimes = JSON.parse(localStorage.getItem("playerTimes")) || {};
-    App.data.seasonData = JSON.parse(localStorage.getItem("seasonData")) || {};
+    const teamId = App.helpers.getCurrentTeamId();
+    App.data.seasonData = JSON.parse(localStorage.getItem(`seasonData_${teamId}`)) || {};
   },
   
   saveSelectedPlayers() {
@@ -20,7 +21,8 @@ App.storage = {
   },
   
   saveSeasonData() {
-    localStorage.setItem("seasonData", JSON.stringify(App.data.seasonData));
+    const teamId = App.helpers.getCurrentTeamId();
+    localStorage.setItem(`seasonData_${teamId}`, JSON.stringify(App.data.seasonData));
   },
   
   saveAll() {
