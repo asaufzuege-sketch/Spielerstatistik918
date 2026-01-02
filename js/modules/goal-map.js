@@ -49,7 +49,8 @@ App.goalMap = {
     
     // Apply goalie filter for red zone
     const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
-    const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+    const teamId = App.helpers.getCurrentTeamId();
+    const savedGoalie = localStorage.getItem(`goalMapActiveGoalie_${teamId}`);
     if (savedGoalie && goalieFilterSelect && goalieFilterSelect.value === savedGoalie) {
       // Specific goalie is selected, filter red zone
       this.filterByGoalies([savedGoalie]);
@@ -788,7 +789,8 @@ App.goalMap = {
   
   // Restore filter state from localStorage
   restoreFilterState() {
-    const savedFilter = localStorage.getItem("goalMapPlayerFilter");
+    const teamId = App.helpers.getCurrentTeamId();
+    const savedFilter = localStorage.getItem(`goalMapPlayerFilter_${teamId}`);
     if (savedFilter) {
       this.playerFilter = savedFilter;
       const filterSelect = document.getElementById("goalMapPlayerFilter");
@@ -798,7 +800,7 @@ App.goalMap = {
       this.applyPlayerFilter();
     }
     
-    const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+    const savedGoalie = localStorage.getItem(`goalMapActiveGoalie_${teamId}`);
     if (savedGoalie) {
       const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
       if (goalieFilterSelect) {
@@ -816,7 +818,7 @@ App.goalMap = {
             this.filterByGoalies([savedGoalie]);
           } else {
             // Value couldn't be set, clean up
-            localStorage.removeItem("goalMapActiveGoalie");
+            localStorage.removeItem(`goalMapActiveGoalie_${teamId}`);
             goalieFilterSelect.value = ""; // Set to "All Goalies"
             goalieFilterSelect.classList.remove("active");
             // Remove overlays
@@ -824,7 +826,7 @@ App.goalMap = {
           }
         } else {
           // Goalie doesn't exist anymore, clean up
-          localStorage.removeItem("goalMapActiveGoalie");
+          localStorage.removeItem(`goalMapActiveGoalie_${teamId}`);
           goalieFilterSelect.value = ""; // Set to "All Goalies"
           goalieFilterSelect.classList.remove("active");
           // Remove overlays
@@ -860,12 +862,14 @@ App.goalMap = {
       return markers;
     });
     
-    localStorage.setItem("goalMapMarkers", JSON.stringify(allMarkers));
+    const teamId = App.helpers.getCurrentTeamId();
+    localStorage.setItem(`goalMapMarkers_${teamId}`, JSON.stringify(allMarkers));
   },
   
   // Restore markers from localStorage
   restoreMarkers() {
-    const allMarkers = App.helpers.safeJSONParse("goalMapMarkers", null);
+    const teamId = App.helpers.getCurrentTeamId();
+    const allMarkers = App.helpers.safeJSONParse(`goalMapMarkers_${teamId}`, null);
     if (!allMarkers) return;
       const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
       
@@ -934,7 +938,8 @@ App.goalMap = {
       this.applyPlayerFilter(); // Green zone
       
       // Apply goalie filter for red zone
-      const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+      const teamId = App.helpers.getCurrentTeamId();
+      const savedGoalie = localStorage.getItem(`goalMapActiveGoalie_${teamId}`);
       if (savedGoalie) {
         const goalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
         const goalieNames = goalies.map(g => g.name);
@@ -963,8 +968,9 @@ App.goalMap = {
     }
     this.timeTrackingInitialized = true;
     
-    let timeData = App.helpers.safeJSONParse("timeData", {});
-    let timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
+    const teamId = App.helpers.getCurrentTeamId();
+    let timeData = App.helpers.safeJSONParse(`timeData_${teamId}`, {});
+    let timeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
@@ -1004,7 +1010,7 @@ App.goalMap = {
           const newVal = Math.max(0, current + delta);
           timeDataWithPlayers[key][playerName] = newVal;
           
-          localStorage.setItem("timeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
+          localStorage.setItem(`timeDataWithPlayers_${teamId}`, JSON.stringify(timeDataWithPlayers));
           
           let displayVal = 0;
           if (this.playerFilter) {
@@ -1017,7 +1023,7 @@ App.goalMap = {
           
           if (!timeData[periodNum]) timeData[periodNum] = {};
           timeData[periodNum][idx] = displayVal;
-          localStorage.setItem("timeData", JSON.stringify(timeData));
+          localStorage.setItem(`timeData_${teamId}`, JSON.stringify(timeData));
           
           if (delta > 0 && App.goalMapWorkflow?.active) {
             const btnRect = newBtn.getBoundingClientRect();
@@ -1145,7 +1151,8 @@ App.goalMap = {
       }
     });
     
-    const savedFilter = localStorage.getItem("goalMapPlayerFilter");
+    const teamId = App.helpers.getCurrentTeamId();
+    const savedFilter = localStorage.getItem(`goalMapPlayerFilter_${teamId}`);
     if (savedFilter) {
       filterSelect.value = savedFilter;
       this.playerFilter = savedFilter;
@@ -1170,11 +1177,11 @@ App.goalMap = {
         
         // Save to localStorage or remove if "All Goalies"
         if (selectedGoalie && selectedGoalie !== "") {
-          localStorage.setItem("goalMapActiveGoalie", selectedGoalie);
+          localStorage.setItem(`goalMapActiveGoalie_${teamId}`, selectedGoalie);
           goalieFilterSelect.classList.add("active"); // Pulsieren AN
         } else {
           // "All Goalies" selected - remove localStorage and overlays
-          localStorage.removeItem("goalMapActiveGoalie");
+          localStorage.removeItem(`goalMapActiveGoalie_${teamId}`);
           goalieFilterSelect.classList.remove("active"); // Pulsieren AUS
           // Remove any existing goalie name overlays
           document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal').forEach(el => el.remove());
@@ -1196,7 +1203,7 @@ App.goalMap = {
       });
       
       // KRITISCH: Restore saved goalie value after populating dropdown
-      const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+      const savedGoalie = localStorage.getItem(`goalMapActiveGoalie_${teamId}`);
       if (savedGoalie) {
         // Check if saved goalie still exists as option in dropdown
         const goalieNames = goalies.map(g => g.name);
@@ -1213,12 +1220,12 @@ App.goalMap = {
             this.filterByGoalies([savedGoalie]);
           } else {
             // Value couldn't be set, clean up
-            localStorage.removeItem("goalMapActiveGoalie");
+            localStorage.removeItem(`goalMapActiveGoalie_${teamId}`);
             goalieFilterSelect.classList.remove("active");
           }
         } else {
           // Goalie doesn't exist anymore, clean up
-          localStorage.removeItem("goalMapActiveGoalie");
+          localStorage.removeItem(`goalMapActiveGoalie_${teamId}`);
           goalieFilterSelect.value = ""; // Set to "All Goalies"
           goalieFilterSelect.classList.remove("active");
         }
@@ -1270,7 +1277,8 @@ App.goalMap = {
   applyGoalieTimeTrackingFilter(goalieNames) {
     if (!this.timeTrackingBox) return;
     
-    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
+    const teamId = App.helpers.getCurrentTeamId();
+    const timeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
@@ -1295,10 +1303,11 @@ App.goalMap = {
   },
   
   applyPlayerFilter() {
+    const teamId = App.helpers.getCurrentTeamId();
     if (this.playerFilter) {
-      localStorage.setItem("goalMapPlayerFilter", this.playerFilter);
+      localStorage.setItem(`goalMapPlayerFilter_${teamId}`, this.playerFilter);
     } else {
-      localStorage.removeItem("goalMapPlayerFilter");
+      localStorage.removeItem(`goalMapPlayerFilter_${teamId}`);
     }
     
     const boxes = document.querySelectorAll(App.selectors.torbildBoxes);
@@ -1325,7 +1334,8 @@ App.goalMap = {
   applyTimeTrackingFilter() {
     if (!this.timeTrackingBox) return;
     
-    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
+    const teamId = App.helpers.getCurrentTeamId();
+    const timeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
@@ -1426,7 +1436,7 @@ App.goalMap = {
     localStorage.setItem(`seasonMapMarkers_${teamId}`, JSON.stringify(allMarkers));
     
     // Player-bezogene Zeitdaten übernehmen
-    const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
+    const timeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
     console.log('[Goal Map Export] timeDataWithPlayers:', timeDataWithPlayers);
     localStorage.setItem(`seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(timeDataWithPlayers));
     
@@ -1450,15 +1460,15 @@ App.goalMap = {
     
     // Alte timeData ebenfalls aktualisieren
     const timeData = this.readTimeTrackingFromBox();
-    localStorage.setItem("timeData", JSON.stringify(timeData));
+    localStorage.setItem(`timeData_${teamId}`, JSON.stringify(timeData));
     
     const keep = confirm("Game exported to Season Map. Keep data in Goal Map? (OK = Yes)");
     if (!keep) {
       document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
       document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
-      localStorage.removeItem("timeData");
-      localStorage.removeItem("timeDataWithPlayers");
-      localStorage.removeItem("goalMapMarkers");
+      localStorage.removeItem(`timeData_${teamId}`);
+      localStorage.removeItem(`timeDataWithPlayers_${teamId}`);
+      localStorage.removeItem(`goalMapMarkers_${teamId}`);
     }
     
     App.showPage("seasonMap");
@@ -1496,9 +1506,10 @@ App.goalMap = {
     document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
     document.querySelectorAll("#torbildPage .time-btn").forEach(b => b.textContent = "0");
     
-    localStorage.removeItem("timeData");
-    localStorage.removeItem("timeDataWithPlayers");
-    localStorage.removeItem("goalMapMarkers");
+    const teamId = App.helpers.getCurrentTeamId();
+    localStorage.removeItem(`timeData_${teamId}`);
+    localStorage.removeItem(`timeDataWithPlayers_${teamId}`);
+    localStorage.removeItem(`goalMapMarkers_${teamId}`);
     
     // Reset initialization flag to allow re-initialization
     this.timeTrackingInitialized = false;
