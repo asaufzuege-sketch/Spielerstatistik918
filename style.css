@@ -2670,6 +2670,10 @@ tr[data-player].dragging {
   justify-content: center !important;
   align-items: flex-start !important;
   width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-height: calc(100vh - 200px) !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
 #seasonContainer table,
