@@ -1407,6 +1407,7 @@ App.goalMap = {
   exportGoalMap() {
     if (!confirm("In Season Map exportieren?")) return;
     
+    const teamId = App.helpers.getCurrentTeamId();
     const boxes = Array.from(document.querySelectorAll(App.selectors.torbildBoxes));
     const allMarkers = boxes.map(box => {
       const markers = [];
@@ -1422,12 +1423,12 @@ App.goalMap = {
       return markers;
     });
     
-    localStorage.setItem("seasonMapMarkers", JSON.stringify(allMarkers));
+    localStorage.setItem(`seasonMapMarkers_${teamId}`, JSON.stringify(allMarkers));
     
     // Player-bezogene Zeitdaten übernehmen
     const timeDataWithPlayers = App.helpers.safeJSONParse("timeDataWithPlayers", {});
     console.log('[Goal Map Export] timeDataWithPlayers:', timeDataWithPlayers);
-    localStorage.setItem("seasonMapTimeDataWithPlayers", JSON.stringify(timeDataWithPlayers));
+    localStorage.setItem(`seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(timeDataWithPlayers));
     
     // Flache Zeitdaten für Momentum-Graph aus timeDataWithPlayers berechnen
     const momentumData = {};
@@ -1445,7 +1446,7 @@ App.goalMap = {
     });
     
     console.log('[Goal Map Export] momentumData:', momentumData);
-    localStorage.setItem("seasonMapTimeData", JSON.stringify(momentumData));
+    localStorage.setItem(`seasonMapTimeData_${teamId}`, JSON.stringify(momentumData));
     
     // Alte timeData ebenfalls aktualisieren
     const timeData = this.readTimeTrackingFromBox();

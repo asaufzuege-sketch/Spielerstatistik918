@@ -34,12 +34,14 @@
   
   // Goal Markers Management
   function saveGoalMarkers() {
-    localStorage.setItem('seasonMapMarkers', JSON.stringify(goalMarkers));
+    const teamId = App.helpers.getCurrentTeamId();
+    localStorage.setItem(`seasonMapMarkers_${teamId}`, JSON.stringify(goalMarkers));
   }
   
   function loadGoalMarkers() {
     try {
-      const saved = localStorage.getItem('seasonMapMarkers');
+      const teamId = App.helpers.getCurrentTeamId();
+      const saved = localStorage.getItem(`seasonMapMarkers_${teamId}`);
       if (saved) {
         const parsed = JSON.parse(saved);
         
@@ -228,7 +230,8 @@
   // Rest der ursprünglichen Funktionen...
   function readFromLocalStorageFallback() {
     try {
-      const raw = localStorage.getItem('seasonMapTimeData') || null;
+      const teamId = App.helpers.getCurrentTeamId();
+      const raw = localStorage.getItem(`seasonMapTimeData_${teamId}`) || null;
       console.log('[Season Map] Geladene Momentum-Daten (raw):', raw);
       if (!raw) return null;
       const obj = JSON.parse(raw);
@@ -416,13 +419,14 @@
 
     // Get active filters
     const playerFilter = App.seasonMap?.playerFilter || null;
-    let goalieFilter = localStorage.getItem("seasonMapActiveGoalie") || null;
+    const teamId = App.helpers.getCurrentTeamId();
+    let goalieFilter = localStorage.getItem(`seasonMapActiveGoalie_${teamId}`) || null;
     
     // Normalize empty string and "All Goalies" values to null for consistent filter logic
     goalieFilter = App.helpers.normalizeGoalieFilter(goalieFilter);
     
     // Load per-player data instead of aggregated totals
-    const timeDataWithPlayers = App.helpers.safeJSONParse("seasonMapTimeDataWithPlayers", {});
+    const timeDataWithPlayers = App.helpers.safeJSONParse(`seasonMapTimeDataWithPlayers_${teamId}`, {});
     
     // Helper: Sum button value based on filter
     function sumButton(key, isBottomRow) {
@@ -629,9 +633,10 @@
   function setupAutoUpdate() {
     const clearLSOnReset = () => {
       try {
-        localStorage.removeItem('seasonMapTimeData');
-        localStorage.removeItem('seasonMapTimeDataWithPlayers');
-        localStorage.removeItem('seasonMapMarkers'); // Clear goal markers too
+        const teamId = App.helpers.getCurrentTeamId();
+        localStorage.removeItem(`seasonMapTimeData_${teamId}`);
+        localStorage.removeItem(`seasonMapTimeDataWithPlayers_${teamId}`);
+        localStorage.removeItem(`seasonMapMarkers_${teamId}`); // Clear goal markers too
       } catch (e) {}
       goalMarkers = []; // Clear in-memory markers
       setTimeout(() => {
