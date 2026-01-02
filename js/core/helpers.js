@@ -1,5 +1,10 @@
 // Helper-Funktionen
 App.helpers = {
+  getCurrentTeamId() {
+    const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+    return teamInfo?.id || 'team1';
+  },
+  
   escapeHtml(s) {
     return String(s || "").replace(/[&<>"']/g, c => ({
       '&':'&amp;',
