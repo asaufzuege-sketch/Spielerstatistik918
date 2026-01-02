@@ -449,7 +449,6 @@ App.seasonMap = {
     // Apply filters after restoring
     this.applyPlayerFilter(true); // Skip stats render - will be called after both filters applied
     
-    const teamId = App.helpers.getCurrentTeamId();
     const savedGoalie = localStorage.getItem(`seasonMapActiveGoalie_${teamId}`);
     if (savedGoalie) {
       this.filterByGoalies([savedGoalie], true); // Skip stats render - will be called after both filters applied
