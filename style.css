@@ -2933,3 +2933,81 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   height: 100%;
   object-fit: contain;
 }
+
+/* ===== SEASON MAP LAYOUT FIX - OVERRIDES ===== */
+
+/* SEASON MAP: Desktop >= 1025px – 50/50 Layout, boxes fill, no 16:9 constraints */
+@media (min-width: 1025px) {
+  #seasonMapPage .torbild-layout {
+    flex-direction: row;
+    gap: 20px;
+    height: auto;
+    min-height: unset;
+    max-height: unset;
+    aspect-ratio: unset;
+    margin-bottom: 32px; /* Momentum graphic stays below */
+  }
+  #seasonMapPage .field-column { flex: 1 1 50%; min-width: 0; }
+  #seasonMapPage .goal-column  { flex: 1 1 50%; min-width: 0; gap: 15px; }
+
+  #seasonMapPage .field-box,
+  #seasonMapPage .goal-img-box,
+  #seasonMapPage .time-tracking-box {
+    height: 100%;
+    min-height: 0;
+    overflow: visible; /* don't clip anything */
+  }
+}
+
+/* SEASON MAP: Tablet 901–1024px – also 50/50, no aspect-ratio constraints */
+@media (min-width: 901px) and (max-width: 1024px) {
+  #seasonMapPage .torbild-layout {
+    flex-direction: row;
+    gap: 16px;
+    height: auto;
+    min-height: unset;
+    max-height: unset;
+    aspect-ratio: unset;
+    margin-bottom: 24px;
+  }
+  #seasonMapPage .field-column { flex: 1 1 50%; min-width: 0; }
+  #seasonMapPage .goal-column  { flex: 1 1 50%; min-width: 0; gap: 12px; }
+
+  #seasonMapPage .field-box,
+  #seasonMapPage .goal-img-box,
+  #seasonMapPage .time-tracking-box {
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+}
+
+/* SEASON MAP: Mobile <= 900px – keep column stack, but don't clip */
+@media (max-width: 900px) {
+  #seasonMapPage .torbild-layout {
+    flex-direction: column;
+    gap: 12px;
+    height: auto;
+    min-height: unset;
+    max-height: unset;
+    aspect-ratio: unset;
+    margin-bottom: 16px;
+  }
+
+  #seasonMapPage .field-box,
+  #seasonMapPage .goal-img-box,
+  #seasonMapPage .time-tracking-box {
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+}
+
+/* Images fill their boxes without clipping */
+#seasonMapPage .goal-img-box img,
+#seasonMapPage .field-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
