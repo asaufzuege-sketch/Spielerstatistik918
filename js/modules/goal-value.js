@@ -14,7 +14,9 @@ App.goalValue = {
   
   getOpponents() {
     try {
-      const raw = localStorage.getItem("goalValueOpponents");
+      const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+      const teamId = teamInfo?.id || 'team1';
+      const raw = localStorage.getItem(`goalValueOpponents_${teamId}`);
       if (raw) {
         let opponents = JSON.parse(raw);
         // Convert old German "Gegner" to English "Opponent"
@@ -38,12 +40,16 @@ App.goalValue = {
   },
   
   setOpponents(arr) {
-    localStorage.setItem("goalValueOpponents", JSON.stringify(arr));
+    const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const teamId = teamInfo?.id || 'team1';
+    localStorage.setItem(`goalValueOpponents_${teamId}`, JSON.stringify(arr));
   },
   
   getData() {
     try {
-      const raw = localStorage.getItem("goalValueData");
+      const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+      const teamId = teamInfo?.id || 'team1';
+      const raw = localStorage.getItem(`goalValueData_${teamId}`);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
     return {};
@@ -54,19 +60,25 @@ App.goalValue = {
       console.warn("[Goal Value] setData blocked during update to prevent recursion");
       return;
     }
-    localStorage.setItem("goalValueData", JSON.stringify(obj));
+    const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const teamId = teamInfo?.id || 'team1';
+    localStorage.setItem(`goalValueData_${teamId}`, JSON.stringify(obj));
   },
   
   getBottom() {
     try {
-      const raw = localStorage.getItem("goalValueBottom");
+      const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+      const teamId = teamInfo?.id || 'team1';
+      const raw = localStorage.getItem(`goalValueBottom_${teamId}`);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
     return this.getOpponents().map(() => 0);
   },
   
   setBottom(arr) {
-    localStorage.setItem("goalValueBottom", JSON.stringify(arr));
+    const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+    const teamId = teamInfo?.id || 'team1';
+    localStorage.setItem(`goalValueBottom_${teamId}`, JSON.stringify(arr));
   },
   
   computeValueForPlayer(name) {
@@ -101,7 +113,9 @@ App.goalValue = {
         }
       });
       
-      localStorage.setItem("goalValueData", JSON.stringify(all));
+      const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+      const teamId = teamInfo?.id || 'team1';
+      localStorage.setItem(`goalValueData_${teamId}`, JSON.stringify(all));
       console.log("[Goal Value] ensureDataForSeason completed");
     } finally {
       this.isUpdatingData = false;

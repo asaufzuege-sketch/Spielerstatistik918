@@ -143,9 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
       App.saveActiveTimersState(); // Timer State speichern
       localStorage.setItem("timerSeconds", String(App.timer.seconds));
       if (App.goalValue) {
-        localStorage.setItem("goalValueOpponents", JSON.stringify(App.goalValue.getOpponents()));
-        localStorage.setItem("goalValueData", JSON.stringify(App.goalValue.getData()));
-        localStorage.setItem("goalValueBottom", JSON.stringify(App.goalValue.getBottom()));
+        const teamInfo = App.teamSelection?.getCurrentTeamInfo();
+        const teamId = teamInfo?.id || 'team1';
+        localStorage.setItem(`goalValueOpponents_${teamId}`, JSON.stringify(App.goalValue.getOpponents()));
+        localStorage.setItem(`goalValueData_${teamId}`, JSON.stringify(App.goalValue.getData()));
+        localStorage.setItem(`goalValueBottom_${teamId}`, JSON.stringify(App.goalValue.getBottom()));
       }
     } catch (e) {
       console.warn("Save on unload failed:", e);
