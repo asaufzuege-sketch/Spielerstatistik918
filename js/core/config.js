@@ -429,12 +429,7 @@ const App = {
     const category = eventType === 'goal' ? 'Goals' : 'Shot';
     this.data.statsData[playerName][category] = (this.data.statsData[playerName][category] || 0) + 1;
     
-copilot/fix-duplicate-const-teamid-again
-    // Save to localStorage - USE SINGLE teamId DECLARATION
-    const teamId = App.helpers.getCurrentTeamId();
-
     // Save to localStorage
-main
     localStorage.setItem(`goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
     localStorage.setItem(`statsData_${teamId}`, JSON.stringify(this.data.statsData));
     
