@@ -403,6 +403,7 @@ const App = {
     const eventType = this.goalMapWorkflow.eventType;
     const workflowType = this.goalMapWorkflow.workflowType;
     const points = this.goalMapWorkflow.collectedPoints;
+    const teamId = App.helpers.getCurrentTeamId();
     
     // Save the collected points with player data
     if (!this.data.goalMapData) {
@@ -428,8 +429,12 @@ const App = {
     const category = eventType === 'goal' ? 'Goals' : 'Shot';
     this.data.statsData[playerName][category] = (this.data.statsData[playerName][category] || 0) + 1;
     
+copilot/fix-duplicate-const-teamid-again
     // Save to localStorage - USE SINGLE teamId DECLARATION
     const teamId = App.helpers.getCurrentTeamId();
+
+    // Save to localStorage
+main
     localStorage.setItem(`goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
     localStorage.setItem(`statsData_${teamId}`, JSON.stringify(this.data.statsData));
     
