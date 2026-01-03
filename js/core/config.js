@@ -428,15 +428,14 @@ const App = {
     const category = eventType === 'goal' ? 'Goals' : 'Shot';
     this.data.statsData[playerName][category] = (this.data.statsData[playerName][category] || 0) + 1;
     
-    // Save to localStorage
-    const teamId = this.teamSelection ? this.teamSelection.getCurrentTeamInfo().id : 'team1';
+    // Save to localStorage - USE SINGLE teamId DECLARATION
+    const teamId = App.helpers.getCurrentTeamId();
     localStorage.setItem(`goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
     localStorage.setItem(`statsData_${teamId}`, JSON.stringify(this.data.statsData));
     
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
     // WICHTIG: Workflow-Punkte AUCH in goalMapMarkers speichern (für restoreMarkers)
-    const teamId = App.helpers.getCurrentTeamId();
     const existingMarkers = App.helpers.safeJSONParse(`goalMapMarkers_${teamId}`, null) || [[], [], []];
 
     points.forEach(point => {
