@@ -269,7 +269,8 @@ const App = {
         if (page === "seasonMap" && this.seasonMap && typeof this.seasonMap.render === 'function') {
           // Check if markers are missing in DOM but exist in localStorage
           const markersInDOM = document.querySelectorAll("#seasonMapPage .marker-dot").length;
-          const savedMarkers = localStorage.getItem("seasonMapMarkers");
+          const teamId = App.helpers.getCurrentTeamId();
+          const savedMarkers = localStorage.getItem(`seasonMapMarkers_${teamId}`);
           
           if (markersInDOM === 0 && savedMarkers) {
             console.log('[Season Map] Restoring markers from localStorage...');
@@ -286,6 +287,9 @@ const App = {
           }
         }
         if (page === "torbild" && this.goalMap) {
+          // Reset timeTracking initialization flag to ensure buttons are re-initialized
+          this.goalMap.timeTrackingInitialized = false;
+          
           // Nach dem Anzeigen der torbild-Seite, Marker wiederherstellen
           if (typeof this.goalMap.restoreMarkers === 'function') {
             this.goalMap.restoreMarkers();
@@ -295,7 +299,8 @@ const App = {
           this.goalMap.applyPlayerFilter();
           
           // Goalie Filter anwenden
-          const savedGoalie = localStorage.getItem("goalMapActiveGoalie");
+          const teamId = App.helpers.getCurrentTeamId();
+          const savedGoalie = localStorage.getItem(`goalMapActiveGoalie_${teamId}`);
           if (savedGoalie) {
             this.goalMap.filterByGoalies([savedGoalie]);
           } else {
@@ -431,7 +436,8 @@ const App = {
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
     // WICHTIG: Workflow-Punkte AUCH in goalMapMarkers speichern (für restoreMarkers)
-    const existingMarkers = App.helpers.safeJSONParse("goalMapMarkers", null) || [[], [], []];
+    const teamId = App.helpers.getCurrentTeamId();
+    const existingMarkers = App.helpers.safeJSONParse(`goalMapMarkers_${teamId}`, null) || [[], [], []];
 
     points.forEach(point => {
       // Skip timeTrackingBox markers - they are not stored in goalMapMarkers
@@ -468,7 +474,7 @@ const App = {
       }
     });
 
-    localStorage.setItem("goalMapMarkers", JSON.stringify(existingMarkers));
+    localStorage.setItem(`goalMapMarkers_${teamId}`, JSON.stringify(existingMarkers));
     console.log("[Workflow] Markers saved to goalMapMarkers:", existingMarkers);
     
     // Reset workflow state
@@ -490,11 +496,11 @@ const App = {
       this.goalMap.updatePlayerNameOverlay();
     }
     
-    // WICHTIG: Nach Shot-Workflow IMMER zurück zu Game Data
-    // Nach Goal-Workflow auch zurück zu Game Data (nach 3 Schritten)
-    setTimeout(() => {
-      this.showPage('stats');
-    }, 300);
+    // REMOVED: Auto-navigation destroyed Goal Map DOM before timebox values were saved to localStorage,
+    // and timeTrackingInitialized flag prevented re-initialization. User navigates manually after workflow.
+    // setTimeout(() => {
+    //   this.showPage('stats');
+    // }, 300);
   },
   
   cancelGoalMapWorkflow() {
