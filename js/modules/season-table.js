@@ -52,8 +52,7 @@ App.seasonTable = {
 
   // NEU: Position des Spielers aus Player Selection holen
   getPlayerPosition(playerName) {
-    const teamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const teamId = teamInfo?.id;
+    const teamId = App.helpers.getCurrentTeamId();
     if (!teamId) return '';
     
     const savedPlayersKey = `playerSelectionData_${teamId}`;
@@ -255,8 +254,7 @@ App.seasonTable = {
     });
 
     // Filter out goalies from the player list
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
 
     let goalieNames = [];
