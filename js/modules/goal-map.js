@@ -997,7 +997,8 @@ App.goalMap = {
         let clickTimeout = null;
         
         const updateValue = (delta) => {
-          // ALWAYS read teamId dynamically at click time - NEVER use captured value!
+          // CRITICAL: Read teamId and data dynamically at click time to ensure data persistence across team switches.
+          // This prevents closure capture of stale team data when switching teams.
           const currentTeamId = App.helpers.getCurrentTeamId();
           let currentTimeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${currentTeamId}`, {});
           let currentTimeData = App.helpers.safeJSONParse(`timeData_${currentTeamId}`, {});
