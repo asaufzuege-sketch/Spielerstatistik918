@@ -25,8 +25,8 @@ App.playerSelection = {
       if (confirm("Alle Spieler und Goalies zurücksetzen?")) {
         App.data.selectedPlayers = [];
         App.data.goalies = [];
-        // LocalStorage auch löschen
-        const teamId = App.teamSelection?.getCurrentTeamInfo()?.id;
+        // LocalStorage auch löschen - use consistent helper
+        const teamId = App.helpers.getCurrentTeamId();
         if (teamId) {
           localStorage.removeItem(`selectedPlayers_${teamId}`);
           localStorage.removeItem(`playerSelectionData_${teamId}`);
@@ -84,8 +84,7 @@ App.playerSelection = {
   
   getPlayers() {
     // Get current team info
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id;
+    const currentTeamId = App.helpers.getCurrentTeamId();
     
     // Load saved player data for the team
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
@@ -247,8 +246,7 @@ App.playerSelection = {
   },
   
   saveCurrentState() {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id;
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     const players = [];
@@ -301,9 +299,8 @@ App.playerSelection = {
       App.storage.saveSelectedPlayers();
       
       // Save to team-specific keys for proper persistence
-      const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-      if (currentTeamInfo) {
-        const teamId = currentTeamInfo.id;
+      const teamId = App.helpers.getCurrentTeamId();
+      if (teamId) {
         localStorage.setItem(`selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
       }
       

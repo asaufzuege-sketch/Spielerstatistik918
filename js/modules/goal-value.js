@@ -131,8 +131,7 @@ App.goalValue = {
       : App.data.selectedPlayers.map(p => p.name);
     
     // Filter out goalies - check both playerSelectionData and selectedPlayers
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     try {
@@ -372,8 +371,7 @@ App.goalValue = {
       : App.data. selectedPlayers.map(p => p.name);
     
     // Filter out goalies - same logic as render()
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     try {

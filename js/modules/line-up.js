@@ -19,8 +19,7 @@ App.lineUp = {
   },
   
   loadData() {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedPlayersOut = localStorage.getItem(`playersOut_${currentTeamId}`);
     
     // Load team-specific stats data
@@ -47,14 +46,12 @@ App.lineUp = {
   },
   
   saveDataForMode(mode) {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     localStorage.setItem(`lineUpData_${mode}_${currentTeamId}`, JSON.stringify(this.lineUpData));
   },
   
   loadDataForMode(mode) {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedData = localStorage.getItem(`lineUpData_${mode}_${currentTeamId}`);
     
     try {
@@ -93,15 +90,13 @@ App.lineUp = {
   },
   
   savePlayersOut() {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     localStorage.setItem(`playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
   },
   
   getAvailablePlayers() {
     // Get players from player selection that are active
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     let players = [];
@@ -362,8 +357,7 @@ App.lineUp = {
   
   removePlayerFromAllModes(playerName) {
     const modes = ['normal', 'power', 'manuell'];
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     
     modes.forEach(mode => {
       const key = `lineUpData_${mode}_${currentTeamId}`;
@@ -986,8 +980,7 @@ App.lineUp = {
   },
   
   getPlayersWithMVPPoints() {
-    const currentTeamInfo = App.teamSelection?.getCurrentTeamInfo();
-    const currentTeamId = currentTeamInfo?.id || 'team1';
+    const currentTeamId = App.helpers.getCurrentTeamId();
     const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     let players = [];
