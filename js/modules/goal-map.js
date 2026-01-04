@@ -997,32 +997,38 @@ App.goalMap = {
         let clickTimeout = null;
         
         const updateValue = (delta) => {
+          // CRITICAL: Read teamId and data dynamically at click time to ensure data persistence across team switches.
+          // This prevents closure capture of stale team data when switching teams.
+          const currentTeamId = App.helpers.getCurrentTeamId();
+          let currentTimeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${currentTeamId}`, {});
+          let currentTimeData = App.helpers.safeJSONParse(`timeData_${currentTeamId}`, {});
+          
           const playerName =
             (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName)
               ? App.goalMapWorkflow.playerName
               : (this.playerFilter || '_anonymous');
           
-          if (!timeDataWithPlayers[key]) timeDataWithPlayers[key] = {};
-          if (!timeDataWithPlayers[key][playerName]) timeDataWithPlayers[key][playerName] = 0;
+          if (!currentTimeDataWithPlayers[key]) currentTimeDataWithPlayers[key] = {};
+          if (!currentTimeDataWithPlayers[key][playerName]) currentTimeDataWithPlayers[key][playerName] = 0;
           
-          const current = Number(timeDataWithPlayers[key][playerName]);
+          const current = Number(currentTimeDataWithPlayers[key][playerName]);
           const newVal = Math.max(0, current + delta);
-          timeDataWithPlayers[key][playerName] = newVal;
+          currentTimeDataWithPlayers[key][playerName] = newVal;
           
-          localStorage.setItem(`timeDataWithPlayers_${teamId}`, JSON.stringify(timeDataWithPlayers));
+          localStorage.setItem(`timeDataWithPlayers_${currentTeamId}`, JSON.stringify(currentTimeDataWithPlayers));
           
           let displayVal = 0;
           if (this.playerFilter) {
-            displayVal = timeDataWithPlayers[key][this.playerFilter] || 0;
+            displayVal = currentTimeDataWithPlayers[key][this.playerFilter] || 0;
           } else {
-            displayVal = Object.values(timeDataWithPlayers[key])
+            displayVal = Object.values(currentTimeDataWithPlayers[key])
               .reduce((sum, val) => sum + Number(val), 0);
           }
           newBtn.textContent = displayVal;
           
-          if (!timeData[periodNum]) timeData[periodNum] = {};
-          timeData[periodNum][idx] = displayVal;
-          localStorage.setItem(`timeData_${teamId}`, JSON.stringify(timeData));
+          if (!currentTimeData[periodNum]) currentTimeData[periodNum] = {};
+          currentTimeData[periodNum][idx] = displayVal;
+          localStorage.setItem(`timeData_${currentTeamId}`, JSON.stringify(currentTimeData));
           
           if (delta > 0 && App.goalMapWorkflow?.active) {
             const btnRect = newBtn.getBoundingClientRect();
