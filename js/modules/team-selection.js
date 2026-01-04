@@ -134,6 +134,58 @@ App.teamSelection = (function() {
         localStorage.setItem('currentTeamId', teamId);
         updateButtonStates();
         
+        // === NEW: Clear Goal Map DOM state ===
+        // Remove all Goal Map markers
+        document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
+        // Reset Goal Map time buttons
+        document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
+        // Remove overlays
+        document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal, .player-name-overlay').forEach(el => el.remove());
+        // Reset timeTrackingInitialized flag
+        if (App.goalMap) {
+            App.goalMap.timeTrackingInitialized = false;
+            App.goalMap.playerFilter = null;
+        }
+        
+        // === NEW: Clear Season Map DOM state ===
+        // Remove all Season Map markers
+        document.querySelectorAll("#seasonMapPage .marker-dot").forEach(d => d.remove());
+        // Reset Season Map time buttons
+        document.querySelectorAll("#seasonMapPage .time-btn").forEach(btn => btn.textContent = "0");
+        // Remove heatmap canvas
+        document.querySelectorAll("#seasonMapPage .heatmap-canvas").forEach(c => c.remove());
+        // Remove goal area labels
+        document.querySelectorAll("#seasonMapPage .goal-area-label").forEach(el => el.remove());
+        // Clear momentum graphic
+        const momentumContainer = document.getElementById("seasonMapMomentum");
+        if (momentumContainer) momentumContainer.innerHTML = "";
+        // Reset season map filter
+        if (App.seasonMap) {
+            App.seasonMap.playerFilter = null;
+        }
+        
+        // === NEW: Reset filter dropdowns ===
+        const goalMapPlayerFilter = document.getElementById("goalMapPlayerFilter");
+        if (goalMapPlayerFilter) {
+            goalMapPlayerFilter.value = "";
+            goalMapPlayerFilter.classList.remove("active");
+        }
+        const goalMapGoalieFilter = document.getElementById("goalMapGoalieFilter");
+        if (goalMapGoalieFilter) {
+            goalMapGoalieFilter.value = "";
+            goalMapGoalieFilter.classList.remove("active");
+        }
+        const seasonMapPlayerFilter = document.getElementById("seasonMapPlayerFilter");
+        if (seasonMapPlayerFilter) {
+            seasonMapPlayerFilter.value = "";
+            seasonMapPlayerFilter.classList.remove("active");
+        }
+        const seasonMapGoalieFilter = document.getElementById("seasonMapGoalieFilter");
+        if (seasonMapGoalieFilter) {
+            seasonMapGoalieFilter.value = "";
+            seasonMapGoalieFilter.classList.remove("active");
+        }
+        
         // Reload team-specific data for the new team
         App.storage.load();
         
