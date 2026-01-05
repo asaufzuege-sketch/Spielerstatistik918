@@ -564,6 +564,15 @@ App.seasonTable = {
 
       names.forEach(name => {
         const d = App.data.seasonData[name] || {};
+        
+        // NEU: Position aus Player Selection holen
+        const playerPosition = this.getPlayerPosition(name);
+        
+        // Filter out goalies from export
+        if (playerPosition === "G") {
+          return; // Skip goalies
+        }
+        
         const games = Number(d.games || 0);
         const goals = Number(d.goals || 0);
         const assists = Number(d.assists || 0);
@@ -604,9 +613,6 @@ App.seasonTable = {
           (penaltyPerGame * 1.2)
         );
         const mvpPointsRounded = Number(mvpPointsNum.toFixed(1));
-
-        // NEU: Position aus Player Selection holen
-        const playerPosition = this.getPlayerPosition(name);
 
         const row = [
           d.num || "",

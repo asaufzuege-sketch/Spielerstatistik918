@@ -78,8 +78,11 @@ App.csvHandler = {
     const headers = ["#", "Player", ...App.data.categories, "Time"];
     data.push(headers);
     
+    // Filter out goalies from export
+    const skaters = App.data.selectedPlayers.filter(p => p.position !== "G");
+    
     // Spieler Daten - exakte Formatierung wie in der Tabelle
-    App.data.selectedPlayers.forEach(player => {
+    skaters.forEach(player => {
       const row = [
         player.num || "",
         player.name,
@@ -93,34 +96,34 @@ App.csvHandler = {
     });
     
     // Totals Row - exakt wie in der Tabelle berechnet
-    const totals = ["", `Total (${App.data.selectedPlayers.length})`];
+    const totals = ["", `Total (${skaters.length})`];
     
     App.data.categories.forEach(cat => {
       if (cat === "+/-") {
         // Durchschnitt berechnen
-        const vals = App.data.selectedPlayers.map(p => Number(App.data.statsData[p.name]?.[cat] || 0));
+        const vals = skaters.map(p => Number(App.data.statsData[p.name]?.[cat] || 0));
         const avg = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
         totals.push(`Ø ${avg}`);
       } else if (cat === "FaceOffs Won") {
         // FaceOff Prozentsatz
-        const totalFace = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["FaceOffs"] || 0), 0);
-        const totalWon = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["FaceOffs Won"] || 0), 0);
+        const totalFace = skaters.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["FaceOffs"] || 0), 0);
+        const totalWon = skaters.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["FaceOffs Won"] || 0), 0);
         const pct = totalFace ? Math.round((totalWon / totalFace) * 100) : 0;
         totals.push(`${totalWon} (${pct}%)`);
       } else if (cat === "Shot") {
         // Shot vs Opponent
-        const own = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["Shot"] || 0), 0);
+        const own = skaters.reduce((sum, p) => sum + (App.data.statsData[p.name]?.["Shot"] || 0), 0);
         const opp = this.getOpponentShots();
         totals.push(`${own} vs ${opp}`);
       } else {
         // Standard Summe
-        const total = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.statsData[p.name]?.[cat] || 0), 0);
+        const total = skaters.reduce((sum, p) => sum + (App.data.statsData[p.name]?.[cat] || 0), 0);
         totals.push(total);
       }
     });
     
     // Time Total
-    const totalTime = App.data.selectedPlayers.reduce((sum, p) => sum + (App.data.playerTimes[p.name] || 0), 0);
+    const totalTime = skaters.reduce((sum, p) => sum + (App.data.playerTimes[p.name] || 0), 0);
     totals.push(App.helpers.formatTimeMMSS(totalTime));
     
     data.push(totals);
@@ -140,7 +143,10 @@ App.csvHandler = {
     const headers = ["#", "Player", ...App.data.categories, "MVP Points"];
     data.push(headers);
     
-    App.data.selectedPlayers.forEach(player => {
+    // Filter out goalies from export
+    const skaters = App.data.selectedPlayers.filter(p => p.position !== "G");
+    
+    skaters.forEach(player => {
       const seasonStats = App.data.seasonData[player.name] || {};
       const mvpPoints = this.calculateMVPPoints(seasonStats);
       
@@ -154,15 +160,15 @@ App.csvHandler = {
     });
     
     // Season Totals
-    const totals = ["", `Total (${App.data.selectedPlayers.length})`];
+    const totals = ["", `Total (${skaters.length})`];
     App.data.categories.forEach(cat => {
-      const total = App.data.selectedPlayers.reduce((sum, p) => {
+      const total = skaters.reduce((sum, p) => {
         return sum + ((App.data.seasonData[p.name] || {})[cat] || 0);
       }, 0);
       totals.push(total);
     });
     
-    const totalMVP = App.data.selectedPlayers.reduce((sum, p) => {
+    const totalMVP = skaters.reduce((sum, p) => {
       const seasonStats = App.data.seasonData[p.name] || {};
       return sum + this.calculateMVPPoints(seasonStats);
     }, 0);

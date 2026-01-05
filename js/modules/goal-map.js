@@ -978,13 +978,38 @@ App.goalMap = {
       buttons.forEach((btn, idx) => {
         const key = `${periodNum}_${idx}`;
         
-        // Display-Value berechnen
+        // Determine if this is a bottom-row (red) button by checking button index
+        // In each period: indices 0-3 are top row (green), indices 4-7 are bottom row (red)
+        const isBottomRow = idx >= 4;
+        
+        // Display-Value berechnen based on button row
         let displayValue = 0;
-        if (timeDataWithPlayers[key]) {
-          displayValue = Object.values(timeDataWithPlayers[key])
-            .reduce((sum, val) => sum + Number(val), 0);
-        } else if (timeData[periodNum] && typeof timeData[periodNum][idx] !== "undefined") {
-          displayValue = Number(timeData[periodNum][idx]);
+        if (isBottomRow) {
+          // Bottom row (red buttons): show goalie data
+          const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+          const selectedGoalie = goalieFilterSelect ? goalieFilterSelect.value : '';
+          
+          if (selectedGoalie && selectedGoalie !== "") {
+            // Specific goalie selected
+            displayValue = (timeDataWithPlayers[key] && timeDataWithPlayers[key][selectedGoalie]) 
+              ? Number(timeDataWithPlayers[key][selectedGoalie]) : 0;
+          } else {
+            // "All Goalies" - sum all goalies
+            const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+            allGoalies.forEach(goalie => {
+              if (timeDataWithPlayers[key] && timeDataWithPlayers[key][goalie.name]) {
+                displayValue += Number(timeDataWithPlayers[key][goalie.name]);
+              }
+            });
+          }
+        } else {
+          // Top row (green buttons): show player data
+          if (timeDataWithPlayers[key]) {
+            displayValue = Object.values(timeDataWithPlayers[key])
+              .reduce((sum, val) => sum + Number(val), 0);
+          } else if (timeData[periodNum] && typeof timeData[periodNum][idx] !== "undefined") {
+            displayValue = Number(timeData[periodNum][idx]);
+          }
         }
         
         // KRITISCH: Button komplett ersetzen um ALLE alten Listener zu entfernen
@@ -1003,10 +1028,21 @@ App.goalMap = {
           let currentTimeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${currentTeamId}`, {});
           let currentTimeData = App.helpers.safeJSONParse(`timeData_${currentTeamId}`, {});
           
-          const playerName =
-            (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName)
-              ? App.goalMapWorkflow.playerName
-              : (this.playerFilter || '_anonymous');
+          // Determine if this is a bottom-row (red) button
+          const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
+          
+          let playerName;
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName) {
+            // In workflow: use workflow player
+            playerName = App.goalMapWorkflow.playerName;
+          } else if (isBottomRow) {
+            // Bottom row (red buttons): use active goalie
+            const activeGoalie = this.getActiveGoalie();
+            playerName = activeGoalie ? activeGoalie.name : '_anonymous';
+          } else {
+            // Top row (green buttons): use player filter or anonymous
+            playerName = this.playerFilter || '_anonymous';
+          }
           
           if (!currentTimeDataWithPlayers[key]) currentTimeDataWithPlayers[key] = {};
           if (!currentTimeDataWithPlayers[key][playerName]) currentTimeDataWithPlayers[key][playerName] = 0;
@@ -1017,12 +1053,31 @@ App.goalMap = {
           
           localStorage.setItem(`timeDataWithPlayers_${currentTeamId}`, JSON.stringify(currentTimeDataWithPlayers));
           
+          // Calculate display value based on button row and filters
           let displayVal = 0;
-          if (this.playerFilter) {
-            displayVal = currentTimeDataWithPlayers[key][this.playerFilter] || 0;
+          if (isBottomRow) {
+            // Bottom row: show goalie filter values
+            const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
+            const selectedGoalie = goalieFilterSelect ? goalieFilterSelect.value : '';
+            
+            if (selectedGoalie && selectedGoalie !== "") {
+              // Specific goalie selected
+              displayVal = currentTimeDataWithPlayers[key][selectedGoalie] || 0;
+            } else {
+              // "All Goalies" - sum all goalies
+              const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
+              allGoalies.forEach(goalie => {
+                displayVal += Number(currentTimeDataWithPlayers[key][goalie.name]) || 0;
+              });
+            }
           } else {
-            displayVal = Object.values(currentTimeDataWithPlayers[key])
-              .reduce((sum, val) => sum + Number(val), 0);
+            // Top row: show player filter values
+            if (this.playerFilter) {
+              displayVal = currentTimeDataWithPlayers[key][this.playerFilter] || 0;
+            } else {
+              displayVal = Object.values(currentTimeDataWithPlayers[key])
+                .reduce((sum, val) => sum + Number(val), 0);
+            }
           }
           newBtn.textContent = displayVal;
           
