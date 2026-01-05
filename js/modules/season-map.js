@@ -1176,6 +1176,23 @@ App.seasonMap = {
       box.style.boxShadow = 'none';
     });
     
+    // Ensure goal images maintain aspect ratio in export
+    const goalImages = exportContainer.querySelectorAll('.goal-img-box img');
+    goalImages.forEach(img => {
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'contain';
+    });
+    
+    // Ensure goal boxes have sufficient height
+    const goalBoxes = exportContainer.querySelectorAll('.goal-img-box');
+    goalBoxes.forEach(box => {
+      box.style.minHeight = '150px';
+      box.style.display = 'flex';
+      box.style.alignItems = 'center';
+      box.style.justifyContent = 'center';
+    });
+    
     const cleanupTempContainer = () => {
       if (document.body.contains(exportContainer)) {
         document.body.removeChild(exportContainer);
