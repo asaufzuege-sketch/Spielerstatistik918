@@ -1154,6 +1154,35 @@ App.seasonMap = {
     if (layout) {
       const layoutClone = layout.cloneNode(true);
       exportContainer.appendChild(layoutClone);
+      
+      // NEW: Copy heatmap canvas pixel data to the cloned layout
+      // The cloned canvas has no pixel data, so we must copy it from the original
+      const clonedFieldBox = layoutClone.querySelector('#seasonFieldBox') || layoutClone.querySelector('.field-box');
+      if (clonedFieldBox) {
+        // Remove the empty cloned canvas
+        const emptyCanvas = clonedFieldBox.querySelector('.heatmap-canvas');
+        if (emptyCanvas) emptyCanvas.remove();
+        
+        // Get the original canvas with the rendered heatmap data
+        const originalCanvas = document.querySelector('#seasonFieldBox .heatmap-canvas');
+        if (originalCanvas) {
+          // Create a copy of the canvas with pixel data
+          const canvasCopy = document.createElement('canvas');
+          canvasCopy.className = 'heatmap-canvas';
+          canvasCopy.width = originalCanvas.width;
+          canvasCopy.height = originalCanvas.height;
+          
+          // Copy the styles
+          canvasCopy.style.cssText = originalCanvas.style.cssText;
+          
+          // Copy the pixel data
+          const ctx = canvasCopy.getContext('2d');
+          ctx.drawImage(originalCanvas, 0, 0);
+          
+          // Add the canvas to the cloned field box
+          clonedFieldBox.appendChild(canvasCopy);
+        }
+      }
     }
     
     // Clone the momentum container
