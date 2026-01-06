@@ -507,14 +507,10 @@ App.seasonMap = {
       return;
     }
     
-    // Position canvas to overlay the rendered image (not fill container)
-    const containerRect = fieldBox.getBoundingClientRect();
-    const offsetX = renderedImageRect.x - containerRect.left;
-    const offsetY = renderedImageRect.y - containerRect.top;
-    
-    // Override default positioning to match image location within container
-    canvas.style.left = `${offsetX}px`;
-    canvas.style.top = `${offsetY}px`;
+    // Position canvas at top-left of container (image fills container)
+    canvas.style.left = '0';
+    canvas.style.top = '0';
+    canvas.style.position = 'absolute';
     canvas.style.width = `${renderedImageRect.width}px`;
     canvas.style.height = `${renderedImageRect.height}px`;
     
@@ -1153,6 +1149,13 @@ App.seasonMap = {
     const layout = seasonMapPage.querySelector('.torbild-layout');
     if (layout) {
       const layoutClone = layout.cloneNode(true);
+      
+      // NEU: Timebox aus dem Export entfernen (Momentum-Grafik zeigt gleiche Daten)
+      const timeBox = layoutClone.querySelector('.time-tracking-box') || layoutClone.querySelector('#seasonMapTimeTrackingBox');
+      if (timeBox) {
+        timeBox.remove();
+      }
+      
       exportContainer.appendChild(layoutClone);
       
       // Goal-Bilder korrekt stylen
@@ -1166,13 +1169,6 @@ App.seasonMap = {
       layoutClone.querySelectorAll('.goal-img-box').forEach(box => {
         box.style.minHeight = '180px';
       });
-      
-      // Timebox kompakter machen (~1/3 der Höhe, kein Leerraum oben)
-      const timeBox = layoutClone.querySelector('.time-tracking-box');
-      if (timeBox) {
-        timeBox.style.maxHeight = '320px';
-        timeBox.style.paddingTop = '8px';
-      }
       
       // Goal-Column auf Grid umstellen für bessere Verteilung
       const goalColumn = layoutClone.querySelector('.goal-column');
