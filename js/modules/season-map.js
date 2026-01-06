@@ -1162,9 +1162,8 @@ App.seasonMap = {
         img.style.height = '100%';
       });
       
-      // Goal-Boxen größer machen (jede ~1/3 der Höhe)
+      // Goal-Boxen Mindesthöhe setzen
       layoutClone.querySelectorAll('.goal-img-box').forEach(box => {
-        box.style.flex = '1 1 0';
         box.style.minHeight = '180px';
       });
       
@@ -1172,7 +1171,6 @@ App.seasonMap = {
       const timeBox = layoutClone.querySelector('.time-tracking-box');
       if (timeBox) {
         timeBox.style.maxHeight = '320px';
-        timeBox.style.flex = '0 0 auto';
         timeBox.style.paddingTop = '8px';
       }
       
