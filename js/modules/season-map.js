@@ -1150,7 +1150,7 @@ App.seasonMap = {
     if (layout) {
       const layoutClone = layout.cloneNode(true);
       
-      // NEU: Timebox aus dem Export entfernen (Momentum-Grafik zeigt gleiche Daten)
+      // NEW: Remove timebox from export (Momentum graphic shows same data)
       const timeBox = layoutClone.querySelector('.time-tracking-box') || layoutClone.querySelector('#seasonMapTimeTrackingBox');
       if (timeBox) {
         timeBox.remove();
