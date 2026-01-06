@@ -1155,6 +1155,33 @@ App.seasonMap = {
       const layoutClone = layout.cloneNode(true);
       exportContainer.appendChild(layoutClone);
       
+      // Goal-Bilder korrekt stylen
+      layoutClone.querySelectorAll('.goal-img-box img').forEach(img => {
+        img.style.objectFit = 'contain';
+        img.style.width = '100%';
+        img.style.height = '100%';
+      });
+      
+      // Goal-Boxen Mindesthöhe setzen
+      layoutClone.querySelectorAll('.goal-img-box').forEach(box => {
+        box.style.minHeight = '180px';
+      });
+      
+      // Timebox kompakter machen (~1/3 der Höhe, kein Leerraum oben)
+      const timeBox = layoutClone.querySelector('.time-tracking-box');
+      if (timeBox) {
+        timeBox.style.maxHeight = '320px';
+        timeBox.style.paddingTop = '8px';
+      }
+      
+      // Goal-Column auf Grid umstellen für bessere Verteilung
+      const goalColumn = layoutClone.querySelector('.goal-column');
+      if (goalColumn) {
+        goalColumn.style.display = 'grid';
+        goalColumn.style.gridTemplateRows = '1fr 1fr 0.75fr';
+        goalColumn.style.gap = '15px';
+      }
+      
       // NEW: Copy heatmap canvas pixel data to the cloned layout
       // The cloned canvas has no pixel data, so we must copy it from the original
       const clonedFieldBox = layoutClone.querySelector('#seasonFieldBox') || layoutClone.querySelector('.field-box');

@@ -502,20 +502,25 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin-bottom: 32px;  /* Abstand nach unten zur Momentum-Grafik */
 }
 
+/* Season Map: Goal-Spalte auf Grid umstellen, Timebox kleiner */
 #seasonMapPage .goal-column {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr 1fr 0.75fr; /* 2x Tore, kleinerer Anteil Timebox */
   gap: 15px;
 }
 
 #seasonMapPage .goal-img-box {
-  flex: 1;
   min-height: 0;
   position: relative;
 }
 
+/* Timebox: Höhe begrenzen, nicht größer als nötig */
 #seasonMapPage .time-tracking-box {
-  flex: 1;
+  max-height: 320px;      /* nach Bedarf anpassen (z. B. 300–340px) */
+  min-height: 0;
+  overflow: hidden;       /* falls noch zu viel Inhalt, sonst auto */
+  display: flex;          /* falls nötig, um interne Ausrichtung zu halten */
+  align-items: stretch;
   visibility: hidden;  /* Hide Time Box in Season Map but keep the space */
 }
 
@@ -567,7 +572,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-radius: 8px;
 }
 
-/* Season Map – Torbilder behalten Seitenverhältnis */
+/* Torbilder: Seitenverhältnis erhalten */
 #seasonMapPage .goal-img-box img {
   width: 100%;
   height: 100%;
