@@ -121,7 +121,7 @@ App.seasonTable = {
       
       // Pos. Spalte bekommt einen Dropdown-Filter
       if (h === "Pos.") {
-        th.className = "pos-header";
+        th.className = "pos-header sortable";
         th.dataset.colIndex = idx;
         
         const select = document.createElement("select");
@@ -129,7 +129,7 @@ App.seasonTable = {
         select.id = "positionFilter";
         
         const options = [
-          { value: "", text: "Pos." },
+          { value: "", text: "Pos. ▼" },
           { value: "C", text: "Center" },
           { value: "W", text: "Wing" },
           { value: "D", text: "Defense" }
