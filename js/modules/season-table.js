@@ -92,6 +92,8 @@ App.seasonTable = {
         const select = document.createElement("select");
         select.className = "pos-filter";
         select.id = "positionFilter";
+        select.style.color = "#44bb91";  // GRÜN
+        select.style.fontWeight = "bold";
         
         const options = [
           { value: "", text: "Pos." },
@@ -275,6 +277,8 @@ App.seasonTable = {
         // Pos. cell (index 2)
         if (cellIdx === 2) {
           td.className = "pos-cell";
+          td.style.color = "#44bb91";  // GRÜN wie auf Screenshot
+          td.style.fontWeight = "bold";
         }
         
         // Klickbare Statistik-Zellen mit Click/Doppelklick Handler
