@@ -1349,7 +1349,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Pos. Spalte Header mit Dropdown */
 #seasonPage .pos-header {
-  min-width: 60px;
+  min-width: 80px;
   padding: 5px;
 }
 
@@ -1362,9 +1362,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-size: 0.85rem;
   cursor: pointer;
   width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  min-width: 70px;
 }
 
 #seasonPage .pos-filter:focus {
