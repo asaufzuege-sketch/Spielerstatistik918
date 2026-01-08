@@ -1343,6 +1343,41 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 8px 6px;
 }
 
+/* Position Column Styles */
+.season-table .pos-header {
+  background: var(--header-bg);
+  color: #fff;
+  padding: 6px;
+  text-align: center;
+  cursor: default;
+}
+
+.season-table .pos-filter {
+  width: 100%;
+  padding: 4px 6px;
+  background: var(--header-bg);
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.season-table .pos-filter:hover {
+  border-color: #777;
+}
+
+.season-table .pos-filter:focus {
+  border-color: #999;
+}
+
+.season-table .pos-cell {
+  text-align: center;
+  font-weight: 600;
+  min-width: 70px;
+}
+
 /* ==================== */
 /* TEAM SELECTION STYLES */
 /* ==================== */

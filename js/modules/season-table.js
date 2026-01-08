@@ -4,6 +4,7 @@ App.seasonTable = {
   sortState: { index: null, asc: true },
   isRendering: false, // NEU: Flag um Rekursion zu verhindern
   clickTimers: new WeakMap(), // Store click timers per cell to avoid race conditions
+  positionFilter: '', // Aktueller Positionsfilter
 
   init() {
     this.container = document.getElementById("seasonContainer");
@@ -66,7 +67,7 @@ App.seasonTable = {
     console.log("[Season Table] Rendering started at:", new Date().toISOString());
 
     const headerCols = [
-      "Nr", "Player", "Games",
+      "Nr", "Player", "Pos.", "Games",
       "Goals", "Assists", "Points", "+/-", "Ø +/-",
       "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
       "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", "Time",
@@ -84,15 +85,43 @@ App.seasonTable = {
     headerCols.forEach((h, idx) => {
       const th = document.createElement("th");
       
-      th.textContent = h;
-      th.dataset.colIndex = idx;
-      th.className = "sortable";
-      th.style.cursor = "pointer";
+      if (h === "Pos.") {
+        th.className = "pos-header";
+        th.dataset.colIndex = idx;
+        
+        const select = document.createElement("select");
+        select.className = "pos-filter";
+        select.id = "positionFilter";
+        
+        const options = [
+          { value: "", text: "Pos." },
+          { value: "C", text: "Center" },
+          { value: "W", text: "Wing" },
+          { value: "D", text: "Defense" }
+        ];
+        
+        options.forEach(opt => {
+          const option = document.createElement("option");
+          option.value = opt.value;
+          option.textContent = opt.text;
+          if (opt.value === this.positionFilter) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        });
+        
+        th.appendChild(select);
+      } else {
+        th.textContent = h;
+        th.dataset.colIndex = idx;
+        th.className = "sortable";
+        th.style.cursor = "pointer";
 
-      const arrow = document.createElement("span");
-      arrow.className = "sort-arrow";
-      arrow.style.marginLeft = "6px";
-      th.appendChild(arrow);
+        const arrow = document.createElement("span");
+        arrow.className = "sort-arrow";
+        arrow.style.marginLeft = "6px";
+        th.appendChild(arrow);
+      }
 
       headerRow.appendChild(th);
     });
@@ -154,6 +183,7 @@ App.seasonTable = {
       const cells = [
         d.num || "",
         d.name,
+        this.getPlayerPosition(d.name),
         games,
         goals,
         assists,
@@ -241,16 +271,21 @@ App.seasonTable = {
           td.style.fontWeight = "700";
         }
         
+        // Pos. cell (index 2)
+        if (cellIdx === 2) {
+          td.className = "pos-cell";
+        }
+        
         // Klickbare Statistik-Zellen mit Click/Doppelklick Handler
         const clickableStatMap = {
-          2: 'games',
-          3: 'goals',
-          4: 'assists',
-          6: 'plusMinus',
-          8: 'shots',
-          13: 'penaltys',
-          15: 'faceOffs',
-          16: 'faceOffsWon'
+          3: 'games',
+          4: 'goals',
+          5: 'assists',
+          7: 'plusMinus',
+          9: 'shots',
+          14: 'penaltys',
+          16: 'faceOffs',
+          17: 'faceOffsWon'
         };
         
         if (clickableStatMap[cellIdx]) {
@@ -258,8 +293,8 @@ App.seasonTable = {
           this.attachStatClickHandlers(td, r.name, clickableStatMap[cellIdx]);
         }
         
-        // NEU: Time Cell (index 18) bekommt Long Press Handler
-        if (cellIdx === 18) {
+        // NEU: Time Cell (index 19) bekommt Long Press Handler
+        if (cellIdx === 19) {
           td.className = "season-time-cell";
           td.dataset.player = r.name;
           this.attachLongPressHandler(td, r.name, r.raw.timeSeconds);
@@ -297,25 +332,26 @@ App.seasonTable = {
 
       const totalCells = new Array(headerCols.length).fill("");
       totalCells[1] = "Total Ø";
-      totalCells[2] = (sums.games / count).toFixed(1);
-      totalCells[3] = (sums.goals / count).toFixed(1);
-      totalCells[4] = (sums.assists / count).toFixed(1);
-      totalCells[5] = (sums.points / count).toFixed(1);
-      totalCells[6] = (sums.plusMinus / count).toFixed(1);
+      totalCells[2] = "";
+      totalCells[3] = (sums.games / count).toFixed(1);
+      totalCells[4] = (sums.goals / count).toFixed(1);
+      totalCells[5] = (sums.assists / count).toFixed(1);
+      totalCells[6] = (sums.points / count).toFixed(1);
       totalCells[7] = (sums.plusMinus / count).toFixed(1);
-      totalCells[8] = (sums.shots / count).toFixed(1);
-      totalCells[9] = ((sums.shots / count) / ((sums.games / count) || 1)).toFixed(1);
-      totalCells[10] = String(avgShotsPercent) + "%";
-      totalCells[11] = ((sums.goals / count) / ((sums.games / count) || 1)).toFixed(1);
-      totalCells[12] = ((sums.points / count) / ((sums.games / count) || 1)).toFixed(1);
-      totalCells[13] = (sums.penalty / count).toFixed(1);
-      totalCells[14] = "";
-      totalCells[15] = (sums.faceOffs / count).toFixed(1);
-      totalCells[16] = (sums.faceOffsWon / count).toFixed(1);
-      totalCells[17] = String(avgFacePercent) + "%";
-      totalCells[18] = App.helpers.formatTimeMMSS(avgTime);
-      totalCells[19] = "";
+      totalCells[8] = (sums.plusMinus / count).toFixed(1);
+      totalCells[9] = (sums.shots / count).toFixed(1);
+      totalCells[10] = ((sums.shots / count) / ((sums.games / count) || 1)).toFixed(1);
+      totalCells[11] = String(avgShotsPercent) + "%";
+      totalCells[12] = ((sums.goals / count) / ((sums.games / count) || 1)).toFixed(1);
+      totalCells[13] = ((sums.points / count) / ((sums.games / count) || 1)).toFixed(1);
+      totalCells[14] = (sums.penalty / count).toFixed(1);
+      totalCells[15] = "";
+      totalCells[16] = (sums.faceOffs / count).toFixed(1);
+      totalCells[17] = (sums.faceOffsWon / count).toFixed(1);
+      totalCells[18] = String(avgFacePercent) + "%";
+      totalCells[19] = App.helpers.formatTimeMMSS(avgTime);
       totalCells[20] = "";
+      totalCells[21] = "";
 
       const trTotal = document.createElement("tr");
       trTotal.className = "total-row";
@@ -360,6 +396,14 @@ App.seasonTable = {
     });
     
     console.log("[Season Table] Rendering completed");
+    
+    // Event Listener für Position Filter
+    const posFilter = document.getElementById('positionFilter');
+    if (posFilter) {
+      posFilter.addEventListener('change', (e) => {
+        this.filterByPosition(e.target.value);
+      });
+    }
     
     // WICHTIG: Flag zurücksetzen
     this.isRendering = false;
@@ -471,7 +515,7 @@ App.seasonTable = {
       }
 
       const header = [
-        "Nr","Player","Games",
+        "Nr","Player","Pos.","Games",
         "Goals","Assists","Points","+/-","Ø +/-",
         "Shots","Shots/Game","Shots %","Goals/Game","Points/Game",
         "Penalty","Goal Value","FaceOffs","FaceOffs Won","FaceOffs %","Time",
@@ -527,6 +571,7 @@ App.seasonTable = {
         const row = [
           d.num || "",
           name,
+          this.getPlayerPosition(name),
           games,
           goals,
           assists,
@@ -597,7 +642,7 @@ App.seasonTable = {
         const avgTime = Math.round(sums.timeSeconds / count);
 
         const totalRow = [
-          "", "Total Ø",
+          "", "Total Ø", "",
           (sums.games / count).toFixed(1),
           (sums.goals / count).toFixed(1),
           (sums.assists / count).toFixed(1),
@@ -831,5 +876,35 @@ App.seasonTable = {
     } else {
       alert("Player not found");
     }
+  },
+  
+  getPlayerPosition(playerName) {
+    const teamId = App.helpers.getCurrentTeamId();
+    if (!teamId) return '';
+    
+    const savedPlayersKey = `playerSelectionData_${teamId}`;
+    let players = [];
+    try {
+      players = JSON.parse(localStorage.getItem(savedPlayersKey) || '[]');
+    } catch (e) {
+      return '';
+    }
+    
+    const player = players.find(p => p.name === playerName);
+    return player?.position || '';
+  },
+  
+  filterByPosition(position) {
+    this.positionFilter = position;
+    const rows = document.querySelectorAll('#seasonContainer .season-table tbody tr:not(.total-row)');
+    rows.forEach(row => {
+      const posCell = row.querySelector('.pos-cell');
+      const cellText = posCell ? posCell.textContent : '';
+      if (!position || cellText === position) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
   }
 };
