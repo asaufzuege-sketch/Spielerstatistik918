@@ -208,6 +208,7 @@ App.seasonTable = {
       return {
         name: d.name,
         num: d.num || "",
+        position: this.getPlayerPosition(d.name),
         cells,
         raw: { games, goals, assists, points, plusMinus, shots, penalty, faceOffs, faceOffsWon, faceOffPercent, timeSeconds, goalValue },
         mvpPointsRounded
@@ -619,16 +620,16 @@ App.seasonTable = {
         };
 
         tempRows.forEach(r => {
-          sums.games += Number(r[2]) || 0;
-          sums.goals += Number(r[3]) || 0;
-          sums.assists += Number(r[4]) || 0;
-          sums.points += Number(r[5]) || 0;
-          sums.plusMinus += Number(r[6]) || 0;
-          sums.shots += Number(r[8]) || 0;
-          sums.penalty += Number(r[13]) || 0;
-          sums.faceOffs += Number(r[15]) || 0;
-          sums.faceOffsWon += Number(r[16]) || 0;
-          const t = r[18] || "00:00";
+          sums.games += Number(r[3]) || 0;
+          sums.goals += Number(r[4]) || 0;
+          sums.assists += Number(r[5]) || 0;
+          sums.points += Number(r[6]) || 0;
+          sums.plusMinus += Number(r[7]) || 0;
+          sums.shots += Number(r[9]) || 0;
+          sums.penalty += Number(r[14]) || 0;
+          sums.faceOffs += Number(r[16]) || 0;
+          sums.faceOffsWon += Number(r[17]) || 0;
+          const t = r[19] || "00:00";
           if (/^\d{2}:\d{2}$/.test(t)) {
             const parts = t.split(":");
             const mm = Number(parts[0]) || 0;
