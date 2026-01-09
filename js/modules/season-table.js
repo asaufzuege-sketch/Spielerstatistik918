@@ -77,6 +77,7 @@ App.seasonTable = {
     document.documentElement.style.setProperty('--left-nr', '0px');
     document.documentElement.style.setProperty('--left-player', `${w1}px`);
     document.documentElement.style.setProperty('--left-pos', `${w1 + w2}px`);
+    document.documentElement.style.setProperty('--sticky-total', `${w1 + w2 + w3}px`);
   },
 
   render() {
