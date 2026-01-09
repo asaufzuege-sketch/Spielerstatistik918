@@ -746,6 +746,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   height: auto;
   min-height: 0;
   max-height: calc(100vh - 200px);
+  background: var(--bg-color); /* Opaque background for sticky columns */
 }
 
 #seasonContainer::-webkit-scrollbar {
@@ -1215,7 +1216,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table {
   width: 100%;
   table-layout: fixed;
-  border-collapse: collapse;
+  border-collapse: separate; /* CRITICAL: prevents bleeding */
+  border-spacing: 0;
   margin: 6px auto 10px auto;
   min-width: max-content;
   font-size: 0.95rem;
@@ -1226,14 +1228,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table td {
   white-space: nowrap;
   padding: 6px 6px;
+  background: var(--row-even); /* Opaque background for all cells */
 }
 
 /* Header oben sticky */
 .season-table thead th {
   position: sticky;
   top: 0;
-  z-index: 5;
-  background: var(--header-bg);
+  z-index: 20; /* Higher z-index above all body cells */
+  background: var(--header-bg); /* Opaque header background */
   color: #fff;
   border-bottom: 2px solid #333;
   text-align: center;
@@ -1254,7 +1257,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-width: var(--w-nr);
   position: sticky;
   left: var(--left-nr);
-  z-index: 4;
+  z-index: 15; /* Above scrolling cells */
+  background: var(--row-even);
+  box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
 }
 
 .season-table thead th:nth-child(1) {
@@ -1267,17 +1272,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-width: var(--w-player);
   position: sticky;
   left: var(--left-player);
-  z-index: 4;
+  z-index: 15; /* Above scrolling cells */
+  background: var(--row-even);
+  box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
+  text-align: left;
+  padding-left: 12px;
 }
 
 .season-table thead th:nth-child(2) {
   background: var(--header-bg);
-  text-align: left;
-  padding-left: 12px;
-  font-weight: 700;
-}
-
-.season-table tbody td:nth-child(2) {
   text-align: left;
   padding-left: 12px;
   font-weight: 700;
@@ -1289,7 +1292,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-width: var(--w-pos);
   position: sticky;
   left: var(--left-pos);
-  z-index: 4;
+  z-index: 15; /* Above scrolling cells */
+  background: var(--row-even);
+  box-shadow: 2px 0 4px rgba(0,0,0,0.3); /* Stronger shadow for last sticky column */
 }
 
 .season-table thead th:nth-child(3) {
@@ -1298,30 +1303,31 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Header der ersten drei Spalten ÜBER Body-Zellen legen */
 .season-table thead th:nth-child(-n+3) {
-  z-index: 6;
+  z-index: 25; /* HIGHEST - above body sticky columns */
+  background: var(--header-bg);
 }
 
-/* Ungerade Zeilen */
+/* Ungerade Zeilen - sticky columns with !important */
 .season-table tbody tr:nth-child(odd) td:nth-child(1),
 .season-table tbody tr:nth-child(odd) td:nth-child(2),
 .season-table tbody tr:nth-child(odd) td:nth-child(3) {
-  background: var(--row-odd);
+  background: var(--row-odd) !important;
 }
 
-/* Gerade Zeilen */
+/* Gerade Zeilen - sticky columns with !important */
 .season-table tbody tr:nth-child(even) td:nth-child(1),
 .season-table tbody tr:nth-child(even) td:nth-child(2),
 .season-table tbody tr:nth-child(even) td:nth-child(3) {
-  background: var(--row-even);
+  background: var(--row-even) !important;
 }
 
 /* Total-Zeile */
 .season-table .total-row td:nth-child(1),
 .season-table .total-row td:nth-child(2),
 .season-table .total-row td:nth-child(3) {
-  background: var(--header-bg);
+  background: var(--header-bg) !important;
   position: sticky;
-  z-index: 4;
+  z-index: 15;
 }
 
 .season-table .total-row td:nth-child(1) {
@@ -1336,14 +1342,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   left: var(--left-pos);
 }
 
-/* Box shadow for visual separation */
-.season-table :is(th, td):nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="dark"] .season-table :is(th, td):nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
-}
+/* Box shadow handled in sticky column definitions above - removed duplicate */
 
 .season-table thead th:last-child,
 .season-table tbody td:last-child {
