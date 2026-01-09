@@ -50,9 +50,10 @@ App.seasonTable = {
     });
     
     // Add resize listener for sticky columns
-    window.addEventListener('resize', () => {
+    this._resizeHandler = () => {
       this.setStickyOffsets();
-    });
+    };
+    window.addEventListener('resize', this._resizeHandler);
   },
 
   /**
@@ -439,6 +440,7 @@ App.seasonTable = {
     }
     
     // Update sticky column offsets after rendering
+    // Small delay ensures DOM is fully rendered before measuring
     setTimeout(() => {
       this.setStickyOffsets();
     }, 50);
@@ -944,5 +946,15 @@ App.seasonTable = {
         row.style.display = 'none';
       }
     });
+  },
+  
+  /**
+   * Cleanup method to remove event listeners and prevent memory leaks
+   */
+  destroy() {
+    if (this._resizeHandler) {
+      window.removeEventListener('resize', this._resizeHandler);
+      this._resizeHandler = null;
+    }
   }
 };

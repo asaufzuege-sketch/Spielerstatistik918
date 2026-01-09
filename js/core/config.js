@@ -263,6 +263,7 @@ const App = {
         if (page === "season" && this.seasonTable && typeof this.seasonTable.render === 'function') {
           this.seasonTable.render();
           // Set sticky offsets after render completes
+          // Delay ensures table is fully rendered in DOM before measuring column widths
           setTimeout(() => {
             if (typeof this.seasonTable.setStickyOffsets === 'function') {
               this.seasonTable.setStickyOffsets();
