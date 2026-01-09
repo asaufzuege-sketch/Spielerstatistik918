@@ -1265,7 +1265,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   color: #fff;
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 40;
   padding: 6px 6px;
   border-bottom: 2px solid #333;
   text-align: center;
@@ -1289,12 +1289,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   text-align: center;
   position: sticky;
   left: 0;
-  z-index: 20;
+  z-index: 30;
   background: var(--header-bg);
 }
 
 .season-table tbody td:nth-child(1) {
   background: inherit;
+  z-index: 19;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(1) {
@@ -1313,12 +1314,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-width: 140px;
   position: sticky;
   left: 60px;
-  z-index: 20;
+  z-index: 30;
   background: var(--header-bg);
 }
 
 .season-table tbody td:nth-child(2) {
   background: inherit;
+  z-index: 19;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(2) {
@@ -1327,6 +1329,47 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .season-table tbody tr:nth-child(even) td:nth-child(2) {
   background: var(--row-even);
+}
+
+/* Column 3 (Pos.) - Sticky positioning */
+.season-table thead th:nth-child(3) {
+  position: sticky;
+  left: 200px;
+  z-index: 30;
+  background: var(--header-bg);
+}
+
+.season-table tbody td:nth-child(3) {
+  position: sticky;
+  left: 200px;
+  z-index: 19;
+}
+
+.season-table tbody tr:nth-child(odd) td:nth-child(3) {
+  background: var(--row-odd);
+}
+
+.season-table tbody tr:nth-child(even) td:nth-child(3) {
+  background: var(--row-even);
+}
+
+.season-table .total-row td:nth-child(1),
+.season-table .total-row td:nth-child(2),
+.season-table .total-row td:nth-child(3) {
+  position: sticky;
+  z-index: 19;
+}
+
+.season-table .total-row td:nth-child(1) {
+  left: 0;
+}
+
+.season-table .total-row td:nth-child(2) {
+  left: 60px;
+}
+
+.season-table .total-row td:nth-child(3) {
+  left: 200px;
 }
 
 .season-table thead th:last-child,
