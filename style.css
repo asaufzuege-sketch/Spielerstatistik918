@@ -1339,7 +1339,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   left: var(--left-pos);
 }
 
-/* Box shadow handled in sticky column definitions above - removed duplicate */
+/* Box shadow handled in sticky column definitions above (lines 1260, 1274, 1293) - removed duplicate */
 
 .season-table thead th:last-child,
 .season-table tbody td:last-child {
