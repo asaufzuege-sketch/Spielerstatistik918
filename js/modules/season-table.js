@@ -72,18 +72,33 @@ App.seasonTable = {
     const w2 = headerCells[1].offsetWidth;
     const w3 = headerCells[2].offsetWidth;
 
-    // Basis-Mindestbreiten (wie bei 100% Zoom)
-    const minW1 = 60;   // Nr
-    const minW2 = 140;  // Player
-    const minW3 = 70;   // Pos
+    // Responsive Mindestbreiten basierend auf Bildschirmgröße
+    const screenWidth = window.innerWidth;
+    let minW1, minW2, minW3;
+    
+    if (screenWidth <= 768) {
+      // Mobile: Kleinere Mindestbreiten
+      minW1 = 35;   // Nr
+      minW2 = 90;   // Player
+      minW3 = 45;   // Pos
+    } else if (screenWidth <= 1024) {
+      // Tablet: Mittlere Mindestbreiten
+      minW1 = 45;   // Nr
+      minW2 = 110;  // Player
+      minW3 = 55;   // Pos
+    } else {
+      // Desktop: Standard Mindestbreiten
+      minW1 = 60;   // Nr
+      minW2 = 140;  // Player
+      minW3 = 70;   // Pos
+    }
 
     // Breite = Maximum aus Mindestbreite und aktueller Breite
-    // So werden Spalten nie kleiner als bei 100% Zoom
     const finalW1 = Math.max(minW1, w1);
     const finalW2 = Math.max(minW2, w2);
     const finalW3 = Math.max(minW3, w3);
 
-    // Breiten setzen (nie kleiner als Minimum)
+    // Breiten setzen (nie kleiner als Minimum für aktuelle Bildschirmgröße)
     document.documentElement.style.setProperty('--w-nr', `${finalW1}px`);
     document.documentElement.style.setProperty('--w-player', `${finalW2}px`);
     document.documentElement.style.setProperty('--w-pos', `${finalW3}px`);
