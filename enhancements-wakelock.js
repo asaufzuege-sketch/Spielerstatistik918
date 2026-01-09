@@ -26,8 +26,10 @@
     const btn = document.createElement('button');
     btn.id = BTN_ID;
     btn.className = 'top-btn';
-    btn.textContent = 'Theme';
-    btn.title = 'Toggle between light and dark theme';
+    // Set initial icon based on current theme
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    btn.innerHTML = currentTheme === 'light' ? '☽' : '☀';
+    btn.title = currentTheme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
     btn.addEventListener('click', (ev) => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -95,6 +97,10 @@
 
     if (insertButtonIntoTopBar()) {
       observeTopBarChildren();
+      // Update icon after insertion
+      if (typeof updateThemeButtonIcon === 'function') {
+        updateThemeButtonIcon();
+      }
       return true;
     }
 
@@ -108,6 +114,10 @@
             setTimeout(() => {
               insertButtonIntoTopBar();
               observeTopBarChildren();
+              // Update icon after insertion
+              if (typeof updateThemeButtonIcon === 'function') {
+                updateThemeButtonIcon();
+              }
             }, 60);
             break;
           }
@@ -121,6 +131,10 @@
       if (insertButtonIntoTopBar()) {
         clearInterval(intId);
         observeTopBarChildren();
+        // Update icon after insertion
+        if (typeof updateThemeButtonIcon === 'function') {
+          updateThemeButtonIcon();
+        }
       }
     }, 400);
     setTimeout(() => clearInterval(intId), 10000);
