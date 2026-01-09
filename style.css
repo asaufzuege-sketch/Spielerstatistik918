@@ -1255,6 +1255,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky;
   left: var(--left-nr);
   z-index: 4;
+}
+
+.season-table thead th:nth-child(1) {
   background: var(--header-bg);
 }
 
@@ -1265,7 +1268,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky;
   left: var(--left-player);
   z-index: 4;
+}
+
+.season-table thead th:nth-child(2) {
   background: var(--header-bg);
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 700;
+}
+
+.season-table tbody td:nth-child(2) {
   text-align: left;
   padding-left: 12px;
   font-weight: 700;
@@ -1278,6 +1290,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky;
   left: var(--left-pos);
   z-index: 4;
+}
+
+.season-table thead th:nth-child(3) {
   background: var(--header-bg);
 }
 
