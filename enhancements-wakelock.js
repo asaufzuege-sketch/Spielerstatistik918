@@ -17,7 +17,9 @@
   }
 
   function findTimerButton(topBar) {
-    return document.getElementById('timerBtn');
+    // Only look for timer button within the provided topBar
+    if (!topBar) return null;
+    return topBar.querySelector('#timerBtn');
   }
 
   function createButtonElement() {
@@ -56,7 +58,7 @@
       const existing = document.getElementById(BTN_ID);
       // Ensure it's in the correct position (first, before timer)
       const timerBtn = findTimerButton(topBar);
-      if (timerBtn && existing.nextSibling !== timerBtn && timerBtn.parentNode === topBar) {
+      if (timerBtn && existing.nextSibling !== timerBtn) {
         topBar.insertBefore(existing, timerBtn);
       }
       return true;
@@ -67,7 +69,7 @@
 
     try {
       // Insert before timer button (first position in top-bar)
-      if (timerBtn && timerBtn.parentNode === topBar) {
+      if (timerBtn) {
         topBar.insertBefore(btn, timerBtn);
         log('Inserted Theme button before Timer button');
       } else {
