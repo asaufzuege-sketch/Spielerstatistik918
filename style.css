@@ -1330,15 +1330,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Box shadow for visual separation */
-.season-table :is(th, td):nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="dark"] .season-table :is(th, td):nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
-}
-
 .season-table thead th:last-child,
 .season-table tbody td:last-child {
   min-width: 80px;
