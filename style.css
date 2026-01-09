@@ -27,6 +27,14 @@
   /* NEU: Perioden-Boxen sollen "bleiben wie sie sind" (dunkel mit weißem Text) */
   --period-bg: #2a2a2a;
   --period-text: #ffffff;
+  
+  /* Season Table Spaltenbreiten */
+  --w-nr: 60px;
+  --w-player: 140px;
+  --w-pos: 70px;
+  --left-nr: 0px;
+  --left-player: calc(var(--w-nr));
+  --left-pos: calc(var(--w-nr) + var(--w-player));
 }
 
 [data-theme="dark"] {
@@ -722,20 +730,19 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 #seasonContainer {
+  position: relative;
+  overflow: auto;
   display: flex !important;
   justify-content: center !important;
   align-items: flex-start !important;
   width: 100% !important;
   max-width: 1100px;
   margin: 0 auto;
-  overflow-x: auto !important;
-  overflow-y: auto;
   -webkit-overflow-scrolling: touch !important;
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: 20px !important;
   box-sizing: border-box !important;
-  position: relative !important;
   height: auto;
   min-height: 0;
   max-height: calc(100vh - 200px);
@@ -774,34 +781,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   color: #ffffff; /* FIX */
   position: sticky;
   top: 0;
-  z-index: 40;
   text-align: center;
-}
-
-#seasonPage th,
-#seasonPage td {
-  padding: 6px 4px !important;
-  text-align: center;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  color: var(--text-color);
-  white-space: nowrap;
-}
-
-#seasonPage thead th:nth-child(1),
-#seasonPage tbody td:nth-child(1) {
-  min-width: 60px;
-  text-align: center;
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-#seasonPage thead th:nth-child(2),
-#seasonPage tbody td:nth-child(2) {
-  text-align: left;
-  white-space: nowrap;
-  font-weight: 700;
-  padding-left: 12px;
-  min-width: 140px;
 }
 
 #seasonPage tbody tr:nth-child(odd) { background-color: var(--row-odd); }
@@ -1231,58 +1211,36 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* --- Season Table Fix: eigenständige Klasse & Scroll-Konsistenz --- */
-#seasonContainer {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  overflow-x: auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
-  box-sizing: border-box;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 16px;
-  position: relative;
-  height: auto;
-  min-height: 0;
-  max-height: calc(100vh - 200px);
-}
 
-/* Season Table Column Width Variables */
-/* These variables define the widths of sticky columns and are used in calc()
-   expressions for positioning. This ensures proper scaling at all zoom levels. */
 .season-table {
-  --col-nr-width: 60px;        /* Width of Nr column (1st sticky column) */
-  --col-player-width: 140px;   /* Width of Player column (2nd sticky column) */
-  --col-pos-width: 70px;       /* Width of Pos column (3rd sticky column) */
-  
   width: 100%;
-  margin: 6px auto 10px auto;  /* Tabelle zentrieren */
-  min-width: max-content;
-  max-width: none;
-  border-collapse: collapse;
-  font-size: 0.95rem;
   table-layout: fixed;
+  border-collapse: collapse;
+  margin: 6px auto 10px auto;
+  min-width: max-content;
+  font-size: 0.95rem;
   display: table;
 }
 
+.season-table th,
+.season-table td {
+  white-space: nowrap;
+  padding: 6px 6px;
+}
+
+/* Header oben sticky */
 .season-table thead th {
-  background: var(--header-bg);
-  color: #fff;
   position: sticky;
   top: 0;
-  z-index: 4;
-  padding: 6px 6px;
+  z-index: 5;
+  background: var(--header-bg);
+  color: #fff;
   border-bottom: 2px solid #333;
   text-align: center;
   font-weight: 700;
-  white-space: nowrap;
 }
 
 .season-table tbody td {
-  padding: 6px 6px;
-  white-space: nowrap;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   text-align: center;
 }
@@ -1290,114 +1248,101 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table tbody tr:nth-child(odd) { background: var(--row-odd); }
 .season-table tbody tr:nth-child(even) { background: var(--row-even); }
 
-/* Nr Column (1st) */
-.season-table thead th:nth-child(1),
-.season-table tbody td:nth-child(1) {
-  min-width: var(--col-nr-width);
-  width: var(--col-nr-width);
-  max-width: var(--col-nr-width);
-  text-align: center;
+/* Nr Column (1st) - Header UND Body */
+.season-table :is(th, td):nth-child(1) {
+  width: var(--w-nr);
+  min-width: var(--w-nr);
   position: sticky;
-  left: 0;
-  z-index: 3;
-  box-sizing: border-box;
+  left: var(--left-nr);
+  z-index: 4;
 }
 
 .season-table thead th:nth-child(1) {
   background: var(--header-bg);
-  z-index: 5;
 }
 
-.season-table tbody tr:nth-child(odd) td:nth-child(1) {
-  background: var(--row-odd) !important;
-}
-
-.season-table tbody tr:nth-child(even) td:nth-child(1) {
-  background: var(--row-even) !important;
-}
-
-/* Player Column (2nd) */
-.season-table thead th:nth-child(2),
-.season-table tbody td:nth-child(2) {
-  min-width: var(--col-player-width);
-  width: var(--col-player-width);
-  max-width: var(--col-player-width);
-  text-align: left;
-  font-weight: 700;
-  padding-left: 12px;
+/* Player Column (2nd) - Header UND Body */
+.season-table :is(th, td):nth-child(2) {
+  width: var(--w-player);
+  min-width: var(--w-player);
   position: sticky;
-  left: var(--col-nr-width);
-  z-index: 3;
-  box-sizing: border-box;
+  left: var(--left-player);
+  z-index: 4;
 }
 
 .season-table thead th:nth-child(2) {
   background: var(--header-bg);
-  z-index: 5;
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 700;
 }
 
-.season-table tbody tr:nth-child(odd) td:nth-child(2) {
-  background: var(--row-odd) !important;
+.season-table tbody td:nth-child(2) {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 700;
 }
 
-.season-table tbody tr:nth-child(even) td:nth-child(2) {
-  background: var(--row-even) !important;
-}
-
-/* Pos Column (3rd) */
-.season-table thead th:nth-child(3),
-.season-table tbody td:nth-child(3) {
-  min-width: var(--col-pos-width);
-  width: var(--col-pos-width);
-  max-width: var(--col-pos-width);
-  text-align: center;
+/* Pos Column (3rd) - Header UND Body */
+.season-table :is(th, td):nth-child(3) {
+  width: var(--w-pos);
+  min-width: var(--w-pos);
   position: sticky;
-  left: calc(var(--col-nr-width) + var(--col-player-width));
-  z-index: 3;
-  box-sizing: border-box;
+  left: var(--left-pos);
+  z-index: 4;
 }
 
 .season-table thead th:nth-child(3) {
   background: var(--header-bg);
-  z-index: 5;
 }
 
+/* Header der ersten drei Spalten ÜBER Body-Zellen legen */
+.season-table thead th:nth-child(-n+3) {
+  z-index: 6;
+}
+
+/* Ungerade Zeilen */
+.season-table tbody tr:nth-child(odd) td:nth-child(1),
+.season-table tbody tr:nth-child(odd) td:nth-child(2),
 .season-table tbody tr:nth-child(odd) td:nth-child(3) {
-  background: var(--row-odd) !important;
+  background: var(--row-odd);
 }
 
+/* Gerade Zeilen */
+.season-table tbody tr:nth-child(even) td:nth-child(1),
+.season-table tbody tr:nth-child(even) td:nth-child(2),
 .season-table tbody tr:nth-child(even) td:nth-child(3) {
-  background: var(--row-even) !important;
+  background: var(--row-even);
 }
 
-/* Box shadow for visual separation */
-.season-table thead th:nth-child(3),
-.season-table tbody td:nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="dark"] .season-table thead th:nth-child(3),
-[data-theme="dark"] .season-table tbody td:nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
-}
-
+/* Total-Zeile */
 .season-table .total-row td:nth-child(1),
 .season-table .total-row td:nth-child(2),
 .season-table .total-row td:nth-child(3) {
+  background: var(--header-bg);
   position: sticky;
-  z-index: 3;
+  z-index: 4;
 }
 
 .season-table .total-row td:nth-child(1) {
-  left: 0;
+  left: var(--left-nr);
 }
 
 .season-table .total-row td:nth-child(2) {
-  left: var(--col-nr-width);
+  left: var(--left-player);
 }
 
 .season-table .total-row td:nth-child(3) {
-  left: calc(var(--col-nr-width) + var(--col-player-width));
+  left: var(--left-pos);
+}
+
+/* Box shadow for visual separation */
+.season-table :is(th, td):nth-child(3) {
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .season-table :is(th, td):nth-child(3) {
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
 }
 
 .season-table thead th:last-child,
@@ -1554,67 +1499,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* ========================================= */
 /* EXPLICIT STICKY COLUMN BACKGROUNDS        */
 /* ========================================= */
-
-/* EXPLIZITE Hintergrundfarben für Season Table Light Mode */
-.season-table tbody tr:nth-child(even) td:nth-child(1),
-.season-table tbody tr:nth-child(even) td:nth-child(2) {
-  background-color: #f0f0f0 !important;
-}
-
-.season-table tbody tr:nth-child(odd) td:nth-child(1),
-.season-table tbody tr:nth-child(odd) td:nth-child(2) {
-  background-color: #e0e0e0 !important;
-}
-
-/* EXPLIZITE Hintergrundfarben für Season Table Dark Mode */
-[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(1),
-[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(2),
-[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(3) {
-  background: var(--row-even) !important;
-}
-
-[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(1),
-[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(2),
-[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(3) {
-  background: var(--row-odd) !important;
-}
-
-/* Total row Pos. column */
-.season-table .total-row td:nth-child(3) {
-  background: var(--header-bg) !important;
-}
-
-/* Box shadow for sticky columns separation */
-.season-table thead th:nth-child(1),
-.season-table thead th:nth-child(2),
-.season-table thead th:nth-child(3),
-.season-table tbody td:nth-child(1),
-.season-table tbody td:nth-child(2),
-.season-table tbody td:nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="dark"] .season-table thead th:nth-child(1),
-[data-theme="dark"] .season-table thead th:nth-child(2),
-[data-theme="dark"] .season-table thead th:nth-child(3),
-[data-theme="dark"] .season-table tbody td:nth-child(1),
-[data-theme="dark"] .season-table tbody td:nth-child(2),
-[data-theme="dark"] .season-table tbody td:nth-child(3) {
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Higher z-index for header sticky columns */
-.season-table thead th:nth-child(1) {
-  z-index: 5 !important;
-}
-
-.season-table thead th:nth-child(2) {
-  z-index: 5 !important;
-}
-
-.season-table thead th:nth-child(3) {
-  z-index: 5 !important;
-}
 
 /* EXPLIZITE Hintergrundfarben für Goal Value Table Light Mode */
 .goalvalue-table tbody tr:nth-child(even) td.sticky-col {
@@ -2731,18 +2615,6 @@ tr[data-player].dragging {
   margin-top: 4px !important;
   height: auto !important;
   overflow: visible !important;
-}
-
-/* FIX: Season Tabelle zentrieren - VERSTÄRKT */
-#seasonContainer {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: flex-start !important;
-  width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  max-height: calc(100vh - 200px) !important;
-  -webkit-overflow-scrolling: touch !important;
 }
 
 #seasonContainer table,
