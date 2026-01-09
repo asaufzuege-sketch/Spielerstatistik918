@@ -1253,10 +1253,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Nr Column (1st) - Header UND Body */
 .season-table :is(th, td):nth-child(1) {
-  width: var(--w-nr);
-  min-width: var(--w-nr);
+  width: var(--w-nr, 60px);
+  min-width: var(--w-nr, 60px);
   position: sticky;
-  left: var(--left-nr);
+  left: var(--left-nr, 0px);
   z-index: 15; /* Above scrolling cells */
   box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
 }
@@ -1267,10 +1267,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Player Column (2nd) - Header UND Body */
 .season-table :is(th, td):nth-child(2) {
-  width: var(--w-player);
-  min-width: var(--w-player);
+  width: var(--w-player, 140px);
+  min-width: var(--w-player, 140px);
   position: sticky;
-  left: var(--left-player);
+  left: var(--left-player, 60px);
   z-index: 15; /* Above scrolling cells */
   box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
   text-align: left;
@@ -1286,10 +1286,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Pos Column (3rd) - Header UND Body */
 .season-table :is(th, td):nth-child(3) {
-  width: var(--w-pos);
-  min-width: var(--w-pos);
+  width: var(--w-pos, 70px);
+  min-width: var(--w-pos, 70px);
   position: sticky;
-  left: var(--left-pos);
+  left: var(--left-pos, 200px);
   z-index: 15; /* Above scrolling cells */
   box-shadow: 2px 0 4px rgba(0,0,0,0.3); /* Stronger shadow for last sticky column */
 }
@@ -1328,15 +1328,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .season-table .total-row td:nth-child(1) {
-  left: var(--left-nr);
+  left: var(--left-nr, 0px);
 }
 
 .season-table .total-row td:nth-child(2) {
-  left: var(--left-player);
+  left: var(--left-player, 60px);
 }
 
 .season-table .total-row td:nth-child(3) {
-  left: var(--left-pos);
+  left: var(--left-pos, 200px);
 }
 
 /* Box shadow handled in sticky column definitions above (lines 1260, 1274, 1293) - removed duplicate */
