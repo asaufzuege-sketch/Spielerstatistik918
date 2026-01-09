@@ -1272,7 +1272,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   color: #fff;
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 4;
   padding: 6px 6px;
   border-bottom: 2px solid #333;
   text-align: center;
@@ -1299,13 +1299,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   text-align: center;
   position: sticky;
   left: 0;
-  z-index: 25;
+  z-index: 3;
   box-sizing: border-box;
 }
 
 .season-table thead th:nth-child(1) {
   background: var(--header-bg);
-  z-index: 35;
+  z-index: 5;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(1) {
@@ -1327,13 +1327,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding-left: 12px;
   position: sticky;
   left: var(--col-nr-width);
-  z-index: 24;
+  z-index: 3;
   box-sizing: border-box;
 }
 
 .season-table thead th:nth-child(2) {
   background: var(--header-bg);
-  z-index: 34;
+  z-index: 5;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(2) {
@@ -1353,13 +1353,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   text-align: center;
   position: sticky;
   left: calc(var(--col-nr-width) + var(--col-player-width));
-  z-index: 23;
+  z-index: 3;
   box-sizing: border-box;
 }
 
 .season-table thead th:nth-child(3) {
   background: var(--header-bg);
-  z-index: 33;
+  z-index: 5;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(3) {
@@ -1385,7 +1385,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table .total-row td:nth-child(2),
 .season-table .total-row td:nth-child(3) {
   position: sticky;
-  z-index: 19;
+  z-index: 3;
 }
 
 .season-table .total-row td:nth-child(1) {
@@ -1605,15 +1605,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Higher z-index for header sticky columns */
 .season-table thead th:nth-child(1) {
-  z-index: 35 !important;
+  z-index: 5 !important;
 }
 
 .season-table thead th:nth-child(2) {
-  z-index: 34 !important;
+  z-index: 5 !important;
 }
 
 .season-table thead th:nth-child(3) {
-  z-index: 33 !important;
+  z-index: 5 !important;
 }
 
 /* EXPLIZITE Hintergrundfarben für Goal Value Table Light Mode */
