@@ -781,34 +781,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   color: #ffffff; /* FIX */
   position: sticky;
   top: 0;
-  z-index: 40;
   text-align: center;
-}
-
-#seasonPage th,
-#seasonPage td {
-  padding: 6px 4px !important;
-  text-align: center;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  color: var(--text-color);
-  white-space: nowrap;
-}
-
-#seasonPage thead th:nth-child(1),
-#seasonPage tbody td:nth-child(1) {
-  min-width: 60px;
-  text-align: center;
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-#seasonPage thead th:nth-child(2),
-#seasonPage tbody td:nth-child(2) {
-  text-align: left;
-  white-space: nowrap;
-  font-weight: 700;
-  padding-left: 12px;
-  min-width: 140px;
 }
 
 #seasonPage tbody tr:nth-child(odd) { background-color: var(--row-odd); }
