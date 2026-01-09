@@ -35,6 +35,7 @@
   --left-nr: 0px;
   --left-player: calc(var(--w-nr));
   --left-pos: calc(var(--w-nr) + var(--w-player));
+  --sticky-total: calc(var(--w-nr) + var(--w-player) + var(--w-pos));
 }
 
 [data-theme="dark"] {
@@ -739,7 +740,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-width: 1100px;
   margin: 0 auto;
   -webkit-overflow-scrolling: touch !important;
-  padding-left: 20px;
+  padding: 0; /* CRITICAL: no left padding to prevent gap */
   padding-right: 20px;
   padding-bottom: 20px !important;
   box-sizing: border-box !important;
@@ -747,6 +748,19 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-height: 0;
   max-height: calc(100vh - 200px);
   background: var(--bg-color); /* Opaque background for sticky columns */
+}
+
+/* Left overlay mask to prevent scrolling columns from showing through */
+#seasonContainer::before {
+  content: "";
+  position: sticky;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sticky-total, 270px);
+  background: var(--bg-color);
+  z-index: 12; /* Below sticky cells (15+), above scrolling cells */
+  pointer-events: none;
 }
 
 #seasonContainer::-webkit-scrollbar {
@@ -1256,13 +1270,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: var(--w-nr, 60px);
   min-width: var(--w-nr, 60px);
   position: sticky;
-  left: var(--left-nr, 0px);
+  left: 0; /* Exactly at left edge */
   z-index: 15; /* Above scrolling cells */
   box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
-}
-
-.season-table thead th:nth-child(1) {
-  background: var(--header-bg);
 }
 
 /* Player Column (2nd) - Header UND Body */
@@ -1270,18 +1280,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: var(--w-player, 140px);
   min-width: var(--w-player, 140px);
   position: sticky;
-  left: var(--left-player, 60px);
+  left: var(--w-nr, 60px); /* Directly calculated from first column width */
   z-index: 15; /* Above scrolling cells */
   box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
   text-align: left;
   padding-left: 12px;
-}
-
-.season-table thead th:nth-child(2) {
-  background: var(--header-bg);
-  text-align: left;
-  padding-left: 12px;
-  font-weight: 700;
 }
 
 /* Pos Column (3rd) - Header UND Body */
@@ -1289,19 +1292,21 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: var(--w-pos, 70px);
   min-width: var(--w-pos, 70px);
   position: sticky;
-  left: var(--left-pos, 200px);
+  left: calc(var(--w-nr, 60px) + var(--w-player, 140px)); /* Sum of first two columns */
   z-index: 15; /* Above scrolling cells */
   box-shadow: 2px 0 4px rgba(0,0,0,0.3); /* Stronger shadow for last sticky column */
-}
-
-.season-table thead th:nth-child(3) {
-  background: var(--header-bg);
 }
 
 /* Header der ersten drei Spalten ÜBER Body-Zellen legen */
 .season-table thead th:nth-child(-n+3) {
   z-index: 25; /* HIGHEST - above body sticky columns */
   background: var(--header-bg);
+}
+
+.season-table thead th:nth-child(2) {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 700;
 }
 
 /* Ungerade Zeilen - sticky columns with !important */
@@ -1328,15 +1333,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .season-table .total-row td:nth-child(1) {
-  left: var(--left-nr, 0px);
+  left: 0;
 }
 
 .season-table .total-row td:nth-child(2) {
-  left: var(--left-player, 60px);
+  left: var(--w-nr, 60px);
 }
 
 .season-table .total-row td:nth-child(3) {
-  left: var(--left-pos, 200px);
+  left: calc(var(--w-nr, 60px) + var(--w-player, 140px));
 }
 
 /* Box shadow handled in sticky column definitions above (lines 1260, 1274, 1293) - removed duplicate */
