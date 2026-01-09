@@ -67,17 +67,32 @@ App.seasonTable = {
     const headerCells = table.tHead?.rows[0]?.cells;
     if (!headerCells || headerCells.length < 3) return;
 
+    // Aktuelle Breiten messen
     const w1 = headerCells[0].offsetWidth;
     const w2 = headerCells[1].offsetWidth;
     const w3 = headerCells[2].offsetWidth;
 
-    document.documentElement.style.setProperty('--w-nr', `${w1}px`);
-    document.documentElement.style.setProperty('--w-player', `${w2}px`);
-    document.documentElement.style.setProperty('--w-pos', `${w3}px`);
+    // Basis-Mindestbreiten (wie bei 100% Zoom)
+    const minW1 = 60;   // Nr
+    const minW2 = 140;  // Player
+    const minW3 = 70;   // Pos
+
+    // Breite = Maximum aus Mindestbreite und aktueller Breite
+    // So werden Spalten nie kleiner als bei 100% Zoom
+    const finalW1 = Math.max(minW1, w1);
+    const finalW2 = Math.max(minW2, w2);
+    const finalW3 = Math.max(minW3, w3);
+
+    // Breiten setzen (nie kleiner als Minimum)
+    document.documentElement.style.setProperty('--w-nr', `${finalW1}px`);
+    document.documentElement.style.setProperty('--w-player', `${finalW2}px`);
+    document.documentElement.style.setProperty('--w-pos', `${finalW3}px`);
+
+    // Offsets basierend auf finalen Breiten
     document.documentElement.style.setProperty('--left-nr', '0px');
-    document.documentElement.style.setProperty('--left-player', `${w1}px`);
-    document.documentElement.style.setProperty('--left-pos', `${w1 + w2}px`);
-    document.documentElement.style.setProperty('--sticky-total', `${w1 + w2 + w3}px`);
+    document.documentElement.style.setProperty('--left-player', `${finalW1}px`);
+    document.documentElement.style.setProperty('--left-pos', `${finalW1 + finalW2}px`);
+    document.documentElement.style.setProperty('--sticky-total', `${finalW1 + finalW2 + finalW3}px`);
   },
 
   render() {
