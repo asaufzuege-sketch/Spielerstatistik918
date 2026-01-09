@@ -1,9 +1,27 @@
 // theme-toggle.js
 
+// Function to update the theme button icon based on current theme
+function updateThemeButtonIcon() {
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (!themeBtn) return;
+    
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'light') {
+        // In Light Mode: Show moon icon (indicates switch to dark)
+        themeBtn.innerHTML = '☽';
+        themeBtn.title = 'Switch to Dark Mode';
+    } else {
+        // In Dark Mode: Show sun icon (indicates switch to light)
+        themeBtn.innerHTML = '☀';
+        themeBtn.title = 'Switch to Light Mode';
+    }
+}
+
 // Function to set the theme
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
+    updateThemeButtonIcon();
 }
 
 // Function to toggle between light and dark mode

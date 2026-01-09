@@ -192,8 +192,8 @@ h1 {
 }
 #statsPage .top-btn,
 #statsPage .import-csv-btn {
-  flex: 1 1 0 !important;
-  min-width: 0 !important;
+  flex: 1 1 auto !important;
+  min-width: auto !important;
   white-space: nowrap !important;
   font-size: clamp(0.80rem, 1.0vw, 0.95rem) !important;
   padding: clamp(6px, 0.9vw, 8px) clamp(8px, 1.4vw, 14px) !important;
@@ -204,21 +204,29 @@ h1 {
 /* Theme Toggle Button - Only on Game Data page */
 #themeToggleBtn {
   background: linear-gradient(to bottom, #d0d0d0, #808080);
-  color: #fff;
+  color: #000;
   border: none;
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 8px 12px;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  min-width: 70px !important;
-  max-width: 70px !important;
+  font-size: 1.2rem;  /* Larger icon size */
+  min-width: 40px !important;
+  max-width: 45px !important;
   flex: 0 0 auto !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: none;
 }
 
 #themeToggleBtn:hover {
   filter: brightness(1.1);
+}
+
+/* Dark Mode Styling for Theme Button */
+[data-theme="dark"] #themeToggleBtn {
+  background: linear-gradient(to bottom, #4a4a4a, #2a2a2a);
+  color: #fff;
 }
 
 /* Season-Seite Topbar */
