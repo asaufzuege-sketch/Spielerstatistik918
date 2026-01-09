@@ -1289,7 +1289,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   text-align: center;
   position: sticky;
   left: 0;
-  z-index: 30;
   background: var(--header-bg);
 }
 
@@ -1314,7 +1313,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-width: 140px;
   position: sticky;
   left: 60px;
-  z-index: 30;
   background: var(--header-bg);
 }
 
@@ -1335,14 +1333,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table thead th:nth-child(3) {
   position: sticky;
   left: 200px;
-  z-index: 30;
   background: var(--header-bg);
+  min-width: 70px;
 }
 
 .season-table tbody td:nth-child(3) {
   position: sticky;
   left: 200px;
   z-index: 19;
+  background: inherit;
+  min-width: 70px;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(3) {
@@ -1547,6 +1547,52 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 [data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(1),
 [data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(2) {
   background-color: #4a4a4a !important;
+}
+
+/* Dark mode backgrounds for Pos. column (3rd column) */
+[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(3) {
+  background: #4a4a4a;
+}
+
+[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(3) {
+  background: #333333;
+}
+
+/* Total row Pos. column */
+.season-table .total-row td:nth-child(3) {
+  background: var(--header-bg) !important;
+}
+
+/* Box shadow for sticky columns separation */
+.season-table thead th:nth-child(1),
+.season-table thead th:nth-child(2),
+.season-table thead th:nth-child(3),
+.season-table tbody td:nth-child(1),
+.season-table tbody td:nth-child(2),
+.season-table tbody td:nth-child(3) {
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .season-table thead th:nth-child(1),
+[data-theme="dark"] .season-table thead th:nth-child(2),
+[data-theme="dark"] .season-table thead th:nth-child(3),
+[data-theme="dark"] .season-table tbody td:nth-child(1),
+[data-theme="dark"] .season-table tbody td:nth-child(2),
+[data-theme="dark"] .season-table tbody td:nth-child(3) {
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Higher z-index for header sticky columns */
+.season-table thead th:nth-child(1) {
+  z-index: 35 !important;
+}
+
+.season-table thead th:nth-child(2) {
+  z-index: 34 !important;
+}
+
+.season-table thead th:nth-child(3) {
+  z-index: 33 !important;
 }
 
 /* EXPLIZITE Hintergrundfarben für Goal Value Table Light Mode */
