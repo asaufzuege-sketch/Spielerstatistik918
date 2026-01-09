@@ -1228,7 +1228,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table td {
   white-space: nowrap;
   padding: 6px 6px;
-  background: var(--row-even); /* Opaque background for all cells */
+  /* Background colors handled by row striping and header rules */
 }
 
 /* Header oben sticky */
@@ -1258,7 +1258,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky;
   left: var(--left-nr);
   z-index: 15; /* Above scrolling cells */
-  background: var(--row-even);
   box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
 }
 
@@ -1273,7 +1272,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky;
   left: var(--left-player);
   z-index: 15; /* Above scrolling cells */
-  background: var(--row-even);
   box-shadow: 2px 0 0 rgba(0,0,0,0.3); /* Visual separation */
   text-align: left;
   padding-left: 12px;
@@ -1293,7 +1291,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky;
   left: var(--left-pos);
   z-index: 15; /* Above scrolling cells */
-  background: var(--row-even);
   box-shadow: 2px 0 4px rgba(0,0,0,0.3); /* Stronger shadow for last sticky column */
 }
 
