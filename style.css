@@ -1249,14 +1249,19 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-height: calc(100vh - 200px);
 }
 
+/* Season Table Column Width Variables */
 .season-table {
+  --col-nr-width: 60px;
+  --col-player-width: 140px;
+  --col-pos-width: 70px;
+  
   width: 100%;
   margin: 6px auto 10px auto;  /* Tabelle zentrieren */
   min-width: max-content;
   max-width: none;
   border-collapse: collapse;
   font-size: 0.95rem;
-  table-layout: auto;
+  table-layout: fixed;
   display: table;
 }
 
@@ -1283,74 +1288,95 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table tbody tr:nth-child(odd) { background: var(--row-odd); }
 .season-table tbody tr:nth-child(even) { background: var(--row-even); }
 
+/* Nr Column (1st) */
 .season-table thead th:nth-child(1),
 .season-table tbody td:nth-child(1) {
-  min-width: 60px;
+  min-width: var(--col-nr-width);
+  width: var(--col-nr-width);
+  max-width: var(--col-nr-width);
   text-align: center;
   position: sticky;
   left: 0;
-  background: var(--header-bg);
+  z-index: 25;
+  box-sizing: border-box;
 }
 
-.season-table tbody td:nth-child(1) {
-  background: inherit;
-  z-index: 19;
+.season-table thead th:nth-child(1) {
+  background: var(--header-bg);
+  z-index: 35;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(1) {
-  background: var(--row-odd);
+  background: var(--row-odd) !important;
 }
 
 .season-table tbody tr:nth-child(even) td:nth-child(1) {
-  background: var(--row-even);
+  background: var(--row-even) !important;
 }
 
+/* Player Column (2nd) */
 .season-table thead th:nth-child(2),
 .season-table tbody td:nth-child(2) {
+  min-width: var(--col-player-width);
+  width: var(--col-player-width);
+  max-width: var(--col-player-width);
   text-align: left;
   font-weight: 700;
   padding-left: 12px;
-  min-width: 140px;
   position: sticky;
-  left: 60px;
-  background: var(--header-bg);
+  left: var(--col-nr-width);
+  z-index: 24;
+  box-sizing: border-box;
 }
 
-.season-table tbody td:nth-child(2) {
-  background: inherit;
-  z-index: 19;
+.season-table thead th:nth-child(2) {
+  background: var(--header-bg);
+  z-index: 34;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(2) {
-  background: var(--row-odd);
+  background: var(--row-odd) !important;
 }
 
 .season-table tbody tr:nth-child(even) td:nth-child(2) {
-  background: var(--row-even);
+  background: var(--row-even) !important;
 }
 
-/* Column 3 (Pos.) - Sticky positioning */
-.season-table thead th:nth-child(3) {
-  position: sticky;
-  left: 200px;
-  background: var(--header-bg);
-  min-width: 70px;
-}
-
+/* Pos Column (3rd) */
+.season-table thead th:nth-child(3),
 .season-table tbody td:nth-child(3) {
+  min-width: var(--col-pos-width);
+  width: var(--col-pos-width);
+  max-width: var(--col-pos-width);
+  text-align: center;
   position: sticky;
-  left: 200px;
-  z-index: 19;
-  background: inherit;
-  min-width: 70px;
+  left: calc(var(--col-nr-width) + var(--col-player-width));
+  z-index: 23;
+  box-sizing: border-box;
+}
+
+.season-table thead th:nth-child(3) {
+  background: var(--header-bg);
+  z-index: 33;
 }
 
 .season-table tbody tr:nth-child(odd) td:nth-child(3) {
-  background: var(--row-odd);
+  background: var(--row-odd) !important;
 }
 
 .season-table tbody tr:nth-child(even) td:nth-child(3) {
-  background: var(--row-even);
+  background: var(--row-even) !important;
+}
+
+/* Box shadow for visual separation */
+.season-table thead th:nth-child(3),
+.season-table tbody td:nth-child(3) {
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .season-table thead th:nth-child(3),
+[data-theme="dark"] .season-table tbody td:nth-child(3) {
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
 }
 
 .season-table .total-row td:nth-child(1),
@@ -1365,11 +1391,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .season-table .total-row td:nth-child(2) {
-  left: 60px;
+  left: var(--col-nr-width);
 }
 
 .season-table .total-row td:nth-child(3) {
-  left: 200px;
+  left: calc(var(--col-nr-width) + var(--col-player-width));
 }
 
 .season-table thead th:last-child,
@@ -1540,22 +1566,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* EXPLIZITE Hintergrundfarben für Season Table Dark Mode */
 [data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(1),
-[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(2) {
-  background-color: #333333 !important;
+[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(2),
+[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(3) {
+  background: var(--row-even) !important;
 }
 
 [data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(1),
-[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(2) {
-  background-color: #4a4a4a !important;
-}
-
-/* Dark mode backgrounds for Pos. column (3rd column) */
+[data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(2),
 [data-theme="dark"] .season-table tbody tr:nth-child(odd) td:nth-child(3) {
-  background: #4a4a4a;
-}
-
-[data-theme="dark"] .season-table tbody tr:nth-child(even) td:nth-child(3) {
-  background: #333333;
+  background: var(--row-odd) !important;
 }
 
 /* Total row Pos. column */
