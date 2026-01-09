@@ -3025,5 +3025,6 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
     width: auto;
     min-width: auto;
     z-index: auto;
+    box-shadow: none;
   }
 }
