@@ -48,6 +48,34 @@ App.seasonTable = {
         this.closeAddTimeDialog();
       }
     });
+    
+    // Add resize listener for sticky columns
+    window.addEventListener('resize', () => {
+      this.setStickyOffsets();
+    });
+  },
+
+  /**
+   * Measures the actual widths of the first 3 header cells and sets them as CSS variables.
+   * This keeps header and body aligned correctly at 125%/150% zoom.
+   */
+  setStickyOffsets() {
+    const table = document.querySelector('.season-table');
+    if (!table) return;
+    
+    const headerCells = table.tHead?.rows[0]?.cells;
+    if (!headerCells || headerCells.length < 3) return;
+
+    const w1 = headerCells[0].offsetWidth;
+    const w2 = headerCells[1].offsetWidth;
+    const w3 = headerCells[2].offsetWidth;
+
+    document.documentElement.style.setProperty('--w-nr', `${w1}px`);
+    document.documentElement.style.setProperty('--w-player', `${w2}px`);
+    document.documentElement.style.setProperty('--w-pos', `${w3}px`);
+    document.documentElement.style.setProperty('--left-nr', '0px');
+    document.documentElement.style.setProperty('--left-player', `${w1}px`);
+    document.documentElement.style.setProperty('--left-pos', `${w1 + w2}px`);
   },
 
   render() {
@@ -409,6 +437,11 @@ App.seasonTable = {
         this.filterByPosition(e.target.value);
       });
     }
+    
+    // Update sticky column offsets after rendering
+    setTimeout(() => {
+      this.setStickyOffsets();
+    }, 50);
     
     // WICHTIG: Flag zurücksetzen
     this.isRendering = false;
