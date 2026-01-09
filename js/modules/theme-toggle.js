@@ -22,9 +22,3 @@ if (userPreference) {
     const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     setTheme(systemPreference);
 }
-
-// Add a button to toggle the theme
-const themeToggleButton = document.createElement('button');
-themeToggleButton.innerText = 'Toggle Theme';
-themeToggleButton.onclick = toggleTheme;
-document.body.appendChild(themeToggleButton);

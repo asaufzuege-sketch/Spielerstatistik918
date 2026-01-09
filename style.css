@@ -201,6 +201,25 @@ h1 {
 }
 #statsPage #timerBtn { font-variant-numeric: tabular-nums; }
 
+/* Theme Toggle Button - Only on Game Data page */
+#themeToggleBtn {
+  background: linear-gradient(to bottom, #d0d0d0, #808080);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-width: 70px !important;
+  max-width: 70px !important;
+  flex: 0 0 auto !important;
+}
+
+#themeToggleBtn:hover {
+  filter: brightness(1.1);
+}
+
 /* Season-Seite Topbar */
 #seasonPage .top-bar {
   gap: 12px;
