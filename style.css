@@ -1250,10 +1250,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* Season Table Column Width Variables */
+/* These variables define the widths of sticky columns and are used in calc()
+   expressions for positioning. This ensures proper scaling at all zoom levels. */
 .season-table {
-  --col-nr-width: 60px;
-  --col-player-width: 140px;
-  --col-pos-width: 70px;
+  --col-nr-width: 60px;        /* Width of Nr column (1st sticky column) */
+  --col-player-width: 140px;   /* Width of Player column (2nd sticky column) */
+  --col-pos-width: 70px;       /* Width of Pos column (3rd sticky column) */
   
   width: 100%;
   margin: 6px auto 10px auto;  /* Tabelle zentrieren */
