@@ -29,11 +29,11 @@
   --period-text: #ffffff;
   
   /* Season Table Spaltenbreiten */
-  --w-nr: 60px;
-  --w-player: 140px;
-  --w-pos: 70px;
+  --w-nr: 48px;
+  --w-player: 160px;
+  --w-pos: 80px;
   --left-nr: 0px;
-  --left-player: calc(var(--w-nr));
+  --left-player: var(--w-nr);
   --left-pos: calc(var(--w-nr) + var(--w-player));
   --sticky-total: calc(var(--w-nr) + var(--w-player) + var(--w-pos));
 }
@@ -1256,8 +1256,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* --- Season Table Fix: eigenständige Klasse & Scroll-Konsistenz --- */
 
 .season-table {
-  width: 100%;
   table-layout: fixed;
+  width: 100%;
   border-collapse: separate; /* CRITICAL: prevents bleeding */
   border-spacing: 0;
   margin: 6px auto 10px auto;
@@ -2988,43 +2988,56 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
 
 /* ===== SEASON TABLE RESPONSIVE STICKY COLUMNS ===== */
 
-/* Tablet (≤1024px) */
+/* Tablet (≤1024px): All 3 columns sticky, but narrower */
 @media (max-width: 1024px) {
   :root {
-    --w-nr: 36px;
-    --w-player: 120px;
-    --w-pos: 64px;
+    --w-nr: 28px;
+    --w-player: 110px;
+    --w-pos: 54px;
     --sticky-total: calc(var(--w-nr) + var(--w-player) + var(--w-pos));
   }
   .season-table :is(th, td):nth-child(1) { left: 0; }
   .season-table :is(th, td):nth-child(2) { left: var(--w-nr); }
   .season-table :is(th, td):nth-child(3) { left: calc(var(--w-nr) + var(--w-player)); }
+  .season-table th, .season-table td { padding: 6px 8px; font-size: 14px; }
 }
 
-/* Mobile (≤768px) */
+/* Mobile (≤768px): Only Nr + Player sticky, Pos scrollable */
 @media (max-width: 768px) {
   :root {
-    --w-nr: 32px;
-    --w-player: 110px;
-    --w-pos: 56px;
-    --sticky-total: calc(var(--w-nr) + var(--w-player) + var(--w-pos));
+    --w-nr: 24px;
+    --w-player: 100px;
+    --w-pos: 48px;
+    --sticky-total: calc(var(--w-nr) + var(--w-player));
   }
-  .season-table :is(th, td):nth-child(1) { left: 0; }
-  .season-table :is(th, td):nth-child(2) { left: var(--w-nr); }
-  .season-table :is(th, td):nth-child(3) { left: calc(var(--w-nr) + var(--w-player)); }
-}
-
-/* Sehr klein (≤640px): Pos nicht mehr sticky */
-@media (max-width: 640px) {
-  :root {
-    --sticky-total: calc(var(--w-nr) + var(--w-player)); /* Nur Nr + Player */
+  /* Nr */
+  .season-table :is(th, td):nth-child(1) {
+    position: sticky;
+    left: 0;
+    width: var(--w-nr); min-width: var(--w-nr);
   }
+  /* Player */
+  .season-table :is(th, td):nth-child(2) {
+    position: sticky;
+    left: var(--w-nr);
+    width: var(--w-player); min-width: var(--w-player);
+  }
+  /* Pos nicht mehr sticky */
   .season-table :is(th, td):nth-child(3) {
     position: static;
     left: auto;
-    width: auto;
-    min-width: auto;
+    width: auto; min-width: auto;
     z-index: auto;
-    box-shadow: none;
   }
+  .season-table th, .season-table td { padding: 5px 7px; font-size: 13px; }
+}
+
+/* Sehr klein (≤640px): Noch kompakter */
+@media (max-width: 640px) {
+  :root {
+    --w-nr: 22px;
+    --w-player: 92px;
+    --sticky-total: calc(var(--w-nr) + var(--w-player));
+  }
+  .season-table th, .season-table td { padding: 4px 6px; font-size: 12px; }
 }
