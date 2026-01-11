@@ -1017,22 +1017,24 @@ setStickyOffsets() {
     this.positionFilter = position;
     
     // Get rows from both tables
-    const fixedRows = document.querySelectorAll('#seasonContainer .season-table-fixed tbody tr:not(.total-row)');
-    const scrollRows = document.querySelectorAll('#seasonContainer .season-table-scroll tbody tr:not(.total-row)');
+    const fixedRows = Array.from(document.querySelectorAll('#seasonContainer .season-table-fixed tbody tr:not(.total-row)'));
+    const scrollRows = Array.from(document.querySelectorAll('#seasonContainer .season-table-scroll tbody tr:not(.total-row)'));
     
-    // Filter both tables synchronously
-    fixedRows.forEach((row, idx) => {
-      const posCell = row.querySelector('.pos-cell');
+    // Ensure both tables have the same number of rows
+    if (fixedRows.length !== scrollRows.length) {
+      console.warn('[Season Table] Row count mismatch between fixed and scroll tables');
+    }
+    
+    // Filter both tables synchronously by index
+    const maxRows = Math.min(fixedRows.length, scrollRows.length);
+    for (let idx = 0; idx < maxRows; idx++) {
+      const posCell = fixedRows[idx].querySelector('.pos-cell');
       const cellText = posCell ? posCell.textContent : '';
       const shouldShow = !position || cellText === position;
       
-      row.style.display = shouldShow ? '' : 'none';
-      
-      // Apply same filter to corresponding row in scroll table
-      if (scrollRows[idx]) {
-        scrollRows[idx].style.display = shouldShow ? '' : 'none';
-      }
-    });
+      fixedRows[idx].style.display = shouldShow ? '' : 'none';
+      scrollRows[idx].style.display = shouldShow ? '' : 'none';
+    }
   },
   
   /**
