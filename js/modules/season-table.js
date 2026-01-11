@@ -57,42 +57,11 @@ App.seasonTable = {
   },
 
   /**
-   * Measures the actual widths of the first 3 header cells and sets them as CSS variables.
-   * This keeps header and body aligned correctly at 125%/150% zoom.
+   * DEAKTIVIERT - CSS übernimmt alles mit vw-Einheiten für zoom-unabhängige Darstellung
    */
   setStickyOffsets() {
-    // On Mobile/Tablet: let CSS handle it, do NOTHING!
-    if (window.innerWidth <= 1024) return;
-    
-    const table = document.querySelector('.season-table');
-    if (!table) return;
-    
-    const headerCells = table.tHead?.rows[0]?.cells;
-    if (!headerCells || headerCells.length < 3) return;
-
-    const root = document.documentElement;
-    
-    // Reset before measuring (not cumulative!)
-    root.style.removeProperty('--w-nr');
-    root.style.removeProperty('--w-player');
-    root.style.removeProperty('--w-pos');
-    root.style.removeProperty('--left-nr');
-    root.style.removeProperty('--left-player');
-    root.style.removeProperty('--left-pos');
-    root.style.removeProperty('--sticky-total');
-
-    // Now measure fresh
-    const w1 = headerCells[0].offsetWidth;
-    const w2 = headerCells[1].offsetWidth;
-    const w3 = headerCells[2].offsetWidth;
-
-    root.style.setProperty('--w-nr', `${w1}px`);
-    root.style.setProperty('--w-player', `${w2}px`);
-    root.style.setProperty('--w-pos', `${w3}px`);
-    root.style.setProperty('--left-nr', '0px');
-    root.style.setProperty('--left-player', `${w1}px`);
-    root.style.setProperty('--left-pos', `${w1 + w2}px`);
-    root.style.setProperty('--sticky-total', `${w1 + w2 + w3}px`);
+    // KOMPLETT deaktivieren - CSS übernimmt alles mit vw-Einheiten
+    return;
   },
 
   render() {
