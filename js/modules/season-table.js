@@ -73,6 +73,10 @@ App.seasonTable = {
     root.style.removeProperty('--w-nr'); 
     root.style.removeProperty('--w-player');
     root.style.removeProperty('--w-pos');
+    root.style.removeProperty('--left-nr');
+    root.style.removeProperty('--left-player');
+    root.style.removeProperty('--left-pos');
+    root.style.removeProperty('--sticky-total');
 
     // Jetzt frisch messen
     const w1 = headerCells[0].offsetWidth;
