@@ -481,9 +481,6 @@ setStickyOffsets() {
     this.container.appendChild(wrapper);
 
     console.log("[Season Table] Tables in container:", this.container.querySelectorAll('table').length);
-    this.container.appendChild(table);
-
-    console.log("[Season Table] Tables in container:", this.container.querySelectorAll('table').length);
 
     // Sort UI - update both tables
     this.updateSortUI(fixedTable);
