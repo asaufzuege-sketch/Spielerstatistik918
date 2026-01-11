@@ -67,47 +67,29 @@ App.seasonTable = {
     const headerCells = table.tHead?.rows[0]?.cells;
     if (!headerCells || headerCells.length < 3) return;
 
-    // Aktuelle Breiten messen
+    const root = document.documentElement;
+    
+    // WICHTIG: Vor dem Messen die Variablen zurücksetzen (nicht kumulativ!)
+    root.style.removeProperty('--w-nr'); 
+    root.style.removeProperty('--w-player');
+    root.style.removeProperty('--w-pos');
+    root.style.removeProperty('--left-nr');
+    root.style.removeProperty('--left-player');
+    root.style.removeProperty('--left-pos');
+    root.style.removeProperty('--sticky-total');
+
+    // Jetzt frisch messen
     const w1 = headerCells[0].offsetWidth;
     const w2 = headerCells[1].offsetWidth;
     const w3 = headerCells[2].offsetWidth;
 
-    // Responsive Mindestbreiten basierend auf Bildschirmgröße
-    const screenWidth = window.innerWidth;
-    let minW1, minW2, minW3;
-    
-    if (screenWidth <= 768) {
-      // Mobile: Kleinere Mindestbreiten
-      minW1 = 35;   // Nr
-      minW2 = 90;   // Player
-      minW3 = 45;   // Pos
-    } else if (screenWidth <= 1024) {
-      // Tablet: Mittlere Mindestbreiten
-      minW1 = 45;   // Nr
-      minW2 = 110;  // Player
-      minW3 = 55;   // Pos
-    } else {
-      // Desktop: Standard Mindestbreiten
-      minW1 = 60;   // Nr
-      minW2 = 140;  // Player
-      minW3 = 70;   // Pos
-    }
-
-    // Breite = Maximum aus Mindestbreite und aktueller Breite
-    const finalW1 = Math.max(minW1, w1);
-    const finalW2 = Math.max(minW2, w2);
-    const finalW3 = Math.max(minW3, w3);
-
-    // Breiten setzen (nie kleiner als Minimum für aktuelle Bildschirmgröße)
-    document.documentElement.style.setProperty('--w-nr', `${finalW1}px`);
-    document.documentElement.style.setProperty('--w-player', `${finalW2}px`);
-    document.documentElement.style.setProperty('--w-pos', `${finalW3}px`);
-
-    // Offsets basierend auf finalen Breiten
-    document.documentElement.style.setProperty('--left-nr', '0px');
-    document.documentElement.style.setProperty('--left-player', `${finalW1}px`);
-    document.documentElement.style.setProperty('--left-pos', `${finalW1 + finalW2}px`);
-    document.documentElement.style.setProperty('--sticky-total', `${finalW1 + finalW2 + finalW3}px`);
+    root.style.setProperty('--w-nr', `${w1}px`);
+    root.style.setProperty('--w-player', `${w2}px`);
+    root.style.setProperty('--w-pos', `${w3}px`);
+    root.style.setProperty('--left-nr', '0px');
+    root.style.setProperty('--left-player', `${w1}px`);
+    root.style.setProperty('--left-pos', `${w1 + w2}px`);
+    root.style.setProperty('--sticky-total', `${w1 + w2 + w3}px`);
   },
 
   render() {
