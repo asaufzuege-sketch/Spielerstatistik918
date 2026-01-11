@@ -843,6 +843,147 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: relative !important;
 }
 
+/* ====================== */
+/* TWO-TABLE SOLUTION FOR SEASON TABLE */
+/* ====================== */
+
+.season-table-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.fixed-columns {
+  flex-shrink: 0;
+  z-index: 10;
+  background: var(--bg-color);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.fixed-columns table {
+  border-collapse: collapse;
+}
+
+.scrollable-columns {
+  flex: 1;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollable-columns table {
+  border-collapse: collapse;
+  min-width: max-content;
+}
+
+/* Zeilen-Höhe synchronisieren */
+.season-table-fixed tbody tr,
+.season-table-scroll tbody tr {
+  height: 36px;
+}
+
+.season-table-fixed th,
+.season-table-fixed td,
+.season-table-scroll th,
+.season-table-scroll td {
+  padding: 8px 12px;
+  white-space: nowrap;
+  border-bottom: 1px solid #333;
+}
+
+/* Header Styling */
+.season-table-fixed thead th,
+.season-table-scroll thead th {
+  background: var(--header-bg);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 8px 12px;
+  border-bottom: 2px solid #333;
+}
+
+/* Alternating row colors */
+.season-table-fixed tbody tr:nth-child(odd),
+.season-table-scroll tbody tr:nth-child(odd) {
+  background: var(--row-odd);
+}
+
+.season-table-fixed tbody tr:nth-child(even),
+.season-table-scroll tbody tr:nth-child(even) {
+  background: var(--row-even);
+}
+
+/* Total row styling */
+.season-table-fixed .total-row td,
+.season-table-scroll .total-row td {
+  background: var(--header-bg) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-top: 2px solid #333;
+}
+
+/* Position column styles in fixed table */
+.season-table-fixed .pos-header {
+  background: var(--header-bg);
+  color: #fff;
+  padding: 8px 12px;
+  text-align: center;
+  cursor: default;
+}
+
+.season-table-fixed .pos-filter {
+  width: 100%;
+  padding: 4px 6px;
+  background: var(--header-bg);
+  color: #44bb91;
+  font-weight: bold;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.season-table-fixed .pos-filter:hover {
+  border-color: #777;
+}
+
+.season-table-fixed .pos-filter:focus {
+  border-color: #999;
+}
+
+.season-table-fixed .pos-cell {
+  text-align: center;
+  font-weight: 600;
+  color: #44bb91;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .fixed-columns {
+    max-width: 40%;
+  }
+  
+  .season-table-fixed th,
+  .season-table-fixed td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .season-table-scroll th,
+  .season-table-scroll td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .season-table-fixed tbody tr,
+  .season-table-scroll tbody tr {
+    height: 32px;
+  }
+}
+
 /* ============ */
 /* GOAL VALUE PAGE */
 /* ============ */
@@ -3095,27 +3236,4 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
     font-size: 11px !important; 
   }
 }
-/* ========================================= */
-/* FORCE:  Sticky columns max 25% of viewport */
-/* ========================================= */
-.season-table : is(th, td):nth-child(1) { 
-  width: 4vw !important; 
-  min-width: 4vw !important; 
-  max-width: 4vw !important; 
-  left: 0 !important;
-}
-.season-table : is(th, td):nth-child(2) { 
-  width: 15vw !important; 
-  min-width: 15vw !important; 
-  max-width: 15vw !important; 
-  left: 4vw !important; 
-}
-. season-table :is(th, td):nth-child(3) { 
-  width: 6vw !important; 
-  min-width: 6vw !important; 
-  max-width:  6vw ! important; 
-  left: 19vw !important; 
-}
-: root {
-  --sticky-total:  25vw ! important;
-}
+

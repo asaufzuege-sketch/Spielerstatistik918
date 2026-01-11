@@ -79,72 +79,115 @@ setStickyOffsets() {
     
     console.log("[Season Table] Rendering started at:", new Date().toISOString());
 
-    const headerCols = [
-      "Nr", "Player", "Pos.", "Games",
-      "Goals", "Assists", "Points", "+/-", "Ø +/-",
-      "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
-      "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", "Time",
-      "MVP", "MVP Points"
+    // === WRAPPER ERSTELLEN ===
+    const wrapper = document.createElement("div");
+    wrapper.className = "season-table-wrapper";
+
+    // === FIXIERTE SPALTEN ===
+    const fixedDiv = document.createElement("div");
+    fixedDiv.className = "fixed-columns";
+    
+    const fixedTable = document.createElement("table");
+    fixedTable.className = "season-table-fixed";
+    
+    const fixedThead = document.createElement("thead");
+    const fixedHeaderRow = document.createElement("tr");
+    
+    // Nr Header
+    const thNr = document.createElement("th");
+    thNr.textContent = "Nr";
+    thNr.dataset.colIndex = "0";
+    thNr.className = "sortable";
+    thNr.style.cursor = "pointer";
+    const arrowNr = document.createElement("span");
+    arrowNr.className = "sort-arrow";
+    arrowNr.style.marginLeft = "6px";
+    thNr.appendChild(arrowNr);
+    fixedHeaderRow.appendChild(thNr);
+    
+    // Player Header
+    const thPlayer = document.createElement("th");
+    thPlayer.textContent = "Player";
+    thPlayer.dataset.colIndex = "1";
+    thPlayer.className = "sortable";
+    thPlayer.style.cursor = "pointer";
+    thPlayer.style.textAlign = "left";
+    const arrowPlayer = document.createElement("span");
+    arrowPlayer.className = "sort-arrow";
+    arrowPlayer.style.marginLeft = "6px";
+    thPlayer.appendChild(arrowPlayer);
+    fixedHeaderRow.appendChild(thPlayer);
+    
+    // Pos. Header mit Filter
+    const thPos = document.createElement("th");
+    thPos.className = "pos-header";
+    thPos.dataset.colIndex = "2";
+    
+    const select = document.createElement("select");
+    select.className = "pos-filter";
+    select.id = "positionFilter";
+    select.style.color = "#44bb91";
+    select.style.fontWeight = "bold";
+    
+    const options = [
+      { value: "", text: "Pos." },
+      { value: "C", text: "Center" },
+      { value: "W", text: "Wing" },
+      { value: "D", text: "Defense" }
     ];
-
-    // Tabelle direkt in den Container
-    const table = document.createElement("table");
-    table.className = "season-table";
-    table.setAttribute("data-table-id", "season-main-table");
-
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-
-    headerCols.forEach((h, idx) => {
-      const th = document.createElement("th");
-      
-      if (h === "Pos.") {
-        th.className = "pos-header";
-        th.dataset.colIndex = idx;
-        
-        const select = document.createElement("select");
-        select.className = "pos-filter";
-        select.id = "positionFilter";
-        select.style.color = "#44bb91";  // GRÜN
-        select.style.fontWeight = "bold";
-        
-        const options = [
-          { value: "", text: "Pos." },
-          { value: "C", text: "Center" },
-          { value: "W", text: "Wing" },
-          { value: "D", text: "Defense" }
-        ];
-        
-        options.forEach(opt => {
-          const option = document.createElement("option");
-          option.value = opt.value;
-          option.textContent = opt.text;
-          if (opt.value === this.positionFilter) {
-            option.selected = true;
-          }
-          select.appendChild(option);
-        });
-        
-        th.appendChild(select);
-      } else {
-        th.textContent = h;
-        th.dataset.colIndex = idx;
-        th.className = "sortable";
-        th.style.cursor = "pointer";
-
-        const arrow = document.createElement("span");
-        arrow.className = "sort-arrow";
-        arrow.style.marginLeft = "6px";
-        th.appendChild(arrow);
+    
+    options.forEach(opt => {
+      const option = document.createElement("option");
+      option.value = opt.value;
+      option.textContent = opt.text;
+      if (opt.value === this.positionFilter) {
+        option.selected = true;
       }
-
-      headerRow.appendChild(th);
+      select.appendChild(option);
     });
-
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    const tbody = document.createElement("tbody");
+    
+    thPos.appendChild(select);
+    fixedHeaderRow.appendChild(thPos);
+    
+    fixedThead.appendChild(fixedHeaderRow);
+    fixedTable.appendChild(fixedThead);
+    
+    const fixedTbody = document.createElement("tbody");
+    
+    // === SCROLLBARE SPALTEN ===
+    const scrollDiv = document.createElement("div");
+    scrollDiv.className = "scrollable-columns";
+    
+    const scrollTable = document.createElement("table");
+    scrollTable.className = "season-table-scroll";
+    
+    const scrollThead = document.createElement("thead");
+    const scrollHeaderRow = document.createElement("tr");
+    
+    const scrollHeaders = [
+      "Games", "Goals", "Assists", "Points", "+/-", "Ø +/-",
+      "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
+      "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", 
+      "Time", "MVP", "MVP Points"
+    ];
+    
+    scrollHeaders.forEach((text, idx) => {
+      const th = document.createElement("th");
+      th.textContent = text;
+      th.dataset.colIndex = String(idx + 3); // Offset by 3 for fixed columns
+      th.className = "sortable";
+      th.style.cursor = "pointer";
+      const arrow = document.createElement("span");
+      arrow.className = "sort-arrow";
+      arrow.style.marginLeft = "6px";
+      th.appendChild(arrow);
+      scrollHeaderRow.appendChild(th);
+    });
+    
+    scrollThead.appendChild(scrollHeaderRow);
+    scrollTable.appendChild(scrollThead);
+    
+    const scrollTbody = document.createElement("tbody");
 
     // WICHTIG: Goal Value Daten OHNE Trigger zu ensureDataForSeason
     // Wir rufen es NICHT auf, um die Rekursion zu verhindern
@@ -276,53 +319,75 @@ setStickyOffsets() {
       });
     }
 
-    // Body rendern
+    // Body rendern - BEIDE TABELLEN GLEICHZEITIG
     displayRows.forEach(r => {
-      const tr = document.createElement("tr");
-      r.cells.forEach((c, cellIdx) => {
+      // Fixed Table Row (Nr, Player, Pos)
+      const fixedTr = document.createElement("tr");
+      
+      // Nr cell
+      const tdNr = document.createElement("td");
+      tdNr.textContent = r.cells[0]; // Nr
+      fixedTr.appendChild(tdNr);
+      
+      // Player cell
+      const tdPlayer = document.createElement("td");
+      tdPlayer.textContent = r.cells[1]; // Player name
+      tdPlayer.style.textAlign = "left";
+      tdPlayer.style.fontWeight = "700";
+      fixedTr.appendChild(tdPlayer);
+      
+      // Pos cell
+      const tdPos = document.createElement("td");
+      tdPos.textContent = r.cells[2]; // Position
+      tdPos.className = "pos-cell";
+      tdPos.style.color = "#44bb91";
+      tdPos.style.fontWeight = "bold";
+      fixedTr.appendChild(tdPos);
+      
+      fixedTbody.appendChild(fixedTr);
+      
+      // Scrollable Table Row (Games, Goals, ... MVP Points)
+      const scrollTr = document.createElement("tr");
+      
+      // Klickbare Statistik-Zellen - adjusted indices for scroll table
+      const clickableStatMap = {
+        0: 'games',        // index 3 in original -> 0 in scroll
+        1: 'goals',        // index 4 in original -> 1 in scroll
+        2: 'assists',      // index 5 in original -> 2 in scroll
+        4: 'plusMinus',    // index 7 in original -> 4 in scroll
+        6: 'shots',        // index 9 in original -> 6 in scroll
+        11: 'penaltys',    // index 14 in original -> 11 in scroll
+        13: 'faceOffs',    // index 16 in original -> 13 in scroll
+        14: 'faceOffsWon'  // index 17 in original -> 14 in scroll
+      };
+      
+      // Add all scrollable cells (from index 3 onwards in original cells)
+      for (let i = 3; i < r.cells.length; i++) {
         const td = document.createElement("td");
-        td.textContent = c;
-        if (cellIdx === 1) {
-          td.style.textAlign = "left";
-          td.style.fontWeight = "700";
+        td.textContent = r.cells[i];
+        
+        const scrollIdx = i - 3; // Adjust index for scroll table
+        
+        // Attach click handlers for editable stats
+        if (clickableStatMap[scrollIdx]) {
+          td.dataset.stat = clickableStatMap[scrollIdx];
+          this.attachStatClickHandlers(td, r.name, clickableStatMap[scrollIdx]);
         }
         
-        // Pos. cell (index 2)
-        if (cellIdx === 2) {
-          td.className = "pos-cell";
-          td.style.color = "#44bb91";  // GRÜN wie auf Screenshot
-          td.style.fontWeight = "bold";
-        }
-        
-        // Klickbare Statistik-Zellen mit Click/Doppelklick Handler
-        const clickableStatMap = {
-          3: 'games',
-          4: 'goals',
-          5: 'assists',
-          7: 'plusMinus',
-          9: 'shots',
-          14: 'penaltys',
-          16: 'faceOffs',
-          17: 'faceOffsWon'
-        };
-        
-        if (clickableStatMap[cellIdx]) {
-          td.dataset.stat = clickableStatMap[cellIdx];
-          this.attachStatClickHandlers(td, r.name, clickableStatMap[cellIdx]);
-        }
-        
-        // NEU: Time Cell (index 19) bekommt Long Press Handler
-        if (cellIdx === 19) {
+        // Time Cell (index 16 in scroll table = index 19 in original)
+        if (scrollIdx === 16) {
           td.className = "season-time-cell";
           td.dataset.player = r.name;
           this.attachLongPressHandler(td, r.name, r.raw.timeSeconds);
         }
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
+        
+        scrollTr.appendChild(td);
+      }
+      
+      scrollTbody.appendChild(scrollTr);
     });
 
-    // Total-Zeile
+    // Total-Zeile - BEIDE TABELLEN
     if (filteredRows.length > 0) {
       const sums = {
         games: 0, goals: 0, assists: 0, points: 0, plusMinus: 0,
@@ -348,55 +413,86 @@ setStickyOffsets() {
       const avgFacePercent = sums.faceOffs ? Math.round((sums.faceOffsWon / sums.faceOffs) * 100) : 0;
       const avgTime = Math.round(sums.timeSeconds / count);
 
-      const totalCells = new Array(headerCols.length).fill("");
-      totalCells[1] = "Total Ø";
-      totalCells[2] = "";
-      totalCells[3] = (sums.games / count).toFixed(1);
-      totalCells[4] = (sums.goals / count).toFixed(1);
-      totalCells[5] = (sums.assists / count).toFixed(1);
-      totalCells[6] = (sums.points / count).toFixed(1);
-      totalCells[7] = (sums.plusMinus / count).toFixed(1);
-      totalCells[8] = (sums.plusMinus / count).toFixed(1);
-      totalCells[9] = (sums.shots / count).toFixed(1);
-      totalCells[10] = ((sums.shots / count) / ((sums.games / count) || 1)).toFixed(1);
-      totalCells[11] = String(avgShotsPercent) + "%";
-      totalCells[12] = ((sums.goals / count) / ((sums.games / count) || 1)).toFixed(1);
-      totalCells[13] = ((sums.points / count) / ((sums.games / count) || 1)).toFixed(1);
-      totalCells[14] = (sums.penalty / count).toFixed(1);
-      totalCells[15] = "";
-      totalCells[16] = (sums.faceOffs / count).toFixed(1);
-      totalCells[17] = (sums.faceOffsWon / count).toFixed(1);
-      totalCells[18] = String(avgFacePercent) + "%";
-      totalCells[19] = App.helpers.formatTimeMMSS(avgTime);
-      totalCells[20] = "";
-      totalCells[21] = "";
-
-      const trTotal = document.createElement("tr");
-      trTotal.className = "total-row";
-      totalCells.forEach((c, idx) => {
+      // Fixed table total row
+      const fixedTotalTr = document.createElement("tr");
+      fixedTotalTr.className = "total-row";
+      
+      const tdTotalNr = document.createElement("td");
+      tdTotalNr.textContent = "";
+      fixedTotalTr.appendChild(tdTotalNr);
+      
+      const tdTotalPlayer = document.createElement("td");
+      tdTotalPlayer.textContent = "Total Ø";
+      tdTotalPlayer.style.textAlign = "left";
+      tdTotalPlayer.style.fontWeight = "700";
+      fixedTotalTr.appendChild(tdTotalPlayer);
+      
+      const tdTotalPos = document.createElement("td");
+      tdTotalPos.textContent = "";
+      fixedTotalTr.appendChild(tdTotalPos);
+      
+      fixedTbody.appendChild(fixedTotalTr);
+      
+      // Scrollable table total row
+      const scrollTotalTr = document.createElement("tr");
+      scrollTotalTr.className = "total-row";
+      
+      const totalScrollCells = [
+        (sums.games / count).toFixed(1),
+        (sums.goals / count).toFixed(1),
+        (sums.assists / count).toFixed(1),
+        (sums.points / count).toFixed(1),
+        (sums.plusMinus / count).toFixed(1),
+        (sums.plusMinus / count).toFixed(1), // Ø +/-
+        (sums.shots / count).toFixed(1),
+        ((sums.shots / count) / ((sums.games / count) || 1)).toFixed(1),
+        String(avgShotsPercent) + "%",
+        ((sums.goals / count) / ((sums.games / count) || 1)).toFixed(1),
+        ((sums.points / count) / ((sums.games / count) || 1)).toFixed(1),
+        (sums.penalty / count).toFixed(1),
+        "", // Goal Value
+        (sums.faceOffs / count).toFixed(1),
+        (sums.faceOffsWon / count).toFixed(1),
+        String(avgFacePercent) + "%",
+        App.helpers.formatTimeMMSS(avgTime),
+        "", // MVP
+        ""  // MVP Points
+      ];
+      
+      totalScrollCells.forEach(c => {
         const td = document.createElement("td");
         td.textContent = c;
-        if (idx === 1) {
-          td.style.textAlign = "left";
-          td.style.fontWeight = "700";
-        }
-        trTotal.appendChild(td);
+        scrollTotalTr.appendChild(td);
       });
-      tbody.appendChild(trTotal);
+      
+      scrollTbody.appendChild(scrollTotalTr);
     }
 
-    table.appendChild(tbody);
-
-    // Tabelle direkt in den Container
-    this.container.appendChild(table);
+    // Tabellen zusammenbauen
+    fixedTable.appendChild(fixedTbody);
+    fixedDiv.appendChild(fixedTable);
+    
+    scrollTable.appendChild(scrollTbody);
+    scrollDiv.appendChild(scrollTable);
+    
+    wrapper.appendChild(fixedDiv);
+    wrapper.appendChild(scrollDiv);
+    
+    this.container.appendChild(wrapper);
 
     console.log("[Season Table] Tables in container:", this.container.querySelectorAll('table').length);
 
-    // Sort UI
-    this.updateSortUI(table);
+    // Sort UI - update both tables
+    this.updateSortUI(fixedTable);
+    this.updateSortUI(scrollTable);
     
-    // Event Listener für Sortierung
-    table.querySelectorAll("th.sortable").forEach(th => {
+    // Event Listener für Sortierung - both tables
+    const allSortableHeaders = [
+      ...fixedTable.querySelectorAll("th.sortable"),
+      ...scrollTable.querySelectorAll("th.sortable")
+    ];
+    
+    allSortableHeaders.forEach(th => {
       const hasListener = th.hasAttribute('data-listener-attached');
       if (!hasListener) {
         th.setAttribute('data-listener-attached', 'true');
@@ -919,16 +1015,26 @@ setStickyOffsets() {
   
   filterByPosition(position) {
     this.positionFilter = position;
-    const rows = document.querySelectorAll('#seasonContainer .season-table tbody tr:not(.total-row)');
-    rows.forEach(row => {
-      const posCell = row.querySelector('.pos-cell');
+    
+    // Get rows from both tables
+    const fixedRows = Array.from(document.querySelectorAll('#seasonContainer .season-table-fixed tbody tr:not(.total-row)'));
+    const scrollRows = Array.from(document.querySelectorAll('#seasonContainer .season-table-scroll tbody tr:not(.total-row)'));
+    
+    // Ensure both tables have the same number of rows
+    if (fixedRows.length !== scrollRows.length) {
+      console.warn('[Season Table] Row count mismatch between fixed and scroll tables');
+    }
+    
+    // Filter both tables synchronously by index
+    const maxRows = Math.min(fixedRows.length, scrollRows.length);
+    for (let idx = 0; idx < maxRows; idx++) {
+      const posCell = fixedRows[idx].querySelector('.pos-cell');
       const cellText = posCell ? posCell.textContent : '';
-      if (!position || cellText === position) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
-    });
+      const shouldShow = !position || cellText === position;
+      
+      fixedRows[idx].style.display = shouldShow ? '' : 'none';
+      scrollRows[idx].style.display = shouldShow ? '' : 'none';
+    }
   },
   
   /**
