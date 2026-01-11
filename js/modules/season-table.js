@@ -933,11 +933,13 @@ setStickyOffsets() {
   
   /**
    * Cleanup method to remove event listeners and prevent memory leaks
+   * NOTE: Resize handler removed since CSS vw units handle everything zoom-independently
    */
   destroy() {
-    if (this._resizeHandler) {
-      window.removeEventListener('resize', this._resizeHandler);
-      this._resizeHandler = null;
-    }
+    // Resize handler removed - no cleanup needed
+    // if (this._resizeHandler) {
+    //   window.removeEventListener('resize', this._resizeHandler);
+    //   this._resizeHandler = null;
+    // }
   }
 };
