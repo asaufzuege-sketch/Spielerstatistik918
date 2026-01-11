@@ -1424,102 +1424,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* ==================== */
-/* SEASON TABLE RESPONSIVE MEDIA QUERIES */
-/* ==================== */
-
-/* Tablet: Narrower columns, all 3 still sticky */
-@media (max-width: 1024px) {
-  :root {
-    --w-nr: 32px;
-    --w-player: 120px;
-    --w-pos: 56px;
-    --left-nr: 0px;
-    --left-player: 32px;
-    --left-pos: 152px;
-    --sticky-total: 208px;
-  }
-  
-  .season-table :is(th, td):nth-child(1) {
-    left: 0;
-  }
-  
-  .season-table :is(th, td):nth-child(2) {
-    left: var(--w-nr);
-  }
-  
-  .season-table :is(th, td):nth-child(3) {
-    left: calc(var(--w-nr) + var(--w-player));
-  }
-  
-  .season-table th,
-  .season-table td {
-    padding: 6px 8px;
-    font-size: 14px;
-  }
-}
-
-/* Mobile: Only Nr + Player sticky, Pos scrollable */
-@media (max-width: 768px) {
-  :root {
-    --w-nr: 26px;
-    --w-player: 100px;
-    --w-pos: 50px;
-    --left-nr: 0px;
-    --left-player: 26px;
-    --sticky-total: 126px;
-  }
-  
-  /* Nr - sticky */
-  .season-table :is(th, td):nth-child(1) {
-    position: sticky !important;
-    left: 0 !important;
-    width: var(--w-nr) !important;
-    min-width: var(--w-nr) !important;
-  }
-  
-  /* Player - sticky */
-  .season-table :is(th, td):nth-child(2) {
-    position: sticky !important;
-    left: var(--w-nr) !important;
-    width: var(--w-player) !important;
-    min-width: var(--w-player) !important;
-  }
-  
-  /* All columns from 3 onwards - NOT sticky on mobile */
-  .season-table :is(th, td):nth-child(n+3) {
-    position: static !important;
-    left: auto !important;
-    width: auto !important;
-    min-width: auto !important;
-    z-index: auto !important;
-    box-shadow: none !important;
-  }
-  
-  .season-table th,
-  .season-table td {
-    padding: 5px 7px;
-    font-size: 13px;
-  }
-}
-
-/* Very Small: Even more compact */
-@media (max-width: 640px) {
-  :root {
-    --w-nr: 22px;
-    --w-player: 92px;
-    --left-nr: 0px;
-    --left-player: 22px;
-    --sticky-total: 114px;
-  }
-  
-  .season-table th,
-  .season-table td {
-    padding: 4px 6px;
-    font-size: 12px;
-  }
-}
-
-/* ==================== */
 /* TEAM SELECTION STYLES */
 /* ==================== */
 
@@ -3108,22 +3012,26 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   }
   /* Nr */
   .season-table :is(th, td):nth-child(1) {
-    position: sticky;
-    left: 0;
-    width: var(--w-nr); min-width: var(--w-nr);
+    position: sticky !important;
+    left: 0 !important;
+    width: var(--w-nr) !important;
+    min-width: var(--w-nr) !important;
   }
   /* Player */
   .season-table :is(th, td):nth-child(2) {
-    position: sticky;
-    left: var(--w-nr);
-    width: var(--w-player); min-width: var(--w-player);
+    position: sticky !important;
+    left: var(--w-nr) !important;
+    width: var(--w-player) !important;
+    min-width: var(--w-player) !important;
   }
-  /* Pos nicht mehr sticky */
-  .season-table :is(th, td):nth-child(3) {
-    position: static;
-    left: auto;
-    width: auto; min-width: auto;
-    z-index: auto;
+  /* All columns from 3 onwards - NOT sticky on mobile */
+  .season-table :is(th, td):nth-child(n+3) {
+    position: static !important;
+    left: auto !important;
+    width: auto !important;
+    min-width: auto !important;
+    z-index: auto !important;
+    box-shadow: none !important;
   }
   .season-table th, .season-table td { padding: 5px 7px; font-size: 13px; }
 }
