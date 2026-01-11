@@ -73,9 +73,13 @@ App.seasonTable = {
     const root = document.documentElement;
     
     // Reset before measuring (not cumulative!)
-    root.style.setProperty('--w-nr', '');
-    root.style.setProperty('--w-player', '');
-    root.style.setProperty('--w-pos', '');
+    root.style.removeProperty('--w-nr');
+    root.style.removeProperty('--w-player');
+    root.style.removeProperty('--w-pos');
+    root.style.removeProperty('--left-nr');
+    root.style.removeProperty('--left-player');
+    root.style.removeProperty('--left-pos');
+    root.style.removeProperty('--sticky-total');
 
     // Now measure fresh
     const w1 = headerCells[0].offsetWidth;
