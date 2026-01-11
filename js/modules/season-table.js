@@ -193,6 +193,14 @@ setStickyOffsets() {
     // Wir rufen es NICHT auf, um die Rekursion zu verhindern
     // ensureDataForSeason wird nur beim ersten Laden oder explizit aufgerufen
 
+    const headerCols = [
+      "Nr", "Player", "Pos.", "Games",
+      "Goals", "Assists", "Points", "+/-", "Ø +/-",
+      "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
+      "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", "Time",
+      "MVP", "MVP Points"
+    ];
+
     const rows = Object.keys(App.data.seasonData).map(name => {
       const d = App.data.seasonData[name];
       const games = Number(d.games || 0);
