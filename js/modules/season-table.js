@@ -61,6 +61,9 @@ App.seasonTable = {
    * This keeps header and body aligned correctly at 125%/150% zoom.
    */
   setStickyOffsets() {
+    // Auf Mobile/Tablet: CSS übernehmen lassen, NICHTS tun!
+    if (window.innerWidth <= 1024) return;
+    
     const table = document.querySelector('.season-table');
     if (!table) return;
     
@@ -69,14 +72,10 @@ App.seasonTable = {
 
     const root = document.documentElement;
     
-    // WICHTIG: Vor dem Messen die Variablen zurücksetzen (nicht kumulativ!)
-    root.style.removeProperty('--w-nr'); 
-    root.style.removeProperty('--w-player');
-    root.style.removeProperty('--w-pos');
-    root.style.removeProperty('--left-nr');
-    root.style.removeProperty('--left-player');
-    root.style.removeProperty('--left-pos');
-    root.style.removeProperty('--sticky-total');
+    // Vor dem Messen zurücksetzen (nicht kumulativ!)
+    root.style.setProperty('--w-nr', '');
+    root.style.setProperty('--w-player', '');
+    root.style.setProperty('--w-pos', '');
 
     // Jetzt frisch messen
     const w1 = headerCells[0].offsetWidth;
