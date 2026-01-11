@@ -2985,3 +2985,46 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   height: 100%;
   object-fit: contain;
 }
+
+/* ===== SEASON TABLE RESPONSIVE STICKY COLUMNS ===== */
+
+/* Tablet (≤1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --w-nr: 36px;
+    --w-player: 120px;
+    --w-pos: 64px;
+    --sticky-total: calc(var(--w-nr) + var(--w-player) + var(--w-pos));
+  }
+  .season-table :is(th, td):nth-child(1) { left: 0; }
+  .season-table :is(th, td):nth-child(2) { left: var(--w-nr); }
+  .season-table :is(th, td):nth-child(3) { left: calc(var(--w-nr) + var(--w-player)); }
+}
+
+/* Mobile (≤768px) */
+@media (max-width: 768px) {
+  :root {
+    --w-nr: 32px;
+    --w-player: 110px;
+    --w-pos: 56px;
+    --sticky-total: calc(var(--w-nr) + var(--w-player) + var(--w-pos));
+  }
+  .season-table :is(th, td):nth-child(1) { left: 0; }
+  .season-table :is(th, td):nth-child(2) { left: var(--w-nr); }
+  .season-table :is(th, td):nth-child(3) { left: calc(var(--w-nr) + var(--w-player)); }
+}
+
+/* Sehr klein (≤640px): Pos nicht mehr sticky */
+@media (max-width: 640px) {
+  :root {
+    --sticky-total: calc(var(--w-nr) + var(--w-player)); /* Nur Nr + Player */
+  }
+  .season-table :is(th, td):nth-child(3) {
+    position: static;
+    left: auto;
+    width: auto;
+    min-width: auto;
+    z-index: auto;
+    box-shadow: none;
+  }
+}
