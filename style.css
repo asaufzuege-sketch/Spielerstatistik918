@@ -3095,3 +3095,7 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
     font-size: 11px !important; 
   }
 }
+/* FORCE:  Sticky columns max 25% of viewport */
+.season-table : is(th, td):nth-child(1) { width: 4vw ! important; min-width: 4vw !important; max-width: 4vw !important; }
+.season-table :is(th, td):nth-child(2) { width: 15vw !important; min-width: 15vw !important; max-width:  15vw ! important; left: 4vw !important; }
+.season-table :is(th, td):nth-child(3) { width: 6vw !important; min-width: 6vw !important; max-width:  6vw ! important; left: 19vw !important; }
