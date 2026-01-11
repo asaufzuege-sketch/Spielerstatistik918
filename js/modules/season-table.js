@@ -70,9 +70,9 @@ App.seasonTable = {
     const root = document.documentElement;
     
     // WICHTIG: Vor dem Messen die Variablen zurücksetzen (nicht kumulativ!)
-    root.style.setProperty('--w-nr', ''); 
-    root.style.setProperty('--w-player', '');
-    root.style.setProperty('--w-pos', '');
+    root.style.removeProperty('--w-nr'); 
+    root.style.removeProperty('--w-player');
+    root.style.removeProperty('--w-pos');
 
     // Jetzt frisch messen
     const w1 = headerCells[0].offsetWidth;
