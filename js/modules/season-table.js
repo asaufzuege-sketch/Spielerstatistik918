@@ -59,9 +59,8 @@ App.seasonTable = {
   /**
    * DISABLED - CSS handles everything with vw units for zoom-independent display
    */
-  setStickyOffsets() {
-    // Completely disabled - CSS handles everything with vw units
-    return;
+setStickyOffsets() {
+  return; // KOMPLETT DEAKTIVIERT - CSS übernimmt alles
   },
 
   render() {
