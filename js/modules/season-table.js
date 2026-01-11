@@ -49,11 +49,11 @@ App.seasonTable = {
       }
     });
     
-    // Add resize listener for sticky columns
-    this._resizeHandler = () => {
-      this.setStickyOffsets();
-    };
-    window.addEventListener('resize', this._resizeHandler);
+    // Resize listener removed - CSS vw units handle everything zoom-independently
+    // this._resizeHandler = () => {
+    //   this.setStickyOffsets();
+    // };
+    // window.addEventListener('resize', this._resizeHandler);
   },
 
   /**
@@ -423,11 +423,10 @@ setStickyOffsets() {
       });
     }
     
-    // Update sticky column offsets after rendering
-    // Small delay ensures DOM is fully rendered before measuring
-    setTimeout(() => {
-      this.setStickyOffsets();
-    }, 50);
+    // setStickyOffsets() call removed - CSS vw units handle everything zoom-independently
+    // setTimeout(() => {
+    //   this.setStickyOffsets();
+    // }, 50);
     
     // WICHTIG: Flag zurücksetzen
     this.isRendering = false;
