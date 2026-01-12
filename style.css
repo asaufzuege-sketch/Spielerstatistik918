@@ -841,7 +841,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .season-table-wrapper {
   display: flex;
-  gap: 8px;
+  gap: 0; /* GEÄNDERT: Keine Lücke mehr zwischen den Tabellen */
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -852,8 +852,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   flex-shrink: 0;
   z-index: 10;
   background: var(--bg-color);
-  box-shadow: 4px 0 8px rgba(0,0,0,0.3);
-  border-radius: 8px 0 0 8px;
+  /* GEÄNDERT: Subtilerer Schatten wie Goal Value */
+  box-shadow: 2px 0 4px rgba(0,0,0,0.15);
+  border-radius: 0; /* Keine abgerundeten Ecken */
 }
 
 .scrollable-columns {
@@ -861,7 +862,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   min-width: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0; /* Keine abgerundeten Ecken */
 }
 
 .season-table-fixed,
@@ -910,7 +911,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Tablet (≤1024px) */
 @media (max-width: 1024px) {
   .season-table-wrapper {
-    gap: 10px;
+    gap: 0; /* Auch auf Tablet kein gap */
   }
   
   .season-table-fixed th,
@@ -925,7 +926,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Mobile (≤768px) */
 @media (max-width: 768px) {
   .season-table-wrapper {
-    gap: 12px;
+    gap: 0; /* Auch auf Mobile kein gap */
   }
   
   .fixed-columns {
@@ -950,7 +951,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Sehr klein (≤480px) */
 @media (max-width: 480px) {
   .season-table-wrapper {
-    gap: 8px;
+    gap: 0; /* Auch auf kleinen Screens kein gap */
   }
   
   .fixed-columns {
