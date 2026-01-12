@@ -836,6 +836,11 @@ setStickyOffsets() {
         // Speichern und UI aktualisieren
         App.storage.saveSeasonData();
         this.render();
+        
+        // Position Filter wiederherstellen
+        if (this.positionFilter) {
+          this.filterByPosition(this.positionFilter);
+        }
       }, 250);
       
       this.clickTimers.set(statCell, timer);
@@ -870,6 +875,11 @@ setStickyOffsets() {
       // Speichern und UI aktualisieren
       App.storage.saveSeasonData();
       this.render();
+      
+      // Position Filter wiederherstellen
+      if (this.positionFilter) {
+        this.filterByPosition(this.positionFilter);
+      }
     });
   },
   
@@ -992,6 +1002,11 @@ setStickyOffsets() {
       
       // Re-render table
       this.render();
+      
+      // Position Filter wiederherstellen
+      if (this.positionFilter) {
+        this.filterByPosition(this.positionFilter);
+      }
       
       console.log(`Added ${additionalSeconds}s to ${playerName}. New time: ${newTime}s`);
     } else {
