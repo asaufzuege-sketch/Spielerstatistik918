@@ -839,13 +839,20 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   -webkit-overflow-scrolling: touch;
 }
 
+/* Exakte Ausrichtung beider Tabellen */
 .season-table-wrapper {
   display: flex;
-  gap: 0; /* GEÄNDERT: Keine Lücke mehr zwischen den Tabellen */
+  gap: 0;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  align-items: flex-start;
+  align-items: stretch; /* Beide Tabellen gleich hoch */
+}
+
+.fixed-columns,
+.scrollable-columns {
+  margin: 0;
+  padding: 0;
 }
 
 .fixed-columns {
@@ -868,7 +875,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table-fixed,
 .season-table-scroll {
   border-collapse: collapse;
+  border-spacing: 0;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .season-table-fixed th,
@@ -878,7 +888,27 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 8px 12px;
   white-space: nowrap;
   border-bottom: 1px solid #333;
-  line-height: 1.2;
+  line-height: 1;
+}
+
+/* Header exakt gleiche Höhe */
+.season-table-fixed thead tr,
+.season-table-scroll thead tr {
+  height: 44px;
+}
+
+.season-table-fixed thead th,
+.season-table-scroll thead th {
+  background: var(--header-bg);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 44px;
+  padding: 8px 12px;
+  vertical-align: middle;
+  box-sizing: border-box;
+  line-height: 1;
 }
 
 /* Body-Zeilen exakt gleiche Höhe */
@@ -890,20 +920,21 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table-fixed tbody td,
 .season-table-scroll tbody td {
   height: 40px;
+  padding: 8px 12px;
   vertical-align: middle;
   box-sizing: border-box;
+  line-height: 1;
 }
 
-.season-table-fixed thead th,
-.season-table-scroll thead th {
-  background: var(--header-bg);
-  color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  height: 44px;
-  vertical-align: middle;
-  box-sizing: border-box;
+/* Total row gleiche Höhe */
+.season-table-fixed .total-row,
+.season-table-scroll .total-row {
+  height: 40px;
+}
+
+.season-table-fixed .total-row td,
+.season-table-scroll .total-row td {
+  height: 40px;
 }
 
 /* Synchronisierte Zeilenfarben */
@@ -925,30 +956,30 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 700;
 }
 
-/* Pos Filter - wie im alten Design */
+/* Pos Filter - kompakter gemacht */
 .pos-filter {
   background: #3a3a3a;
   color: #44bb91;
   border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
+  border-radius: 6px;
+  padding: 4px 10px;
+  padding-right: 24px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   outline: none;
   /* Dropdown Arrow */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2344bb91' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%2344bb91' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 30px;
+  background-position: right 8px center;
 }
 
-/* Pos Header Zelle */
+/* Pos Header Zelle - kompakter */
 .pos-header {
-  padding: 8px !important;
+  padding: 4px 8px !important;
 }
 
 /* Hover Effekt */
@@ -973,6 +1004,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   .season-table-scroll td {
     padding: 6px 10px;
     font-size: 13px;
+  }
+  
+  .season-table-fixed thead tr,
+  .season-table-scroll thead tr {
+    height: 40px;
   }
   
   .season-table-fixed thead th,
@@ -1010,6 +1046,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   .season-table-scroll td {
     padding: 5px 8px;
     font-size: 12px;
+  }
+  
+  .season-table-fixed thead tr,
+  .season-table-scroll thead tr {
+    height: 40px;
   }
   
   .season-table-fixed thead th,
