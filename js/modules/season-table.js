@@ -79,115 +79,76 @@ setStickyOffsets() {
     
     console.log("[Season Table] Rendering started at:", new Date().toISOString());
 
-    // === WRAPPER ERSTELLEN ===
-    const wrapper = document.createElement("div");
-    wrapper.className = "season-table-wrapper";
-
-    // === FIXIERTE SPALTEN ===
-    const fixedDiv = document.createElement("div");
-    fixedDiv.className = "fixed-columns";
+    // === SINGLE TABLE CREATION ===
+    const table = document.createElement("table");
+    table.className = "season-table";
     
-    const fixedTable = document.createElement("table");
-    fixedTable.className = "season-table-fixed";
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
     
-    const fixedThead = document.createElement("thead");
-    const fixedHeaderRow = document.createElement("tr");
-    
-    // Nr Header
-    const thNr = document.createElement("th");
-    thNr.textContent = "Nr";
-    thNr.dataset.colIndex = "0";
-    thNr.className = "sortable";
-    thNr.style.cursor = "pointer";
-    const arrowNr = document.createElement("span");
-    arrowNr.className = "sort-arrow";
-    arrowNr.style.marginLeft = "6px";
-    thNr.appendChild(arrowNr);
-    fixedHeaderRow.appendChild(thNr);
-    
-    // Player Header
-    const thPlayer = document.createElement("th");
-    thPlayer.textContent = "Player";
-    thPlayer.dataset.colIndex = "1";
-    thPlayer.className = "sortable";
-    thPlayer.style.cursor = "pointer";
-    thPlayer.style.textAlign = "left";
-    const arrowPlayer = document.createElement("span");
-    arrowPlayer.className = "sort-arrow";
-    arrowPlayer.style.marginLeft = "6px";
-    thPlayer.appendChild(arrowPlayer);
-    fixedHeaderRow.appendChild(thPlayer);
-    
-    // Pos. Header mit Filter
-    const thPos = document.createElement("th");
-    thPos.className = "pos-header";
-    thPos.dataset.colIndex = "2";
-    
-    const select = document.createElement("select");
-    select.className = "pos-filter";
-    select.id = "positionFilter";
-    select.style.color = "#44bb91";
-    select.style.fontWeight = "bold";
-    
-    const options = [
-      { value: "", text: "Pos." },
-      { value: "C", text: "Center" },
-      { value: "W", text: "Wing" },
-      { value: "D", text: "Defense" }
-    ];
-    
-    options.forEach(opt => {
-      const option = document.createElement("option");
-      option.value = opt.value;
-      option.textContent = opt.text;
-      if (opt.value === this.positionFilter) {
-        option.selected = true;
-      }
-      select.appendChild(option);
-    });
-    
-    thPos.appendChild(select);
-    fixedHeaderRow.appendChild(thPos);
-    
-    fixedThead.appendChild(fixedHeaderRow);
-    fixedTable.appendChild(fixedThead);
-    
-    const fixedTbody = document.createElement("tbody");
-    
-    // === SCROLLBARE SPALTEN ===
-    const scrollDiv = document.createElement("div");
-    scrollDiv.className = "scrollable-columns";
-    
-    const scrollTable = document.createElement("table");
-    scrollTable.className = "season-table-scroll";
-    
-    const scrollThead = document.createElement("thead");
-    const scrollHeaderRow = document.createElement("tr");
-    
-    const scrollHeaders = [
+    // All headers in one row
+    const allHeaders = [
+      "Nr", "Player", "Pos.",
       "Games", "Goals", "Assists", "Points", "+/-", "Ø +/-",
       "Shots", "Shots/Game", "Shots %", "Goals/Game", "Points/Game",
       "Penalty", "Goal Value", "FaceOffs", "FaceOffs Won", "FaceOffs %", 
       "Time", "MVP", "MVP Points"
     ];
     
-    scrollHeaders.forEach((text, idx) => {
+    allHeaders.forEach((text, idx) => {
       const th = document.createElement("th");
-      th.textContent = text;
-      th.dataset.colIndex = String(idx + 3); // Offset by 3 for fixed columns
-      th.className = "sortable";
-      th.style.cursor = "pointer";
-      const arrow = document.createElement("span");
-      arrow.className = "sort-arrow";
-      arrow.style.marginLeft = "6px";
-      th.appendChild(arrow);
-      scrollHeaderRow.appendChild(th);
+      
+      // Special handling for Pos. header with filter dropdown
+      if (idx === 2) {
+        th.className = "pos-header";
+        th.dataset.colIndex = String(idx);
+        
+        const select = document.createElement("select");
+        select.className = "pos-filter";
+        select.id = "positionFilter";
+        
+        const options = [
+          { value: "", text: "Pos." },
+          { value: "C", text: "Center" },
+          { value: "W", text: "Wing" },
+          { value: "D", text: "Defense" }
+        ];
+        
+        options.forEach(opt => {
+          const option = document.createElement("option");
+          option.value = opt.value;
+          option.textContent = opt.text;
+          if (opt.value === this.positionFilter) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        });
+        
+        th.appendChild(select);
+      } else {
+        // Regular sortable header
+        th.textContent = text;
+        th.dataset.colIndex = String(idx);
+        th.className = "sortable";
+        th.style.cursor = "pointer";
+        
+        if (idx === 1) { // Player column
+          th.style.textAlign = "left";
+        }
+        
+        const arrow = document.createElement("span");
+        arrow.className = "sort-arrow";
+        arrow.style.marginLeft = "6px";
+        th.appendChild(arrow);
+      }
+      
+      headerRow.appendChild(th);
     });
     
-    scrollThead.appendChild(scrollHeaderRow);
-    scrollTable.appendChild(scrollThead);
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
     
-    const scrollTbody = document.createElement("tbody");
+    const tbody = document.createElement("tbody");
 
     // WICHTIG: Goal Value Daten OHNE Trigger zu ensureDataForSeason
     // Wir rufen es NICHT auf, um die Rekursion zu verhindern
@@ -327,75 +288,57 @@ setStickyOffsets() {
       });
     }
 
-    // Body rendern - BEIDE TABELLEN GLEICHZEITIG
+    // Body rendern - SINGLE TABLE
+    // Klickbare Statistik-Zellen mapping (indices in full cells array)
+    const clickableStatMap = {
+      3: 'games',        // index 3
+      4: 'goals',        // index 4
+      5: 'assists',      // index 5
+      7: 'plusMinus',    // index 7
+      9: 'shots',        // index 9
+      14: 'penaltys',    // index 14
+      16: 'faceOffs',    // index 16
+      17: 'faceOffsWon'  // index 17
+    };
+    
     displayRows.forEach(r => {
-      // Fixed Table Row (Nr, Player, Pos)
-      const fixedTr = document.createElement("tr");
+      const tr = document.createElement("tr");
       
-      // Nr cell
-      const tdNr = document.createElement("td");
-      tdNr.textContent = r.cells[0]; // Nr
-      fixedTr.appendChild(tdNr);
-      
-      // Player cell
-      const tdPlayer = document.createElement("td");
-      tdPlayer.textContent = r.cells[1]; // Player name
-      tdPlayer.style.textAlign = "left";
-      tdPlayer.style.fontWeight = "700";
-      fixedTr.appendChild(tdPlayer);
-      
-      // Pos cell
-      const tdPos = document.createElement("td");
-      tdPos.textContent = r.cells[2]; // Position
-      tdPos.className = "pos-cell";
-      tdPos.style.color = "#44bb91";
-      tdPos.style.fontWeight = "bold";
-      fixedTr.appendChild(tdPos);
-      
-      fixedTbody.appendChild(fixedTr);
-      
-      // Scrollable Table Row (Games, Goals, ... MVP Points)
-      const scrollTr = document.createElement("tr");
-      
-      // Klickbare Statistik-Zellen - adjusted indices for scroll table
-      const clickableStatMap = {
-        0: 'games',        // index 3 in original -> 0 in scroll
-        1: 'goals',        // index 4 in original -> 1 in scroll
-        2: 'assists',      // index 5 in original -> 2 in scroll
-        4: 'plusMinus',    // index 7 in original -> 4 in scroll
-        6: 'shots',        // index 9 in original -> 6 in scroll
-        11: 'penaltys',    // index 14 in original -> 11 in scroll
-        13: 'faceOffs',    // index 16 in original -> 13 in scroll
-        14: 'faceOffsWon'  // index 17 in original -> 14 in scroll
-      };
-      
-      // Add all scrollable cells (from index 3 onwards in original cells)
-      for (let i = 3; i < r.cells.length; i++) {
+      // Add all cells
+      r.cells.forEach((cellValue, idx) => {
         const td = document.createElement("td");
-        td.textContent = r.cells[i];
+        td.textContent = cellValue;
         
-        const scrollIdx = i - 3; // Adjust index for scroll table
-        
-        // Attach click handlers for editable stats
-        if (clickableStatMap[scrollIdx]) {
-          td.dataset.stat = clickableStatMap[scrollIdx];
-          this.attachStatClickHandlers(td, r.name, clickableStatMap[scrollIdx]);
+        // Special styling for specific columns
+        if (idx === 1) { // Player column
+          td.style.textAlign = "left";
+          td.style.fontWeight = "700";
         }
         
-        // Time Cell (index 16 in scroll table = index 19 in original)
-        if (scrollIdx === 16) {
+        if (idx === 2) { // Pos column
+          td.className = "pos-cell";
+        }
+        
+        // Attach click handlers for editable stats
+        if (clickableStatMap[idx]) {
+          td.dataset.stat = clickableStatMap[idx];
+          this.attachStatClickHandlers(td, r.name, clickableStatMap[idx]);
+        }
+        
+        // Time Cell (index 19)
+        if (idx === 19) {
           td.className = "season-time-cell";
           td.dataset.player = r.name;
           this.attachLongPressHandler(td, r.name, r.raw.timeSeconds);
         }
         
-        scrollTr.appendChild(td);
-      }
+        tr.appendChild(td);
+      });
       
-      scrollTbody.appendChild(scrollTr);
+      tbody.appendChild(tr);
     });
 
-    // Total-Zeile - BEIDE TABELLEN
+    // Total-Zeile
     if (filteredRows.length > 0) {
       const sums = {
         games: 0, goals: 0, assists: 0, points: 0, plusMinus: 0,
@@ -421,31 +364,13 @@ setStickyOffsets() {
       const avgFacePercent = sums.faceOffs ? Math.round((sums.faceOffsWon / sums.faceOffs) * 100) : 0;
       const avgTime = Math.round(sums.timeSeconds / count);
 
-      // Fixed table total row
-      const fixedTotalTr = document.createElement("tr");
-      fixedTotalTr.className = "total-row";
+      const totalTr = document.createElement("tr");
+      totalTr.className = "total-row";
       
-      const tdTotalNr = document.createElement("td");
-      tdTotalNr.textContent = "";
-      fixedTotalTr.appendChild(tdTotalNr);
-      
-      const tdTotalPlayer = document.createElement("td");
-      tdTotalPlayer.textContent = "Total Ø";
-      tdTotalPlayer.style.textAlign = "left";
-      tdTotalPlayer.style.fontWeight = "700";
-      fixedTotalTr.appendChild(tdTotalPlayer);
-      
-      const tdTotalPos = document.createElement("td");
-      tdTotalPos.textContent = "";
-      fixedTotalTr.appendChild(tdTotalPos);
-      
-      fixedTbody.appendChild(fixedTotalTr);
-      
-      // Scrollable table total row
-      const scrollTotalTr = document.createElement("tr");
-      scrollTotalTr.className = "total-row";
-      
-      const totalScrollCells = [
+      const totalCells = [
+        "", // Nr
+        "Total Ø", // Player
+        "", // Pos
         (sums.games / count).toFixed(1),
         (sums.goals / count).toFixed(1),
         (sums.assists / count).toFixed(1),
@@ -467,38 +392,30 @@ setStickyOffsets() {
         ""  // MVP Points
       ];
       
-      totalScrollCells.forEach(c => {
+      totalCells.forEach((c, idx) => {
         const td = document.createElement("td");
         td.textContent = c;
-        scrollTotalTr.appendChild(td);
+        if (idx === 1) { // Player column in total row
+          td.style.textAlign = "left";
+          td.style.fontWeight = "700";
+        }
+        totalTr.appendChild(td);
       });
       
-      scrollTbody.appendChild(scrollTotalTr);
+      tbody.appendChild(totalTr);
     }
 
-    // Tabellen zusammenbauen
-    fixedTable.appendChild(fixedTbody);
-    fixedDiv.appendChild(fixedTable);
-    
-    scrollTable.appendChild(scrollTbody);
-    scrollDiv.appendChild(scrollTable);
-    
-    wrapper.appendChild(fixedDiv);
-    wrapper.appendChild(scrollDiv);
-    
-    this.container.appendChild(wrapper);
+    // Tabelle zusammenbauen
+    table.appendChild(tbody);
+    this.container.appendChild(table);
 
-    console.log("[Season Table] Tables in container:", this.container.querySelectorAll('table').length);
+    console.log("[Season Table] Single table rendered with", this.container.querySelectorAll('table').length, "table(s)");
 
-    // Sort UI - update both tables
-    this.updateSortUI(fixedTable);
-    this.updateSortUI(scrollTable);
+    // Sort UI aktualisieren
+    this.updateSortUI(table);
     
-    // Event Listener für Sortierung - both tables
-    const allSortableHeaders = [
-      ...fixedTable.querySelectorAll("th.sortable"),
-      ...scrollTable.querySelectorAll("th.sortable")
-    ];
+    // Event Listener für Sortierung
+    const allSortableHeaders = table.querySelectorAll("th.sortable");
     
     allSortableHeaders.forEach(th => {
       const hasListener = th.hasAttribute('data-listener-attached');
@@ -1024,25 +941,17 @@ setStickyOffsets() {
   filterByPosition(position) {
     this.positionFilter = position;
     
-    // Get rows from both tables
-    const fixedRows = Array.from(document.querySelectorAll('#seasonContainer .season-table-fixed tbody tr:not(.total-row)'));
-    const scrollRows = Array.from(document.querySelectorAll('#seasonContainer .season-table-scroll tbody tr:not(.total-row)'));
+    // Get rows from single table
+    const rows = Array.from(document.querySelectorAll('#seasonContainer .season-table tbody tr:not(.total-row)'));
     
-    // Ensure both tables have the same number of rows
-    if (fixedRows.length !== scrollRows.length) {
-      console.warn('[Season Table] Row count mismatch between fixed and scroll tables');
-    }
-    
-    // Filter both tables synchronously by index
-    const maxRows = Math.min(fixedRows.length, scrollRows.length);
-    for (let idx = 0; idx < maxRows; idx++) {
-      const posCell = fixedRows[idx].querySelector('.pos-cell');
+    // Filter rows based on position
+    rows.forEach(row => {
+      const posCell = row.querySelector('.pos-cell');
       const cellText = posCell ? posCell.textContent : '';
       const shouldShow = !position || cellText === position;
       
-      fixedRows[idx].style.display = shouldShow ? '' : 'none';
-      scrollRows[idx].style.display = shouldShow ? '' : 'none';
-    }
+      row.style.display = shouldShow ? '' : 'none';
+    });
   },
   
   /**
