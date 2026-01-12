@@ -505,7 +505,10 @@ setStickyOffsets() {
     // Event Listener für Position Filter
     const posFilter = document.getElementById('positionFilter');
     if (posFilter) {
-      posFilter.addEventListener('change', (e) => {
+      // Remove old listener first to prevent duplicates
+      posFilter.replaceWith(posFilter.cloneNode(true));
+      const newPosFilter = document.getElementById('positionFilter');
+      newPosFilter.addEventListener('change', (e) => {
         this.filterByPosition(e.target.value);
       });
     }
@@ -1010,16 +1013,22 @@ setStickyOffsets() {
   filterByPosition(position) {
     this.positionFilter = position;
     
-    // Get rows from single table
-    const rows = Array.from(document.querySelectorAll('#seasonContainer .season-table tbody tr:not(.total-row)'));
+    // Get rows from both tables
+    const fixedRows = Array.from(document.querySelectorAll('.season-table-fixed tbody tr:not(.total-row)'));
+    const scrollRows = Array.from(document.querySelectorAll('.season-table-scroll tbody tr:not(.total-row)'));
     
-    // Filter rows based on position
-    rows.forEach(row => {
-      const posCell = row.querySelector('.pos-cell');
-      const cellText = posCell ? posCell.textContent : '';
+    // Filter both tables synchronously by index
+    fixedRows.forEach((row, idx) => {
+      // Position is in the 3rd column (index 2) of the fixed table
+      const posCell = row.querySelector('td:nth-child(3)');
+      const cellText = posCell ? posCell.textContent.trim() : '';
       const shouldShow = !position || cellText === position;
       
+      // Show/hide both rows
       row.style.display = shouldShow ? '' : 'none';
+      if (scrollRows[idx]) {
+        scrollRows[idx].style.display = shouldShow ? '' : 'none';
+      }
     });
   },
   
