@@ -329,14 +329,14 @@ setStickyOffsets() {
     // Body rendern - TWO TABLES
     // Klickbare Statistik-Zellen mapping (indices in full cells array)
     const clickableStatMap = {
-      3: 'games',        // index 3 (now in scroll table, index 0)
-      4: 'goals',        // index 4 (now in scroll table, index 1)
-      5: 'assists',      // index 5 (now in scroll table, index 2)
-      7: 'plusMinus',    // index 7 (now in scroll table, index 4)
-      9: 'shots',        // index 9 (now in scroll table, index 6)
-      14: 'penaltys',    // index 14 (now in scroll table, index 11)
-      16: 'faceOffs',    // index 16 (now in scroll table, index 13)
-      17: 'faceOffsWon'  // index 17 (now in scroll table, index 14)
+      3: 'games',
+      4: 'goals',
+      5: 'assists',
+      7: 'plusMinus',
+      9: 'shots',
+      14: 'penaltys',
+      16: 'faceOffs',
+      17: 'faceOffsWon'
     };
     
     displayRows.forEach(r => {

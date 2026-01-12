@@ -867,7 +867,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table-fixed,
 .season-table-scroll {
   border-collapse: collapse;
-  border-spacing: 0;
   width: 100%;
 }
 
