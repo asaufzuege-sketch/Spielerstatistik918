@@ -878,6 +878,20 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 8px 12px;
   white-space: nowrap;
   border-bottom: 1px solid #333;
+  line-height: 1.2;
+}
+
+/* Body-Zeilen exakt gleiche Höhe */
+.season-table-fixed tbody tr,
+.season-table-scroll tbody tr {
+  height: 40px;
+}
+
+.season-table-fixed tbody td,
+.season-table-scroll tbody td {
+  height: 40px;
+  vertical-align: middle;
+  box-sizing: border-box;
 }
 
 .season-table-fixed thead th,
@@ -887,6 +901,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky;
   top: 0;
   z-index: 20;
+  height: 44px;
+  vertical-align: middle;
+  box-sizing: border-box;
 }
 
 /* Synchronisierte Zeilenfarben */
@@ -908,6 +925,42 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 700;
 }
 
+/* Pos Filter - wie im alten Design */
+.pos-filter {
+  background: #3a3a3a;
+  color: #44bb91;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  /* Dropdown Arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2344bb91' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+/* Pos Header Zelle */
+.pos-header {
+  padding: 8px !important;
+}
+
+/* Hover Effekt */
+.pos-filter:hover {
+  background-color: #4a4a4a;
+}
+
+/* Focus Effekt */
+.pos-filter:focus {
+  box-shadow: 0 0 0 2px rgba(68, 187, 145, 0.3);
+}
+
 /* Tablet (≤1024px) */
 @media (max-width: 1024px) {
   .season-table-wrapper {
@@ -920,6 +973,18 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   .season-table-scroll td {
     padding: 6px 10px;
     font-size: 13px;
+  }
+  
+  .season-table-fixed thead th,
+  .season-table-scroll thead th {
+    height: 40px;
+  }
+  
+  .season-table-fixed tbody tr,
+  .season-table-scroll tbody tr,
+  .season-table-fixed tbody td,
+  .season-table-scroll tbody td {
+    height: 36px;
   }
 }
 
@@ -945,6 +1010,25 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   .season-table-scroll td {
     padding: 5px 8px;
     font-size: 12px;
+  }
+  
+  .season-table-fixed thead th,
+  .season-table-scroll thead th {
+    height: 40px;
+  }
+  
+  .season-table-fixed tbody tr,
+  .season-table-scroll tbody tr,
+  .season-table-fixed tbody td,
+  .season-table-scroll tbody td {
+    height: 36px;
+  }
+  
+  .pos-filter {
+    padding: 6px 12px;
+    padding-right: 26px;
+    font-size: 12px;
+    border-radius: 6px;
   }
 }
 
