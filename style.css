@@ -926,6 +926,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   vertical-align: middle;
   box-sizing: border-box;
   line-height: 1;
+  text-align: center;
 }
 
 /* Total row gleiche Höhe */
@@ -956,6 +957,21 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: var(--header-bg);
   color: #fff;
   font-weight: 700;
+}
+
+/* Ensure first two columns (Games, Goals) in scrollable table are centered */
+.season-table-scroll td:nth-child(1),
+.season-table-scroll td:nth-child(2) {
+  text-align: center !important;
+}
+
+/* Ensure all columns in scrollable table are centered */
+.season-table-scroll td {
+  text-align: center !important;
+}
+
+.season-table-scroll th {
+  text-align: center !important;
 }
 
 /* Pos Filter - kompakter gemacht */
