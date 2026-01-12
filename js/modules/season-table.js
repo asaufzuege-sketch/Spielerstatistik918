@@ -496,6 +496,11 @@ setStickyOffsets() {
             this.sortState.asc = true;
           }
           this.render();
+          
+          // WICHTIG: Position Filter NACH dem Rendern wieder anwenden
+          if (this.positionFilter) {
+            this.filterByPosition(this.positionFilter);
+          }
         });
       }
     });

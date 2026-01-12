@@ -889,6 +889,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   white-space: nowrap;
   border-bottom: 1px solid #333;
   line-height: 1;
+  text-align: center;
 }
 
 /* Header exakt gleiche Höhe */
@@ -909,6 +910,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   vertical-align: middle;
   box-sizing: border-box;
   line-height: 1;
+  text-align: center;
 }
 
 /* Body-Zeilen exakt gleiche Höhe */
