@@ -394,6 +394,10 @@ setStickyOffsets() {
       scrollTbody.appendChild(scrollTr);
     });
 
+    // Variablen AUSSERHALB des if-Blocks deklarieren
+    let fixedTfoot = null;
+    let scrollTfoot = null;
+
     // Total-Zeile
     if (filteredRows.length > 0) {
       const sums = {
@@ -470,22 +474,23 @@ setStickyOffsets() {
       }
       
       // Total-Zeile in tfoot für korrektes sticky bottom
-      const fixedTfoot = document.createElement("tfoot");
+      // WICHTIG: Variablen wurden oben mit let deklariert!
+      fixedTfoot = document.createElement("tfoot");
       fixedTfoot.appendChild(fixedTotalTr);
       
-      const scrollTfoot = document.createElement("tfoot");
+      scrollTfoot = document.createElement("tfoot");
       scrollTfoot.appendChild(scrollTotalTr);
     }
 
     // Assemble both tables
     fixedTable.appendChild(fixedTbody);
-    if (filteredRows.length > 0) {
+    if (fixedTfoot) {  // Prüfen ob tfoot existiert
       fixedTable.appendChild(fixedTfoot);  // tfoot NACH tbody
     }
     fixedContainer.appendChild(fixedTable);
     
     scrollTable.appendChild(scrollTbody);
-    if (filteredRows.length > 0) {
+    if (scrollTfoot) {  // Prüfen ob tfoot existiert
       scrollTable.appendChild(scrollTfoot);  // tfoot NACH tbody
     }
     scrollContainer.appendChild(scrollTable);
