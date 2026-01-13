@@ -5,6 +5,7 @@ App.seasonTable = {
   isRendering: false, // NEU: Flag um Rekursion zu verhindern
   clickTimers: new WeakMap(), // Store click timers per cell to avoid race conditions
   positionFilter: '', // Aktueller Positionsfilter
+  scrollListeners: { fixed: null, scroll: null }, // Track scroll event listeners
 
   init() {
     this.container = document.getElementById("seasonContainer");
@@ -516,6 +517,33 @@ setStickyOffsets() {
       newPosFilter.addEventListener('change', (e) => {
         this.filterByPosition(e.target.value);
       });
+    }
+    
+    // Synchronized vertical scrolling between fixed and scrollable tables
+    const fixedContainer = document.querySelector('.fixed-columns');
+    const scrollContainer = document.querySelector('.scrollable-columns');
+    
+    if (fixedContainer && scrollContainer) {
+      // Remove old listeners if they exist
+      if (this.scrollListeners.fixed) {
+        fixedContainer.removeEventListener('scroll', this.scrollListeners.fixed);
+      }
+      if (this.scrollListeners.scroll) {
+        scrollContainer.removeEventListener('scroll', this.scrollListeners.scroll);
+      }
+      
+      // Create new listeners
+      this.scrollListeners.scroll = () => {
+        fixedContainer.scrollTop = scrollContainer.scrollTop;
+      };
+      
+      this.scrollListeners.fixed = () => {
+        scrollContainer.scrollTop = fixedContainer.scrollTop;
+      };
+      
+      // Add new listeners
+      scrollContainer.addEventListener('scroll', this.scrollListeners.scroll);
+      fixedContainer.addEventListener('scroll', this.scrollListeners.fixed);
     }
     
     // setStickyOffsets() call removed - CSS vw units handle everything zoom-independently
@@ -1048,6 +1076,20 @@ setStickyOffsets() {
       row.style.display = shouldShow ? '' : 'none';
       if (scrollRows[idx]) {
         scrollRows[idx].style.display = shouldShow ? '' : 'none';
+      }
+    });
+    
+    // WICHTIG: Zeilen-Farben nach dem Filtern neu setzen
+    let visibleIndex = 0;
+    fixedRows.forEach((row, idx) => {
+      if (row.style.display !== 'none') {
+        // Alternierend hellgrau/dunkelgrau
+        const bgColor = visibleIndex % 2 === 0 ? '#2a2a2a' : '#333';
+        row.style.background = bgColor;
+        if (scrollRows[idx]) {
+          scrollRows[idx].style.background = bgColor;
+        }
+        visibleIndex++;
       }
     });
   },

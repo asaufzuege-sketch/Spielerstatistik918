@@ -862,14 +862,56 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* GEÄNDERT: Subtilerer Schatten wie Goal Value */
   box-shadow: 2px 0 4px rgba(0,0,0,0.15);
   border-radius: 0; /* Keine abgerundeten Ecken */
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .scrollable-columns {
   flex: 1;
   min-width: 0;
   overflow-x: auto;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: 0; /* Keine abgerundeten Ecken */
+  max-height: calc(100vh - 250px);
+}
+
+/* Scrollbar styling */
+.scrollable-columns::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+.scrollable-columns::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+.scrollable-columns::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+}
+
+.scrollable-columns::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+.fixed-columns::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+.fixed-columns::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+.fixed-columns::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+}
+
+.fixed-columns::-webkit-scrollbar-thumb:hover {
+  background: #777;
 }
 
 .season-table-fixed,
@@ -957,6 +999,20 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: var(--header-bg);
   color: #fff;
   font-weight: 700;
+}
+
+/* Total row sticky at bottom */
+.season-table-fixed .total-row,
+.season-table-scroll .total-row {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+.season-table-fixed .total-row td,
+.season-table-scroll .total-row td {
+  background: var(--header-bg) !important;
+  color: #fff !important;
 }
 
 /* Ensure first two columns (Games, Goals) in scrollable table are centered */
