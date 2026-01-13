@@ -1083,8 +1083,11 @@ setStickyOffsets() {
     let visibleIndex = 0;
     fixedRows.forEach((row, idx) => {
       if (row.style.display !== 'none') {
-        // Alternierend hellgrau/dunkelgrau
-        const bgColor = visibleIndex % 2 === 0 ? '#2a2a2a' : '#333';
+        // Alternierend hellgrau/dunkelgrau - use CSS custom properties
+        const rootStyles = getComputedStyle(document.documentElement);
+        const bgColor = visibleIndex % 2 === 0 
+          ? rootStyles.getPropertyValue('--row-dark-even').trim() 
+          : rootStyles.getPropertyValue('--row-dark-odd').trim();
         row.style.background = bgColor;
         if (scrollRows[idx]) {
           scrollRows[idx].style.background = bgColor;

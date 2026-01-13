@@ -32,6 +32,13 @@
   --w-nr: 36px;
   --w-player: 140px;
   --w-pos: 60px;
+  
+  /* Season Table scroll container height offset */
+  --table-scroll-offset: 250px;
+  
+  /* Season Table row colors for dark mode */
+  --row-dark-even: #2a2a2a;
+  --row-dark-odd: #333;
 
 }
 
@@ -862,7 +869,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* GEÄNDERT: Subtilerer Schatten wie Goal Value */
   box-shadow: 2px 0 4px rgba(0,0,0,0.15);
   border-radius: 0; /* Keine abgerundeten Ecken */
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - var(--table-scroll-offset));
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -874,7 +881,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: 0; /* Keine abgerundeten Ecken */
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - var(--table-scroll-offset));
 }
 
 /* Scrollbar styling */
