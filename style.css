@@ -873,13 +873,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   flex-shrink: 0;
   z-index: 10;
   background: var(--bg-color);
-  /* GEÄNDERT: Subtilerer Schatten wie Goal Value */
+  /* Subtle shadow similar to Goal Value table */
   box-shadow: 2px 0 4px rgba(0,0,0,0.15);
-  border-radius: 0; /* Keine abgerundeten Ecken */
+  border-radius: 0;
   overflow-x: visible !important;
 }
 
-/* Scrollable columns - NO horizontal scroll, handled by parent container */
+/* Scrollable columns - no horizontal scroll, handled by parent container */
 .scrollable-columns {
   flex: 1;
   min-width: 0;
@@ -992,7 +992,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   box-sizing: border-box;
 }
 
-/* Synchronisierte Zeilenfarben - use CSS classes for filter compatibility */
+/* Synchronized row colors - use CSS classes for filter compatibility */
 .season-table-fixed tbody tr.even-row td,
 .season-table-scroll tbody tr.even-row td {
   background-color: var(--row-dark-even, #2a2a2a);
