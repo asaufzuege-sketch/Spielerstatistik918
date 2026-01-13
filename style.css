@@ -855,7 +855,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin: 0 auto;
   align-items: flex-start; /* Changed from stretch to flex-start */
   max-height: calc(100vh - 200px);
-  overflow-y: auto; /* EIN Scrollbar für beide Tabellen */
+  overflow-y: auto; /* EIN Scrollbar für beide Tabellen - supports sticky positioning */
   overflow-x: hidden;
 }
 
@@ -863,6 +863,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .scrollable-columns {
   margin: 0;
   padding: 0;
+  position: relative; /* Support sticky positioning */
 }
 
 /* Fixed columns - KEIN eigener Scrollbar */
@@ -1020,14 +1021,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Total row sticky at bottom */
 .season-table-fixed .total-row,
 .season-table-scroll .total-row {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 20 !important;
+  background: #1a1a1a !important;
 }
 
 .season-table-fixed .total-row td,
 .season-table-scroll .total-row td {
-  background: var(--header-bg) !important;
+  background: #1a1a1a !important;
   color: #fff !important;
 }
 
