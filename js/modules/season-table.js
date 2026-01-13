@@ -96,7 +96,7 @@ setStickyOffsets() {
     // Create fixed columns container (Nr, Player, Pos)
     const fixedContainer = document.createElement("div");
     fixedContainer.className = "fixed-columns";
-    fixedContainer.style.overflow = 'visible';  // HINZUFÜGEN
+    fixedContainer.style.overflow = 'visible';  // Allow horizontal scroll on parent
     
     const fixedTable = document.createElement("table");
     fixedTable.className = "season-table-fixed";
@@ -164,7 +164,7 @@ setStickyOffsets() {
     // Create scrollable columns container (Games and all other stats)
     const scrollContainer = document.createElement("div");
     scrollContainer.className = "scrollable-columns";
-    scrollContainer.style.overflow = 'visible';  // HINZUFÜGEN
+    scrollContainer.style.overflow = 'visible';  // Allow horizontal scroll on parent
     
     const scrollTable = document.createElement("table");
     scrollTable.className = "season-table-scroll";
@@ -354,7 +354,7 @@ setStickyOffsets() {
       const fixedTr = document.createElement("tr");
       const scrollTr = document.createElement("tr");
       
-      // Zeilen-Farben via CSS-Klassen
+      // Row colors via CSS classes
       const rowClass = (rowIndex % 2 === 0) ? 'even-row' : 'odd-row';
       fixedTr.classList.add(rowClass);
       scrollTr.classList.add(rowClass);
@@ -1107,7 +1107,7 @@ setStickyOffsets() {
     const fixedRows = Array.from(document.querySelectorAll('.season-table-fixed tbody tr:not(.total-row)'));
     const scrollRows = Array.from(document.querySelectorAll('.season-table-scroll tbody tr:not(.total-row)'));
     
-    // Re-striping nach Filter
+    // Re-striping after filter
     const visiblePairs = [];
     fixedRows.forEach((row, idx) => {
       const posCell = row.querySelector('td:nth-child(3)');
@@ -1123,10 +1123,9 @@ setStickyOffsets() {
       }
     });
 
-    // CSS-Klassen für Zeilen-Farben neu zuweisen
+    // Reassign CSS classes for row colors
     visiblePairs.forEach((pair, i) => {
       const cls = (i % 2 === 0) ? 'even-row' : 'odd-row';
-      const removeCls = (i % 2 === 0) ? 'odd-row' : 'even-row';
       
       [pair.fixed, pair.scroll].forEach(r => {
         if (!r) return;
