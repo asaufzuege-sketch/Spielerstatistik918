@@ -1028,6 +1028,33 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 700;
 }
 
+/* Total row in tfoot sticky at bottom - RAHMEN UNTEN */
+.season-table-fixed tfoot,
+.season-table-scroll tfoot {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 30 !important;
+}
+
+.season-table-fixed tfoot tr,
+.season-table-scroll tfoot tr {
+  height: 44px !important;
+}
+
+.season-table-fixed tfoot td,
+.season-table-scroll tfoot td {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 30 !important;
+  background: var(--header-bg) !important;
+  color: #fff !important;
+  font-weight: 700;
+  height: 44px !important;
+  padding: 8px 12px;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
 /* Ensure first two columns (Games, Goals) in scrollable table are centered */
 .season-table-scroll td:nth-child(1),
 .season-table-scroll td:nth-child(2) {
