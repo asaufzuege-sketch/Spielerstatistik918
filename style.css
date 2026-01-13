@@ -853,7 +853,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  align-items: stretch; /* Beide Tabellen gleich hoch */
+  align-items: flex-start; /* Changed from stretch to flex-start */
+  max-height: calc(100vh - 200px);
+  overflow-y: auto; /* EIN Scrollbar für beide Tabellen */
+  overflow-x: hidden;
 }
 
 .fixed-columns,
@@ -862,6 +865,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 0;
 }
 
+/* Fixed columns - KEIN eigener Scrollbar */
 .fixed-columns {
   flex-shrink: 0;
   z-index: 10;
@@ -869,19 +873,20 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* GEÄNDERT: Subtilerer Schatten wie Goal Value */
   box-shadow: 2px 0 4px rgba(0,0,0,0.15);
   border-radius: 0; /* Keine abgerundeten Ecken */
-  max-height: calc(100vh - var(--table-scroll-offset));
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
 }
 
+/* Scrollable columns - nur horizontaler Scrollbar */
 .scrollable-columns {
   flex: 1;
   min-width: 0;
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: hidden !important; /* Kein eigener vertikaler Scrollbar */
   -webkit-overflow-scrolling: touch;
   border-radius: 0; /* Keine abgerundeten Ecken */
-  max-height: calc(100vh - var(--table-scroll-offset));
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Scrollbar styling */
@@ -891,7 +896,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .scrollable-columns::-webkit-scrollbar-track {
-  background: #2a2a2a;
+  background: #1a1a1a;
 }
 
 .scrollable-columns::-webkit-scrollbar-thumb {
@@ -903,22 +908,23 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: #777;
 }
 
+/* Fixed columns should have no scrollbar */
 .fixed-columns::-webkit-scrollbar {
-  height: 12px;
-  width: 12px;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .fixed-columns::-webkit-scrollbar-track {
-  background: #2a2a2a;
+  display: none;
 }
 
 .fixed-columns::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 6px;
+  display: none;
 }
 
 .fixed-columns::-webkit-scrollbar-thumb:hover {
-  background: #777;
+  display: none;
 }
 
 .season-table-fixed,
@@ -978,15 +984,18 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   text-align: center;
 }
 
-/* Total row gleiche Höhe */
+/* Total row exakt gleiche Höhe - 44px statt 40px */
 .season-table-fixed .total-row,
 .season-table-scroll .total-row {
-  height: 40px;
+  height: 44px !important;
 }
 
 .season-table-fixed .total-row td,
 .season-table-scroll .total-row td {
-  height: 40px;
+  height: 44px !important;
+  padding: 8px 12px;
+  vertical-align: middle;
+  box-sizing: border-box;
 }
 
 /* Synchronisierte Zeilenfarben */
