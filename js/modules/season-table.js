@@ -6,9 +6,17 @@ App.seasonTable = {
   clickTimers: new WeakMap(), // Store click timers per cell to avoid race conditions
   positionFilter: '', // Aktueller Positionsfilter
   scrollListeners: { fixed: null, scroll: null }, // Track scroll event listeners
+  isSyncing: false, // Prevent infinite scroll loops
+  rowColors: null, // Cached row colors from CSS
 
   init() {
     this.container = document.getElementById("seasonContainer");
+    
+    // Cache row colors from CSS for better performance
+    this.rowColors = {
+      dark: getComputedStyle(document.documentElement).getPropertyValue('--row-dark-even').trim() || '#2a2a2a',
+      light: getComputedStyle(document.documentElement).getPropertyValue('--row-dark-odd').trim() || '#333'
+    };
 
     // Event Listeners
     document.getElementById("exportSeasonFromStatsBtn")?.addEventListener("click", () => {
@@ -532,26 +540,23 @@ setStickyOffsets() {
         scrollCol.removeEventListener('scroll', this.scrollListeners.scroll);
       }
       
-      // Flag to prevent infinite loop
-      let isSyncing = false;
-      
-      // Create new listeners with sync protection
+      // Create new listeners with sync protection using instance property
       this.scrollListeners.scroll = () => {
-        if (!isSyncing) {
-          isSyncing = true;
+        if (!this.isSyncing) {
+          this.isSyncing = true;
           fixedCol.scrollTop = scrollCol.scrollTop;
           requestAnimationFrame(() => {
-            isSyncing = false;
+            this.isSyncing = false;
           });
         }
       };
       
       this.scrollListeners.fixed = () => {
-        if (!isSyncing) {
-          isSyncing = true;
+        if (!this.isSyncing) {
+          this.isSyncing = true;
           scrollCol.scrollTop = fixedCol.scrollTop;
           requestAnimationFrame(() => {
-            isSyncing = false;
+            this.isSyncing = false;
           });
         }
       };
@@ -1095,9 +1100,9 @@ setStickyOffsets() {
     });
     
     // WICHTIG: Farben NEU setzen - GLEICHE Farben wie ohne Filter!
-    // Hole die Farben aus CSS oder verwende die Original-Werte
-    const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--row-dark-even').trim() || '#2a2a2a';
-    const lightColor = getComputedStyle(document.documentElement).getPropertyValue('--row-dark-odd').trim() || '#333';
+    // Use cached colors from init for better performance
+    const darkColor = this.rowColors?.dark || '#2a2a2a';
+    const lightColor = this.rowColors?.light || '#333';
     
     let visibleIndex = 0;
     fixedRows.forEach((row, idx) => {
