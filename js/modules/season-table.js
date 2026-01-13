@@ -532,13 +532,28 @@ setStickyOffsets() {
         scrollCol.removeEventListener('scroll', this.scrollListeners.scroll);
       }
       
-      // Create new listeners
+      // Flag to prevent infinite loop
+      let isSyncing = false;
+      
+      // Create new listeners with sync protection
       this.scrollListeners.scroll = () => {
-        fixedCol.scrollTop = scrollCol.scrollTop;
+        if (!isSyncing) {
+          isSyncing = true;
+          fixedCol.scrollTop = scrollCol.scrollTop;
+          requestAnimationFrame(() => {
+            isSyncing = false;
+          });
+        }
       };
       
       this.scrollListeners.fixed = () => {
-        scrollCol.scrollTop = fixedCol.scrollTop;
+        if (!isSyncing) {
+          isSyncing = true;
+          scrollCol.scrollTop = fixedCol.scrollTop;
+          requestAnimationFrame(() => {
+            isSyncing = false;
+          });
+        }
       };
       
       // Add new listeners
@@ -1079,50 +1094,32 @@ setStickyOffsets() {
       }
     });
     
-    // WICHTIG: Zeilen-Farben NEU setzen basierend auf sichtbaren Zeilen
-    if (!position) {
-      // Wenn position leer ist (alle zeigen), Farben auch zurücksetzen basierend auf Original-Index
-      fixedRows.forEach((row, idx) => {
-        const bgColor = idx % 2 === 0 ? '#2a2a2a' : '#333';
-        row.style.backgroundColor = bgColor;
+    // WICHTIG: Farben NEU setzen - GLEICHE Farben wie ohne Filter!
+    // Hole die Farben aus CSS oder verwende die Original-Werte
+    const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--row-dark-even').trim() || '#2a2a2a';
+    const lightColor = getComputedStyle(document.documentElement).getPropertyValue('--row-dark-odd').trim() || '#333';
+    
+    let visibleIndex = 0;
+    fixedRows.forEach((row, idx) => {
+      if (row.style.display !== 'none') {
+        // Alternierend dunkel/hell basierend auf visibleIndex
+        const bgColor = visibleIndex % 2 === 0 ? darkColor : lightColor;
         
-        // Auch alle td-Elemente in der Zeile
-        row.querySelectorAll('td').forEach(td => {
-          td.style.backgroundColor = bgColor;
+        row.style.backgroundColor = bgColor;
+        row.querySelectorAll('td:not(.sticky-col)').forEach(td => {
+          td.style.backgroundColor = '';  // Reset to inherit from row
         });
         
         if (scrollRows[idx]) {
           scrollRows[idx].style.backgroundColor = bgColor;
           scrollRows[idx].querySelectorAll('td').forEach(td => {
-            td.style.backgroundColor = bgColor;
+            td.style.backgroundColor = '';  // Reset to inherit from row
           });
         }
-      });
-    } else {
-      // Filter aktiv: Farben neu setzen basierend auf visibleIndex
-      let visibleIndex = 0;
-      fixedRows.forEach((row, idx) => {
-        if (row.style.display !== 'none') {
-          // Alternierend hellgrau/dunkelgrau basierend auf visibleIndex
-          const bgColor = visibleIndex % 2 === 0 ? '#2a2a2a' : '#333';
-          row.style.backgroundColor = bgColor;
-          
-          // Auch alle td-Elemente in der Zeile
-          row.querySelectorAll('td').forEach(td => {
-            td.style.backgroundColor = bgColor;
-          });
-          
-          if (scrollRows[idx]) {
-            scrollRows[idx].style.backgroundColor = bgColor;
-            scrollRows[idx].querySelectorAll('td').forEach(td => {
-              td.style.backgroundColor = bgColor;
-            });
-          }
-          
-          visibleIndex++;
-        }
-      });
-    }
+        
+        visibleIndex++;
+      }
+    });
   },
   
   /**
