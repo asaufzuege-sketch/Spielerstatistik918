@@ -520,30 +520,30 @@ setStickyOffsets() {
     }
     
     // Synchronized vertical scrolling between fixed and scrollable tables
-    const fixedContainer = document.querySelector('.fixed-columns');
-    const scrollContainer = document.querySelector('.scrollable-columns');
+    const fixedCol = document.querySelector('.fixed-columns');
+    const scrollCol = document.querySelector('.scrollable-columns');
     
-    if (fixedContainer && scrollContainer) {
+    if (fixedCol && scrollCol) {
       // Remove old listeners if they exist
       if (this.scrollListeners.fixed) {
-        fixedContainer.removeEventListener('scroll', this.scrollListeners.fixed);
+        fixedCol.removeEventListener('scroll', this.scrollListeners.fixed);
       }
       if (this.scrollListeners.scroll) {
-        scrollContainer.removeEventListener('scroll', this.scrollListeners.scroll);
+        scrollCol.removeEventListener('scroll', this.scrollListeners.scroll);
       }
       
       // Create new listeners
       this.scrollListeners.scroll = () => {
-        fixedContainer.scrollTop = scrollContainer.scrollTop;
+        fixedCol.scrollTop = scrollCol.scrollTop;
       };
       
       this.scrollListeners.fixed = () => {
-        scrollContainer.scrollTop = fixedContainer.scrollTop;
+        scrollCol.scrollTop = fixedCol.scrollTop;
       };
       
       // Add new listeners
-      scrollContainer.addEventListener('scroll', this.scrollListeners.scroll);
-      fixedContainer.addEventListener('scroll', this.scrollListeners.fixed);
+      scrollCol.addEventListener('scroll', this.scrollListeners.scroll);
+      fixedCol.addEventListener('scroll', this.scrollListeners.fixed);
     }
     
     // setStickyOffsets() call removed - CSS vw units handle everything zoom-independently
