@@ -128,12 +128,19 @@ const App = {
         text-align: center !important;
       }
       
-      #seasonContainer table th:nth-child(1),
-      #seasonContainer table td:nth-child(1),
-      #seasonContainer table th:nth-child(2),
-      #seasonContainer table td:nth-child(2) {
+      /* ONLY Fixed table - Nr and Player left-aligned */
+      #seasonContainer .season-table-fixed th:nth-child(1),
+      #seasonContainer .season-table-fixed td:nth-child(1),
+      #seasonContainer .season-table-fixed th:nth-child(2),
+      #seasonContainer .season-table-fixed td:nth-child(2) {
         text-align: left !important;
         padding-left: 12px !important;
+      }
+      
+      /* Scrollable table - ALL centered */
+      #seasonContainer .season-table-scroll th,
+      #seasonContainer .season-table-scroll td {
+        text-align: center !important;
       }
       
       #goalValueContainer table th:first-child,
