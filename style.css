@@ -853,7 +853,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  align-items: flex-start; /* Changed from stretch to flex-start */
+  align-items: stretch;
   max-height: calc(100vh - 200px);
   overflow: hidden; /* Container doesn't scroll - children do */
 }
@@ -865,9 +865,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: relative; /* Support sticky positioning */
   max-height: calc(100vh - 200px); /* Same as wrapper for sticky to work */
   overflow-y: auto; /* Both tables scroll vertically for sticky positioning */
+  overflow-x: visible !important; /* Important: let horizontal scroll be handled by parent */
 }
 
-/* Fixed columns - eigener Scrollbar für sticky positioning */
+/* Fixed columns - no horizontal scroll */
 .fixed-columns {
   flex-shrink: 0;
   z-index: 10;
@@ -875,14 +876,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* GEÄNDERT: Subtilerer Schatten wie Goal Value */
   box-shadow: 2px 0 4px rgba(0,0,0,0.15);
   border-radius: 0; /* Keine abgerundeten Ecken */
-  overflow-x: hidden;
+  overflow-x: visible !important;
 }
 
-/* Scrollable columns - horizontal und vertikal scrollbar */
+/* Scrollable columns - NO horizontal scroll, handled by parent container */
 .scrollable-columns {
   flex: 1;
   min-width: 0;
-  overflow-x: auto;
+  overflow-x: visible !important;
   -webkit-overflow-scrolling: touch;
   border-radius: 0; /* Keine abgerundeten Ecken */
   padding-bottom: 0;
@@ -991,14 +992,25 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   box-sizing: border-box;
 }
 
-/* Synchronisierte Zeilenfarben */
-.season-table-fixed tbody tr:nth-child(odd) td,
-.season-table-scroll tbody tr:nth-child(odd) td {
+/* Synchronisierte Zeilenfarben - use CSS classes for filter compatibility */
+.season-table-fixed tbody tr.even-row td,
+.season-table-scroll tbody tr.even-row td {
+  background-color: var(--row-dark-even, #2a2a2a);
+}
+
+.season-table-fixed tbody tr.odd-row td,
+.season-table-scroll tbody tr.odd-row td {
+  background-color: var(--row-dark-odd, #333);
+}
+
+/* Fallback for rows without classes (nth-child still works) */
+.season-table-fixed tbody tr:nth-child(odd):not(.even-row):not(.odd-row) td,
+.season-table-scroll tbody tr:nth-child(odd):not(.even-row):not(.odd-row) td {
   background: var(--row-odd);
 }
 
-.season-table-fixed tbody tr:nth-child(even) td,
-.season-table-scroll tbody tr:nth-child(even) td {
+.season-table-fixed tbody tr:nth-child(even):not(.even-row):not(.odd-row) td,
+.season-table-scroll tbody tr:nth-child(even):not(.even-row):not(.odd-row) td {
   background: var(--row-even);
 }
 
