@@ -5,6 +5,7 @@ App.seasonTable = {
   isRendering: false, // NEU: Flag um Rekursion zu verhindern
   clickTimers: new WeakMap(), // Store click timers per cell to avoid race conditions
   positionFilter: '', // Aktueller Positionsfilter
+  scrollListeners: { fixed: null, scroll: null }, // Track scroll event listeners
 
   init() {
     this.container = document.getElementById("seasonContainer");
@@ -516,6 +517,33 @@ setStickyOffsets() {
       newPosFilter.addEventListener('change', (e) => {
         this.filterByPosition(e.target.value);
       });
+    }
+    
+    // Synchronized vertical scrolling between fixed and scrollable tables
+    const fixedCol = document.querySelector('.fixed-columns');
+    const scrollCol = document.querySelector('.scrollable-columns');
+    
+    if (fixedCol && scrollCol) {
+      // Remove old listeners if they exist
+      if (this.scrollListeners.fixed) {
+        fixedCol.removeEventListener('scroll', this.scrollListeners.fixed);
+      }
+      if (this.scrollListeners.scroll) {
+        scrollCol.removeEventListener('scroll', this.scrollListeners.scroll);
+      }
+      
+      // Create new listeners
+      this.scrollListeners.scroll = () => {
+        fixedCol.scrollTop = scrollCol.scrollTop;
+      };
+      
+      this.scrollListeners.fixed = () => {
+        scrollCol.scrollTop = fixedCol.scrollTop;
+      };
+      
+      // Add new listeners
+      scrollCol.addEventListener('scroll', this.scrollListeners.scroll);
+      fixedCol.addEventListener('scroll', this.scrollListeners.fixed);
     }
     
     // setStickyOffsets() call removed - CSS vw units handle everything zoom-independently
@@ -1048,6 +1076,23 @@ setStickyOffsets() {
       row.style.display = shouldShow ? '' : 'none';
       if (scrollRows[idx]) {
         scrollRows[idx].style.display = shouldShow ? '' : 'none';
+      }
+    });
+    
+    // WICHTIG: Zeilen-Farben nach dem Filtern neu setzen
+    let visibleIndex = 0;
+    fixedRows.forEach((row, idx) => {
+      if (row.style.display !== 'none') {
+        // Alternierend hellgrau/dunkelgrau - use CSS custom properties
+        const rootStyles = getComputedStyle(document.documentElement);
+        const bgColor = visibleIndex % 2 === 0 
+          ? rootStyles.getPropertyValue('--row-dark-even').trim() 
+          : rootStyles.getPropertyValue('--row-dark-odd').trim();
+        row.style.background = bgColor;
+        if (scrollRows[idx]) {
+          scrollRows[idx].style.background = bgColor;
+        }
+        visibleIndex++;
       }
     });
   },
