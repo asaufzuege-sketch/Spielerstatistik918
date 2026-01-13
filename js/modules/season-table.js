@@ -1065,7 +1065,7 @@ setStickyOffsets() {
     const fixedRows = Array.from(document.querySelectorAll('.season-table-fixed tbody tr:not(.total-row)'));
     const scrollRows = Array.from(document.querySelectorAll('.season-table-scroll tbody tr:not(.total-row)'));
     
-    // Filter both tables synchronously by index
+    // Erst alle Zeilen filtern (show/hide)
     fixedRows.forEach((row, idx) => {
       // Position is in the 3rd column (index 2) of the fixed table
       const posCell = row.querySelector('td:nth-child(3)');
@@ -1079,22 +1079,31 @@ setStickyOffsets() {
       }
     });
     
-    // WICHTIG: Zeilen-Farben nach dem Filtern neu setzen
-    let visibleIndex = 0;
-    fixedRows.forEach((row, idx) => {
-      if (row.style.display !== 'none') {
-        // Alternierend hellgrau/dunkelgrau - use CSS custom properties
-        const rootStyles = getComputedStyle(document.documentElement);
-        const bgColor = visibleIndex % 2 === 0 
-          ? rootStyles.getPropertyValue('--row-dark-even').trim() 
-          : rootStyles.getPropertyValue('--row-dark-odd').trim();
-        row.style.background = bgColor;
+    // WICHTIG: Zeilen-Farben NEU setzen basierend auf sichtbaren Zeilen
+    if (!position) {
+      // Wenn position leer ist (alle zeigen), Farben auch zurücksetzen basierend auf Original-Index
+      fixedRows.forEach((row, idx) => {
+        const bgColor = idx % 2 === 0 ? '#2a2a2a' : '#333';
+        row.style.backgroundColor = bgColor;
         if (scrollRows[idx]) {
-          scrollRows[idx].style.background = bgColor;
+          scrollRows[idx].style.backgroundColor = bgColor;
         }
-        visibleIndex++;
-      }
-    });
+      });
+    } else {
+      // Filter aktiv: Farben neu setzen basierend auf visibleIndex
+      let visibleIndex = 0;
+      fixedRows.forEach((row, idx) => {
+        if (row.style.display !== 'none') {
+          // Alternierend hellgrau/dunkelgrau basierend auf visibleIndex
+          const bgColor = visibleIndex % 2 === 0 ? '#2a2a2a' : '#333';
+          row.style.backgroundColor = bgColor;
+          if (scrollRows[idx]) {
+            scrollRows[idx].style.backgroundColor = bgColor;
+          }
+          visibleIndex++;
+        }
+      });
+    }
   },
   
   /**
