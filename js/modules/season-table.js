@@ -6,9 +6,17 @@ App.seasonTable = {
   clickTimers: new WeakMap(), // Store click timers per cell to avoid race conditions
   positionFilter: '', // Aktueller Positionsfilter
   scrollListeners: { fixed: null, scroll: null }, // Track scroll event listeners
+  isSyncing: false, // Prevent infinite scroll loops
+  rowColors: null, // Cached row colors from CSS
 
   init() {
     this.container = document.getElementById("seasonContainer");
+    
+    // Cache row colors from CSS for better performance
+    this.rowColors = {
+      dark: getComputedStyle(document.documentElement).getPropertyValue('--row-dark-even').trim() || '#2a2a2a',
+      light: getComputedStyle(document.documentElement).getPropertyValue('--row-dark-odd').trim() || '#333'
+    };
 
     // Event Listeners
     document.getElementById("exportSeasonFromStatsBtn")?.addEventListener("click", () => {
@@ -532,13 +540,25 @@ setStickyOffsets() {
         scrollCol.removeEventListener('scroll', this.scrollListeners.scroll);
       }
       
-      // Create new listeners
+      // Create new listeners with sync protection using instance property
       this.scrollListeners.scroll = () => {
-        fixedCol.scrollTop = scrollCol.scrollTop;
+        if (!this.isSyncing) {
+          this.isSyncing = true;
+          fixedCol.scrollTop = scrollCol.scrollTop;
+          requestAnimationFrame(() => {
+            this.isSyncing = false;
+          });
+        }
       };
       
       this.scrollListeners.fixed = () => {
-        scrollCol.scrollTop = fixedCol.scrollTop;
+        if (!this.isSyncing) {
+          this.isSyncing = true;
+          scrollCol.scrollTop = fixedCol.scrollTop;
+          requestAnimationFrame(() => {
+            this.isSyncing = false;
+          });
+        }
       };
       
       // Add new listeners
@@ -1079,50 +1099,32 @@ setStickyOffsets() {
       }
     });
     
-    // WICHTIG: Zeilen-Farben NEU setzen basierend auf sichtbaren Zeilen
-    if (!position) {
-      // Wenn position leer ist (alle zeigen), Farben auch zurücksetzen basierend auf Original-Index
-      fixedRows.forEach((row, idx) => {
-        const bgColor = idx % 2 === 0 ? '#2a2a2a' : '#333';
-        row.style.backgroundColor = bgColor;
+    // WICHTIG: Farben NEU setzen - GLEICHE Farben wie ohne Filter!
+    // Use cached colors from init for better performance
+    const darkColor = this.rowColors?.dark || '#2a2a2a';
+    const lightColor = this.rowColors?.light || '#333';
+    
+    let visibleIndex = 0;
+    fixedRows.forEach((row, idx) => {
+      if (row.style.display !== 'none') {
+        // Alternierend dunkel/hell basierend auf visibleIndex
+        const bgColor = visibleIndex % 2 === 0 ? darkColor : lightColor;
         
-        // Auch alle td-Elemente in der Zeile
-        row.querySelectorAll('td').forEach(td => {
-          td.style.backgroundColor = bgColor;
+        row.style.backgroundColor = bgColor;
+        row.querySelectorAll('td:not(.sticky-col)').forEach(td => {
+          td.style.backgroundColor = '';  // Reset to inherit from row
         });
         
         if (scrollRows[idx]) {
           scrollRows[idx].style.backgroundColor = bgColor;
           scrollRows[idx].querySelectorAll('td').forEach(td => {
-            td.style.backgroundColor = bgColor;
+            td.style.backgroundColor = '';  // Reset to inherit from row
           });
         }
-      });
-    } else {
-      // Filter aktiv: Farben neu setzen basierend auf visibleIndex
-      let visibleIndex = 0;
-      fixedRows.forEach((row, idx) => {
-        if (row.style.display !== 'none') {
-          // Alternierend hellgrau/dunkelgrau basierend auf visibleIndex
-          const bgColor = visibleIndex % 2 === 0 ? '#2a2a2a' : '#333';
-          row.style.backgroundColor = bgColor;
-          
-          // Auch alle td-Elemente in der Zeile
-          row.querySelectorAll('td').forEach(td => {
-            td.style.backgroundColor = bgColor;
-          });
-          
-          if (scrollRows[idx]) {
-            scrollRows[idx].style.backgroundColor = bgColor;
-            scrollRows[idx].querySelectorAll('td').forEach(td => {
-              td.style.backgroundColor = bgColor;
-            });
-          }
-          
-          visibleIndex++;
-        }
-      });
-    }
+        
+        visibleIndex++;
+      }
+    });
   },
   
   /**
