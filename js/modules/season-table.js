@@ -96,6 +96,7 @@ setStickyOffsets() {
     // Create fixed columns container (Nr, Player, Pos)
     const fixedContainer = document.createElement("div");
     fixedContainer.className = "fixed-columns";
+    fixedContainer.style.overflow = 'visible';  // Allow horizontal scroll on parent
     
     const fixedTable = document.createElement("table");
     fixedTable.className = "season-table-fixed";
@@ -163,6 +164,7 @@ setStickyOffsets() {
     // Create scrollable columns container (Games and all other stats)
     const scrollContainer = document.createElement("div");
     scrollContainer.className = "scrollable-columns";
+    scrollContainer.style.overflow = 'visible';  // Allow horizontal scroll on parent
     
     const scrollTable = document.createElement("table");
     scrollTable.className = "season-table-scroll";
@@ -348,9 +350,14 @@ setStickyOffsets() {
       17: 'faceOffsWon'
     };
     
-    displayRows.forEach(r => {
+    displayRows.forEach((r, rowIndex) => {
       const fixedTr = document.createElement("tr");
       const scrollTr = document.createElement("tr");
+      
+      // Row colors via CSS classes
+      const rowClass = (rowIndex % 2 === 0) ? 'even-row' : 'odd-row';
+      fixedTr.classList.add(rowClass);
+      scrollTr.classList.add(rowClass);
       
       // Add fixed columns (Nr, Player, Pos)
       for (let i = 0; i < 3; i++) {
@@ -1100,45 +1107,37 @@ setStickyOffsets() {
     const fixedRows = Array.from(document.querySelectorAll('.season-table-fixed tbody tr:not(.total-row)'));
     const scrollRows = Array.from(document.querySelectorAll('.season-table-scroll tbody tr:not(.total-row)'));
     
-    // Erst alle Zeilen filtern (show/hide)
+    // Re-striping after filter
+    const visiblePairs = [];
     fixedRows.forEach((row, idx) => {
-      // Position is in the 3rd column (index 2) of the fixed table
       const posCell = row.querySelector('td:nth-child(3)');
       const cellText = posCell ? posCell.textContent.trim() : '';
       const shouldShow = !position || cellText === position;
-      
-      // Show/hide both rows
+
       row.style.display = shouldShow ? '' : 'none';
       if (scrollRows[idx]) {
         scrollRows[idx].style.display = shouldShow ? '' : 'none';
       }
-    });
-    
-    // WICHTIG: Farben NEU setzen - GLEICHE Farben wie ohne Filter!
-    // Use cached colors from init for better performance
-    const darkColor = this.rowColors?.dark || '#2a2a2a';
-    const lightColor = this.rowColors?.light || '#333';
-    
-    let visibleIndex = 0;
-    fixedRows.forEach((row, idx) => {
-      if (row.style.display !== 'none') {
-        // Alternierend dunkel/hell basierend auf visibleIndex
-        const bgColor = visibleIndex % 2 === 0 ? darkColor : lightColor;
-        
-        row.style.backgroundColor = bgColor;
-        row.querySelectorAll('td:not(.sticky-col)').forEach(td => {
-          td.style.backgroundColor = '';  // Reset to inherit from row
-        });
-        
-        if (scrollRows[idx]) {
-          scrollRows[idx].style.backgroundColor = bgColor;
-          scrollRows[idx].querySelectorAll('td').forEach(td => {
-            td.style.backgroundColor = '';  // Reset to inherit from row
-          });
-        }
-        
-        visibleIndex++;
+      if (shouldShow) {
+        visiblePairs.push({ fixed: row, scroll: scrollRows[idx] });
       }
+    });
+
+    // Reassign CSS classes for row colors
+    visiblePairs.forEach((pair, i) => {
+      const cls = (i % 2 === 0) ? 'even-row' : 'odd-row';
+      
+      [pair.fixed, pair.scroll].forEach(r => {
+        if (!r) return;
+        r.classList.remove('even-row', 'odd-row');
+        r.classList.add(cls);
+        
+        // Reset inline background styles to use CSS classes
+        r.style.backgroundColor = '';
+        r.querySelectorAll('td').forEach(td => {
+          td.style.backgroundColor = '';
+        });
+      });
     });
   },
   
