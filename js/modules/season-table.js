@@ -469,15 +469,25 @@ setStickyOffsets() {
         scrollTotalTr.appendChild(td);
       }
       
-      fixedTbody.appendChild(fixedTotalTr);
-      scrollTbody.appendChild(scrollTotalTr);
+      // Total-Zeile in tfoot für korrektes sticky bottom
+      const fixedTfoot = document.createElement("tfoot");
+      fixedTfoot.appendChild(fixedTotalTr);
+      
+      const scrollTfoot = document.createElement("tfoot");
+      scrollTfoot.appendChild(scrollTotalTr);
     }
 
     // Assemble both tables
     fixedTable.appendChild(fixedTbody);
+    if (filteredRows.length > 0) {
+      fixedTable.appendChild(fixedTfoot);  // tfoot NACH tbody
+    }
     fixedContainer.appendChild(fixedTable);
     
     scrollTable.appendChild(scrollTbody);
+    if (filteredRows.length > 0) {
+      scrollTable.appendChild(scrollTfoot);  // tfoot NACH tbody
+    }
     scrollContainer.appendChild(scrollTable);
     
     wrapper.appendChild(fixedContainer);
