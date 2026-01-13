@@ -128,7 +128,7 @@ const App = {
         text-align: center !important;
       }
       
-      /* NUR Fixed table - Nr und Player links */
+      /* ONLY Fixed table - Nr and Player left-aligned */
       #seasonContainer .season-table-fixed th:nth-child(1),
       #seasonContainer .season-table-fixed td:nth-child(1),
       #seasonContainer .season-table-fixed th:nth-child(2),
@@ -137,7 +137,7 @@ const App = {
         padding-left: 12px !important;
       }
       
-      /* Scrollable table - ALLES zentriert */
+      /* Scrollable table - ALL centered */
       #seasonContainer .season-table-scroll th,
       #seasonContainer .season-table-scroll td {
         text-align: center !important;
