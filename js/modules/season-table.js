@@ -1085,8 +1085,17 @@ setStickyOffsets() {
       fixedRows.forEach((row, idx) => {
         const bgColor = idx % 2 === 0 ? '#2a2a2a' : '#333';
         row.style.backgroundColor = bgColor;
+        
+        // Auch alle td-Elemente in der Zeile
+        row.querySelectorAll('td').forEach(td => {
+          td.style.backgroundColor = bgColor;
+        });
+        
         if (scrollRows[idx]) {
           scrollRows[idx].style.backgroundColor = bgColor;
+          scrollRows[idx].querySelectorAll('td').forEach(td => {
+            td.style.backgroundColor = bgColor;
+          });
         }
       });
     } else {
@@ -1097,9 +1106,19 @@ setStickyOffsets() {
           // Alternierend hellgrau/dunkelgrau basierend auf visibleIndex
           const bgColor = visibleIndex % 2 === 0 ? '#2a2a2a' : '#333';
           row.style.backgroundColor = bgColor;
+          
+          // Auch alle td-Elemente in der Zeile
+          row.querySelectorAll('td').forEach(td => {
+            td.style.backgroundColor = bgColor;
+          });
+          
           if (scrollRows[idx]) {
             scrollRows[idx].style.backgroundColor = bgColor;
+            scrollRows[idx].querySelectorAll('td').forEach(td => {
+              td.style.backgroundColor = bgColor;
+            });
           }
+          
           visibleIndex++;
         }
       });
