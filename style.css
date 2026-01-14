@@ -871,7 +871,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: relative; /* Support sticky positioning */
   max-height: calc(100vh - var(--table-scroll-offset));
   overflow-y: auto !important; /* Both tables scroll vertically */
-  overflow-x: visible !important;  /* No own horizontal scrollbar */
+}
+
+/* Fixed columns specific overflow */
+.fixed-columns {
+  overflow-x: hidden !important;  /* No horizontal scrollbar on fixed columns */
 }
 
 /* Fixed columns - no horizontal scroll */
@@ -884,7 +888,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* Subtle shadow similar to Goal Value table */
   box-shadow: 2px 0 4px rgba(0,0,0,0.15);
   border-radius: 0;
-  overflow-x: hidden !important;
 }
 
 /* Scrollable columns - horizontal scroll for many columns */
@@ -894,29 +897,27 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding-left: 0 !important;  /* No padding to prevent gap */
   min-width: 0;
   overflow-x: auto !important;
+  overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
   border-radius: 0; /* Keine abgerundeten Ecken */
   padding-bottom: 0;
   margin-bottom: 0;
 }
 
-/* Scrollbar styling */
+/* Season Table: Einheitliche Scrollbar-Farben (grüner Thumb) */
 .scrollable-columns::-webkit-scrollbar {
-  height: 12px;
+  height: 14px;
   width: 12px;
+  background: rgba(0, 0, 0, 0.3);
 }
-
-.scrollable-columns::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
 .scrollable-columns::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 6px;
+  background: #44bb91;
+  border-radius: 8px;
 }
-
-.scrollable-columns::-webkit-scrollbar-thumb:hover {
-  background: #777;
+/* Firefox scrollbar */
+.scrollable-columns {
+  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.3);
+  scrollbar-width: auto;
 }
 
 /* Fixed columns should have no visible scrollbar */
@@ -1004,9 +1005,10 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* Synchronized row colors - use CSS classes for filter compatibility */
+/* Zeilenhelligkeit auf Season-Seite an Game-Data anlehnen */
 .season-table-fixed tbody tr.even-row,
 .season-table-scroll tbody tr.even-row {
-  background-color: #2a2a2a !important;  /* Dark gray */
+  background-color: #2f2f2f !important;  /* Lighter dark gray - matches Game Data */
 }
 
 .season-table-fixed tbody tr.odd-row,
@@ -1016,7 +1018,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 .season-table-fixed tbody tr.even-row td,
 .season-table-scroll tbody tr.even-row td {
-  background-color: #2a2a2a !important;  /* Dark gray */
+  background-color: #2f2f2f !important;  /* Lighter dark gray - matches Game Data */
 }
 
 .season-table-fixed tbody tr.odd-row td,
@@ -1138,6 +1140,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .pos-filter:focus {
   box-shadow: 0 0 0 2px rgba(68, 187, 145, 0.3);
 }
+
+/* Season Page specific row colors - scoped to prevent affecting other pages */
+#seasonPage .even-row { background-color: #2f2f2f !important; }
+#seasonPage .odd-row  { background-color: #3a3a3a !important; }
+
+/* Light Mode row colors for Season Page */
+[data-theme="light"] #seasonPage .even-row { background-color: #f7f7f7 !important; }
+[data-theme="light"] #seasonPage .odd-row  { background-color: #ededed !important; }
 
 /* Tablet (≤1024px) */
 @media (max-width: 1024px) {
