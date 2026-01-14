@@ -840,102 +840,73 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* ========================================= */
-/* SEASON TABLE - TWO TABLES WITH GAP */
+/* ========================================= */
+/* SEASON TABLE - FINAL FIX */
 /* ========================================= */
 
 #seasonContainer {
-  max-width: 1200px;
+  position: relative;
+  overflow: auto !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 1400px;
   margin: 0 auto;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Exakte Ausrichtung beider Tabellen */
-.season-table-wrapper {
-  display: inline-flex !important;  /* inline-flex instead of flex prevents full-width expansion */
-  gap: 0 !important;  /* CRITICAL: No gap between tables */
-  width: max-content !important; /* Important for horizontal scrolling */
-  min-width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: stretch !important;
+  padding-bottom: 20px;
+  box-sizing: border-box;
   max-height: calc(100vh - 200px);
-  overflow: hidden; /* Container doesn't scroll - children do */
-  margin-bottom: 0;  /* Scrollbar below tables, not within */
-}
-
-.fixed-columns,
-.scrollable-columns {
-  margin: 0 !important;  /* No margin to prevent gap */
-  padding: 0 !important;  /* No padding to prevent gap */
-  position: relative; /* Support sticky positioning */
-  max-height: calc(100vh - var(--table-scroll-offset));
-  overflow: hidden !important; /* kein eigener Balken */
-}
-
-/* Fixed columns specific overflow */
-.fixed-columns {
-  overflow-x: hidden !important;  /* No horizontal scrollbar on fixed columns */
-}
-
-/* Fixed columns - no horizontal scroll */
-.fixed-columns {
-  flex-shrink: 0;
-  margin-right: 0 !important;  /* No margin to prevent gap */
-  padding-right: 0 !important;  /* No padding to prevent gap */
-  z-index: 10;
   background: var(--bg-color);
-  /* Subtle shadow similar to Goal Value table */
-  box-shadow: 2px 0 4px rgba(0,0,0,0.15);
-  border-radius: 0;
 }
 
-/* Scrollable columns - horizontal scroll for many columns */
-.scrollable-columns {
-  flex: 1;
-  margin-left: 0 !important;  /* No margin to prevent gap */
-  padding-left: 0 !important;  /* No padding to prevent gap */
-  min-width: 0;
-  overflow: hidden !important; /* KEIN eigener Scrollbar auf dem Container */
-  border-radius: 0; /* Keine abgerundeten Ecken */
-  padding-bottom: 0;
-  margin-bottom: 0;
+/* Grüner horizontaler Scrollbar */
+#seasonContainer::-webkit-scrollbar {
+  height: 16px;
+  background: rgba(0, 0, 0, 0.25);
 }
-
-/* Inner scroll container for scrollable columns */
-.scrollable-columns .table-scroll {
-  overflow-x: auto !important;  /* EIN horizontaler Balken */
-  overflow-y: hidden !important;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Season Table: Einheitliche Scrollbar-Farben (grüner Thumb) */
-.scrollable-columns .table-scroll::-webkit-scrollbar {
-  height: 14px;
-  background: rgba(0, 0, 0, 0.35);
-}
-.scrollable-columns .table-scroll::-webkit-scrollbar-thumb {
+#seasonContainer::-webkit-scrollbar-thumb {
   background: #44bb91;
   border-radius: 8px;
 }
-/* Firefox scrollbar */
-.scrollable-columns .table-scroll {
-  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.35);
+#seasonContainer::-webkit-scrollbar-thumb:hover {
+  background: #3a9d7a;
+}
+#seasonContainer {
   scrollbar-width: auto;
+  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.25);
 }
 
-/* Fixed columns should have no visible scrollbar */
-.fixed-columns::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
+/* Wrapper - KEINE Lücke, KEIN eigener Scrollbar */
+.season-table-wrapper {
+  display: flex !important;
+  gap: 0 !important;
+  width: max-content;
+  min-width: 100%;
+  align-items: flex-start;
 }
 
+/* Fixed Columns - KEINE box-shadow, KEIN margin */
 .fixed-columns {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  flex-shrink: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg-color);
+  z-index: 10;
+  /* KEINE box-shadow - das verursacht die Lücke! */
 }
 
+/* Scrollable Columns - KEIN eigener Scrollbar */
+.scrollable-columns {
+  flex: 1;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-width: 0;
+}
+
+/* Table Scroll Container - kein overflow, da #seasonContainer scrollt */
+.table-scroll {
+  width: 100%;
+}
+
+/* Beide Tabellen - identisches Styling */
 .season-table-fixed,
 .season-table-scroll {
   border-collapse: collapse;
@@ -945,6 +916,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 0;
 }
 
+/* Zellen */
 .season-table-fixed th,
 .season-table-fixed td,
 .season-table-scroll th,
@@ -952,33 +924,24 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 8px 12px;
   white-space: nowrap;
   border-bottom: 1px solid #333;
-  line-height: 1;
+  line-height: 1.2;
   text-align: center;
+  box-sizing: border-box;
 }
 
-/* Header exakt gleiche Höhe */
-.season-table-fixed thead tr,
-.season-table-scroll thead tr {
-  height: 44px;
-}
-
-/* Header sticky oben - RAHMEN OBEN */
+/* Header - sticky oben */
 .season-table-fixed thead th,
 .season-table-scroll thead th {
   background: var(--header-bg) !important;
   color: #fff !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 30 !important;
+  position: sticky;
+  top: 0;
+  z-index: 30;
   height: 44px;
-  padding: 8px 12px;
   vertical-align: middle;
-  box-sizing: border-box;
-  line-height: 1;
-  text-align: center;
 }
 
-/* Body-Zeilen exakt gleiche Höhe */
+/* Body-Zeilen - exakt gleiche Höhe */
 .season-table-fixed tbody tr,
 .season-table-scroll tbody tr {
   height: 40px;
@@ -987,274 +950,80 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table-fixed tbody td,
 .season-table-scroll tbody td {
   height: 40px;
-  padding: 8px 12px;
   vertical-align: middle;
-  box-sizing: border-box;
-  line-height: 1;
-  text-align: center;
 }
 
-/* Total row exakt gleiche Höhe - 44px statt 40px */
-.season-table-fixed .total-row,
-.season-table-scroll .total-row {
-  height: 44px !important;
-}
-
-.season-table-fixed .total-row td,
-.season-table-scroll .total-row td {
-  height: 44px !important;
-  padding: 8px 12px;
-  vertical-align: middle;
-  box-sizing: border-box;
-}
-
-/* Synchronized row colors - use CSS classes for filter compatibility */
-/* Zeilenhelligkeit auf Season-Seite an Game-Data anlehnen */
-.season-table-fixed tbody tr.even-row,
-.season-table-scroll tbody tr.even-row {
-  background-color: #2f2f2f !important;  /* Lighter dark gray - matches Game Data */
-}
-
-.season-table-fixed tbody tr.odd-row,
-.season-table-scroll tbody tr.odd-row {
-  background-color: #3a3a3a !important; /* LIGHTER than even-row - noticeably brighter! */
-}
-
+/* ZEILEN-FARBEN - EXAKT WIE GAME DATA */
 .season-table-fixed tbody tr.even-row td,
 .season-table-scroll tbody tr.even-row td {
-  background-color: #2f2f2f !important;  /* Lighter dark gray - matches Game Data */
+  background-color: #333333 !important;
 }
 
 .season-table-fixed tbody tr.odd-row td,
 .season-table-scroll tbody tr.odd-row td {
-  background-color: #3a3a3a !important;  /* LIGHTER than even-row - noticeably brighter! */
+  background-color: #4a4a4a !important;
 }
 
-/* Fallback for rows without classes (nth-child still works) */
-.season-table-fixed tbody tr:nth-child(odd):not(.even-row):not(.odd-row) td,
-.season-table-scroll tbody tr:nth-child(odd):not(.even-row):not(.odd-row) td {
-  background: var(--row-odd);
+/* Light Mode */
+[data-theme="light"] .season-table-fixed tbody tr.even-row td,
+[data-theme="light"] .season-table-scroll tbody tr.even-row td {
+  background-color: #f7f7f7 !important;
 }
 
-.season-table-fixed tbody tr:nth-child(even):not(.even-row):not(.odd-row) td,
-.season-table-scroll tbody tr:nth-child(even):not(.even-row):not(.odd-row) td {
-  background: var(--row-even);
+[data-theme="light"] .season-table-fixed tbody tr.odd-row td,
+[data-theme="light"] .season-table-scroll tbody tr.odd-row td {
+  background-color: #ededed !important;
 }
 
-/* Total row */
-.season-table-fixed .total-row td,
-.season-table-scroll .total-row td {
-  background: var(--header-bg);
-  color: #fff;
-  font-weight: 700;
-}
-
-/* Total row sticky at bottom - RAHMEN UNTEN */
-.season-table-fixed .total-row,
-.season-table-scroll .total-row {
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 30 !important;
-}
-
-.season-table-fixed .total-row td,
-.season-table-scroll .total-row td {
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 30 !important;
-  background: var(--header-bg) !important;
-  color: #fff !important;
-  font-weight: 700;
-}
-
-/* Total row in tfoot sticky at bottom - RAHMEN UNTEN */
+/* TOTAL-ZEILE - sticky unten, BEIDE Tabellen */
 .season-table-fixed tfoot,
 .season-table-scroll tfoot {
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 30 !important;
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
 }
 
-.season-table-fixed tfoot tr,
-.season-table-scroll tfoot tr {
-  height: 44px !important;
-}
-
-.season-table-fixed tfoot td,
-.season-table-scroll tfoot td {
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 30 !important;
+.season-table-fixed .total-row td,
+.season-table-scroll .total-row td {
   background: var(--header-bg) !important;
-  color: #fff !important;
-  font-weight: 700;
-  height: 44px !important;
-  padding: 8px 12px;
-  vertical-align: middle;
-  box-sizing: border-box;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-top: 2px solid #555;
+  height: 44px;
 }
 
-/* Ensure first two columns (Games, Goals) in scrollable table are centered */
-.season-table-scroll td:nth-child(1),
-.season-table-scroll td:nth-child(2) {
-  text-align: center !important;
+/* Player column left-aligned */
+.season-table-fixed td:nth-child(2),
+.season-table-fixed th:nth-child(2) {
+  text-align: left;
+  padding-left: 12px;
 }
 
-/* Ensure all columns in scrollable table are centered */
-.season-table-scroll td {
-  text-align: center !important;
+/* Scrollable table vertical scrollbar (rechts) */
+.scrollable-columns::-webkit-scrollbar {
+  width: 12px;
+  background: rgba(0, 0, 0, 0.2);
 }
-
-.season-table-scroll th {
-  text-align: center !important;
-}
-
-/* Pos Filter - kompakter gemacht */
-.pos-filter {
-  background: #3a3a3a;
-  color: #44bb91;
-  border: none;
+.scrollable-columns::-webkit-scrollbar-thumb {
+  background: #44bb91;
   border-radius: 6px;
-  padding: 4px 10px;
-  padding-right: 24px;
-  font-weight: bold;
-  font-size: 12px;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  outline: none;
-  /* Dropdown Arrow */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%2344bb91' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
 }
 
-/* Pos Header Zelle - kompakter */
-.pos-header {
-  padding: 4px 8px !important;
+/* Synchronized vertical scroll - beide Container gleiche Höhe */
+.fixed-columns,
+.scrollable-columns {
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
 }
 
-/* Hover Effekt */
-.pos-filter:hover {
-  background-color: #4a4a4a;
+/* Fixed columns versteckter vertikaler Scrollbar */
+.fixed-columns::-webkit-scrollbar {
+  width: 0;
+  display: none;
 }
-
-/* Focus Effekt */
-.pos-filter:focus {
-  box-shadow: 0 0 0 2px rgba(68, 187, 145, 0.3);
-}
-
-/* Season Page specific row colors - scoped to prevent affecting other pages */
-#seasonPage .even-row { background-color: #2f2f2f !important; }
-#seasonPage .odd-row  { background-color: #3a3a3a !important; }
-
-/* Light Mode row colors for Season Page */
-[data-theme="light"] #seasonPage .even-row { background-color: #f7f7f7 !important; }
-[data-theme="light"] #seasonPage .odd-row  { background-color: #ededed !important; }
-
-/* Tablet (≤1024px) */
-@media (max-width: 1024px) {
-  .season-table-wrapper {
-    gap: 0 !important; /* Auch auf Tablet kein gap */
-  }
-  
-  .season-table-fixed th,
-  .season-table-fixed td,
-  .season-table-scroll th,
-  .season-table-scroll td {
-    padding: 6px 10px;
-    font-size: 13px;
-  }
-  
-  .season-table-fixed thead tr,
-  .season-table-scroll thead tr {
-    height: 40px;
-  }
-  
-  .season-table-fixed thead th,
-  .season-table-scroll thead th {
-    height: 40px;
-  }
-  
-  .season-table-fixed tbody tr,
-  .season-table-scroll tbody tr,
-  .season-table-fixed tbody td,
-  .season-table-scroll tbody td {
-    height: 36px;
-  }
-}
-
-/* Mobile (≤768px) */
-@media (max-width: 768px) {
-  .season-table-wrapper {
-    gap: 0 !important; /* Auch auf Mobile kein gap */
-  }
-  
-  .fixed-columns {
-    max-width: 40%;
-    flex-shrink: 0;
-  }
-  
-  .scrollable-columns {
-    flex: 1;
-    min-width: 55%;
-  }
-  
-  .season-table-fixed th,
-  .season-table-fixed td,
-  .season-table-scroll th,
-  .season-table-scroll td {
-    padding: 5px 8px;
-    font-size: 12px;
-  }
-  
-  .season-table-fixed thead tr,
-  .season-table-scroll thead tr {
-    height: 40px;
-  }
-  
-  .season-table-fixed thead th,
-  .season-table-scroll thead th {
-    height: 40px;
-  }
-  
-  .season-table-fixed tbody tr,
-  .season-table-scroll tbody tr,
-  .season-table-fixed tbody td,
-  .season-table-scroll tbody td {
-    height: 36px;
-  }
-  
-  .pos-filter {
-    padding: 6px 12px;
-    padding-right: 26px;
-    font-size: 12px;
-    border-radius: 6px;
-  }
-}
-
-/* Sehr klein (≤480px) */
-@media (max-width: 480px) {
-  .season-table-wrapper {
-    gap: 0 !important; /* Auch auf kleinen Screens kein gap */
-  }
-  
-  .fixed-columns {
-    max-width: 35%;
-  }
-  
-  .scrollable-columns {
-    min-width: 60%;
-  }
-  
-  .season-table-fixed th,
-  .season-table-fixed td,
-  .season-table-scroll th,
-  .season-table-scroll td {
-    padding: 4px 6px;
-    font-size: 11px;
-  }
+.fixed-columns {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* ============ */

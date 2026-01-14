@@ -68,179 +68,20 @@ const App = {
     const style = document.createElement('style');
     style.id = 'season-goalvalue-scroll-fix';
     style.textContent = `
-      /* === SEASON TABLE SCROLL/LAYOUT FIX === */
-      #seasonContainer {
-        overflow: auto !important;            /* ein Scroll-Container */
-        padding-bottom: 16px !important;      /* Platz für den Balken */
-        box-sizing: border-box !important;
-      }
-      .season-table-wrapper {
-        display: inline-flex !important;
-        gap: 0 !important;                    /* KEIN Spalt */
-        width: max-content !important;
-        align-items: stretch !important;
-      }
-      .fixed-columns,
-      .scrollable-columns {
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;          /* kein eigener Balken */
-      }
-      .scrollable-columns .table-scroll {
-        overflow-x: auto !important;          /* EIN horizontaler Balken */
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch;
-      }
-      /* Scrollbar Style (Chrome/WebKit) */
-      .scrollable-columns .table-scroll::-webkit-scrollbar {
-        height: 14px;
-        background: rgba(0,0,0,0.35);
-      }
-      .scrollable-columns .table-scroll::-webkit-scrollbar-thumb {
-        background: #44bb91;
-        border-radius: 8px;
-      }
-      /* Scrollbar Style (Firefox) */
-      .scrollable-columns .table-scroll {
-        scrollbar-color: #44bb91 rgba(0,0,0,0.35);
-      }
-      /* Zeilenfarben Season (Dark) */
-      #seasonPage .even-row td { background: #2f2f2f !important; }
-      #seasonPage .odd-row  td { background: #3a3a3a !important; }
-      /* Zeilenfarben Season (Light) */
-      [data-theme="light"] #seasonPage .even-row td { background: #f7f7f7 !important; }
-      [data-theme="light"] #seasonPage .odd-row  td { background: #ededed !important; }
+      /* Season Table - KEINE widersprüchlichen Regeln */
+      /* Alles wird über style.css gesteuert */
       
-      /* ===== SEASON CONTAINER - ZENTRIERT ===== */
-      #seasonPage {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        width: 100% !important;
-      }
-      
-      #seasonContainer {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: flex-start !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-      }
-      
-      #seasonContainer table {
-        white-space: nowrap !important;
-        margin: 0 auto !important;
-        width: auto !important;
-        max-width: none !important;
-        box-sizing: border-box !important;
-      }
-      
-      /* ===== GOAL VALUE CONTAINER - LINKS ===== */
+      /* Goal Value Container - Links ausgerichtet */
       #goalValueContainer {
         display: flex !important;
         justify-content: flex-start !important;
-        align-items: flex-start !important;
-        padding-left: 0 !important;
-        margin-left: 0 !important;
-        box-sizing: border-box !important;
         width: 100% !important;
       }
       
       #goalValueContainer table {
-        white-space: nowrap !important;
         margin-left: 0 !important;
         margin-right: auto !important;
         width: auto !important;
-        max-width: none !important;
-        box-sizing: border-box !important;
-      }
-      
-      /* ===== SCROLL BEHAVIOR ===== */
-      #seasonContainer .table-scroll, #goalValueContainer .table-scroll {
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-      }
-      
-      /* ===== TEXT ALIGNMENT ===== */
-      #seasonContainer table th, #seasonContainer table td,
-      #goalValueContainer table th, #goalValueContainer table td {
-        text-align: center !important;
-      }
-      
-      /* ONLY Fixed table - Nr and Player left-aligned */
-      #seasonContainer .season-table-fixed th:nth-child(1),
-      #seasonContainer .season-table-fixed td:nth-child(1),
-      #seasonContainer .season-table-fixed th:nth-child(2),
-      #seasonContainer .season-table-fixed td:nth-child(2) {
-        text-align: left !important;
-        padding-left: 12px !important;
-      }
-      
-      /* Scrollable table - ALL centered */
-      #seasonContainer .season-table-scroll th,
-      #seasonContainer .season-table-scroll td {
-        text-align: center !important;
-      }
-      
-      #goalValueContainer table th:first-child,
-      #goalValueContainer table td:first-child {
-        text-align: left !important;
-        padding-left: 12px !important;
-      }
-      
-      /* ===== MEDIA QUERY - GROSSE BILDSCHIRME ===== */
-      @media (min-width: 1200px) {
-        /* Season bleibt zentriert auch auf großen Bildschirmen */
-        #seasonContainer {
-          width: 100% !important;
-          max-width: 100% !important;
-          display: flex !important;
-          justify-content: center !important;
-        }
-        
-        #seasonContainer table {
-          margin: 0 auto !important;
-        }
-        
-        /* Goal Value kann volle Breite nutzen */
-        #goalValueContainer {
-          width: 100vw !important;
-          overflow: visible !important;
-        }
-        
-        #seasonContainer .table-scroll {
-          overflow-x: auto !important;
-          display: flex !important;
-          justify-content: center !important;
-        }
-        
-        #goalValueContainer .table-scroll {
-          overflow-x: auto !important;
-        }
-        
-        #seasonContainer table {
-          width: auto !important;
-          table-layout: auto !important;
-          white-space: nowrap !important;
-          font-size: 13px !important;
-        }
-        
-        #goalValueContainer table {
-          width: auto !important;
-          table-layout: fixed !important;
-          white-space: nowrap !important;
-          font-size: 13px !important;
-        }
-      }
-      
-      /* ===== PAGE VISIBILITY FIX ===== */
-      .page[style*="display: none"] {
-        display: none !important;
-        visibility: hidden !important;
       }
     `;
     document.head.appendChild(style);
