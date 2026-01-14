@@ -62,12 +62,55 @@ const App = {
   
   // CSS Injection für Season/GoalValue Tables (SCROLL FIX eingearbeitet)
   injectTableStyles() {
-    const existing = document.getElementById('season-goalvalue-left-align');
+    const existing = document.getElementById('season-goalvalue-scroll-fix');
     if (existing) existing.remove();
     
     const style = document.createElement('style');
-    style.id = 'season-goalvalue-left-align';
+    style.id = 'season-goalvalue-scroll-fix';
     style.textContent = `
+      /* Season Table Scroll Fix */
+      #seasonContainer {
+        overflow-x: scroll !important;  /* scroll instead of auto = ALWAYS visible */
+        overflow-y: hidden !important;
+        padding-bottom: 20px !important;  /* Platz für Scrollbar unter den Tabellen */
+      }
+      
+      .season-table-wrapper {
+        display: flex;
+        gap: 0 !important;  /* No gap between tables */
+        width: max-content;
+        margin-bottom: 0;  /* Scrollbar below tables, not within */
+      }
+      
+      .fixed-columns {
+        flex-shrink: 0;
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+      }
+      
+      .scrollable-columns {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+      }
+      
+      .fixed-columns,
+      .scrollable-columns {
+        overflow-x: visible !important;  /* Kein eigener horizontaler Scrollbar */
+        overflow-y: auto !important;     /* Vertikales Scrollen für Spieler */
+        max-height: calc(100vh - 250px);
+      }
+      
+      /* Zeilen-Farben */
+      .season-table-fixed tbody tr.even-row td,
+      .season-table-scroll tbody tr.even-row td {
+        background-color: #2a2a2a !important;
+      }
+      
+      .season-table-fixed tbody tr.odd-row td,
+      .season-table-scroll tbody tr.odd-row td {
+        background-color: #3a3a3a !important;  /* Deutlich HELLER als #2a2a2a */
+      }
+      
       /* ===== SEASON CONTAINER - ZENTRIERT ===== */
       #seasonPage {
         display: flex !important;

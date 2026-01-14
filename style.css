@@ -38,7 +38,11 @@
   
   /* Season Table row colors for dark mode */
   --row-dark-even: #2a2a2a;  /* Dark gray */
-  --row-dark-odd: #3a3a3a;   /* LIGHTER gray */
+  --row-dark-odd: #3a3a3a;   /* LIGHTER gray - Must be noticeably lighter than even! */
+
+  /* Light Mode - hellere Zeilen */
+  --row-even: #f7f7f7;
+  --row-odd: #ededed;
 
 }
 
@@ -47,7 +51,7 @@
   --text-color: #ffffff;
   --header-bg: #1E1E1E;
   --row-even: #333333;
-  --row-odd: #4a4a4a;
+  --row-odd: #4a4a4a;  /* HELLER als even - must be noticeably lighter */
   --cell-pos-color: #00ff80;
   --cell-neg-color: #ff4c4c;
   --cell-zero-color: #ffffff;
@@ -764,7 +768,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonContainer {
   position: relative;
-  overflow-x: auto !important;
+  overflow-x: scroll !important;  /* scroll instead of auto = ALWAYS visible */
   overflow-y: hidden !important;
   display: flex !important;
   justify-content: center !important;
@@ -775,7 +779,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   -webkit-overflow-scrolling: touch !important;
   padding-left: 0; /* CRITICAL: no left padding to prevent gap */
   padding-right: 20px;
-  padding-bottom: 20px !important;
+  padding-bottom: 20px !important;  /* Platz für Scrollbar unter den Tabellen */
   box-sizing: border-box !important;
   height: auto;
   min-height: 0;
@@ -849,7 +853,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Exakte Ausrichtung beider Tabellen */
 .season-table-wrapper {
   display: flex;
-  gap: 0;
+  gap: 0 !important;  /* CRITICAL: No gap between tables */
   width: max-content; /* Important for horizontal scrolling */
   min-width: 100%;
   max-width: 1200px;
@@ -857,21 +861,24 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   align-items: stretch;
   max-height: calc(100vh - 200px);
   overflow: hidden; /* Container doesn't scroll - children do */
+  margin-bottom: 0;  /* Scrollbar below tables, not within */
 }
 
 .fixed-columns,
 .scrollable-columns {
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;  /* No margin to prevent gap */
+  padding: 0 !important;  /* No padding to prevent gap */
   position: relative; /* Support sticky positioning */
   max-height: calc(100vh - var(--table-scroll-offset));
   overflow-y: auto !important; /* Both tables scroll vertically */
-  overflow-x: hidden !important;
+  overflow-x: visible !important;  /* No own horizontal scrollbar */
 }
 
 /* Fixed columns - no horizontal scroll */
 .fixed-columns {
   flex-shrink: 0;
+  margin-right: 0 !important;  /* No margin to prevent gap */
+  padding-right: 0 !important;  /* No padding to prevent gap */
   z-index: 10;
   background: var(--bg-color);
   /* Subtle shadow similar to Goal Value table */
@@ -883,6 +890,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Scrollable columns - horizontal scroll for many columns */
 .scrollable-columns {
   flex: 1;
+  margin-left: 0 !important;  /* No margin to prevent gap */
+  padding-left: 0 !important;  /* No padding to prevent gap */
   min-width: 0;
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch;
@@ -997,22 +1006,22 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Synchronized row colors - use CSS classes for filter compatibility */
 .season-table-fixed tbody tr.even-row,
 .season-table-scroll tbody tr.even-row {
-  background-color: var(--row-dark-even) !important;
+  background-color: #2a2a2a !important;  /* Dark gray */
 }
 
 .season-table-fixed tbody tr.odd-row,
 .season-table-scroll tbody tr.odd-row {
-  background-color: var(--row-dark-odd) !important; /* LIGHTER than even-row! */
+  background-color: #3a3a3a !important; /* LIGHTER than even-row - noticeably brighter! */
 }
 
 .season-table-fixed tbody tr.even-row td,
 .season-table-scroll tbody tr.even-row td {
-  background-color: var(--row-dark-even) !important;
+  background-color: #2a2a2a !important;  /* Dark gray */
 }
 
 .season-table-fixed tbody tr.odd-row td,
 .season-table-scroll tbody tr.odd-row td {
-  background-color: var(--row-dark-odd) !important;
+  background-color: #3a3a3a !important;  /* LIGHTER than even-row - noticeably brighter! */
 }
 
 /* Fallback for rows without classes (nth-child still works) */
@@ -1133,7 +1142,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Tablet (≤1024px) */
 @media (max-width: 1024px) {
   .season-table-wrapper {
-    gap: 0; /* Auch auf Tablet kein gap */
+    gap: 0 !important; /* Auch auf Tablet kein gap */
   }
   
   .season-table-fixed th,
@@ -1165,7 +1174,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Mobile (≤768px) */
 @media (max-width: 768px) {
   .season-table-wrapper {
-    gap: 0; /* Auch auf Mobile kein gap */
+    gap: 0 !important; /* Auch auf Mobile kein gap */
   }
   
   .fixed-columns {
@@ -1214,7 +1223,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Sehr klein (≤480px) */
 @media (max-width: 480px) {
   .season-table-wrapper {
-    gap: 0; /* Auch auf kleinen Screens kein gap */
+    gap: 0 !important; /* Auch auf kleinen Screens kein gap */
   }
   
   .fixed-columns {
