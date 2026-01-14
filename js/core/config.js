@@ -68,53 +68,48 @@ const App = {
     const style = document.createElement('style');
     style.id = 'season-goalvalue-scroll-fix';
     style.textContent = `
-      /* Season Table Scroll Fix */
+      /* === SEASON TABLE SCROLL/LAYOUT FIX === */
       #seasonContainer {
-        overflow-x: scroll !important;  /* scroll instead of auto = ALWAYS visible */
-        overflow-y: hidden !important;
-        padding-bottom: 20px !important;  /* Platz für Scrollbar unter den Tabellen */
+        overflow: auto !important;            /* ein Scroll-Container */
+        padding-bottom: 16px !important;      /* Platz für den Balken */
+        box-sizing: border-box !important;
       }
-      
       .season-table-wrapper {
-        display: flex;
-        gap: 0 !important;  /* No gap between tables */
-        width: max-content;
-        margin-bottom: 0;  /* Scrollbar below tables, not within */
+        display: inline-flex !important;
+        gap: 0 !important;                    /* KEIN Spalt */
+        width: max-content !important;
+        align-items: stretch !important;
       }
-      
-      .fixed-columns {
-        flex-shrink: 0;
-        margin-right: 0 !important;
-        padding-right: 0 !important;
-      }
-      
+      .fixed-columns,
       .scrollable-columns {
-        margin-left: 0 !important;
-        padding-left: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;          /* kein eigener Balken */
       }
-      
-      .fixed-columns {
-        overflow-x: hidden !important;   /* No horizontal scrollbar on fixed columns */
-        overflow-y: auto !important;     /* Vertikales Scrollen für Spieler */
-        max-height: calc(100vh - 250px);
+      .scrollable-columns .table-scroll {
+        overflow-x: auto !important;          /* EIN horizontaler Balken */
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
       }
-      
-      .scrollable-columns {
-        overflow-x: auto !important;     /* Horizontal scroll for data columns */
-        overflow-y: auto !important;     /* Vertikales Scrollen für Spieler */
-        max-height: calc(100vh - 250px);
+      /* Scrollbar Style (Chrome/WebKit) */
+      .scrollable-columns .table-scroll::-webkit-scrollbar {
+        height: 14px;
+        background: rgba(0,0,0,0.35);
       }
-      
-      /* Zeilen-Farben - lighter to match Game Data page */
-      .season-table-fixed tbody tr.even-row td,
-      .season-table-scroll tbody tr.even-row td {
-        background-color: #2f2f2f !important;  /* Lighter than before - matches Game Data */
+      .scrollable-columns .table-scroll::-webkit-scrollbar-thumb {
+        background: #44bb91;
+        border-radius: 8px;
       }
-      
-      .season-table-fixed tbody tr.odd-row td,
-      .season-table-scroll tbody tr.odd-row td {
-        background-color: #3a3a3a !important;  /* Deutlich HELLER als even rows */
+      /* Scrollbar Style (Firefox) */
+      .scrollable-columns .table-scroll {
+        scrollbar-color: #44bb91 rgba(0,0,0,0.35);
       }
+      /* Zeilenfarben Season (Dark) */
+      #seasonPage .even-row td { background: #2f2f2f !important; }
+      #seasonPage .odd-row  td { background: #3a3a3a !important; }
+      /* Zeilenfarben Season (Light) */
+      [data-theme="light"] #seasonPage .even-row td { background: #f7f7f7 !important; }
+      [data-theme="light"] #seasonPage .odd-row  td { background: #ededed !important; }
       
       /* ===== SEASON CONTAINER - ZENTRIERT ===== */
       #seasonPage {

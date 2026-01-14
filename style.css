@@ -852,13 +852,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Exakte Ausrichtung beider Tabellen */
 .season-table-wrapper {
-  display: flex;
+  display: inline-flex !important;  /* inline-flex instead of flex prevents full-width expansion */
   gap: 0 !important;  /* CRITICAL: No gap between tables */
-  width: max-content; /* Important for horizontal scrolling */
+  width: max-content !important; /* Important for horizontal scrolling */
   min-width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  align-items: stretch;
+  align-items: stretch !important;
   max-height: calc(100vh - 200px);
   overflow: hidden; /* Container doesn't scroll - children do */
   margin-bottom: 0;  /* Scrollbar below tables, not within */
@@ -870,7 +870,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 0 !important;  /* No padding to prevent gap */
   position: relative; /* Support sticky positioning */
   max-height: calc(100vh - var(--table-scroll-offset));
-  overflow-y: auto !important; /* Both tables scroll vertically */
+  overflow: hidden !important; /* kein eigener Balken */
 }
 
 /* Fixed columns specific overflow */
@@ -896,27 +896,31 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin-left: 0 !important;  /* No margin to prevent gap */
   padding-left: 0 !important;  /* No padding to prevent gap */
   min-width: 0;
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden !important; /* KEIN eigener Scrollbar auf dem Container */
   border-radius: 0; /* Keine abgerundeten Ecken */
   padding-bottom: 0;
   margin-bottom: 0;
 }
 
-/* Season Table: Einheitliche Scrollbar-Farben (grüner Thumb) */
-.scrollable-columns::-webkit-scrollbar {
-  height: 14px;
-  width: 12px;
-  background: rgba(0, 0, 0, 0.3);
+/* Inner scroll container for scrollable columns */
+.scrollable-columns .table-scroll {
+  overflow-x: auto !important;  /* EIN horizontaler Balken */
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
 }
-.scrollable-columns::-webkit-scrollbar-thumb {
+
+/* Season Table: Einheitliche Scrollbar-Farben (grüner Thumb) */
+.scrollable-columns .table-scroll::-webkit-scrollbar {
+  height: 14px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.scrollable-columns .table-scroll::-webkit-scrollbar-thumb {
   background: #44bb91;
   border-radius: 8px;
 }
 /* Firefox scrollbar */
-.scrollable-columns {
-  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.3);
+.scrollable-columns .table-scroll {
+  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.35);
   scrollbar-width: auto;
 }
 
