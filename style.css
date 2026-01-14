@@ -764,8 +764,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 #seasonContainer {
   position: relative;
-  overflow-x: auto;
-  overflow-y: auto;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
   display: flex !important;
   justify-content: center !important;
   align-items: flex-start !important;
@@ -850,7 +850,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .season-table-wrapper {
   display: flex;
   gap: 0;
-  width: 100%;
+  width: max-content; /* Important for horizontal scrolling */
+  min-width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   align-items: stretch;
@@ -863,9 +864,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin: 0;
   padding: 0;
   position: relative; /* Support sticky positioning */
-  max-height: calc(100vh - 200px); /* Same as wrapper for sticky to work */
-  overflow-y: auto; /* Both tables scroll vertically for sticky positioning */
-  overflow-x: visible !important; /* Important: let horizontal scroll be handled by parent */
+  max-height: calc(100vh - 250px);
+  overflow-y: auto !important; /* Both tables scroll vertically */
+  overflow-x: hidden !important;
 }
 
 /* Fixed columns - no horizontal scroll */
@@ -876,14 +877,14 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   /* Subtle shadow similar to Goal Value table */
   box-shadow: 2px 0 4px rgba(0,0,0,0.15);
   border-radius: 0;
-  overflow-x: visible !important;
+  overflow-x: hidden !important;
 }
 
-/* Scrollable columns - no horizontal scroll, handled by parent container */
+/* Scrollable columns - horizontal scroll for many columns */
 .scrollable-columns {
   flex: 1;
   min-width: 0;
-  overflow-x: visible !important;
+  overflow-x: auto !important;
   -webkit-overflow-scrolling: touch;
   border-radius: 0; /* Keine abgerundeten Ecken */
   padding-bottom: 0;
@@ -913,6 +914,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .fixed-columns::-webkit-scrollbar {
   width: 0;
   height: 0;
+  display: none;
 }
 
 .fixed-columns {
@@ -993,14 +995,24 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* Synchronized row colors - use CSS classes for filter compatibility */
+.season-table-fixed tbody tr.even-row,
+.season-table-scroll tbody tr.even-row {
+  background-color: #2a2a2a !important;
+}
+
+.season-table-fixed tbody tr.odd-row,
+.season-table-scroll tbody tr.odd-row {
+  background-color: #3a3a3a !important; /* LIGHTER than even-row! */
+}
+
 .season-table-fixed tbody tr.even-row td,
 .season-table-scroll tbody tr.even-row td {
-  background-color: var(--row-dark-even, #2a2a2a);
+  background-color: #2a2a2a !important;
 }
 
 .season-table-fixed tbody tr.odd-row td,
 .season-table-scroll tbody tr.odd-row td {
-  background-color: var(--row-dark-odd, #333);
+  background-color: #3a3a3a !important;
 }
 
 /* Fallback for rows without classes (nth-child still works) */
