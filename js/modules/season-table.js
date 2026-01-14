@@ -1208,7 +1208,7 @@ setStickyOffsets() {
     const count = playerNames.length;
     const avgShotsPercent = sums.shots ? Math.round((sums.goals / sums.shots) * 100) : 0;
     const avgFacePercent = sums.faceOffs ? Math.round((sums.faceOffsWon / sums.faceOffs) * 100) : 0;
-    const avgTime = Math.round(sums.timeSeconds / count);
+    const avgTime = count > 0 ? Math.round(sums.timeSeconds / count) : 0;
     
     // Build new total values array (same order as in render())
     const totalValues = [
