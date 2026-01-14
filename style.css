@@ -884,24 +884,24 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: relative;
 }
 
-/* Fixed Columns - FIXIERT beim horizontalen Scrollen */
+/* Fixed Columns - HÖHERER z-index damit rechte Tabelle nicht überdeckt */
 .fixed-columns {
   position: sticky !important;
   left: 0 !important;
-  z-index: 20 !important;
+  z-index: 100 !important;  /* HÖHER als die scrollable-columns! */
+  background: var(--bg-color) !important;  /* Opaque Hintergrund wichtig! */
   flex-shrink: 0;
   margin: 0 !important;
   padding: 0 !important;
-  background: var(--bg-color);
-  /* KEINE box-shadow - das verursacht die Lücke! */
 }
 
-/* Scrollable Columns - KEIN eigener Scrollbar */
+/* Scrollable Columns - niedrigerer z-index */
 .scrollable-columns {
   flex: 1;
   margin: 0 !important;
   padding: 0 !important;
   min-width: 0;
+  z-index: 1 !important;
 }
 
 /* Table Scroll Container - kein overflow, da #seasonContainer scrollt */
@@ -946,7 +946,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Fixed table headers need higher z-index to stay above sticky body columns */
 .season-table-fixed thead th {
-  z-index: 40 !important;
+  z-index: 110 !important;  /* Höher als fixed-columns selbst */
+  background: var(--header-bg) !important;
+}
+
+/* Scrollable table headers - niedrigerer z-index */
+.season-table-scroll thead th {
+  z-index: 30 !important;  /* Niedriger als fixed-columns header */
 }
 
 /* Body-Zeilen - exakt gleiche Höhe */
@@ -991,6 +997,16 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   z-index: 20;
 }
 
+/* Total-Zeile (tfoot) in fixed-columns höherer z-index */
+.season-table-fixed tfoot {
+  z-index: 110 !important;
+}
+
+/* Scrollable table tfoot - niedrigerer z-index */
+.season-table-scroll tfoot {
+  z-index: 20 !important;  /* Niedriger als fixed-columns tfoot */
+}
+
 .season-table-fixed .total-row td,
 .season-table-scroll .total-row td {
   background: var(--header-bg) !important;
@@ -998,6 +1014,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   font-weight: 700 !important;
   border-top: 2px solid #555;
   height: 44px;
+}
+
+.season-table-fixed tfoot td {
+  z-index: 110 !important;
+  background: var(--header-bg) !important;
 }
 
 /* Player column left-aligned */
