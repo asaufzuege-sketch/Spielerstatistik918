@@ -166,6 +166,10 @@ setStickyOffsets() {
     scrollContainer.className = "scrollable-columns";
     // No overflow set - CSS handles it
     
+    // Create inner scroll wrapper for the table
+    const tableScrollWrapper = document.createElement("div");
+    tableScrollWrapper.className = "table-scroll";
+    
     const scrollTable = document.createElement("table");
     scrollTable.className = "season-table-scroll";
     
@@ -500,7 +504,8 @@ setStickyOffsets() {
     if (scrollTfoot) {  // Prüfen ob tfoot existiert
       scrollTable.appendChild(scrollTfoot);  // tfoot NACH tbody
     }
-    scrollContainer.appendChild(scrollTable);
+    tableScrollWrapper.appendChild(scrollTable);
+    scrollContainer.appendChild(tableScrollWrapper);
     
     wrapper.appendChild(fixedContainer);
     wrapper.appendChild(scrollContainer);
