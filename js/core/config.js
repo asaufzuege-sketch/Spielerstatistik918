@@ -93,22 +93,27 @@ const App = {
         padding-left: 0 !important;
       }
       
-      .fixed-columns,
-      .scrollable-columns {
-        overflow-x: visible !important;  /* Kein eigener horizontaler Scrollbar */
+      .fixed-columns {
+        overflow-x: hidden !important;   /* No horizontal scrollbar on fixed columns */
         overflow-y: auto !important;     /* Vertikales Scrollen für Spieler */
         max-height: calc(100vh - 250px);
       }
       
-      /* Zeilen-Farben */
+      .scrollable-columns {
+        overflow-x: auto !important;     /* Horizontal scroll for data columns */
+        overflow-y: auto !important;     /* Vertikales Scrollen für Spieler */
+        max-height: calc(100vh - 250px);
+      }
+      
+      /* Zeilen-Farben - lighter to match Game Data page */
       .season-table-fixed tbody tr.even-row td,
       .season-table-scroll tbody tr.even-row td {
-        background-color: #2a2a2a !important;
+        background-color: #2f2f2f !important;  /* Lighter than before - matches Game Data */
       }
       
       .season-table-fixed tbody tr.odd-row td,
       .season-table-scroll tbody tr.odd-row td {
-        background-color: #3a3a3a !important;  /* Deutlich HELLER als #2a2a2a */
+        background-color: #3a3a3a !important;  /* Deutlich HELLER als even rows */
       }
       
       /* ===== SEASON CONTAINER - ZENTRIERT ===== */
