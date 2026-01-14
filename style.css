@@ -37,8 +37,8 @@
   --table-scroll-offset: 250px;
   
   /* Season Table row colors for dark mode */
-  --row-dark-even: #2a2a2a;
-  --row-dark-odd: #333;
+  --row-dark-even: #2a2a2a;  /* Dark gray */
+  --row-dark-odd: #3a3a3a;   /* LIGHTER gray */
 
 }
 
@@ -864,7 +864,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   margin: 0;
   padding: 0;
   position: relative; /* Support sticky positioning */
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - var(--table-scroll-offset));
   overflow-y: auto !important; /* Both tables scroll vertically */
   overflow-x: hidden !important;
 }
@@ -997,22 +997,22 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Synchronized row colors - use CSS classes for filter compatibility */
 .season-table-fixed tbody tr.even-row,
 .season-table-scroll tbody tr.even-row {
-  background-color: #2a2a2a !important;
+  background-color: var(--row-dark-even) !important;
 }
 
 .season-table-fixed tbody tr.odd-row,
 .season-table-scroll tbody tr.odd-row {
-  background-color: #3a3a3a !important; /* LIGHTER than even-row! */
+  background-color: var(--row-dark-odd) !important; /* LIGHTER than even-row! */
 }
 
 .season-table-fixed tbody tr.even-row td,
 .season-table-scroll tbody tr.even-row td {
-  background-color: #2a2a2a !important;
+  background-color: var(--row-dark-even) !important;
 }
 
 .season-table-fixed tbody tr.odd-row td,
 .season-table-scroll tbody tr.odd-row td {
-  background-color: #3a3a3a !important;
+  background-color: var(--row-dark-odd) !important;
 }
 
 /* Fallback for rows without classes (nth-child still works) */
