@@ -1112,11 +1112,16 @@ setStickyOffsets() {
     const fixedRows = Array.from(document.querySelectorAll('.season-table-fixed tbody tr:not(.total-row)'));
     const scrollRows = Array.from(document.querySelectorAll('.season-table-scroll tbody tr:not(.total-row)'));
     
+    // Collect visible player names for total recalculation
+    const visiblePlayerNames = [];
+    
     // Re-striping after filter
     const visiblePairs = [];
     fixedRows.forEach((row, idx) => {
       const posCell = row.querySelector('td:nth-child(3)');
+      const playerCell = row.querySelector('td:nth-child(2)');
       const cellText = posCell ? posCell.textContent.trim() : '';
+      const playerName = playerCell ? playerCell.textContent.trim() : '';
       const shouldShow = !position || cellText === position;
 
       row.style.display = shouldShow ? '' : 'none';
@@ -1125,6 +1130,9 @@ setStickyOffsets() {
       }
       if (shouldShow) {
         visiblePairs.push({ fixed: row, scroll: scrollRows[idx] });
+        if (playerName) {
+          visiblePlayerNames.push(playerName);
+        }
       }
     });
 
@@ -1144,6 +1152,105 @@ setStickyOffsets() {
         });
       });
     });
+    
+    // RECALCULATE TOTAL ROW based on visible players only
+    this.recalculateTotalRow(visiblePlayerNames);
+  },
+  
+  // NEW FUNCTION: Recalculate total row based on filtered players
+  recalculateTotalRow(playerNames) {
+    // If no players visible, hide total row
+    const fixedTfoot = document.querySelector('.season-table-fixed tfoot');
+    const scrollTfoot = document.querySelector('.season-table-scroll tfoot');
+    
+    if (!playerNames || playerNames.length === 0) {
+      if (fixedTfoot) fixedTfoot.style.display = 'none';
+      if (scrollTfoot) scrollTfoot.style.display = 'none';
+      return;
+    }
+    
+    // Show total rows
+    if (fixedTfoot) fixedTfoot.style.display = '';
+    if (scrollTfoot) scrollTfoot.style.display = '';
+    
+    // Calculate sums for visible players only
+    const sums = {
+      games: 0, goals: 0, assists: 0, points: 0, plusMinus: 0,
+      shots: 0, penalty: 0, faceOffs: 0, faceOffsWon: 0, timeSeconds: 0
+    };
+    
+    playerNames.forEach(name => {
+      const d = App.data.seasonData[name];
+      if (!d) return;
+      
+      const games = Number(d.games || 0);
+      const goals = Number(d.goals || 0);
+      const assists = Number(d.assists || 0);
+      const plusMinus = Number(d.plusMinus || 0);
+      const shots = Number(d.shots || 0);
+      const penalty = Number(d.penaltys || 0);
+      const faceOffs = Number(d.faceOffs || 0);
+      const faceOffsWon = Number(d.faceOffsWon || 0);
+      const timeSeconds = Number(d.timeSeconds || 0);
+      
+      sums.games += games;
+      sums.goals += goals;
+      sums.assists += assists;
+      sums.points += goals + assists;
+      sums.plusMinus += plusMinus;
+      sums.shots += shots;
+      sums.penalty += penalty;
+      sums.faceOffs += faceOffs;
+      sums.faceOffsWon += faceOffsWon;
+      sums.timeSeconds += timeSeconds;
+    });
+    
+    const count = playerNames.length;
+    const avgShotsPercent = sums.shots ? Math.round((sums.goals / sums.shots) * 100) : 0;
+    const avgFacePercent = sums.faceOffs ? Math.round((sums.faceOffsWon / sums.faceOffs) * 100) : 0;
+    const avgTime = Math.round(sums.timeSeconds / count);
+    
+    // Build new total values array (same order as in render())
+    const totalValues = [
+      "", // Nr
+      "Total Ø", // Player
+      "", // Pos
+      (sums.games / count).toFixed(1),
+      (sums.goals / count).toFixed(1),
+      (sums.assists / count).toFixed(1),
+      (sums.points / count).toFixed(1),
+      (sums.plusMinus / count).toFixed(1),
+      (sums.plusMinus / count).toFixed(1), // Ø +/-
+      (sums.shots / count).toFixed(1),
+      ((sums.shots / count) / ((sums.games / count) || 1)).toFixed(1),
+      String(avgShotsPercent) + "%",
+      ((sums.goals / count) / ((sums.games / count) || 1)).toFixed(1),
+      ((sums.points / count) / ((sums.games / count) || 1)).toFixed(1),
+      (sums.penalty / count).toFixed(1),
+      "", // Goal Value
+      (sums.faceOffs / count).toFixed(1),
+      (sums.faceOffsWon / count).toFixed(1),
+      String(avgFacePercent) + "%",
+      App.helpers.formatTimeMMSS(avgTime),
+      "", // MVP
+      ""  // MVP Points
+    ];
+    
+    // Update fixed table total row (first 3 columns)
+    if (fixedTfoot) {
+      const fixedTds = fixedTfoot.querySelectorAll('td');
+      for (let i = 0; i < 3 && i < fixedTds.length; i++) {
+        fixedTds[i].textContent = totalValues[i];
+      }
+    }
+    
+    // Update scroll table total row (columns 3+)
+    if (scrollTfoot) {
+      const scrollTds = scrollTfoot.querySelectorAll('td');
+      for (let i = 0; i < scrollTds.length; i++) {
+        scrollTds[i].textContent = totalValues[i + 3];
+      }
+    }
   },
   
   /**
