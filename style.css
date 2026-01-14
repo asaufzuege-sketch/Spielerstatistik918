@@ -874,22 +874,25 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   scrollbar-color: #44bb91 rgba(0, 0, 0, 0.25);
 }
 
-/* Wrapper - KEINE Lücke, KEIN eigener Scrollbar */
+/* Season Table Wrapper - ermöglicht sticky für fixed-columns */
 .season-table-wrapper {
   display: flex !important;
   gap: 0 !important;
   width: max-content;
   min-width: 100%;
   align-items: flex-start;
+  position: relative;
 }
 
-/* Fixed Columns - KEINE box-shadow, KEIN margin */
+/* Fixed Columns - FIXIERT beim horizontalen Scrollen */
 .fixed-columns {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 20 !important;
   flex-shrink: 0;
   margin: 0 !important;
   padding: 0 !important;
   background: var(--bg-color);
-  z-index: 10;
   /* KEINE box-shadow - das verursacht die Lücke! */
 }
 
@@ -939,6 +942,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   z-index: 30;
   height: 44px;
   vertical-align: middle;
+}
+
+/* Fixed table headers need higher z-index to stay above sticky body columns */
+.season-table-fixed thead th {
+  z-index: 40 !important;
 }
 
 /* Body-Zeilen - exakt gleiche Höhe */
@@ -1586,31 +1594,51 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 
 /* Position Column Styles */
 .season-table .pos-header {
-  background: var(--header-bg);
+  background: var(--header-bg) !important;
   color: #fff;
   padding: 6px;
   text-align: center;
   cursor: default;
 }
 
-.season-table .pos-filter {
+/* Pos Filter Dropdown - GRÜN wie vorher */
+.season-table .pos-filter,
+.pos-filter,
+#positionFilter {
   width: 100%;
-  padding: 4px 6px;
-  background: var(--header-bg);
-  color: #fff;
-  border: 1px solid #555;
+  padding: 4px 8px;
+  background: #44bb91 !important;
+  color: #fff !important;
+  border: none;
   border-radius: 4px;
   font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-align: center;
+  text-align-last: center;
 }
 
-.season-table .pos-filter:hover {
-  border-color: #777;
+.season-table .pos-filter:hover,
+.pos-filter:hover,
+#positionFilter:hover {
+  background: #3a9d7a !important;
 }
 
-.season-table .pos-filter:focus {
-  border-color: #999;
+.season-table .pos-filter:focus,
+.pos-filter:focus,
+#positionFilter:focus {
+  background: #3a9d7a !important;
+}
+
+.season-table .pos-filter option,
+.pos-filter option,
+#positionFilter option {
+  background: #2b2b2b;
+  color: #fff;
 }
 
 .season-table .pos-cell {
