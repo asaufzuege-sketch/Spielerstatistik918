@@ -944,12 +944,9 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   vertical-align: middle;
 }
 
-/* Header in fixed-columns muss auch sticky top sein mit höherem z-index */
+/* Fixed table headers need higher z-index to stay above sticky body columns */
 .season-table-fixed thead th {
-  position: sticky !important;
-  top: 0 !important;
   z-index: 40 !important;
-  background: var(--header-bg) !important;
 }
 
 /* Body-Zeilen - exakt gleiche Höhe */
