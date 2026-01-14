@@ -96,7 +96,7 @@ setStickyOffsets() {
     // Create fixed columns container (Nr, Player, Pos)
     const fixedContainer = document.createElement("div");
     fixedContainer.className = "fixed-columns";
-    fixedContainer.style.overflow = 'visible';  // Allow horizontal scroll on parent
+    // No overflow set - CSS handles it
     
     const fixedTable = document.createElement("table");
     fixedTable.className = "season-table-fixed";
@@ -164,7 +164,7 @@ setStickyOffsets() {
     // Create scrollable columns container (Games and all other stats)
     const scrollContainer = document.createElement("div");
     scrollContainer.className = "scrollable-columns";
-    scrollContainer.style.overflow = 'visible';  // Allow horizontal scroll on parent
+    // No overflow set - CSS handles it
     
     const scrollTable = document.createElement("table");
     scrollTable.className = "season-table-scroll";
