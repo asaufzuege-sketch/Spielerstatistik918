@@ -407,7 +407,7 @@ App.goalMap = {
             );
             // Note: addGoalMapPoint will call completeGoalMapWorkflow which removes overlay
             
-            // Auto-navigate back to Game Data after short delay
+            // Auto-navigate back to Game Center after short delay
             setTimeout(() => {
               if (typeof App.showPage === 'function') {
                 App.showPage('stats');
@@ -1136,7 +1136,7 @@ App.goalMap = {
             // Record time button click
             updateValue(1);
             
-            // Nach grünem Workflow: Zurück zu Game Data
+            // Nach grünem Workflow: Zurück zu Game Center
             if (workflowType === 'scored') {
               setTimeout(() => {
                 if (typeof App.showPage === 'function') {

@@ -209,7 +209,7 @@ h1 {
 }
 #statsPage #timerBtn { font-variant-numeric: tabular-nums; }
 
-/* Theme Toggle Button - Only on Game Data page */
+/* Theme Toggle Button - Only on Game Center page */
 #themeToggleBtn {
   background: linear-gradient(to bottom, #d0d0d0, #808080);
   color: #000;
@@ -2214,7 +2214,7 @@ tr[data-player].dragging {
   filter: brightness(0.9);
 }
 
-/* Game Data Button on Line Up Page */
+/* Game Center Button on Line Up Page */
 #lineUpPage .top-btn.game-data-btn {
   background: #44bb91;
   color: #fff;

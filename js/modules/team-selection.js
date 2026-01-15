@@ -312,10 +312,10 @@ App.teamSelection = (function() {
         de: `Ablauf (Spiel)
 
 1. Team Selection: Team wählen oder bearbeiten 
-2. Player Selection: Spieler erfassen/aktivieren; bei Bedarf direkt zu Line Up oder Game Data. 
+2. Player Selection: Spieler erfassen/aktivieren; bei Bedarf direkt zu Line Up oder Game Center. 
 3. Line Up: Aufstellung setzen (Manuell, Normal + Power vorgegeben durch KI/AI)
-4. Game Data: Spieldaten erfassen
-5. Goal Map: Punkte im Feld/Tor/Time setzen, zurück zu Game Data. 
+4. Game Center: Spieldaten erfassen
+5. Goal Map: Punkte im Feld/Tor/Time setzen, zurück zu Game Center. 
 6. Nach Spiel: Goal Value je Gegner einschätzen (Schwierigkeit). 
 7. Download: Game → Season und Season Map exportieren, um die Saison auszuwerten.
 
@@ -328,8 +328,8 @@ ________________________________________
 
 Player Selection
 • Spieler erfassen/bearbeiten: Nummer, Name, Position (G = Goalie, W = Wing, C= Center, D = Defense).
-• Aktivieren (Checkbox) = Spieler ist für Line Up / Game Data verfügbar.
-• Buttons: „Line Up" → zur Aufstellung; „Game Data" → direkt zur Spiel-Erfassung.
+• Aktivieren (Checkbox) = Spieler ist für Line Up / Game Center verfügbar.
+• Buttons: „Line Up" → zur Aufstellung; „Game Center" → direkt zur Spiel-Erfassung.
 
 ________________________________________
 
@@ -343,7 +343,7 @@ Modi (umschaltbar per Modus-Button):
 
 ________________________________________
 
-Game Data
+Game Center
 Spielerzeile:
 • Klick auf Namen (nicht auf ⋮⋮): Timer Start/Stop.
 • Klick auf Zeit: +10 s; Doppelklick: –10 s.
@@ -366,7 +366,7 @@ Goal-Workflow (Tor):
 • Feldpunkt: Oben→scored, Unten→conceded (legt Art fest).
 • Torpunkt: scored→nur grünes Tor; conceded→nur rotes Tor.
 • Time-Button: scored→nur obere Reihe (grün); conceded→nur untere Reihe (rot).
-• Danach Auto-Return zu Game Data.
+• Danach Auto-Return zu Game Center.
 
 Shot-Workflow (Schuss): Nur Feldpunkt (grüne Zone), kein Tor/Time; Auto-Return.
 
@@ -408,15 +408,15 @@ Season
 ________________________________________
 
 Reset (irreversibel)
-• Game Data: Jede Seite Kann/muss einzeln zurückgesetzt werden`,
+• Game Center: Jede Seite Kann/muss einzeln zurückgesetzt werden`,
         
         en: `Workflow (Game)
 
 1. Team Selection: Choose or edit team.
-2. Player Selection: Add/activate players; go directly to Line Up or Game Data if needed.
+2. Player Selection: Add/activate players; go directly to Line Up or Game Center if needed.
 3. Line Up: Set lineup (Manual, Normal + Power preset by AI)
-4. Game Data: Record game data
-5. Goal Map: Set points in field/goal/time, return to Game Data.
+4. Game Center: Record game data
+5. Goal Map: Set points in field/goal/time, return to Game Center.
 6. After Game: Assess Goal Value per opponent (difficulty).
 7. Download: Export Game → Season and Season Map to analyze the season.
 
@@ -429,8 +429,8 @@ ________________________________________
 
 Player Selection
 • Add/edit players: Number, Name, Position (G = Goalie, W = Wing, C = Center, D = Defense).
-• Activate (checkbox) = Player available for Line Up / Game Data.
-• Buttons: "Line Up" → to lineup; "Game Data" → directly to game recording.
+• Activate (checkbox) = Player available for Line Up / Game Center.
+• Buttons: "Line Up" → to lineup; "Game Center" → directly to game recording.
 
 ________________________________________
 
@@ -444,7 +444,7 @@ Modes (switchable via mode button):
 
 ________________________________________
 
-Game Data
+Game Center
 Player Row:
 • Click on name (not on ⋮⋮): Timer Start/Stop.
 • Click on time: +10 s; Double-click: –10 s.
@@ -467,7 +467,7 @@ Goal Workflow:
 • Field point: Top→scored, Bottom→conceded (sets type).
 • Goal point: scored→green goal only; conceded→red goal only.
 • Time button: scored→top row only (green); conceded→bottom row only (red).
-• Then auto-return to Game Data.
+• Then auto-return to Game Center.
 
 Shot Workflow: Field point only (green zone), no goal/time; auto-return.
 
@@ -509,15 +509,15 @@ Season
 ________________________________________
 
 Reset (irreversible)
-• Game Data: Each page can/must be reset individually`,
+• Game Center: Each page can/must be reset individually`,
         
         ru: `Порядок действий (Игра)
 
 1. Team Selection: Выбрать или редактировать команду.
-2. Player Selection: Добавить/активировать игроков; при необходимости перейти в Line Up или Game Data.
+2. Player Selection: Добавить/активировать игроков; при необходимости перейти в Line Up или Game Center.
 3. Line Up: Установить состав (Ручной, Normal + Power предустановлены ИИ)
-4. Game Data: Записать игровые данные
-5. Goal Map: Установить точки на поле/воротах/времени, вернуться в Game Data.
+4. Game Center: Записать игровые данные
+5. Goal Map: Установить точки на поле/воротах/времени, вернуться в Game Center.
 6. После игры: Оценить Goal Value по соперникам (сложность).
 7. Download: Экспортировать Game → Season и Season Map для анализа сезона.
 
@@ -530,8 +530,8 @@ ________________________________________
 
 Player Selection
 • Добавить/редактировать игроков: Номер, Имя, Позиция (G = Вратарь, W = Крайний, C = Центр, D = Защитник).
-• Активировать (чекбокс) = Игрок доступен для Line Up / Game Data.
-• Кнопки: «Line Up» → к составу; «Game Data» → сразу к записи игры.
+• Активировать (чекбокс) = Игрок доступен для Line Up / Game Center.
+• Кнопки: «Line Up» → к составу; «Game Center» → сразу к записи игры.
 
 ________________________________________
 
@@ -545,7 +545,7 @@ Line Up
 
 ________________________________________
 
-Game Data
+Game Center
 Строка игрока:
 • Клик по имени (не по ⋮⋮): Таймер Старт/Стоп.
 • Клик по времени: +10 с; Двойной клик: –10 с.
@@ -568,7 +568,7 @@ Goal Workflow:
 • Точка на поле: Верх→забито, Низ→пропущено (определяет тип).
 • Точка ворот: забито→только зелёные ворота; пропущено→только красные ворота.
 • Кнопка времени: забито→только верхний ряд (зелёный); пропущено→только нижний ряд (красный).
-• Затем авто-возврат в Game Data.
+• Затем авто-возврат в Game Center.
 
 Shot Workflow: Только точка на поле (зелёная зона), без ворот/времени; авто-возврат.
 
@@ -610,15 +610,15 @@ Season
 ________________________________________
 
 Reset (необратимо)
-• Game Data: Каждую страницу можно/нужно сбросить отдельно`,
+• Game Center: Каждую страницу можно/нужно сбросить отдельно`,
         
         sv: `Arbetsflöde (Match)
 
 1. Team Selection: Välj eller redigera lag.
-2. Player Selection: Lägg till/aktivera spelare; gå direkt till Line Up eller Game Data vid behov.
+2. Player Selection: Lägg till/aktivera spelare; gå direkt till Line Up eller Game Center vid behov.
 3. Line Up: Sätt uppställning (Manuell, Normal + Power förinställt av AI)
-4. Game Data: Registrera matchdata
-5. Goal Map: Sätt punkter i fält/mål/tid, återgå till Game Data.
+4. Game Center: Registrera matchdata
+5. Goal Map: Sätt punkter i fält/mål/tid, återgå till Game Center.
 6. Efter match: Bedöm Goal Value per motståndare (svårighetsgrad).
 7. Download: Exportera Game → Season och Season Map för att analysera säsongen.
 
@@ -631,8 +631,8 @@ ________________________________________
 
 Player Selection
 • Lägg till/redigera spelare: Nummer, Namn, Position (G = Målvakt, W = Wing, C = Center, D = Back).
-• Aktivera (kryssruta) = Spelare tillgänglig för Line Up / Game Data.
-• Knappar: "Line Up" → till uppställning; "Game Data" → direkt till matchregistrering.
+• Aktivera (kryssruta) = Spelare tillgänglig för Line Up / Game Center.
+• Knappar: "Line Up" → till uppställning; "Game Center" → direkt till matchregistrering.
 
 ________________________________________
 
@@ -646,7 +646,7 @@ Lägen (växla via lägesknapp):
 
 ________________________________________
 
-Game Data
+Game Center
 Spelarrad:
 • Klicka på namn (inte på ⋮⋮): Timer Start/Stop.
 • Klicka på tid: +10 s; Dubbelklicka: –10 s.
@@ -669,7 +669,7 @@ Goal Workflow:
 • Fältpunkt: Övre→gjort, Nedre→insläppt (bestämmer typ).
 • Målpunkt: gjort→endast grönt mål; insläppt→endast rött mål.
 • Tidknapp: gjort→endast övre rad (grön); insläppt→endast nedre rad (röd).
-• Sedan auto-återgång till Game Data.
+• Sedan auto-återgång till Game Center.
 
 Shot Workflow: Endast fältpunkt (grön zon), inget mål/tid; auto-återgång.
 
@@ -711,15 +711,15 @@ Season
 ________________________________________
 
 Reset (oåterkallelig)
-• Game Data: Varje sida kan/måste återställas individuellt`,
+• Game Center: Varje sida kan/måste återställas individuellt`,
         
         fi: `Työnkulku (Peli)
 
 1. Team Selection: Valitse tai muokkaa joukkuetta.
-2. Player Selection: Lisää/aktivoi pelaajia; siirry tarvittaessa suoraan Line Up tai Game Data.
+2. Player Selection: Lisää/aktivoi pelaajia; siirry tarvittaessa suoraan Line Up tai Game Center.
 3. Line Up: Aseta kokoonpano (Manuaalinen, Normal + Power esiasetettu tekoälyllä)
-4. Game Data: Tallenna pelitiedot
-5. Goal Map: Aseta pisteet kentälle/maaliin/aikaan, palaa Game Dataan.
+4. Game Center: Tallenna pelitiedot
+5. Goal Map: Aseta pisteet kentälle/maaliin/aikaan, palaa Game Centeriin.
 6. Pelin jälkeen: Arvioi Goal Value vastustajittain (vaikeusaste).
 7. Download: Vie Game → Season ja Season Map kauden analysointiin.
 
@@ -732,8 +732,8 @@ ________________________________________
 
 Player Selection
 • Lisää/muokkaa pelaajia: Numero, Nimi, Pelipaikka (G = Maalivahti, W = Laitahyökkääjä, C = Keskushyökkääjä, D = Puolustaja).
-• Aktivoi (valintaruutu) = Pelaaja käytettävissä Line Up / Game Data.
-• Painikkeet: "Line Up" → kokoonpanoon; "Game Data" → suoraan pelin tallennukseen.
+• Aktivoi (valintaruutu) = Pelaaja käytettävissä Line Up / Game Center.
+• Painikkeet: "Line Up" → kokoonpanoon; "Game Center" → suoraan pelin tallennukseen.
 
 ________________________________________
 
@@ -747,7 +747,7 @@ Tilat (vaihda tilapainikkeella):
 
 ________________________________________
 
-Game Data
+Game Center
 Pelaajarivi:
 • Klikkaa nimeä (ei ⋮⋮): Ajastin Käynnistä/Pysäytä.
 • Klikkaa aikaa: +10 s; Tuplaklikkaa: –10 s.
@@ -770,7 +770,7 @@ Goal Workflow:
 • Kenttäpiste: Ylä→tehty, Ala→päästetty (määrittää tyypin).
 • Maalipiste: tehty→vain vihreä maali; päästetty→vain punainen maali.
 • Aikapainike: tehty→vain ylärivit (vihreä); päästetty→vain alarivit (punainen).
-• Sitten automaattinen paluu Game Dataan.
+• Sitten automaattinen paluu Game Centeriin.
 
 Shot Workflow: Vain kenttäpiste (vihreä alue), ei maalia/aikaa; automaattinen paluu.
 
@@ -812,7 +812,7 @@ Season
 ________________________________________
 
 Reset (peruuttamaton)
-• Game Data: Jokainen sivu voidaan/täytyy nollata erikseen`
+• Game Center: Jokainen sivu voidaan/täytyy nollata erikseen`
     };
     
     const closeButtonText = {

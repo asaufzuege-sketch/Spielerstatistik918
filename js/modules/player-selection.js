@@ -10,7 +10,7 @@ App.playerSelection = {
       this.render();
     }
     
-    // Event Listener für Game Data Button - speichert und navigiert zur Stats-Seite
+    // Event Listener für Game Center Button - speichert und navigiert zur Stats-Seite
     document.getElementById("gameDataBtn")?.addEventListener("click", () => {
       this.handleConfirmAndNavigate();
     });
