@@ -611,16 +611,16 @@ App.statsTable = {
   updateCellColorsForTheme() {
     const colors = App.helpers.getColorStyles();
     
-    // Alle Statistik-Zellen aktualisieren
+    // Update all statistic cells
     this.container?.querySelectorAll("td[data-player][data-cat]").forEach(td => {
       const val = Number(td.textContent) || 0;
       td.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
     });
     
-    // Ice Time Zellen aktualisieren
+    // Update Ice Time cells
     this.updateIceTimeColors();
     
-    // Totals aktualisieren
+    // Update totals
     this.updateTotals();
   },
   
