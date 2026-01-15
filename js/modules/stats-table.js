@@ -608,6 +608,22 @@ App.statsTable = {
     });
   },
   
+  updateCellColorsForTheme() {
+    const colors = App.helpers.getColorStyles();
+    
+    // Alle Statistik-Zellen aktualisieren
+    this.container?.querySelectorAll("td[data-player][data-cat]").forEach(td => {
+      const val = Number(td.textContent) || 0;
+      td.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
+    });
+    
+    // Ice Time Zellen aktualisieren
+    this.updateIceTimeColors();
+    
+    // Totals aktualisieren
+    this.updateTotals();
+  },
+  
   // Teamspezifische Lade- und Speicherfunktionen
   loadTeamSpecificData() {
     const teamId = App.helpers.getCurrentTeamId();

@@ -22,6 +22,18 @@ function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     updateThemeButtonIcon();
+    
+    // NEU: Stats-Tabelle Farben aktualisieren nach Theme-Wechsel
+    // Prüfe ob App und statsTable existieren und wir auf der Stats-Seite sind
+    if (typeof App !== 'undefined' && App.statsTable) {
+        // Aktualisiere die Zellfarben
+        if (typeof App.statsTable.updateCellColorsForTheme === 'function') {
+            App.statsTable.updateCellColorsForTheme();
+        } else if (typeof App.statsTable.render === 'function') {
+            // Fallback: Tabelle neu rendern
+            App.statsTable.render();
+        }
+    }
 }
 
 // Function to toggle between light and dark mode
