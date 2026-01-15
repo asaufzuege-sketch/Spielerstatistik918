@@ -1045,7 +1045,17 @@ App.goalMap = {
           }
           
           if (!currentTimeDataWithPlayers[key]) currentTimeDataWithPlayers[key] = {};
-          if (!currentTimeDataWithPlayers[key][playerName]) currentTimeDataWithPlayers[key][playerName] = 0;
+          
+          // FIX: If playerName doesn't exist in timeDataWithPlayers,
+          // use the current button display value as starting point (migration from old format)
+          if (typeof currentTimeDataWithPlayers[key][playerName] === 'undefined') {
+            // Read the currently displayed value from the button
+            const currentDisplayValue = parseInt(newBtn.textContent, 10) || 0;
+            
+            // Use the button value as the starting point for this player
+            // This handles migration from old timeData format automatically
+            currentTimeDataWithPlayers[key][playerName] = currentDisplayValue;
+          }
           
           const current = Number(currentTimeDataWithPlayers[key][playerName]);
           const newVal = Math.max(0, current + delta);
