@@ -22,6 +22,18 @@ function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     updateThemeButtonIcon();
+    
+    // Update stats table colors after theme change
+    // Check if App and statsTable exist and we are on the stats page
+    if (typeof App !== 'undefined' && App.statsTable) {
+        // Update cell colors
+        if (typeof App.statsTable.updateCellColorsForTheme === 'function') {
+            App.statsTable.updateCellColorsForTheme();
+        } else if (typeof App.statsTable.render === 'function') {
+            // Fallback: Re-render table
+            App.statsTable.render();
+        }
+    }
 }
 
 // Function to toggle between light and dark mode
