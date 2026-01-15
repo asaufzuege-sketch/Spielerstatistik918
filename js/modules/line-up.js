@@ -408,7 +408,7 @@ App.lineUp = {
   openPlayerModal(posBtn) {
     // NUR im Manuell-Modus erlauben!
     if (this.currentMode !== 'manuell') {
-      return; // Nichts tun in Power/Normal Modus
+      return; // Nichts tun in Power/Balanced Modus
     }
     
     this.currentPosition = {
@@ -1086,7 +1086,7 @@ App.lineUp = {
     const modeLabel = document.getElementById('lineupModeLabel');
     if (modeLabel) {
       const modeNames = {
-        'normal': 'NORMAL',
+        'normal': 'BALANCED',
         'power': 'POWER',
         'manuell': 'MANUELL'
       };

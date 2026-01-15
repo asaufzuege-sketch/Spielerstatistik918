@@ -313,7 +313,7 @@ App.teamSelection = (function() {
 
 1. Team Selection: Team wählen oder bearbeiten 
 2. Player Selection: Spieler erfassen/aktivieren; bei Bedarf direkt zu Line Up oder Game Center. 
-3. Line Up: Aufstellung setzen (Manuell, Normal + Power vorgegeben durch KI/AI)
+3. Line Up: Aufstellung setzen (Manuell, Balanced + Power vorgegeben durch KI/AI)
 4. Game Center: Spieldaten erfassen
 5. Goal Map: Punkte im Feld/Tor/Time setzen, zurück zu Game Center. 
 6. Nach Spiel: Goal Value je Gegner einschätzen (Schwierigkeit). 
@@ -335,11 +335,11 @@ ________________________________________
 
 Line Up
 Modi (umschaltbar per Modus-Button):
-• Normal: Vorgabe durch KI/AI-Logik.
+• Balanced: Vorgabe durch KI/AI-Logik.
 • Power: Spezial-Setup durch KI/AI für entscheidende Szenen.
 • Manuell: Frei per Klick auf Position belegen.
 • „Player Out": Spieler als OUT markieren (Bei Penalty-Strafe). Line Up wird automatisch angepasst.
-• Positions-Buttons aus Player Selection zeigen den zugewiesenen Spieler; in Manuell per Klick wählbar, in Normal/Power vorgegeben.
+• Positions-Buttons aus Player Selection zeigen den zugewiesenen Spieler; in Manuell per Klick wählbar, in Balanced/Power vorgegeben.
 
 ________________________________________
 
@@ -414,7 +414,7 @@ Reset (irreversibel)
 
 1. Team Selection: Choose or edit team.
 2. Player Selection: Add/activate players; go directly to Line Up or Game Center if needed.
-3. Line Up: Set lineup (Manual, Normal + Power preset by AI)
+3. Line Up: Set lineup (Manual, Balanced + Power preset by AI)
 4. Game Center: Record game data
 5. Goal Map: Set points in field/goal/time, return to Game Center.
 6. After Game: Assess Goal Value per opponent (difficulty).
@@ -436,11 +436,11 @@ ________________________________________
 
 Line Up
 Modes (switchable via mode button):
-• Normal: Preset by AI logic.
+• Balanced: Preset by AI logic.
 • Power: Special AI setup for decisive moments.
 • Manual: Free assignment by clicking positions.
 • "Player Out": Mark player as OUT (penalty). Line Up adjusts automatically.
-• Position buttons from Player Selection show assigned player; in Manual clickable, in Normal/Power preset.
+• Position buttons from Player Selection show assigned player; in Manual clickable, in Balanced/Power preset.
 
 ________________________________________
 
@@ -515,7 +515,7 @@ Reset (irreversible)
 
 1. Team Selection: Выбрать или редактировать команду.
 2. Player Selection: Добавить/активировать игроков; при необходимости перейти в Line Up или Game Center.
-3. Line Up: Установить состав (Ручной, Normal + Power предустановлены ИИ)
+3. Line Up: Установить состав (Ручной, Balanced + Power предустановлены ИИ)
 4. Game Center: Записать игровые данные
 5. Goal Map: Установить точки на поле/воротах/времени, вернуться в Game Center.
 6. После игры: Оценить Goal Value по соперникам (сложность).
@@ -537,11 +537,11 @@ ________________________________________
 
 Line Up
 Режимы (переключаются кнопкой режима):
-• Normal: Предустановка логикой ИИ.
+• Balanced: Предустановка логикой ИИ.
 • Power: Специальная расстановка ИИ для решающих моментов.
 • Manual: Свободное назначение кликом на позицию.
 • «Player Out»: Отметить игрока как OUT (штраф). Line Up корректируется автоматически.
-• Кнопки позиций из Player Selection показывают назначенного игрока; в Manual кликабельны, в Normal/Power предустановлены.
+• Кнопки позиций из Player Selection показывают назначенного игрока; в Manual кликабельны, в Balanced/Power предустановлены.
 
 ________________________________________
 
@@ -616,7 +616,7 @@ Reset (необратимо)
 
 1. Team Selection: Välj eller redigera lag.
 2. Player Selection: Lägg till/aktivera spelare; gå direkt till Line Up eller Game Center vid behov.
-3. Line Up: Sätt uppställning (Manuell, Normal + Power förinställt av AI)
+3. Line Up: Sätt uppställning (Manuell, Balanced + Power förinställt av AI)
 4. Game Center: Registrera matchdata
 5. Goal Map: Sätt punkter i fält/mål/tid, återgå till Game Center.
 6. Efter match: Bedöm Goal Value per motståndare (svårighetsgrad).
@@ -638,11 +638,11 @@ ________________________________________
 
 Line Up
 Lägen (växla via lägesknapp):
-• Normal: Förinställt av AI-logik.
+• Balanced: Förinställt av AI-logik.
 • Power: Speciell AI-uppställning för avgörande situationer.
 • Manuell: Fritt val genom att klicka på positioner.
 • "Player Out": Markera spelare som OUT (utvisning). Line Up justeras automatiskt.
-• Positionsknappar från Player Selection visar tilldelad spelare; i Manuell klickbar, i Normal/Power förinställd.
+• Positionsknappar från Player Selection visar tilldelad spelare; i Manuell klickbar, i Balanced/Power förinställd.
 
 ________________________________________
 
@@ -717,7 +717,7 @@ Reset (oåterkallelig)
 
 1. Team Selection: Valitse tai muokkaa joukkuetta.
 2. Player Selection: Lisää/aktivoi pelaajia; siirry tarvittaessa suoraan Line Up tai Game Center.
-3. Line Up: Aseta kokoonpano (Manuaalinen, Normal + Power esiasetettu tekoälyllä)
+3. Line Up: Aseta kokoonpano (Manuaalinen, Balanced + Power esiasetettu tekoälyllä)
 4. Game Center: Tallenna pelitiedot
 5. Goal Map: Aseta pisteet kentälle/maaliin/aikaan, palaa Game Centeriin.
 6. Pelin jälkeen: Arvioi Goal Value vastustajittain (vaikeusaste).
@@ -739,11 +739,11 @@ ________________________________________
 
 Line Up
 Tilat (vaihda tilapainikkeella):
-• Normal: Tekoälyn logiikan esiasetus.
+• Balanced: Tekoälyn logiikan esiasetus.
 • Power: Erityinen tekoälyasettelu ratkaiseviin hetkiin.
 • Manuaalinen: Vapaa valinta klikkaamalla paikkoja.
 • "Player Out": Merkitse pelaaja OUT (jäähy). Line Up mukautuu automaattisesti.
-• Paikkapainikkeet Player Selectionista näyttävät määrätyn pelaajan; Manuaalisessa klikattava, Normal/Powerissa esiasetettu.
+• Paikkapainikkeet Player Selectionista näyttävät määrätyn pelaajan; Manuaalisessa klikattava, Balanced/Powerissa esiasetettu.
 
 ________________________________________
 
