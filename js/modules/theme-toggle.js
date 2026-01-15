@@ -23,14 +23,14 @@ function setTheme(theme) {
     localStorage.setItem('theme', theme);
     updateThemeButtonIcon();
     
-    // NEU: Stats-Tabelle Farben aktualisieren nach Theme-Wechsel
-    // Prüfe ob App und statsTable existieren und wir auf der Stats-Seite sind
+    // Update stats table colors after theme change
+    // Check if App and statsTable exist and we are on the stats page
     if (typeof App !== 'undefined' && App.statsTable) {
-        // Aktualisiere die Zellfarben
+        // Update cell colors
         if (typeof App.statsTable.updateCellColorsForTheme === 'function') {
             App.statsTable.updateCellColorsForTheme();
         } else if (typeof App.statsTable.render === 'function') {
-            // Fallback: Tabelle neu rendern
+            // Fallback: Re-render table
             App.statsTable.render();
         }
     }
