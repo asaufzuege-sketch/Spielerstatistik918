@@ -347,7 +347,7 @@ App.lineUp = {
       this.autoFillPowerMode();
     }
     
-    // Im NORMAL Modus: PP und BP neu berechnen
+    // Im BALANCED Modus: PP und BP neu berechnen
     if (this.currentMode === 'normal') {
       this.calculateSpecialTeams();
     }
@@ -408,7 +408,7 @@ App.lineUp = {
   openPlayerModal(posBtn) {
     // NUR im Manuell-Modus erlauben!
     if (this.currentMode !== 'manuell') {
-      return; // Nichts tun in Power/Normal Modus
+      return; // Nichts tun in Power/Balanced Modus
     }
     
     this.currentPosition = {
@@ -903,7 +903,7 @@ App.lineUp = {
     // Calculate PP and BP using the new function
     this.calculateSpecialTeams();
     
-    // === NORMALE LINIEN ===
+    // === BALANCED LINIEN ===
     // C 1-4
     if (centers[0]) this.lineUpData['C_line1'] = centers[0].name;
     if (centers[1]) this.lineUpData['C_line2'] = centers[1].name;
@@ -1086,7 +1086,7 @@ App.lineUp = {
     const modeLabel = document.getElementById('lineupModeLabel');
     if (modeLabel) {
       const modeNames = {
-        'normal': 'NORMAL',
+        'normal': 'BALANCED',
         'power': 'POWER',
         'manuell': 'MANUELL'
       };
