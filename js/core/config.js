@@ -130,7 +130,7 @@ const App = {
       const titles = {
         teamSelection: "Team Selection",
         selection: "Player Selection",
-        stats: "Statistics",
+        stats: "Game Center",
         torbild: "Goal Map",
         goalValue: "Goal Value",
         season: "Season",

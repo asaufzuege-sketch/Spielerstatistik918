@@ -1,5 +1,5 @@
 // enhancements-wakelock.js
-// Refactored to create a Theme Toggle button on the Game Data page (#statsPage)
+// Refactored to create a Theme Toggle button on the Game Center page (#statsPage)
 // - Creates "Theme" button with gray gradient styling
 // - Positioned first in the top-bar, before the timer
 // - Only appears on #statsPage
