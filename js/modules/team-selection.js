@@ -335,17 +335,16 @@ ________________________________________
 
 Line Up
 Modi (umschaltbar per Modus-Button):
-• Balanced: Vorgabe durch KI/AI-Logik.
-• Power: Spezial-Setup durch KI/AI für entscheidende Szenen.
-• Manuell: Frei per Klick auf Position belegen.
+• Balanced: Ausgeglichenes Line Up. Vorgabe durch AI-Logik und Formeln.
+• Power: Stärkstes Line Up, Spezial-Setup für entscheidende Szenen. Vorgabe durch AI-Logik und Formeln.
+• Manuell: Frei erstellbares Line Up per Klick auf Position belegen.
 • „Player Out": Spieler als OUT markieren (Bei Penalty-Strafe). Line Up wird automatisch angepasst.
-• Positions-Buttons aus Player Selection zeigen den zugewiesenen Spieler; in Manuell per Klick wählbar, in Balanced/Power vorgegeben.
 
 ________________________________________
 
 Game Center
 Spielerzeile:
-• Klick auf Namen (nicht auf ⋮⋮): Timer Start/Stop.
+• Klick auf Namen (nicht auf ⋮⋮): Timer Start/Stop für jeden Spieler. Die 5 Spieler mit grünen Werten haben die längste Eiszeit, die 5 Spieler mit roten Werten haben die niedrigste Eiszeit.
 • Klick auf Zeit: +10 s; Doppelklick: –10 s.
 • Langer Druck auf ⋮⋮ → Drag & Drop für Reihenfolge
 
@@ -353,33 +352,44 @@ Statistikzellen (z. B. Goals, Shot):
 • Klick: +1, Doppelklick: –1.
 • Bei +1 auf Goals/Shot startet je nach Ereignis der Goal- bzw. Shot-Workflow in der Goal Map.
 
-Gegner-Schüsse: In der Shot-Totals-Zelle (unten) per Klick/Doppelklick zählen (team-spezifisch).
+Gegner-Schüsse: In der Shot-Totals-Zelle (unten) per Klick/Doppelklick zählen.
 
-Download Game → Season: Spiel in Saisonstatistik übertragen
+Download: Spieldaten werden als Excel heruntergeladen.
+
+Export Season: Spieldaten werden zu Saisonstatistiken addiert.
+
+Nach jedem Spiel muss in Goal Value ein Wert eingegeben werden.
+
+Mit Button (☀️/🌙) kann zwischen Light- und Dark Mode gewechselt werden.
 
 ________________________________________
 
 Goal Map
-Feldhälften: Oben = scored (grün), Unten = conceded (rot).
+Feldhälften: Grün/Oben = scored / Rot/Unten = conceded
 
-Goal-Workflow (Tor):
-• Feldpunkt: Oben→scored, Unten→conceded (legt Art fest).
-• Torpunkt: scored→nur grünes Tor; conceded→nur rotes Tor.
-• Time-Button: scored→nur obere Reihe (grün); conceded→nur untere Reihe (rot).
+Goal-Workflow (Beginnt mit Klick auf Goal in Game Center):
+• 1. Grauen Punkt in grüne Spielhälfte setzen
+• 2. Punkt in grünes Tor setzen
+• 3. Zeit bestimmen in grünen Time-Buttons
 • Danach Auto-Return zu Game Center.
 
-Shot-Workflow (Schuss): Nur Feldpunkt (grüne Zone), kein Tor/Time; Auto-Return.
+Shot-Workflow (Beginnt mit Klick auf Shot in Game Center):
+• 1. Grünen Punkt in grüne Spielhälfte setzen
+• Danach Auto-Return zu Game Center.
 
-Goalie-Pflicht: Rotes Tor und rote Feldpunkte ohne Workflow nur mit aktivem Goalie im Dropdown.
+Goal erhalten (es muss ein Goalie oben ausgewählt werden):
+• 1. Grauen Punkt in rote Spielhälfte setzen
+• 2. Punkt in rotes Tor setzen
+• 3. Zeit bestimmen in roten Time-Buttons
 
-Marker/Timeboxen bleiben bis Reset; Download/Export kopiert alles zur Season Map.
-
-Time Buttons (Goal Map):
+Time Buttons:
 • Klick: +1, Doppelklick: -1
 • WICHTIG: +1/-1 gilt nur für den aktuell ausgewählten Spieler im Filter
-• Ohne Filter wird "_anonymous" verwendet
+• Ohne Filter wird "anonymous" verwendet
 • Der angezeigte Wert ist die SUMME aller Spieler
-• Um einen bestimmten Spieler zu korrigieren, wähle ihn zuerst im Filter aus
+• Um einen bestimmten Spieler zu korrigieren, wähle ihn zuerst im Filter aus und korrigiere per Klick auf Punkt (im Spielfeld und Tor) oder per Doppelklick (Time Buttons)
+
+Export Season Map: Punkte werden zu Season Map addiert
 
 ________________________________________
 
@@ -398,10 +408,10 @@ Momentum-Grafik:
 ________________________________________
 
 Goal Value
+• Dieser Wert wird für die Saisonstatistiken benötigt
 • Manuelle Eingabe der erzielten Tore gegen den jeweiligen Gegner
 • Untere Skala (Bottom) gewichtet Gegnerstärke; Value = Summe (Wert × Gewicht).
 • Reset setzt alle Werte, Skalen und Gegnernamen zurück.
-• Goal Value wird für Season Gesamtstatistik benötigt.
 
 ________________________________________
 
@@ -410,7 +420,7 @@ Season
 • Klick/Doppelklick auf Werte: +1/–1 (bei +/- auch negativ).
 • Long-Press auf Time-Zelle: Zusätzliche Zeit kann manuell eingegeben werden.
 • Positionsfilter (Dropdown „Pos.").
-• MVP Points/MVP = Wertvollster Spieler gemäss analysierter Statistik (KI/AI)
+• MVP Points/MVP = Wertvollster Spieler gemäss analysierter Statistik (AI-Formel)
 
 ________________________________________
 
@@ -443,51 +453,61 @@ ________________________________________
 
 Line Up
 Modes (switchable via mode button):
-• Balanced: Preset by AI logic.
-• Power: Special AI setup for decisive moments.
-• Manual: Free assignment by clicking positions.
+• Balanced: Balanced Line Up. Preset by AI logic and formulas.
+• Power: Strongest Line Up, special setup for decisive moments. Preset by AI logic and formulas.
+• Manual: Freely customizable Line Up by clicking on positions.
 • "Player Out": Mark player as OUT (penalty). Line Up adjusts automatically.
-• Position buttons from Player Selection show assigned player; in Manual clickable, in Balanced/Power preset.
 
 ________________________________________
 
 Game Center
 Player Row:
-• Click on name (not on ⋮⋮): Timer Start/Stop.
+• Click on name (not on ⋮⋮): Timer Start/Stop for each player. The 5 players with green values have the longest ice time, the 5 players with red values have the shortest ice time.
 • Click on time: +10 s; Double-click: –10 s.
 • Long press on ⋮⋮ → Drag & Drop for order
 
 Stat Cells (e.g., Goals, Shot):
 • Click: +1, Double-click: –1.
-• +1 on Goals/Shot triggers corresponding workflow in Goal Map.
+• +1 on Goals/Shot triggers corresponding Goal or Shot workflow in Goal Map.
 
-Opponent Shots: Count in Shot-Totals cell (bottom) via click/double-click (team-specific).
+Opponent Shots: Count in Shot-Totals cell (bottom) via click/double-click.
 
-Download Game → Season: Transfer game to season stats
+Download: Game data is downloaded as Excel.
+
+Export Season: Game data is added to season statistics.
+
+After each game, a value must be entered in Goal Value.
+
+Use button (☀️/🌙) to switch between Light and Dark Mode.
 
 ________________________________________
 
 Goal Map
-Field Halves: Top = scored (green), Bottom = conceded (red).
+Field Halves: Green/Top = scored / Red/Bottom = conceded
 
-Goal Workflow:
-• Field point: Top→scored, Bottom→conceded (sets type).
-• Goal point: scored→green goal only; conceded→red goal only.
-• Time button: scored→top row only (green); conceded→bottom row only (red).
+Goal Workflow (Starts with click on Goal in Game Center):
+• 1. Place gray dot in green field half
+• 2. Place dot in green goal
+• 3. Determine time in green Time Buttons
 • Then auto-return to Game Center.
 
-Shot Workflow: Field point only (green zone), no goal/time; auto-return.
+Shot Workflow (Starts with click on Shot in Game Center):
+• 1. Place green dot in green field half
+• Then auto-return to Game Center.
 
-Goalie Required: Red goal and red field points without workflow only with active goalie in dropdown.
+Goal conceded (a goalie must be selected at the top):
+• 1. Place gray dot in red field half
+• 2. Place dot in red goal
+• 3. Determine time in red Time Buttons
 
-Markers/Time boxes remain until Reset; Download/Export copies everything to Season Map.
-
-Time Buttons (Goal Map):
+Time Buttons:
 • Click: +1, Double-click: -1
 • IMPORTANT: +1/-1 applies only to the currently selected player in the filter
-• Without filter "_anonymous" is used
+• Without filter "anonymous" is used
 • The displayed value is the SUM of all players
-• To correct a specific player, select them in the filter first
+• To correct a specific player, first select them in the filter and correct by clicking on dots (in field and goal) or by double-clicking (Time Buttons)
+
+Export Season Map: Dots are added to Season Map
 
 ________________________________________
 
@@ -506,10 +526,10 @@ Momentum Chart:
 ________________________________________
 
 Goal Value
+• This value is required for season statistics
 • Manual entry of goals scored against each opponent
 • Bottom scale weights opponent strength; Value = Sum (value × weight).
 • Reset clears all values, scales, and opponent names.
-• Goal Value is needed for Season overall statistics.
 
 ________________________________________
 
@@ -518,7 +538,7 @@ Season
 • Click/double-click on values: +1/–1 (+/- can be negative).
 • Long-press on time cell: Additional time can be entered manually.
 • Position filter (dropdown "Pos.").
-• MVP Points/MVP = Most Valuable Player based on analyzed statistics (AI)
+• MVP Points/MVP = Most Valuable Player based on analyzed statistics (AI formula)
 
 ________________________________________
 
@@ -551,51 +571,61 @@ ________________________________________
 
 Line Up
 Режимы (переключаются кнопкой режима):
-• Balanced: Предустановка логикой ИИ.
-• Power: Специальная расстановка ИИ для решающих моментов.
-• Manual: Свободное назначение кликом на позицию.
+• Balanced: Сбалансированный Line Up. Предустановка через AI-логику и формулы.
+• Power: Сильнейший Line Up, специальная установка для решающих моментов. Предустановка через AI-логику и формулы.
+• Manual: Свободно настраиваемый Line Up через клик на позицию.
 • «Player Out»: Отметить игрока как OUT (штраф). Line Up корректируется автоматически.
-• Кнопки позиций из Player Selection показывают назначенного игрока; в Manual кликабельны, в Balanced/Power предустановлены.
 
 ________________________________________
 
 Game Center
 Строка игрока:
-• Клик по имени (не по ⋮⋮): Таймер Старт/Стоп.
+• Клик по имени (не по ⋮⋮): Таймер Старт/Стоп для каждого игрока. 5 игроков с зелёными значениями имеют самое длинное ледовое время, 5 игроков с красными значениями имеют самое короткое ледовое время.
 • Клик по времени: +10 с; Двойной клик: –10 с.
 • Долгое нажатие на ⋮⋮ → Drag & Drop для порядка
 
 Ячейки статистики (например, Goals, Shot):
 • Клик: +1, Двойной клик: –1.
-• +1 на Goals/Shot запускает соответствующий процесс в Goal Map.
+• +1 на Goals/Shot запускает соответствующий Goal- или Shot-процесс в Goal Map.
 
-Броски соперника: Считать в ячейке Shot-Totals (внизу) кликом/двойным кликом (для команды).
+Броски соперника: Считать в ячейке Shot-Totals (внизу) кликом/двойным кликом.
 
-Download Game → Season: Перенести игру в сезонную статистику
+Download: Игровые данные загружаются как Excel.
+
+Export Season: Игровые данные добавляются к сезонной статистике.
+
+После каждой игры необходимо ввести значение в Goal Value.
+
+Кнопка (☀️/🌙) для переключения между светлым и тёмным режимом.
 
 ________________________________________
 
 Goal Map
-Половины поля: Верх = забито (зелёный), Низ = пропущено (красный).
+Половины поля: Зелёный/Верх = забито / Красный/Низ = пропущено
 
-Goal Workflow:
-• Точка на поле: Верх→забито, Низ→пропущено (определяет тип).
-• Точка ворот: забито→только зелёные ворота; пропущено→только красные ворота.
-• Кнопка времени: забито→только верхний ряд (зелёный); пропущено→только нижний ряд (красный).
+Goal-Workflow (Начинается с клика на Goal в Game Center):
+• 1. Поставить серую точку в зелёную половину поля
+• 2. Поставить точку в зелёные ворота
+• 3. Определить время в зелёных Time-Buttons
 • Затем авто-возврат в Game Center.
 
-Shot Workflow: Только точка на поле (зелёная зона), без ворот/времени; авто-возврат.
+Shot-Workflow (Начинается с клика на Shot в Game Center):
+• 1. Поставить зелёную точку в зелёную половину поля
+• Затем авто-возврат в Game Center.
 
-Требуется вратарь: Красные ворота и красные точки на поле без workflow только с активным вратарём в выпадающем списке.
+Пропущенный гол (вратарь должен быть выбран вверху):
+• 1. Поставить серую точку в красную половину поля
+• 2. Поставить точку в красные ворота
+• 3. Определить время в красных Time-Buttons
 
-Маркеры/Тайм-боксы сохраняются до Reset; Download/Export копирует всё в Season Map.
-
-Time Buttons (Goal Map):
+Time Buttons:
 • Клик: +1, Двойной клик: -1
 • ВАЖНО: +1/-1 применяется только к выбранному игроку в фильтре
-• Без фильтра используется "_anonymous"
+• Без фильтра используется "anonymous"
 • Отображаемое значение - это СУММА всех игроков
-• Чтобы исправить конкретного игрока, сначала выберите его в фильтре
+• Чтобы исправить конкретного игрока, сначала выберите его в фильтре и исправьте кликом на точку (на поле и в воротах) или двойным кликом (Time Buttons)
+
+Export Season Map: Точки добавляются к Season Map
 
 ________________________________________
 
@@ -614,10 +644,10 @@ Momentum-график:
 ________________________________________
 
 Goal Value
+• Это значение необходимо для сезонной статистики
 • Ручной ввод забитых голов против каждого соперника
 • Нижняя шкала (Bottom) весит силу соперника; Value = Сумма (значение × вес).
 • Reset сбрасывает все значения, шкалы и имена соперников.
-• Goal Value нужен для общей статистики Season.
 
 ________________________________________
 
@@ -626,7 +656,7 @@ Season
 • Клик/двойной клик по значениям: +1/–1 (+/- может быть отрицательным).
 • Долгое нажатие на ячейку времени: Дополнительное время можно ввести вручную.
 • Фильтр позиции (выпадающий «Pos.»).
-• MVP Points/MVP = Самый ценный игрок по анализу статистики (ИИ)
+• MVP Points/MVP = Самый ценный игрок по анализу статистики (AI-формула)
 
 ________________________________________
 
@@ -659,51 +689,61 @@ ________________________________________
 
 Line Up
 Lägen (växla via lägesknapp):
-• Balanced: Förinställt av AI-logik.
-• Power: Speciell AI-uppställning för avgörande situationer.
-• Manuell: Fritt val genom att klicka på positioner.
+• Balanced: Balanserad Line Up. Förinställning genom AI-logik och formler.
+• Power: Starkaste Line Up, specialinställning för avgörande situationer. Förinställning genom AI-logik och formler.
+• Manuell: Fritt anpassningsbar Line Up genom att klicka på positioner.
 • "Player Out": Markera spelare som OUT (utvisning). Line Up justeras automatiskt.
-• Positionsknappar från Player Selection visar tilldelad spelare; i Manuell klickbar, i Balanced/Power förinställd.
 
 ________________________________________
 
 Game Center
 Spelarrad:
-• Klicka på namn (inte på ⋮⋮): Timer Start/Stop.
+• Klicka på namn (inte på ⋮⋮): Timer Start/Stop för varje spelare. De 5 spelarna med gröna värden har längst istid, de 5 spelarna med röda värden har kortast istid.
 • Klicka på tid: +10 s; Dubbelklicka: –10 s.
 • Långtryck på ⋮⋮ → Drag & Drop för ordning
 
 Statistikceller (t.ex. Goals, Shot):
 • Klick: +1, Dubbelklick: –1.
-• +1 på Goals/Shot startar motsvarande arbetsflöde i Goal Map.
+• +1 på Goals/Shot startar motsvarande Goal- eller Shot-arbetsflöde i Goal Map.
 
-Motståndarskott: Räkna i Shot-Totals-cellen (nederst) via klick/dubbelklick (lagspecifikt).
+Motståndarskott: Räkna i Shot-Totals-cellen (nederst) via klick/dubbelklick.
 
-Download Game → Season: Överför match till säsongsstatistik
+Download: Matchdata laddas ner som Excel.
+
+Export Season: Matchdata läggs till säsongsstatistik.
+
+Efter varje match måste ett värde anges i Goal Value.
+
+Använd knappen (☀️/🌙) för att växla mellan ljust och mörkt läge.
 
 ________________________________________
 
 Goal Map
-Fälthalvor: Övre = gjorda (grön), Nedre = insläppta (röd).
+Fälthalvor: Grön/Övre = gjorda / Röd/Nedre = insläppta
 
-Goal Workflow:
-• Fältpunkt: Övre→gjort, Nedre→insläppt (bestämmer typ).
-• Målpunkt: gjort→endast grönt mål; insläppt→endast rött mål.
-• Tidknapp: gjort→endast övre rad (grön); insläppt→endast nedre rad (röd).
+Goal-Workflow (Börjar med klick på Goal i Game Center):
+• 1. Placera grå punkt i grön fälthälft
+• 2. Placera punkt i grönt mål
+• 3. Bestäm tid i gröna Time-Buttons
 • Sedan auto-återgång till Game Center.
 
-Shot Workflow: Endast fältpunkt (grön zon), inget mål/tid; auto-återgång.
+Shot-Workflow (Börjar med klick på Shot i Game Center):
+• 1. Placera grön punkt i grön fälthälft
+• Sedan auto-återgång till Game Center.
 
-Målvakt krävs: Rött mål och röda fältpunkter utan workflow endast med aktiv målvakt i dropdown.
+Insläppt mål (en målvakt måste väljas överst):
+• 1. Placera grå punkt i röd fälthälft
+• 2. Placera punkt i rött mål
+• 3. Bestäm tid i röda Time-Buttons
 
-Markörer/Tidrutor kvarstår till Reset; Download/Export kopierar allt till Season Map.
-
-Time Buttons (Goal Map):
+Time Buttons:
 • Klick: +1, Dubbelklick: -1
 • VIKTIGT: +1/-1 gäller endast för den valda spelaren i filtret
-• Utan filter används "_anonymous"
+• Utan filter används "anonymous"
 • Det visade värdet är SUMMAN av alla spelare
-• För att korrigera en specifik spelare, välj dem i filtret först
+• För att korrigera en specifik spelare, välj dem först i filtret och korrigera genom att klicka på punkt (i fält och mål) eller genom dubbelklick (Time Buttons)
+
+Export Season Map: Punkter läggs till Season Map
 
 ________________________________________
 
@@ -722,10 +762,10 @@ Momentum-graf:
 ________________________________________
 
 Goal Value
+• Detta värde behövs för säsongsstatistik
 • Manuell inmatning av gjorda mål mot varje motståndare
 • Nedre skala (Bottom) viktar motståndares styrka; Value = Summa (värde × vikt).
 • Reset återställer alla värden, skalor och motståndarnamn.
-• Goal Value behövs för Season övergripande statistik.
 
 ________________________________________
 
@@ -734,7 +774,7 @@ Season
 • Klick/dubbelklick på värden: +1/–1 (+/- kan vara negativt).
 • Långtryck på tidcell: Extra tid kan matas in manuellt.
 • Positionsfilter (dropdown "Pos.").
-• MVP Points/MVP = Mest värdefulla spelaren baserat på analyserad statistik (AI)
+• MVP Points/MVP = Mest värdefulla spelaren baserat på analyserad statistik (AI-formel)
 
 ________________________________________
 
@@ -767,51 +807,61 @@ ________________________________________
 
 Line Up
 Tilat (vaihda tilapainikkeella):
-• Balanced: Tekoälyn logiikan esiasetus.
-• Power: Erityinen tekoälyasettelu ratkaiseviin hetkiin.
-• Manuaalinen: Vapaa valinta klikkaamalla paikkoja.
+• Balanced: Tasapainoinen Line Up. Esiasetus tekoälyn logiikan ja kaavojen kautta.
+• Power: Vahvin Line Up, erikoisasetus ratkaiseviin hetkiin. Esiasetus tekoälyn logiikan ja kaavojen kautta.
+• Manuaalinen: Vapaasti muokattava Line Up klikkaamalla paikkoja.
 • "Player Out": Merkitse pelaaja OUT (jäähy). Line Up mukautuu automaattisesti.
-• Paikkapainikkeet Player Selectionista näyttävät määrätyn pelaajan; Manuaalisessa klikattava, Balanced/Powerissa esiasetettu.
 
 ________________________________________
 
 Game Center
 Pelaajarivi:
-• Klikkaa nimeä (ei ⋮⋮): Ajastin Käynnistä/Pysäytä.
+• Klikkaa nimeä (ei ⋮⋮): Ajastin Käynnistä/Pysäytä jokaiselle pelaajalle. 5 pelaajaa, joilla on vihreät arvot, ovat pelanneet pisimpään jäällä, 5 pelaajaa, joilla on punaiset arvot, ovat pelanneet lyhimmän ajan jäällä.
 • Klikkaa aikaa: +10 s; Tuplaklikkaa: –10 s.
 • Pitkä painallus ⋮⋮ → Vedä ja pudota järjestykseen
 
 Tilastosolut (esim. Goals, Shot):
 • Klikkaus: +1, Tuplaklikkaus: –1.
-• +1 Goals/Shot käynnistää vastaavan työnkulun Goal Mapissa.
+• +1 Goals/Shot käynnistää vastaavan Goal- tai Shot-työnkulun Goal Mapissa.
 
-Vastustajan laukaukset: Laske Shot-Totals-solussa (alhaalla) klikkauksella/tuplaklikkauksella (joukkuekohtainen).
+Vastustajan laukaukset: Laske Shot-Totals-solussa (alhaalla) klikkauksella/tuplaklikkauksella.
 
-Download Game → Season: Siirrä peli kauden tilastoihin
+Download: Pelitiedot ladataan Excelinä.
+
+Export Season: Pelitiedot lisätään kauden tilastoihin.
+
+Jokaisen pelin jälkeen Goal Valueen on syötettävä arvo.
+
+Käytä painiketta (☀️/🌙) vaihtaaksesi vaalean ja tumman tilan välillä.
 
 ________________________________________
 
 Goal Map
-Kenttäpuoliskot: Ylä = tehty (vihreä), Ala = päästetty (punainen).
+Kenttäpuoliskot: Vihreä/Ylä = tehty / Punainen/Ala = päästetty
 
-Goal Workflow:
-• Kenttäpiste: Ylä→tehty, Ala→päästetty (määrittää tyypin).
-• Maalipiste: tehty→vain vihreä maali; päästetty→vain punainen maali.
-• Aikapainike: tehty→vain ylärivit (vihreä); päästetty→vain alarivit (punainen).
+Goal-Workflow (Alkaa klikkauksella Goal Game Centerissä):
+• 1. Aseta harmaa piste vihreälle kenttäpuoliskolle
+• 2. Aseta piste vihreään maaliin
+• 3. Määritä aika vihreissä Time-Buttons
 • Sitten automaattinen paluu Game Centeriin.
 
-Shot Workflow: Vain kenttäpiste (vihreä alue), ei maalia/aikaa; automaattinen paluu.
+Shot-Workflow (Alkaa klikkauksella Shot Game Centerissä):
+• 1. Aseta vihreä piste vihreälle kenttäpuoliskolle
+• Sitten automaattinen paluu Game Centeriin.
 
-Maalivahti vaaditaan: Punainen maali ja punaiset kenttäpisteet ilman työnkulkua vain aktiivisella maalivahdilla pudotusvalikossa.
+Päästetty maali (maalivahti on valittava yläosasta):
+• 1. Aseta harmaa piste punaiselle kenttäpuoliskolle
+• 2. Aseta piste punaiseen maaliin
+• 3. Määritä aika punaisissa Time-Buttons
 
-Merkinnät/Aikalaatikot säilyvät Resetiin asti; Download/Export kopioi kaiken Season Mapiin.
-
-Time Buttons (Goal Map):
+Time Buttons:
 • Klikkaus: +1, Tuplaklikkaus: -1
 • TÄRKEÄÄ: +1/-1 koskee vain suodattimessa valittua pelaajaa
-• Ilman suodatinta käytetään "_anonymous"
+• Ilman suodatinta käytetään "anonymous"
 • Näytetty arvo on SUMMA kaikista pelaajista
-• Korjataksesi tiettyä pelaajaa, valitse heidät ensin suodattimesta
+• Korjataksesi tiettyä pelaajaa, valitse heidät ensin suodattimesta ja korjaa klikkaamalla pistettä (kentällä ja maalissa) tai tuplaklikkaamalla (Time Buttons)
+
+Export Season Map: Pisteet lisätään Season Mapiin
 
 ________________________________________
 
@@ -830,10 +880,10 @@ Momentum-kaavio:
 ________________________________________
 
 Goal Value
+• Tämä arvo tarvitaan kauden tilastoihin
 • Manuaalinen syöttö tehdyistä maaleista kutakin vastustajaa vastaan
 • Alaskala (Bottom) painottaa vastustajan vahvuutta; Value = Summa (arvo × paino).
 • Reset nollaa kaikki arvot, asteikot ja vastustajien nimet.
-• Goal Value tarvitaan Season kokonaistilastoihin.
 
 ________________________________________
 
@@ -842,7 +892,7 @@ Season
 • Klikkaus/tuplaklikkaus arvoihin: +1/–1 (+/- voi olla negatiivinen).
 • Pitkä painallus aikasoluun: Lisäaika voidaan syöttää manuaalisesti.
 • Pelipaikkassuodatin (pudotusvalikko "Pos.").
-• MVP Points/MVP = Arvokkain pelaaja analysoidun tilaston perusteella (tekoäly)
+• MVP Points/MVP = Arvokkain pelaaja analysoidun tilaston perusteella (tekoälykaava)
 
 ________________________________________
 
