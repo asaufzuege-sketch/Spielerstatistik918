@@ -956,6 +956,24 @@ App.goalMap = {
     }
   },
   
+  // Helper function to calculate display value excluding _anonymous when real players exist
+  calculateDisplayValue(playerData) {
+    if (!playerData) return 0;
+    
+    const entries = Object.entries(playerData);
+    const hasRealPlayers = entries.some(([name, val]) => name !== '_anonymous' && Number(val) > 0);
+    
+    if (hasRealPlayers) {
+      // Exclude _anonymous when real players exist
+      return entries
+        .filter(([name]) => name !== '_anonymous')
+        .reduce((sum, [, val]) => sum + Number(val), 0);
+    } else {
+      // Only _anonymous exists, use that value
+      return entries.reduce((sum, [, val]) => sum + Number(val), 0);
+    }
+  },
+  
   // Time Tracking mit Spielerzuordnung
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
@@ -970,24 +988,6 @@ App.goalMap = {
     const teamId = App.helpers.getCurrentTeamId();
     let timeData = App.helpers.safeJSONParse(`timeData_${teamId}`, {});
     let timeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
-    
-    // Helper function to calculate display value excluding _anonymous when real players exist
-    const calculateDisplayValue = (playerData) => {
-      if (!playerData) return 0;
-      
-      const entries = Object.entries(playerData);
-      const hasRealPlayers = entries.some(([name, val]) => name !== '_anonymous' && Number(val) > 0);
-      
-      if (hasRealPlayers) {
-        // Exclude _anonymous when real players exist
-        return entries
-          .filter(([name]) => name !== '_anonymous')
-          .reduce((sum, [, val]) => sum + Number(val), 0);
-      } else {
-        // Only _anonymous exists, use that value
-        return entries.reduce((sum, [, val]) => sum + Number(val), 0);
-      }
-    };
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
@@ -1023,7 +1023,7 @@ App.goalMap = {
         } else {
           // Top row (green buttons): show player data
           if (timeDataWithPlayers[key]) {
-            displayValue = calculateDisplayValue(timeDataWithPlayers[key]);
+            displayValue = this.calculateDisplayValue(timeDataWithPlayers[key]);
           } else if (timeData[periodNum] && typeof timeData[periodNum][idx] !== "undefined") {
             displayValue = Number(timeData[periodNum][idx]);
           }
@@ -1114,7 +1114,7 @@ App.goalMap = {
             if (this.playerFilter) {
               displayVal = (currentTimeDataWithPlayers[key] && currentTimeDataWithPlayers[key][this.playerFilter]) || 0;
             } else {
-              displayVal = calculateDisplayValue(currentTimeDataWithPlayers[key]);
+              displayVal = App.goalMap.calculateDisplayValue(currentTimeDataWithPlayers[key]);
             }
           }
           newBtn.textContent = displayVal;
@@ -1450,7 +1450,7 @@ App.goalMap = {
         if (this.playerFilter) {
           displayVal = Number(playerData[this.playerFilter]) || 0;
         } else {
-          displayVal = Object.values(playerData).reduce((sum, val) => sum + (Number(val) || 0), 0);
+          displayVal = this.calculateDisplayValue(playerData);
         }
         
         btn.textContent = displayVal;
@@ -1547,7 +1547,7 @@ App.goalMap = {
       for (let btnIdx = 0; btnIdx < 8; btnIdx++) {
         const key = `${periodNum}_${btnIdx}`;
         const playerData = timeDataWithPlayers[key] || {};
-        const total = Object.values(playerData).reduce((sum, val) => sum + Number(val || 0), 0);
+        const total = this.calculateDisplayValue(playerData);
         periodValues.push(total);
       }
       momentumData[periodNum] = periodValues;
