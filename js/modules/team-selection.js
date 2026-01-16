@@ -374,6 +374,13 @@ Goalie-Pflicht: Rotes Tor und rote Feldpunkte ohne Workflow nur mit aktivem Goal
 
 Marker/Timeboxen bleiben bis Reset; Download/Export kopiert alles zur Season Map.
 
+Time Buttons (Goal Map):
+• Klick: +1, Doppelklick: -1
+• WICHTIG: +1/-1 gilt nur für den aktuell ausgewählten Spieler im Filter
+• Ohne Filter wird "_anonymous" verwendet
+• Der angezeigte Wert ist die SUMME aller Spieler
+• Um einen bestimmten Spieler zu korrigieren, wähle ihn zuerst im Filter aus
+
 ________________________________________
 
 Season Map
@@ -474,6 +481,13 @@ Shot Workflow: Field point only (green zone), no goal/time; auto-return.
 Goalie Required: Red goal and red field points without workflow only with active goalie in dropdown.
 
 Markers/Time boxes remain until Reset; Download/Export copies everything to Season Map.
+
+Time Buttons (Goal Map):
+• Click: +1, Double-click: -1
+• IMPORTANT: +1/-1 applies only to the currently selected player in the filter
+• Without filter "_anonymous" is used
+• The displayed value is the SUM of all players
+• To correct a specific player, select them in the filter first
 
 ________________________________________
 
@@ -576,6 +590,13 @@ Shot Workflow: Только точка на поле (зелёная зона), 
 
 Маркеры/Тайм-боксы сохраняются до Reset; Download/Export копирует всё в Season Map.
 
+Time Buttons (Goal Map):
+• Клик: +1, Двойной клик: -1
+• ВАЖНО: +1/-1 применяется только к выбранному игроку в фильтре
+• Без фильтра используется "_anonymous"
+• Отображаемое значение - это СУММА всех игроков
+• Чтобы исправить конкретного игрока, сначала выберите его в фильтре
+
 ________________________________________
 
 Season Map
@@ -677,6 +698,13 @@ Målvakt krävs: Rött mål och röda fältpunkter utan workflow endast med akti
 
 Markörer/Tidrutor kvarstår till Reset; Download/Export kopierar allt till Season Map.
 
+Time Buttons (Goal Map):
+• Klick: +1, Dubbelklick: -1
+• VIKTIGT: +1/-1 gäller endast för den valda spelaren i filtret
+• Utan filter används "_anonymous"
+• Det visade värdet är SUMMAN av alla spelare
+• För att korrigera en specifik spelare, välj dem i filtret först
+
 ________________________________________
 
 Season Map
@@ -777,6 +805,13 @@ Shot Workflow: Vain kenttäpiste (vihreä alue), ei maalia/aikaa; automaattinen 
 Maalivahti vaaditaan: Punainen maali ja punaiset kenttäpisteet ilman työnkulkua vain aktiivisella maalivahdilla pudotusvalikossa.
 
 Merkinnät/Aikalaatikot säilyvät Resetiin asti; Download/Export kopioi kaiken Season Mapiin.
+
+Time Buttons (Goal Map):
+• Klikkaus: +1, Tuplaklikkaus: -1
+• TÄRKEÄÄ: +1/-1 koskee vain suodattimessa valittua pelaajaa
+• Ilman suodatinta käytetään "_anonymous"
+• Näytetty arvo on SUMMA kaikista pelaajista
+• Korjataksesi tiettyä pelaajaa, valitse heidät ensin suodattimesta
 
 ________________________________________
 
