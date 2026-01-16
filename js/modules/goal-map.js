@@ -971,6 +971,24 @@ App.goalMap = {
     let timeData = App.helpers.safeJSONParse(`timeData_${teamId}`, {});
     let timeDataWithPlayers = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
     
+    // Helper function to calculate display value excluding _anonymous when real players exist
+    const calculateDisplayValue = (playerData) => {
+      if (!playerData) return 0;
+      
+      const entries = Object.entries(playerData);
+      const hasRealPlayers = entries.some(([name, val]) => name !== '_anonymous' && Number(val) > 0);
+      
+      if (hasRealPlayers) {
+        // Exclude _anonymous when real players exist
+        return entries
+          .filter(([name]) => name !== '_anonymous')
+          .reduce((sum, [, val]) => sum + Number(val), 0);
+      } else {
+        // Only _anonymous exists, use that value
+        return entries.reduce((sum, [, val]) => sum + Number(val), 0);
+      }
+    };
+    
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `p${pIdx}`;
       const buttons = period.querySelectorAll(".time-btn");
@@ -1005,17 +1023,7 @@ App.goalMap = {
         } else {
           // Top row (green buttons): show player data
           if (timeDataWithPlayers[key]) {
-            const entries = Object.entries(timeDataWithPlayers[key]);
-            const hasRealPlayers = entries.some(([name, val]) => name !== '_anonymous' && Number(val) > 0);
-            if (hasRealPlayers) {
-              // Exclude _anonymous when real players exist
-              displayValue = entries
-                .filter(([name]) => name !== '_anonymous')
-                .reduce((sum, [, val]) => sum + Number(val), 0);
-            } else {
-              // Only _anonymous exists, use that value
-              displayValue = entries.reduce((sum, [, val]) => sum + Number(val), 0);
-            }
+            displayValue = calculateDisplayValue(timeDataWithPlayers[key]);
           } else if (timeData[periodNum] && typeof timeData[periodNum][idx] !== "undefined") {
             displayValue = Number(timeData[periodNum][idx]);
           }
@@ -1106,19 +1114,7 @@ App.goalMap = {
             if (this.playerFilter) {
               displayVal = (currentTimeDataWithPlayers[key] && currentTimeDataWithPlayers[key][this.playerFilter]) || 0;
             } else {
-              if (currentTimeDataWithPlayers[key]) {
-                const entries = Object.entries(currentTimeDataWithPlayers[key]);
-                const hasRealPlayers = entries.some(([name, val]) => name !== '_anonymous' && Number(val) > 0);
-                if (hasRealPlayers) {
-                  // Exclude _anonymous when real players exist
-                  displayVal = entries
-                    .filter(([name]) => name !== '_anonymous')
-                    .reduce((sum, [, val]) => sum + Number(val), 0);
-                } else {
-                  // Only _anonymous exists, use that value
-                  displayVal = entries.reduce((sum, [, val]) => sum + Number(val), 0);
-                }
-              }
+              displayVal = calculateDisplayValue(currentTimeDataWithPlayers[key]);
             }
           }
           newBtn.textContent = displayVal;
