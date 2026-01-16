@@ -547,15 +547,57 @@ App.statsTable = {
         const ownC = own > opp ? "#00ff80" : opp > own ? "#ff4c4c" : "#ffffff";
         const oppC = opp > own ? "#00ff80" : own > opp ? "#ff4c4c" : "#ffffff";
         tc.innerHTML = `<span style="color:${ownC}">${own}</span> <span style="color:white">vs</span> <span style="color:${oppC}">${opp}</span>`;
-        tc.onclick = () => {
-          tc.dataset.opp = String(Number(tc.dataset.opp || 0) + 1);
+        
+        // Remove existing event listeners by replacing the element
+        const newTc = tc.cloneNode(true);
+        tc.parentNode.replaceChild(newTc, tc);
+        tc = newTc;
+        
+        // Track click timing for double-click detection
+        let clickTimeout = null;
+        
+        // Single Click: +1
+        tc.addEventListener('click', (e) => {
+          if (clickTimeout) {
+            // Double click will be handled by dblclick handler
+            return;
+          }
+          
+          clickTimeout = setTimeout(() => {
+            // Single click: +1
+            tc.dataset.opp = String(Number(tc.dataset.opp || 0) + 1);
+            
+            // Gegner-Schüsse teamspezifisch in LocalStorage speichern
+            const teamId = App.helpers.getCurrentTeamId();
+            localStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
+            
+            this.updateTotals();
+            clickTimeout = null;
+          }, 250); // 250ms delay to detect double click
+        });
+        
+        // Double Click: -1 (but not below 0)
+        tc.addEventListener('dblclick', (e) => {
+          e.preventDefault();
+          
+          if (clickTimeout) {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
+          }
+          
+          // Double click: -1 (minimum 0)
+          const currentOpp = Number(tc.dataset.opp || 0);
+          tc.dataset.opp = String(Math.max(0, currentOpp - 1));
           
           // Gegner-Schüsse teamspezifisch in LocalStorage speichern
           const teamId = App.helpers.getCurrentTeamId();
           localStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
           
           this.updateTotals();
-        };
+        });
+        
+        // Add visual feedback for clickability
+        tc.style.cursor = "pointer";
       } else {
         const val = totals[cat] || 0;
         const colors = App.helpers.getColorStyles();
