@@ -548,56 +548,69 @@ App.statsTable = {
         const oppC = opp > own ? "#00ff80" : own > opp ? "#ff4c4c" : "#ffffff";
         tc.innerHTML = `<span style="color:${ownC}">${own}</span> <span style="color:white">vs</span> <span style="color:${oppC}">${opp}</span>`;
         
-        // Remove existing event listeners by replacing the element
-        const newTc = tc.cloneNode(true);
-        tc.parentNode.replaceChild(newTc, tc);
-        tc = newTc;
-        
-        // Track click timing for double-click detection
-        let clickTimeout = null;
-        
-        // Single Click: +1
-        tc.addEventListener('click', (e) => {
-          if (clickTimeout) {
-            // Double click will be handled by dblclick handler
-            return;
-          }
+        // Only attach event listeners once (check if already attached)
+        if (!tc.dataset.listenersAttached) {
+          tc.dataset.listenersAttached = "true";
           
-          clickTimeout = setTimeout(() => {
-            // Single click: +1
-            tc.dataset.opp = String(Number(tc.dataset.opp || 0) + 1);
+          // Track click timing for double-click detection
+          let clickTimeout = null;
+          
+          // Single Click: +1
+          tc.addEventListener('click', (e) => {
+            if (clickTimeout) {
+              // Double click will be handled by dblclick handler
+              return;
+            }
+            
+            clickTimeout = setTimeout(() => {
+              // Single click: +1
+              const newOpp = Number(tc.dataset.opp || 0) + 1;
+              tc.dataset.opp = String(newOpp);
+              
+              // Gegner-Schüsse teamspezifisch in LocalStorage speichern
+              const teamId = App.helpers.getCurrentTeamId();
+              localStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
+              
+              // Update display directly without recursion
+              const ownVal = totals["Shot"] || 0;
+              const oppVal = newOpp;
+              const ownColor = ownVal > oppVal ? "#00ff80" : oppVal > ownVal ? "#ff4c4c" : "#ffffff";
+              const oppColor = oppVal > ownVal ? "#00ff80" : ownVal > oppVal ? "#ff4c4c" : "#ffffff";
+              tc.innerHTML = `<span style="color:${ownColor}">${ownVal}</span> <span style="color:white">vs</span> <span style="color:${oppColor}">${oppVal}</span>`;
+              
+              clickTimeout = null;
+            }, 250); // 250ms delay to detect double click
+          });
+          
+          // Double Click: -1 (but not below 0)
+          tc.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            
+            if (clickTimeout) {
+              clearTimeout(clickTimeout);
+              clickTimeout = null;
+            }
+            
+            // Double click: -1 (minimum 0)
+            const currentOpp = Number(tc.dataset.opp || 0);
+            const newOpp = Math.max(0, currentOpp - 1);
+            tc.dataset.opp = String(newOpp);
             
             // Gegner-Schüsse teamspezifisch in LocalStorage speichern
             const teamId = App.helpers.getCurrentTeamId();
             localStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
             
-            this.updateTotals();
-            clickTimeout = null;
-          }, 250); // 250ms delay to detect double click
-        });
-        
-        // Double Click: -1 (but not below 0)
-        tc.addEventListener('dblclick', (e) => {
-          e.preventDefault();
+            // Update display directly without recursion
+            const ownVal = totals["Shot"] || 0;
+            const oppVal = newOpp;
+            const ownColor = ownVal > oppVal ? "#00ff80" : oppVal > ownVal ? "#ff4c4c" : "#ffffff";
+            const oppColor = oppVal > ownVal ? "#00ff80" : ownVal > oppVal ? "#ff4c4c" : "#ffffff";
+            tc.innerHTML = `<span style="color:${ownColor}">${ownVal}</span> <span style="color:white">vs</span> <span style="color:${oppColor}">${oppVal}</span>`;
+          });
           
-          if (clickTimeout) {
-            clearTimeout(clickTimeout);
-            clickTimeout = null;
-          }
-          
-          // Double click: -1 (minimum 0)
-          const currentOpp = Number(tc.dataset.opp || 0);
-          tc.dataset.opp = String(Math.max(0, currentOpp - 1));
-          
-          // Gegner-Schüsse teamspezifisch in LocalStorage speichern
-          const teamId = App.helpers.getCurrentTeamId();
-          localStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
-          
-          this.updateTotals();
-        });
-        
-        // Add visual feedback for clickability
-        tc.style.cursor = "pointer";
+          // Add visual feedback for clickability
+          tc.style.cursor = "pointer";
+        }
       } else {
         const val = totals[cat] || 0;
         const colors = App.helpers.getColorStyles();
