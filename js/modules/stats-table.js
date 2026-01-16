@@ -561,7 +561,12 @@ App.statsTable = {
             localStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
             
             // Update display directly without recursion
-            const ownVal = totals["Shot"] || 0;
+            // Recalculate own shots fresh from current stats data
+            let ownVal = 0;
+            App.data.selectedPlayers.forEach(p => {
+              ownVal += Number(App.data.statsData[p.name]?.["Shot"] || 0);
+            });
+            
             const oppVal = newOpp;
             const ownColor = ownVal > oppVal ? "#00ff80" : oppVal > ownVal ? "#ff4c4c" : "#ffffff";
             const oppColor = oppVal > ownVal ? "#00ff80" : ownVal > oppVal ? "#ff4c4c" : "#ffffff";
