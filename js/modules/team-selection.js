@@ -1059,7 +1059,7 @@ Reset (peruuttamaton)
                 const allTitles = infoContent.querySelectorAll('.info-section-title');
                 allTitles.forEach(title => {
                     const titleText = title.textContent.toLowerCase();
-                    const sectionName = scrollToSection.replace('-', ' ').toLowerCase();
+                    const sectionName = scrollToSection.replace(/-/g, ' ').toLowerCase();
                     
                     if (titleText.includes(sectionName)) {
                         title.scrollIntoView({ behavior: 'smooth', block: 'start' });
