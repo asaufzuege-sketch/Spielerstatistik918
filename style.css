@@ -122,7 +122,12 @@ h1 {
   opacity: 0.7;
   cursor: pointer;
   margin-left: 4px;
-  color: inherit;
+  /* Override parent gradient styling to make icon visible */
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: initial;
+  color: var(--page-title-start);
   transition: opacity 0.2s;
   /* Ensure touch-friendly tap area */
   display: inline-block;
