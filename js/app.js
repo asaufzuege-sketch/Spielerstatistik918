@@ -44,6 +44,19 @@ document.addEventListener("DOMContentLoaded", () => {
     App.teamSelection?.showInfo();
   });
   
+  // Event listener for title info icons (e.g., in Player Selection)
+  document.querySelectorAll('.title-info-icon').forEach(icon => {
+    icon.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent other click handlers
+      const section = icon.dataset.section;
+      
+      // Open the info modal with the specified section
+      if (App.teamSelection && App.teamSelection.showInfo) {
+        App.teamSelection.showInfo(section);
+      }
+    });
+  });
+  
   document.getElementById("backToStatsBtn")?.addEventListener("click", () => {
     App.showPage("stats");
   });

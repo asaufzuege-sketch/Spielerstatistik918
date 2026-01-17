@@ -1009,7 +1009,7 @@ Reset (peruuttamaton)
         }
     }
     
-    function showInfo() {
+    function showInfo(scrollToSection) {
         const modal = document.createElement('div');
         modal.className = 'info-modal';
         
@@ -1047,6 +1047,25 @@ Reset (peruuttamaton)
                 localStorage.setItem('infoLanguage', selectedLanguage);
                 updateInfoContent(selectedLanguage);
             });
+        }
+        
+        // After modal content is loaded, scroll to section if specified
+        if (scrollToSection) {
+            setTimeout(() => {
+                const infoContent = document.querySelector('.info-content');
+                if (!infoContent) return;
+                
+                // Find the section with matching title
+                const allTitles = infoContent.querySelectorAll('.info-section-title');
+                allTitles.forEach(title => {
+                    const titleText = title.textContent.toLowerCase();
+                    const sectionName = scrollToSection.replace('-', ' ').toLowerCase();
+                    
+                    if (titleText.includes(sectionName)) {
+                        title.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }, 100);
         }
         
         // Close button event listener
