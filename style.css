@@ -115,6 +115,33 @@ h1 {
   text-align: center;
 }
 
+/* Title Info Icon - small, subtle icon next to title */
+.title-info-icon {
+  font-size: 0.5em;
+  vertical-align: sub;
+  opacity: 0.7;
+  cursor: pointer;
+  margin-left: 4px;
+  /* Override parent gradient styling to make icon visible */
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: initial;
+  color: var(--page-title-start);
+  transition: opacity 0.2s;
+  /* Ensure touch-friendly tap area */
+  display: inline-block;
+  padding: 4px;
+  min-width: 24px;
+  min-height: 24px;
+  line-height: 1;
+}
+
+.title-info-icon:hover,
+.title-info-icon:active {
+  opacity: 1;
+}
+
 .center-text { text-align: center; color: #888; margin-top: 6px; }
 
 .player-list {
