@@ -21,11 +21,11 @@ App.lineUp = {
   
   loadData() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersOut = localStorage.getItem(`s918_playersOut_${currentTeamId}`);
+    const savedPlayersOut = AppStorage.getItem(`playersOut_${currentTeamId}`);
     
     // Load team-specific stats data
     try {
-      const savedStatsData = localStorage.getItem(`s918_statsData_${currentTeamId}`);
+      const savedStatsData = AppStorage.getItem(`statsData_${currentTeamId}`);
       App.data.statsData = savedStatsData ? JSON.parse(savedStatsData) : {};
     } catch (e) {
       App.data.statsData = {};
@@ -48,12 +48,12 @@ App.lineUp = {
   
   saveDataForMode(mode) {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`s918_lineUpData_${mode}_${currentTeamId}`, JSON.stringify(this.lineUpData));
+    AppStorage.setItem(`lineUpData_${mode}_${currentTeamId}`, JSON.stringify(this.lineUpData));
   },
   
   loadDataForMode(mode) {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedData = localStorage.getItem(`s918_lineUpData_${mode}_${currentTeamId}`);
+    const savedData = AppStorage.getItem(`lineUpData_${mode}_${currentTeamId}`);
     
     try {
       this.lineUpData = savedData ? JSON.parse(savedData) : {};
@@ -92,17 +92,17 @@ App.lineUp = {
   
   savePlayersOut() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`s918_playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
+    AppStorage.setItem(`playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
   },
   
   getAvailablePlayers() {
     // Get players from player selection that are active
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     let players = [];
     try {
-      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      const savedPlayers = JSON.parse(AppStorage.getItem(savedPlayersKey) || "[]");
       players = savedPlayers.filter(p => p.active && p.name && p.name.trim() !== "");
     } catch (e) {
       players = [];
@@ -361,8 +361,8 @@ App.lineUp = {
     const currentTeamId = App.helpers.getCurrentTeamId();
     
     modes.forEach(mode => {
-      const key = `s918_lineUpData_${mode}_${currentTeamId}`;
-      const savedData = localStorage.getItem(key);
+      const key = `lineUpData_${mode}_${currentTeamId}`;
+      const savedData = AppStorage.getItem(key);
       
       if (savedData) {
         try {
@@ -378,7 +378,7 @@ App.lineUp = {
           });
           
           if (changed) {
-            localStorage.setItem(key, JSON.stringify(lineUpData));
+            AppStorage.setItem(key, JSON.stringify(lineUpData));
           }
         } catch (e) {
           console.error('Error removing player from mode:', mode, e);
@@ -982,11 +982,11 @@ App.lineUp = {
   
   getPlayersWithMVPPoints() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     let players = [];
     try {
-      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      const savedPlayers = JSON.parse(AppStorage.getItem(savedPlayersKey) || "[]");
       // Modified to NOT filter out players without positions
       players = savedPlayers.filter(p => p.active && p.name && p.name.trim() !== "");
     } catch (e) {

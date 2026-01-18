@@ -298,11 +298,11 @@ setStickyOffsets() {
 
     // Filter out goalies from the player list
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
 
     let goalieNames = [];
     try {
-      const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      const savedPlayers = JSON.parse(AppStorage.getItem(savedPlayersKey) || "[]");
       goalieNames = savedPlayers
         .filter(p => p.position === "G" || p.isGoalie)
         .map(p => p.name);
@@ -882,7 +882,7 @@ setStickyOffsets() {
 
     App.data.seasonData = {};
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.removeItem(`s918_seasonData_${teamId}`);
+    AppStorage.removeItem(`seasonData_${teamId}`);
     this.render();
     alert("Season data deleted.");
   },
@@ -1094,10 +1094,10 @@ setStickyOffsets() {
     const teamId = App.helpers.getCurrentTeamId();
     if (!teamId) return '';
     
-    const savedPlayersKey = `s918_playerSelectionData_${teamId}`;
+    const savedPlayersKey = `playerSelectionData_${teamId}`;
     let players = [];
     try {
-      players = JSON.parse(localStorage.getItem(savedPlayersKey) || '[]');
+      players = JSON.parse(AppStorage.getItem(savedPlayersKey) || '[]');
     } catch (e) {
       return '';
     }

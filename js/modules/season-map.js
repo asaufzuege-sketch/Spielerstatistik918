@@ -101,7 +101,7 @@ App.seasonMap = {
     });
     
     const teamId = App.helpers.getCurrentTeamId();
-    const savedFilter = localStorage.getItem(`s918_seasonMapPlayerFilter_${teamId}`);
+    const savedFilter = AppStorage.getItem(`seasonMapPlayerFilter_${teamId}`);
     if (savedFilter) {
       filterSelect.value = savedFilter;
       this.playerFilter = savedFilter;
@@ -129,7 +129,7 @@ App.seasonMap = {
       }
       
       // Get goalies from time data
-      const timeDataRaw = localStorage.getItem(`s918_seasonMapTimeDataWithPlayers_${teamId}`);
+      const timeDataRaw = AppStorage.getItem(`seasonMapTimeDataWithPlayers_${teamId}`);
       if (timeDataRaw) {
         try {
           const timeData = JSON.parse(timeDataRaw);
@@ -169,11 +169,11 @@ App.seasonMap = {
         const teamId = App.helpers.getCurrentTeamId();
         
         if (selectedGoalie && selectedGoalie !== "") {
-          localStorage.setItem(`s918_seasonMapActiveGoalie_${teamId}`, selectedGoalie);
+          AppStorage.setItem(`seasonMapActiveGoalie_${teamId}`, selectedGoalie);
           goalieFilterSelect.classList.add("active");
           this.filterByGoalies([selectedGoalie]);
         } else {
-          localStorage.removeItem(`s918_seasonMapActiveGoalie_${teamId}`);
+          AppStorage.removeItem(`seasonMapActiveGoalie_${teamId}`);
           goalieFilterSelect.classList.remove("active");
           const allGoalies = this.getAllGoaliesFromData();
           this.filterByGoalies(allGoalies);
@@ -246,7 +246,7 @@ App.seasonMap = {
     const allGoalies = new Set();
     
     const teamId = App.helpers.getCurrentTeamId();
-    const markersRaw = localStorage.getItem(`s918_seasonMapMarkers_${teamId}`);
+    const markersRaw = AppStorage.getItem(`seasonMapMarkers_${teamId}`);
     if (markersRaw) {
       try {
         const allMarkers = JSON.parse(markersRaw);
@@ -333,9 +333,9 @@ App.seasonMap = {
   applyPlayerFilter(skipStatsRender = false) {
     const teamId = App.helpers.getCurrentTeamId();
     if (this.playerFilter) {
-      localStorage.setItem(`s918_seasonMapPlayerFilter_${teamId}`, this.playerFilter);
+      AppStorage.setItem(`seasonMapPlayerFilter_${teamId}`, this.playerFilter);
     } else {
-      localStorage.removeItem(`s918_seasonMapPlayerFilter_${teamId}`);
+      AppStorage.removeItem(`seasonMapPlayerFilter_${teamId}`);
     }
     
     const boxes = document.querySelectorAll(App.selectors.seasonMapBoxes);
@@ -450,7 +450,7 @@ App.seasonMap = {
     // Apply filters after restoring
     this.applyPlayerFilter(true); // Skip stats render - will be called after both filters applied
     
-    const savedGoalie = localStorage.getItem(`s918_seasonMapActiveGoalie_${teamId}`);
+    const savedGoalie = AppStorage.getItem(`seasonMapActiveGoalie_${teamId}`);
     if (savedGoalie) {
       this.filterByGoalies([savedGoalie], true); // Skip stats render - will be called after both filters applied
     } else {
@@ -709,11 +709,11 @@ App.seasonMap = {
     
     // OVERWRITE: Replace existing data completely
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`s918_seasonMapMarkers_${teamId}`, JSON.stringify(allMarkers));
+    AppStorage.setItem(`seasonMapMarkers_${teamId}`, JSON.stringify(allMarkers));
     
     // Time data: OVERWRITE with current game data
     const newTimeData = App.helpers.safeJSONParse(`s918_timeDataWithPlayers_${teamId}`, {});
-    localStorage.setItem(`s918_seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(newTimeData));
+    AppStorage.setItem(`seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(newTimeData));
     
     // Flache Zeitdaten für Momentum-Graph
     // Format: { "p1": [button0, button1, ..., button7], "p2": [...], "p3": [...] }
@@ -733,14 +733,14 @@ App.seasonMap = {
     });
     
     // Speichere für Momentum-Graph
-    localStorage.setItem(`s918_seasonMapTimeData_${teamId}`, JSON.stringify(momentumData));
+    AppStorage.setItem(`seasonMapTimeData_${teamId}`, JSON.stringify(momentumData));
     
     const keep = confirm("Game exported to Season Map. Keep data in Goal Map? (OK = Yes)");
     if (!keep) {
       document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
       document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
-      localStorage.removeItem(`s918_timeData_${teamId}`);
-      localStorage.removeItem(`s918_timeDataWithPlayers_${teamId}`);
+      AppStorage.removeItem(`timeData_${teamId}`);
+      AppStorage.removeItem(`timeDataWithPlayers_${teamId}`);
     }
     
     // Show the season map page
@@ -861,7 +861,7 @@ App.seasonMap = {
         timeDataWithPlayers[key][selectedGoalie] += 1;
         
         // Save to localStorage
-        localStorage.setItem(`s918_seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(timeDataWithPlayers));
+        AppStorage.setItem(`seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(timeDataWithPlayers));
         
         // Update button display
         const total = Object.values(timeDataWithPlayers[key])
@@ -985,7 +985,7 @@ App.seasonMap = {
         // For red goal box (conceded), use goalie filter
         if (isRedGoal) {
           const teamId = App.helpers.getCurrentTeamId();
-          const savedGoalie = localStorage.getItem(`s918_seasonMapActiveGoalie_${teamId}`);
+          const savedGoalie = AppStorage.getItem(`seasonMapActiveGoalie_${teamId}`);
           if (savedGoalie && savedGoalie !== "") {
             // Specific goalie selected - only show their markers
             return m.dataset.player === savedGoalie;
@@ -1077,9 +1077,9 @@ App.seasonMap = {
     
     // LocalStorage Daten löschen
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.removeItem(`s918_seasonMapMarkers_${teamId}`);
-    localStorage.removeItem(`s918_seasonMapTimeData_${teamId}`);
-    localStorage.removeItem(`s918_seasonMapTimeDataWithPlayers_${teamId}`);
+    AppStorage.removeItem(`seasonMapMarkers_${teamId}`);
+    AppStorage.removeItem(`seasonMapTimeData_${teamId}`);
+    AppStorage.removeItem(`seasonMapTimeDataWithPlayers_${teamId}`);
     
     // Momentum Container leeren (korrekter ID: seasonMapMomentum)
     const momentumContainer = document.getElementById("seasonMapMomentum");

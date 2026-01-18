@@ -28,7 +28,7 @@
     btn.id = BTN_ID;
     btn.className = 'top-btn';
     // Set initial icon based on current theme
-    const currentTheme = localStorage.getItem('s918_theme') || 'light';
+    const currentTheme = AppStorage.getItem('theme') || 'light';
     btn.innerHTML = currentTheme === 'light' ? '☽' : '☀';
     btn.title = currentTheme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
     btn.addEventListener('click', (ev) => {

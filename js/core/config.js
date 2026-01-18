@@ -122,7 +122,7 @@ const App = {
         this.storage.setCurrentPage(page);
       } else {
         try {
-          localStorage.setItem("s918_currentPage", page);
+          AppStorage.setItem("currentPage", page);
         } catch (e) {}
       }
       
@@ -167,7 +167,7 @@ const App = {
           // Check if markers are missing in DOM but exist in localStorage
           const markersInDOM = document.querySelectorAll("#seasonMapPage .marker-dot").length;
           const teamId = App.helpers.getCurrentTeamId();
-          const savedMarkers = localStorage.getItem(`s918_seasonMapMarkers_${teamId}`);
+          const savedMarkers = AppStorage.getItem(`seasonMapMarkers_${teamId}`);
           
           if (markersInDOM === 0 && savedMarkers) {
             console.log('[Season Map] Restoring markers from localStorage...');
@@ -197,7 +197,7 @@ const App = {
           
           // Goalie Filter anwenden
           const teamId = App.helpers.getCurrentTeamId();
-          const savedGoalie = localStorage.getItem(`s918_goalMapActiveGoalie_${teamId}`);
+          const savedGoalie = AppStorage.getItem(`goalMapActiveGoalie_${teamId}`);
           if (savedGoalie) {
             this.goalMap.filterByGoalies([savedGoalie]);
           } else {
@@ -327,8 +327,8 @@ const App = {
     this.data.statsData[playerName][category] = (this.data.statsData[playerName][category] || 0) + 1;
     
     // Save to localStorage
-    localStorage.setItem(`s918_goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
-    localStorage.setItem(`s918_statsData_${teamId}`, JSON.stringify(this.data.statsData));
+    AppStorage.setItem(`goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
+    AppStorage.setItem(`statsData_${teamId}`, JSON.stringify(this.data.statsData));
     
     console.log(`Goal Map workflow completed for ${playerName}:`, points);
     
@@ -370,7 +370,7 @@ const App = {
       }
     });
 
-    localStorage.setItem(`s918_goalMapMarkers_${teamId}`, JSON.stringify(existingMarkers));
+    AppStorage.setItem(`goalMapMarkers_${teamId}`, JSON.stringify(existingMarkers));
     console.log("[Workflow] Markers saved to goalMapMarkers:", existingMarkers);
     
     // Reset workflow state

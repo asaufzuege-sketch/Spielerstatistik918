@@ -156,12 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
         App.teamSelection.saveTeams();
       }
       App.saveActiveTimersState(); // Timer State speichern
-      localStorage.setItem("s918_timerSeconds", String(App.timer.seconds));
+      AppStorage.setItem("timerSeconds", String(App.timer.seconds));
       if (App.goalValue) {
         const teamId = App.helpers.getCurrentTeamId();
-        localStorage.setItem(`s918_goalValueOpponents_${teamId}`, JSON.stringify(App.goalValue.getOpponents()));
-        localStorage.setItem(`s918_goalValueData_${teamId}`, JSON.stringify(App.goalValue.getData()));
-        localStorage.setItem(`s918_goalValueBottom_${teamId}`, JSON.stringify(App.goalValue.getBottom()));
+        AppStorage.setItem(`goalValueOpponents_${teamId}`, JSON.stringify(App.goalValue.getOpponents()));
+        AppStorage.setItem(`goalValueData_${teamId}`, JSON.stringify(App.goalValue.getData()));
+        AppStorage.setItem(`goalValueBottom_${teamId}`, JSON.stringify(App.goalValue.getBottom()));
       }
     } catch (e) {
       console.warn("Save on unload failed:", e);
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
 App.saveActiveTimersState = function() {
   try {
     const activeTimerNames = Object.keys(App.data.activeTimers);
-    localStorage.setItem("s918_activeTimerPlayers", JSON.stringify(activeTimerNames));
+    AppStorage.setItem("activeTimerPlayers", JSON.stringify(activeTimerNames));
     console.log("Active timers saved:", activeTimerNames);
   } catch (e) {
     console.warn("Failed to save timer state:", e);
@@ -193,7 +193,7 @@ App.saveActiveTimersState = function() {
 
 App.restoreActiveTimers = function() {
   try {
-    const activeTimerNames = JSON.parse(localStorage.getItem("s918_activeTimerPlayers") || "[]");
+    const activeTimerNames = JSON.parse(AppStorage.getItem("activeTimerPlayers") || "[]");
     
     // Alle bestehenden Timer stoppen
     Object.values(App.data.activeTimers).forEach(timer => {
