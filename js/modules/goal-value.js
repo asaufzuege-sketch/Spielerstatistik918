@@ -1,5 +1,5 @@
 // Goal Value Modul - MIT SCROLLING und STICKY COLUMN
-const STORAGE_PREFIX = 's918_';
+
 App.goalValue = {
   container: null,
   clickTimers: {},

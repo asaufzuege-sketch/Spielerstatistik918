@@ -1,5 +1,5 @@
 // Team Selection Module
-const STORAGE_PREFIX = 's918_';
+
 
 App.teamSelection = (function() {
     console.log('Team Selection Module loading...');
@@ -26,7 +26,7 @@ App.teamSelection = (function() {
         setupModalListeners();
         
         // Load saved current team
-        const savedTeamId = localStorage.getItem(`${STORAGE_PREFIX}currentTeamId`);
+        const savedTeamId = localStorage.getItem(`s918_currentTeamId`);
         if (savedTeamId && getTeam(savedTeamId)) {
             currentTeamId = savedTeamId;
         }
@@ -35,7 +35,7 @@ App.teamSelection = (function() {
     function initializeTeams() {
         // Initialize teams if they don't exist
         TEAMS.forEach(team => {
-            const teamData = localStorage.getItem(`${STORAGE_PREFIX}${team.id}`);
+            const teamData = localStorage.getItem(`s918_${team.id}`);
             if (!teamData) {
                 // Create empty team with no players
                 saveTeam(team.id, {
@@ -73,7 +73,7 @@ App.teamSelection = (function() {
                 playersWithNames = App.data.players ? App.data.players.filter(p => p.name && p.name.trim() !== '').length : 0;
             } else {
                 // Count players with names from playerSelectionData for Team 2 & 3
-                const savedPlayersKey = `${STORAGE_PREFIX}playerSelectionData_${teamDef.id}`;
+                const savedPlayersKey = `s918_playerSelectionData_${teamDef.id}`;
                 try {
                     const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || '[]');
                     playersWithNames = savedPlayers.filter(p => p.name && p.name.trim() !== '').length;
@@ -133,7 +133,7 @@ App.teamSelection = (function() {
     function selectTeam(teamId) {
         console.log('Selecting team:', teamId);
         currentTeamId = teamId;
-        localStorage.setItem(`${STORAGE_PREFIX}currentTeamId`, teamId);
+        localStorage.setItem(`s918_currentTeamId`, teamId);
         updateButtonStates();
         
         // === NEW: Clear Goal Map DOM state ===
@@ -270,7 +270,7 @@ App.teamSelection = (function() {
     }
     
     function getTeam(teamId) {
-        const data = localStorage.getItem(`${STORAGE_PREFIX}${teamId}`);
+        const data = localStorage.getItem(`s918_${teamId}`);
         if (data) {
             try {
                 return JSON.parse(data);
@@ -283,7 +283,7 @@ App.teamSelection = (function() {
     }
     
     function saveTeam(teamId, data) {
-        localStorage.setItem(`${STORAGE_PREFIX}${teamId}`, JSON.stringify(data));
+        localStorage.setItem(`s918_${teamId}`, JSON.stringify(data));
     }
     
     function saveTeams() {
@@ -1016,7 +1016,7 @@ Reset (peruuttamaton)
         modal.className = 'info-modal';
         
         // Get saved language or default to German
-        const savedLanguage = localStorage.getItem(`${STORAGE_PREFIX}infoLanguage`) || 'de';
+        const savedLanguage = localStorage.getItem(`s918_infoLanguage`) || 'de';
         
         modal.innerHTML = `
             <div class="info-content">
@@ -1046,7 +1046,7 @@ Reset (peruuttamaton)
             // Language change event listener
             languageSelect.addEventListener('change', (e) => {
                 const selectedLanguage = e.target.value;
-                localStorage.setItem(`${STORAGE_PREFIX}infoLanguage`, selectedLanguage);
+                localStorage.setItem(`s918_infoLanguage`, selectedLanguage);
                 updateInfoContent(selectedLanguage);
             });
         }

@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = 's918_';
+
 // season_map_momentum.js - Updated mit grauer Punkte und langer Klick für Tor
 (function () {
   const SVG_W = 900;

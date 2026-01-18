@@ -1,5 +1,5 @@
 // Line Up Module
-const STORAGE_PREFIX = 's918_';
+
 App.lineUp = {
   container: null,
   modalOpen: false,

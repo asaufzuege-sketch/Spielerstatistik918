@@ -1,5 +1,5 @@
 // Season Table Modul
-const STORAGE_PREFIX = 's918_';
+
 App.seasonTable = {
   container: null,
   sortState: { index: null, asc: true },

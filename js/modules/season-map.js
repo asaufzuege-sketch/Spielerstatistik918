@@ -1,5 +1,5 @@
 // Season Map Modul – READ ONLY
-const STORAGE_PREFIX = 's918_';
+
 // Shows only data exported from the Goal Map.
 // NO new markers from clicks in Season Map.
 

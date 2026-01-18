@@ -1,6 +1,6 @@
 // Goal Map Modul - Version 2025-12-24 - Deploy Fix
 // Verhalten wie in Repo 912, erweitert um Goal/Shot-Workflow + Spieler-Filter
-const STORAGE_PREFIX = 's918_';
+
 App.goalMap = {
   timeTrackingBox: null,
   playerFilter: null,

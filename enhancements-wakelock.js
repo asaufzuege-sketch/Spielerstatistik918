@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = 's918_';
+
 // enhancements-wakelock.js
 // Refactored to create a Theme Toggle button on the Game Center page (#statsPage)
 // - Creates "Theme" button with gray gradient styling

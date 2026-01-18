@@ -1,5 +1,5 @@
 // Helper-Funktionen
-const STORAGE_PREFIX = 's918_';
+
 
 App.helpers = {
   /**
@@ -9,7 +9,7 @@ App.helpers = {
    * @returns {string} Team ID ('team1', 'team2', or 'team3'). Defaults to 'team1' if no team is selected.
    */
   getCurrentTeamId() {
-    return localStorage.getItem(`${STORAGE_PREFIX}currentTeamId`) || 'team1';
+    return localStorage.getItem(`s918_currentTeamId`) || 'team1';
   },
   
   escapeHtml(s) {
@@ -97,7 +97,7 @@ App.helpers = {
   // Safe JSON parse with error handling and user notification
   safeJSONParse(key, fallback = null) {
     try {
-      const raw = localStorage.getItem(`${STORAGE_PREFIX}${key}`);
+      const raw = localStorage.getItem(`s918_${key}`);
       if (!raw) return fallback;
       return JSON.parse(raw);
     } catch (e) {

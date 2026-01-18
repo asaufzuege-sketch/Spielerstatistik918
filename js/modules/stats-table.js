@@ -1,5 +1,5 @@
 // Stats Table Module mit teamspezifischer Datenverwaltung
-const STORAGE_PREFIX = 's918_';
+
 App.statsTable = {
   container: null,
   dragState: {

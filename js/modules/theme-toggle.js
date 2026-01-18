@@ -1,12 +1,12 @@
 // theme-toggle.js
-const STORAGE_PREFIX = 's918_';
+
 
 // Function to update the theme button icon based on current theme
 function updateThemeButtonIcon() {
     const themeBtn = document.getElementById('themeToggleBtn');
     if (!themeBtn) return;
     
-    const currentTheme = localStorage.getItem(`${STORAGE_PREFIX}theme`) || 'light';
+    const currentTheme = localStorage.getItem(`s918_theme`) || 'light';
     if (currentTheme === 'light') {
         // In Light Mode: Show moon icon (indicates switch to dark)
         themeBtn.innerHTML = '☽';
@@ -21,7 +21,7 @@ function updateThemeButtonIcon() {
 // Function to set the theme
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(`${STORAGE_PREFIX}theme`, theme);
+    localStorage.setItem(`s918_theme`, theme);
     updateThemeButtonIcon();
     
     // Update stats table colors after theme change
@@ -39,13 +39,13 @@ function setTheme(theme) {
 
 // Function to toggle between light and dark mode
 function toggleTheme() {
-    const currentTheme = localStorage.getItem(`${STORAGE_PREFIX}theme`) || 'light';
+    const currentTheme = localStorage.getItem(`s918_theme`) || 'light';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
 }
 
 // Load the theme based on user preference
-const userPreference = localStorage.getItem(`${STORAGE_PREFIX}theme`);
+const userPreference = localStorage.getItem(`s918_theme`);
 if (userPreference) {
     setTheme(userPreference);
 } else {
