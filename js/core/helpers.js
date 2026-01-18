@@ -1,4 +1,6 @@
 // Helper-Funktionen
+
+
 App.helpers = {
   /**
    * Get the current team ID from team selection.
@@ -7,7 +9,7 @@ App.helpers = {
    * @returns {string} Team ID ('team1', 'team2', or 'team3'). Defaults to 'team1' if no team is selected.
    */
   getCurrentTeamId() {
-    return localStorage.getItem('currentTeamId') || 'team1';
+    return localStorage.getItem(`s918_currentTeamId`) || 'team1';
   },
   
   escapeHtml(s) {
@@ -95,7 +97,7 @@ App.helpers = {
   // Safe JSON parse with error handling and user notification
   safeJSONParse(key, fallback = null) {
     try {
-      const raw = localStorage.getItem(key);
+      const raw = localStorage.getItem(`s918_${key}`);
       if (!raw) return fallback;
       return JSON.parse(raw);
     } catch (e) {

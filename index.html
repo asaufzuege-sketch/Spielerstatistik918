@@ -8,6 +8,49 @@
   <link rel="stylesheet" href="season_table_styles.css" />
   <link rel="stylesheet" href="season_map_momentum.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <!-- Storage Migration Script - Must run BEFORE any other scripts -->
+  <script>
+  (function migrateStorage() {
+    const PREFIX = 's918_';
+    const migrationDoneKey = PREFIX + 'migration_done';
+    
+    // Skip if already migrated
+    if (localStorage.getItem(migrationDoneKey)) {
+      console.log('[Storage] Migration already completed');
+      return;
+    }
+    
+    console.log('[Storage Migration] Starting migration...');
+    
+    // Collect all keys that need migration (not starting with any app prefix)
+    // Get all keys first to avoid issues with modifying localStorage during iteration
+    const allKeys = Object.keys(localStorage);
+    const keysToMigrate = allKeys.filter(key => 
+      key && !key.startsWith('s918_') && !key.startsWith('s1player_') && !key.startsWith('s1team_')
+    );
+    
+    // Migrate all found keys
+    let migratedCount = 0;
+    keysToMigrate.forEach(key => {
+      const oldData = localStorage.getItem(key);
+      if (oldData !== null) {
+        const newKey = PREFIX + key;
+        // Only migrate if new key doesn't exist yet
+        if (localStorage.getItem(newKey) === null) {
+          localStorage.setItem(newKey, oldData);
+          localStorage.removeItem(key);
+          migratedCount++;
+          console.log(`[Storage Migration] Migrated: ${key} → ${newKey}`);
+        }
+      }
+    });
+    
+    // Mark migration as done
+    localStorage.setItem(migrationDoneKey, 'true');
+    console.log(`[Storage Migration] Completed! Migrated ${migratedCount} keys.`);
+  })();
+  </script>
 </head>
 <body>
 

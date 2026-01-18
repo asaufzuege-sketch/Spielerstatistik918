@@ -1,3 +1,4 @@
+
 // enhancements-wakelock.js
 // Refactored to create a Theme Toggle button on the Game Center page (#statsPage)
 // - Creates "Theme" button with gray gradient styling
@@ -27,7 +28,7 @@
     btn.id = BTN_ID;
     btn.className = 'top-btn';
     // Set initial icon based on current theme
-    const currentTheme = localStorage.getItem('theme') || 'light';
+    const currentTheme = localStorage.getItem('s918_theme') || 'light';
     btn.innerHTML = currentTheme === 'light' ? '☽' : '☀';
     btn.title = currentTheme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
     btn.addEventListener('click', (ev) => {

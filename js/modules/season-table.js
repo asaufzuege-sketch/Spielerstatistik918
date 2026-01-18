@@ -1,4 +1,5 @@
 // Season Table Modul
+
 App.seasonTable = {
   container: null,
   sortState: { index: null, asc: true },
@@ -297,7 +298,7 @@ setStickyOffsets() {
 
     // Filter out goalies from the player list
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
 
     let goalieNames = [];
     try {
@@ -881,7 +882,7 @@ setStickyOffsets() {
 
     App.data.seasonData = {};
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.removeItem(`seasonData_${teamId}`);
+    localStorage.removeItem(`s918_seasonData_${teamId}`);
     this.render();
     alert("Season data deleted.");
   },
@@ -1093,7 +1094,7 @@ setStickyOffsets() {
     const teamId = App.helpers.getCurrentTeamId();
     if (!teamId) return '';
     
-    const savedPlayersKey = `playerSelectionData_${teamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${teamId}`;
     let players = [];
     try {
       players = JSON.parse(localStorage.getItem(savedPlayersKey) || '[]');

@@ -1,4 +1,5 @@
 // Goal Value Modul - MIT SCROLLING und STICKY COLUMN
+
 App.goalValue = {
   container: null,
   clickTimers: {},
@@ -15,7 +16,7 @@ App.goalValue = {
   getOpponents() {
     try {
       const teamId = App.helpers.getCurrentTeamId();
-      const raw = localStorage.getItem(`goalValueOpponents_${teamId}`);
+      const raw = localStorage.getItem(`s918_goalValueOpponents_${teamId}`);
       if (raw) {
         let opponents = JSON.parse(raw);
         // Convert old German "Gegner" to English "Opponent"
@@ -40,13 +41,13 @@ App.goalValue = {
   
   setOpponents(arr) {
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`goalValueOpponents_${teamId}`, JSON.stringify(arr));
+    localStorage.setItem(`s918_goalValueOpponents_${teamId}`, JSON.stringify(arr));
   },
   
   getData() {
     try {
       const teamId = App.helpers.getCurrentTeamId();
-      const raw = localStorage.getItem(`goalValueData_${teamId}`);
+      const raw = localStorage.getItem(`s918_goalValueData_${teamId}`);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
     return {};
@@ -58,13 +59,13 @@ App.goalValue = {
       return;
     }
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`goalValueData_${teamId}`, JSON.stringify(obj));
+    localStorage.setItem(`s918_goalValueData_${teamId}`, JSON.stringify(obj));
   },
   
   getBottom() {
     try {
       const teamId = App.helpers.getCurrentTeamId();
-      const raw = localStorage.getItem(`goalValueBottom_${teamId}`);
+      const raw = localStorage.getItem(`s918_goalValueBottom_${teamId}`);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
     return this.getOpponents().map(() => 0);
@@ -72,7 +73,7 @@ App.goalValue = {
   
   setBottom(arr) {
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`goalValueBottom_${teamId}`, JSON.stringify(arr));
+    localStorage.setItem(`s918_goalValueBottom_${teamId}`, JSON.stringify(arr));
   },
   
   computeValueForPlayer(name) {
@@ -108,7 +109,7 @@ App.goalValue = {
       });
       
       const teamId = App.helpers.getCurrentTeamId();
-      localStorage.setItem(`goalValueData_${teamId}`, JSON.stringify(all));
+      localStorage.setItem(`s918_goalValueData_${teamId}`, JSON.stringify(all));
       console.log("[Goal Value] ensureDataForSeason completed");
     } finally {
       this.isUpdatingData = false;
@@ -132,7 +133,7 @@ App.goalValue = {
     
     // Filter out goalies - check both playerSelectionData and selectedPlayers
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
     
     try {
       const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
@@ -372,7 +373,7 @@ App.goalValue = {
     
     // Filter out goalies - same logic as render()
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
     
     try {
       const savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");

@@ -5,7 +5,7 @@ App.timer = {
   btn: null,
   
   init() {
-    this.seconds = Number(localStorage.getItem("timerSeconds")) || 0;
+    this.seconds = Number(localStorage.getItem(`s918_timerSeconds`)) || 0;
     this.btn = document.getElementById("timerBtn");
     
     if (this.btn) {
@@ -18,7 +18,7 @@ App.timer = {
     if (this.btn) {
       this.btn.textContent = App.helpers.formatTimeMMSS(this.seconds);
     }
-    localStorage.setItem("timerSeconds", String(this.seconds));
+    localStorage.setItem(`s918_timerSeconds`, String(this.seconds));
   },
   
   start() {

@@ -1,4 +1,6 @@
 // Player Selection Modul
+
+
 App.playerSelection = {
   container: null,
   saveTimeout: null,
@@ -28,8 +30,8 @@ App.playerSelection = {
         // LocalStorage auch löschen - use consistent helper
         const teamId = App.helpers.getCurrentTeamId();
         if (teamId) {
-          localStorage.removeItem(`selectedPlayers_${teamId}`);
-          localStorage.removeItem(`playerSelectionData_${teamId}`);
+          localStorage.removeItem(`s918_selectedPlayers_${teamId}`);
+          localStorage.removeItem(`s918_playerSelectionData_${teamId}`);
         }
         this.render();
       }
@@ -87,7 +89,7 @@ App.playerSelection = {
     const currentTeamId = App.helpers.getCurrentTeamId();
     
     // Load saved player data for the team
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
     let savedPlayers = [];
     try {
       savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
@@ -247,7 +249,7 @@ App.playerSelection = {
   
   saveCurrentState() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
     
     const players = [];
     const items = this.container.querySelectorAll("li");
@@ -301,7 +303,7 @@ App.playerSelection = {
       // Save to team-specific keys for proper persistence
       const teamId = App.helpers.getCurrentTeamId();
       if (teamId) {
-        localStorage.setItem(`selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
+        localStorage.setItem(`s918_selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
       }
       
       App.data.selectedPlayers.forEach(p => {
