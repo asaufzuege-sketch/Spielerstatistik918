@@ -1,11 +1,13 @@
 // Timer Modul
+const STORAGE_PREFIX = 's918_';
+
 App.timer = {
   seconds: 0,
   interval: null,
   btn: null,
   
   init() {
-    this.seconds = Number(localStorage.getItem("timerSeconds")) || 0;
+    this.seconds = Number(localStorage.getItem(`${STORAGE_PREFIX}timerSeconds`)) || 0;
     this.btn = document.getElementById("timerBtn");
     
     if (this.btn) {
@@ -18,7 +20,7 @@ App.timer = {
     if (this.btn) {
       this.btn.textContent = App.helpers.formatTimeMMSS(this.seconds);
     }
-    localStorage.setItem("timerSeconds", String(this.seconds));
+    localStorage.setItem(`${STORAGE_PREFIX}timerSeconds`, String(this.seconds));
   },
   
   start() {

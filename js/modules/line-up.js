@@ -1,4 +1,5 @@
 // Line Up Module
+const STORAGE_PREFIX = 's918_';
 App.lineUp = {
   container: null,
   modalOpen: false,
@@ -20,11 +21,11 @@ App.lineUp = {
   
   loadData() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersOut = localStorage.getItem(`playersOut_${currentTeamId}`);
+    const savedPlayersOut = localStorage.getItem(`s918_playersOut_${currentTeamId}`);
     
     // Load team-specific stats data
     try {
-      const savedStatsData = localStorage.getItem(`statsData_${currentTeamId}`);
+      const savedStatsData = localStorage.getItem(`s918_statsData_${currentTeamId}`);
       App.data.statsData = savedStatsData ? JSON.parse(savedStatsData) : {};
     } catch (e) {
       App.data.statsData = {};
@@ -47,12 +48,12 @@ App.lineUp = {
   
   saveDataForMode(mode) {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`lineUpData_${mode}_${currentTeamId}`, JSON.stringify(this.lineUpData));
+    localStorage.setItem(`s918_lineUpData_${mode}_${currentTeamId}`, JSON.stringify(this.lineUpData));
   },
   
   loadDataForMode(mode) {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedData = localStorage.getItem(`lineUpData_${mode}_${currentTeamId}`);
+    const savedData = localStorage.getItem(`s918_lineUpData_${mode}_${currentTeamId}`);
     
     try {
       this.lineUpData = savedData ? JSON.parse(savedData) : {};
@@ -91,13 +92,13 @@ App.lineUp = {
   
   savePlayersOut() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    localStorage.setItem(`playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
+    localStorage.setItem(`s918_playersOut_${currentTeamId}`, JSON.stringify(this.playersOut));
   },
   
   getAvailablePlayers() {
     // Get players from player selection that are active
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
     
     let players = [];
     try {
@@ -360,7 +361,7 @@ App.lineUp = {
     const currentTeamId = App.helpers.getCurrentTeamId();
     
     modes.forEach(mode => {
-      const key = `lineUpData_${mode}_${currentTeamId}`;
+      const key = `s918_lineUpData_${mode}_${currentTeamId}`;
       const savedData = localStorage.getItem(key);
       
       if (savedData) {
@@ -981,7 +982,7 @@ App.lineUp = {
   
   getPlayersWithMVPPoints() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
     
     let players = [];
     try {
