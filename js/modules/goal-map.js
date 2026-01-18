@@ -987,7 +987,7 @@ App.goalMap = {
     this.timeTrackingInitialized = true;
     
     const teamId = App.helpers.getCurrentTeamId();
-    let timeData = App.helpers.safeJSONParse(`timeData_${teamId}`, {});
+    let timeData = App.helpers.safeJSONParse(`s918_timeData_${teamId}`, {});
     let timeDataWithPlayers = App.helpers.safeJSONParse(`s918_timeDataWithPlayers_${teamId}`, {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
@@ -1044,7 +1044,7 @@ App.goalMap = {
           // This prevents closure capture of stale team data when switching teams.
           const currentTeamId = App.helpers.getCurrentTeamId();
           let currentTimeDataWithPlayers = App.helpers.safeJSONParse(`s918_timeDataWithPlayers_${currentTeamId}`, {});
-          let currentTimeData = App.helpers.safeJSONParse(`timeData_${currentTeamId}`, {});
+          let currentTimeData = App.helpers.safeJSONParse(`s918_timeData_${currentTeamId}`, {});
           
           // Determine if this is a bottom-row (red) button
           const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
