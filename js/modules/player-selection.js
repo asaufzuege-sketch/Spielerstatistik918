@@ -30,8 +30,8 @@ App.playerSelection = {
         // LocalStorage auch löschen - use consistent helper
         const teamId = App.helpers.getCurrentTeamId();
         if (teamId) {
-          localStorage.removeItem(`s918_selectedPlayers_${teamId}`);
-          localStorage.removeItem(`s918_playerSelectionData_${teamId}`);
+          AppStorage.removeItem(`selectedPlayers_${teamId}`);
+          AppStorage.removeItem(`playerSelectionData_${teamId}`);
         }
         this.render();
       }
@@ -89,10 +89,10 @@ App.playerSelection = {
     const currentTeamId = App.helpers.getCurrentTeamId();
     
     // Load saved player data for the team
-    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     let savedPlayers = [];
     try {
-      savedPlayers = JSON.parse(localStorage.getItem(savedPlayersKey) || "[]");
+      savedPlayers = JSON.parse(AppStorage.getItem(savedPlayersKey) || "[]");
     } catch (e) {
       savedPlayers = [];
     }
@@ -249,7 +249,7 @@ App.playerSelection = {
   
   saveCurrentState() {
     const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `s918_playerSelectionData_${currentTeamId}`;
+    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
     
     const players = [];
     const items = this.container.querySelectorAll("li");
@@ -269,7 +269,7 @@ App.playerSelection = {
       });
     });
     
-    localStorage.setItem(savedPlayersKey, JSON.stringify(players));
+    AppStorage.setItem(savedPlayersKey, JSON.stringify(players));
   },
   
   handleConfirm() {
@@ -303,7 +303,7 @@ App.playerSelection = {
       // Save to team-specific keys for proper persistence
       const teamId = App.helpers.getCurrentTeamId();
       if (teamId) {
-        localStorage.setItem(`s918_selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
+        AppStorage.setItem(`selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
       }
       
       App.data.selectedPlayers.forEach(p => {

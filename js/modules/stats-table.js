@@ -131,7 +131,7 @@ App.statsTable = {
       // Teamspezifische Gegner-Schüsse aus LocalStorage wiederherstellen
       if (c === "Shot") {
         const teamId = App.helpers.getCurrentTeamId();
-        const savedOppShots = localStorage.getItem(`s918_opponentShots_${teamId}`);
+        const savedOppShots = AppStorage.getItem(`opponentShots_${teamId}`);
         if (savedOppShots) {
           td.dataset.opp = savedOppShots;
         } else {
@@ -559,7 +559,7 @@ App.statsTable = {
             
             // Gegner-Schüsse teamspezifisch in LocalStorage speichern
             const teamId = App.helpers.getCurrentTeamId();
-            localStorage.setItem(`s918_opponentShots_${teamId}`, tc.dataset.opp);
+            AppStorage.setItem(`opponentShots_${teamId}`, tc.dataset.opp);
             
             // Update display directly without recursion
             // Recalculate own shots fresh from current stats data
@@ -687,7 +687,7 @@ App.statsTable = {
     }
     
     // Load team-specific selectedPlayers order if it exists
-    const savedSelectedPlayers = localStorage.getItem(`s918_selectedPlayers_${teamId}`);
+    const savedSelectedPlayers = AppStorage.getItem(`selectedPlayers_${teamId}`);
     if (savedSelectedPlayers) {
       try {
         App.data.selectedPlayers = JSON.parse(savedSelectedPlayers);
@@ -697,7 +697,7 @@ App.statsTable = {
     }
     
     // Load team-specific stats data
-    const savedStatsData = localStorage.getItem(`s918_statsData_${teamId}`);
+    const savedStatsData = AppStorage.getItem(`statsData_${teamId}`);
     if (savedStatsData) {
       try {
         App.data.statsData = JSON.parse(savedStatsData);
@@ -707,7 +707,7 @@ App.statsTable = {
     }
     
     // Load team-specific player times
-    const savedPlayerTimes = localStorage.getItem(`s918_playerTimes_${teamId}`);
+    const savedPlayerTimes = AppStorage.getItem(`playerTimes_${teamId}`);
     if (savedPlayerTimes) {
       try {
         App.data.playerTimes = JSON.parse(savedPlayerTimes);
@@ -723,15 +723,15 @@ App.statsTable = {
       console.warn('No team selected, cannot save team-specific data');
       return;
     }
-    localStorage.setItem(`s918_selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
-    localStorage.setItem(`s918_statsData_${teamId}`, JSON.stringify(App.data.statsData));
-    localStorage.setItem(`s918_playerTimes_${teamId}`, JSON.stringify(App.data.playerTimes));
+    AppStorage.setItem(`selectedPlayers_${teamId}`, JSON.stringify(App.data.selectedPlayers));
+    AppStorage.setItem(`statsData_${teamId}`, JSON.stringify(App.data.statsData));
+    AppStorage.setItem(`playerTimes_${teamId}`, JSON.stringify(App.data.playerTimes));
   },
   
   saveActiveTimersState() {
     const teamId = App.helpers.getCurrentTeamId();
     const activeTimerPlayers = Object.keys(App.data.activeTimers);
-    localStorage.setItem(`s918_activeTimerPlayers_${teamId}`, JSON.stringify(activeTimerPlayers));
+    AppStorage.setItem(`activeTimerPlayers_${teamId}`, JSON.stringify(activeTimerPlayers));
   },
   
   // Reset nur für aktuelles Team
@@ -751,10 +751,10 @@ App.statsTable = {
     
     // Teamspezifisch löschen - use consistent helper
     const teamId = App.helpers.getCurrentTeamId();
-    localStorage.removeItem(`s918_statsData_${teamId}`);
-    localStorage.removeItem(`s918_playerTimes_${teamId}`);
-    localStorage.removeItem(`s918_activeTimerPlayers_${teamId}`);
-    localStorage.removeItem(`s918_opponentShots_${teamId}`);
+    AppStorage.removeItem(`statsData_${teamId}`);
+    AppStorage.removeItem(`playerTimes_${teamId}`);
+    AppStorage.removeItem(`activeTimerPlayers_${teamId}`);
+    AppStorage.removeItem(`opponentShots_${teamId}`);
     
     // Re-render table
     this.render();
