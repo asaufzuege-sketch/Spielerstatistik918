@@ -739,8 +739,8 @@ App.seasonMap = {
     if (!keep) {
       document.querySelectorAll("#torbildPage .marker-dot").forEach(d => d.remove());
       document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
-      localStorage.removeItem(`s918_timeData_${teamId}`);
-      localStorage.removeItem(`s918_timeDataWithPlayers_${teamId}`);
+      AppStorage.removeItem(`timeData_${teamId}`);
+      AppStorage.removeItem(`timeDataWithPlayers_${teamId}`);
     }
     
     // Show the season map page
