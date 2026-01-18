@@ -621,12 +621,253 @@ setStickyOffsets() {
   },
 
   exportFromStats() {
-    if (!confirm("Export game to Season?")) return;
-
     if (!App.data.selectedPlayers.length) {
       alert("No players selected.");
       return;
     }
+
+    // Show Goal Value popup BEFORE exporting
+    this.showGoalValuePopup(() => {
+      // After confirmation, perform the normal export
+      this.performExport();
+    });
+  },
+  
+  showGoalValuePopup(onComplete) {
+    const modal = document.getElementById("goalValueExportModal");
+    const input = document.getElementById("opponentNameInput");
+    const confirmBtn = document.getElementById("goalValueExportConfirm");
+    const cancelBtn = document.getElementById("goalValueExportCancel");
+    const starRatingContainer = document.getElementById("starRating");
+    const starRatingValue = document.getElementById("starRatingValue");
+    
+    if (!modal || !input || !confirmBtn || !cancelBtn || !starRatingContainer || !starRatingValue) {
+      console.error("[Season Table] Goal Value popup elements not found");
+      // Fallback to direct export if modal not available
+      this.performExport();
+      return;
+    }
+    
+    // Initialize star rating
+    let selectedStars = 0;
+    starRatingContainer.innerHTML = '';
+    
+    // Create 10 stars
+    for (let i = 1; i <= 10; i++) {
+      const star = document.createElement('span');
+      star.className = 'star';
+      star.textContent = '☆';
+      star.dataset.value = i;
+      starRatingContainer.appendChild(star);
+    }
+    
+    // Star rating interaction
+    const stars = starRatingContainer.querySelectorAll('.star');
+    
+    // Click handler
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        selectedStars = parseInt(star.dataset.value);
+        updateStars(selectedStars);
+        starRatingValue.textContent = (selectedStars * 0.5).toFixed(1);
+      });
+    });
+    
+    // Hover handler
+    stars.forEach(star => {
+      star.addEventListener('mouseenter', () => {
+        const hoverValue = parseInt(star.dataset.value);
+        stars.forEach((s, idx) => {
+          if (idx < hoverValue) {
+            s.classList.add('hover');
+            s.textContent = '★';
+          } else {
+            s.classList.remove('hover');
+            if (idx >= selectedStars) {
+              s.textContent = '☆';
+            }
+          }
+        });
+      });
+    });
+    
+    starRatingContainer.addEventListener('mouseleave', () => {
+      updateStars(selectedStars);
+    });
+    
+    function updateStars(count) {
+      stars.forEach((s, idx) => {
+        if (idx < count) {
+          s.classList.add('filled');
+          s.classList.remove('hover');
+          s.textContent = '★';
+        } else {
+          s.classList.remove('filled', 'hover');
+          s.textContent = '☆';
+        }
+      });
+    }
+    
+    // Reset modal state
+    input.value = "";
+    selectedStars = 0;
+    starRatingValue.textContent = "0";
+    updateStars(0);
+    
+    // Show modal
+    modal.style.display = "flex";
+    
+    // Focus input after modal is displayed
+    requestAnimationFrame(() => {
+      input.focus();
+    });
+    
+    // Confirm handler
+    const handleConfirm = () => {
+      const opponentName = input.value.trim();
+      const starValue = selectedStars * 0.5;
+      
+      if (!opponentName) {
+        alert("Bitte Gegner-Name eingeben");
+        return;
+      }
+      
+      if (selectedStars === 0) {
+        alert("Bitte Schwierigkeit auswählen (Sterne)");
+        return;
+      }
+      
+      // Update Goal Value data
+      this.handleGoalValueConfirm(opponentName, starValue);
+      
+      // Close modal
+      modal.style.display = "none";
+      
+      // Clean up event listeners
+      cleanup();
+      
+      // Proceed with export
+      onComplete();
+    };
+    
+    // Cancel handler
+    const handleCancel = () => {
+      modal.style.display = "none";
+      cleanup();
+      // Don't call onComplete - user cancelled
+    };
+    
+    // Close on clicking outside modal
+    const handleOutsideClick = (e) => {
+      if (e.target === modal) {
+        handleCancel();
+      }
+    };
+    
+    // Enter key support
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleConfirm();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        handleCancel();
+      }
+    };
+    
+    // Attach event listeners
+    confirmBtn.addEventListener('click', handleConfirm);
+    cancelBtn.addEventListener('click', handleCancel);
+    modal.addEventListener('click', handleOutsideClick);
+    input.addEventListener('keydown', handleKeyDown);
+    
+    // Cleanup function
+    function cleanup() {
+      confirmBtn.removeEventListener('click', handleConfirm);
+      cancelBtn.removeEventListener('click', handleCancel);
+      modal.removeEventListener('click', handleOutsideClick);
+      input.removeEventListener('keydown', handleKeyDown);
+    }
+  },
+  
+  handleGoalValueConfirm(opponentName, starValue) {
+    console.log(`[Season Table] Goal Value Confirm: ${opponentName} = ${starValue}`);
+    
+    // 1. Get or update opponent list
+    const opponents = App.goalValue.getOpponents();
+    const existingIndex = opponents.findIndex(o => o.toLowerCase() === opponentName.toLowerCase());
+    
+    if (existingIndex === -1) {
+      // New opponent - add to list
+      opponents.push(opponentName);
+      App.goalValue.setOpponents(opponents);
+    }
+    
+    // Get the final index (either existing or newly added)
+    const opponentIndex = opponents.findIndex(o => o.toLowerCase() === opponentName.toLowerCase());
+    
+    // 2. Transfer player goals to Goal Value data
+    const data = App.goalValue.getData();
+    const gameCounts = App.goalValue.getGameCounts();
+    
+    // Ensure arrays are correct length
+    while (gameCounts.length < opponents.length) {
+      gameCounts.push(0);
+    }
+    
+    App.data.selectedPlayers.forEach(player => {
+      const goals = Number(App.data.statsData[player.name]?.Goals || 0);
+      
+      if (!data[player.name]) {
+        data[player.name] = [];
+      }
+      
+      // Ensure player data array has correct length
+      while (data[player.name].length < opponents.length) {
+        data[player.name].push(0);
+      }
+      
+      if (existingIndex === -1) {
+        // New opponent: set goals directly
+        data[player.name][opponentIndex] = goals;
+      } else {
+        // Existing opponent: add goals
+        data[player.name][opponentIndex] = (data[player.name][opponentIndex] || 0) + goals;
+      }
+    });
+    
+    // 3. Update star value in bottom row with averaging
+    const bottom = App.goalValue.getBottom();
+    
+    // Ensure bottom array has correct length
+    while (bottom.length < opponents.length) {
+      bottom.push(0);
+    }
+    
+    if (existingIndex === -1) {
+      // New opponent: set value directly
+      bottom[opponentIndex] = starValue;
+      gameCounts[opponentIndex] = 1;
+    } else {
+      // Existing opponent: calculate average
+      const oldCount = gameCounts[opponentIndex] || 0;
+      const oldValue = bottom[opponentIndex] || 0;
+      const newCount = oldCount + 1;
+      const newAverage = ((oldValue * oldCount) + starValue) / newCount;
+      bottom[opponentIndex] = Math.round(newAverage * 10) / 10; // Round to 1 decimal
+      gameCounts[opponentIndex] = newCount;
+    }
+    
+    // Save all data
+    App.goalValue.setData(data);
+    App.goalValue.setBottom(bottom);
+    App.goalValue.setGameCounts(gameCounts);
+    
+    console.log(`[Season Table] Goal Value updated for ${opponentName} (index ${opponentIndex})`);
+  },
+  
+  performExport() {
+    if (!confirm("Export game to Season?")) return;
 
     App.data.selectedPlayers.forEach(p => {
       const name = p.name;
