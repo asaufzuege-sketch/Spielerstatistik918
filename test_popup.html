@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Goal Value Popup Test</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .input-group {
+            margin: 16px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 4px;
+            font-size: 28px;
+            cursor: pointer;
+            justify-content: center;
+            user-select: none;
+            margin-bottom: 8px;
+        }
+        
+        .star {
+            color: #ccc;
+            transition: color 0.2s, transform 0.1s;
+            cursor: pointer;
+        }
+        
+        .star:hover {
+            transform: scale(1.15);
+        }
+        
+        .star.filled,
+        .star.hover {
+            color: #ffc107;
+        }
+        
+        #starRatingValue {
+            display: inline-block;
+            margin-left: 12px;
+            font-weight: bold;
+            font-size: 20px;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .confirm-btn {
+            background: #44bb91;
+            color: #fff;
+        }
+        
+        .cancel-btn {
+            background: #3a3a3a;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Goal Value Popup Test</h1>
+    <button onclick="showModal()">Show Popup</button>
+    
+    <div id="goalValueExportModal" class="modal">
+        <div class="modal-content">
+            <h3>Goal Value</h3>
+            
+            <div class="input-group">
+                <label for="opponentNameInput">Gegner Name:</label>
+                <input type="text" id="opponentNameInput" placeholder="Gegner eingeben" maxlength="30" />
+            </div>
+            
+            <div class="star-rating-group">
+                <label>Schwierigkeit:</label>
+                <div id="starRating" class="star-rating">
+                </div>
+                <span id="starRatingValue">0</span>
+            </div>
+            
+            <div class="modal-buttons">
+                <button id="goalValueExportConfirm" class="confirm-btn">Bestätigen</button>
+                <button id="goalValueExportCancel" class="cancel-btn">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showModal() {
+            const modal = document.getElementById("goalValueExportModal");
+            const starRatingContainer = document.getElementById("starRating");
+            const starRatingValue = document.getElementById("starRatingValue");
+            const input = document.getElementById("opponentNameInput");
+            
+            let selectedStars = 0;
+            starRatingContainer.innerHTML = '';
+            
+            // Create 10 stars
+            for (let i = 1; i <= 10; i++) {
+                const star = document.createElement('span');
+                star.className = 'star';
+                star.textContent = '☆';
+                star.dataset.value = i;
+                starRatingContainer.appendChild(star);
+            }
+            
+            const stars = starRatingContainer.querySelectorAll('.star');
+            
+            // Click handler
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    selectedStars = parseInt(star.dataset.value);
+                    updateStars(selectedStars);
+                    starRatingValue.textContent = (selectedStars * 0.5).toFixed(1);
+                });
+            });
+            
+            // Hover handler
+            stars.forEach(star => {
+                star.addEventListener('mouseenter', () => {
+                    const hoverValue = parseInt(star.dataset.value);
+                    stars.forEach((s, idx) => {
+                        if (idx < hoverValue) {
+                            s.classList.add('hover');
+                            s.textContent = '★';
+                        } else {
+                            s.classList.remove('hover');
+                            if (idx >= selectedStars) {
+                                s.textContent = '☆';
+                            }
+                        }
+                    });
+                });
+            });
+            
+            starRatingContainer.addEventListener('mouseleave', () => {
+                updateStars(selectedStars);
+            });
+            
+            function updateStars(count) {
+                stars.forEach((s, idx) => {
+                    if (idx < count) {
+                        s.classList.add('filled');
+                        s.classList.remove('hover');
+                        s.textContent = '★';
+                    } else {
+                        s.classList.remove('filled', 'hover');
+                        s.textContent = '☆';
+                    }
+                });
+            }
+            
+            // Reset
+            input.value = "";
+            selectedStars = 0;
+            starRatingValue.textContent = "0";
+            updateStars(0);
+            
+            modal.style.display = "flex";
+            
+            document.getElementById("goalValueExportConfirm").onclick = () => {
+                console.log("Opponent:", input.value, "Stars:", selectedStars * 0.5);
+                modal.style.display = "none";
+            };
+            
+            document.getElementById("goalValueExportCancel").onclick = () => {
+                modal.style.display = "none";
+            };
+        }
+    </script>
+</body>
+</html>

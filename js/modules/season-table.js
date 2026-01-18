@@ -648,6 +648,9 @@ setStickyOffsets() {
       return;
     }
     
+    // Capture context for event handlers
+    const self = this;
+    
     // Initialize star rating
     let selectedStars = 0;
     starRatingContainer.innerHTML = '';
@@ -664,18 +667,38 @@ setStickyOffsets() {
     // Star rating interaction
     const stars = starRatingContainer.querySelectorAll('.star');
     
+    // Helper function to update star display
+    const updateStars = (count) => {
+      stars.forEach((s, idx) => {
+        if (idx < count) {
+          s.classList.add('filled');
+          s.classList.remove('hover');
+          s.textContent = '★';
+        } else {
+          s.classList.remove('filled', 'hover');
+          s.textContent = '☆';
+        }
+      });
+    };
+    
+    // Store click handlers for cleanup
+    const starClickHandlers = [];
+    const starHoverHandlers = [];
+    
     // Click handler
     stars.forEach(star => {
-      star.addEventListener('click', () => {
+      const clickHandler = () => {
         selectedStars = parseInt(star.dataset.value);
         updateStars(selectedStars);
         starRatingValue.textContent = (selectedStars * 0.5).toFixed(1);
-      });
+      };
+      star.addEventListener('click', clickHandler);
+      starClickHandlers.push({ star, handler: clickHandler });
     });
     
     // Hover handler
     stars.forEach(star => {
-      star.addEventListener('mouseenter', () => {
+      const hoverHandler = () => {
         const hoverValue = parseInt(star.dataset.value);
         stars.forEach((s, idx) => {
           if (idx < hoverValue) {
@@ -688,25 +711,15 @@ setStickyOffsets() {
             }
           }
         });
-      });
+      };
+      star.addEventListener('mouseenter', hoverHandler);
+      starHoverHandlers.push({ star, handler: hoverHandler });
     });
     
-    starRatingContainer.addEventListener('mouseleave', () => {
+    const containerLeaveHandler = () => {
       updateStars(selectedStars);
-    });
-    
-    function updateStars(count) {
-      stars.forEach((s, idx) => {
-        if (idx < count) {
-          s.classList.add('filled');
-          s.classList.remove('hover');
-          s.textContent = '★';
-        } else {
-          s.classList.remove('filled', 'hover');
-          s.textContent = '☆';
-        }
-      });
-    }
+    };
+    starRatingContainer.addEventListener('mouseleave', containerLeaveHandler);
     
     // Reset modal state
     input.value = "";
@@ -737,8 +750,8 @@ setStickyOffsets() {
         return;
       }
       
-      // Update Goal Value data
-      this.handleGoalValueConfirm(opponentName, starValue);
+      // Update Goal Value data - use captured context
+      self.handleGoalValueConfirm(opponentName, starValue);
       
       // Close modal
       modal.style.display = "none";
@@ -781,12 +794,21 @@ setStickyOffsets() {
     modal.addEventListener('click', handleOutsideClick);
     input.addEventListener('keydown', handleKeyDown);
     
-    // Cleanup function
+    // Cleanup function - now includes all event listeners
     function cleanup() {
       confirmBtn.removeEventListener('click', handleConfirm);
       cancelBtn.removeEventListener('click', handleCancel);
       modal.removeEventListener('click', handleOutsideClick);
       input.removeEventListener('keydown', handleKeyDown);
+      starRatingContainer.removeEventListener('mouseleave', containerLeaveHandler);
+      
+      // Clean up star event listeners
+      starClickHandlers.forEach(({ star, handler }) => {
+        star.removeEventListener('click', handler);
+      });
+      starHoverHandlers.forEach(({ star, handler }) => {
+        star.removeEventListener('mouseenter', handler);
+      });
     }
   },
   
