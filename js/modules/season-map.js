@@ -115,7 +115,7 @@ App.seasonMap = {
       
       // Get goalies from markers
       const teamId = App.helpers.getCurrentTeamId();
-      const allMarkers = App.helpers.safeJSONParse(`s918_seasonMapMarkers_${teamId}`, []);
+      const allMarkers = App.helpers.safeJSONParse(`seasonMapMarkers_${teamId}`, []);
       if (allMarkers) {
         allMarkers.forEach(markersForBox => {
           if (Array.isArray(markersForBox)) {
@@ -308,7 +308,7 @@ App.seasonMap = {
     if (!this.timeTrackingBox) return;
     
     const teamId = App.helpers.getCurrentTeamId();
-    const timeDataWithPlayers = App.helpers.safeJSONParse(`s918_seasonMapTimeDataWithPlayers_${teamId}`, {});
+    const timeDataWithPlayers = App.helpers.safeJSONParse(`seasonMapTimeDataWithPlayers_${teamId}`, {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `sp${pIdx + 1}`;
@@ -373,7 +373,7 @@ App.seasonMap = {
     if (!this.timeTrackingBox) return;
     
     const teamId = App.helpers.getCurrentTeamId();
-    const timeDataWithPlayers = App.helpers.safeJSONParse(`s918_seasonMapTimeDataWithPlayers_${teamId}`, {});
+    const timeDataWithPlayers = App.helpers.safeJSONParse(`seasonMapTimeDataWithPlayers_${teamId}`, {});
     
     this.timeTrackingBox.querySelectorAll(".period").forEach((period, pIdx) => {
       const periodNum = period.dataset.period || `sp${pIdx + 1}`;
@@ -413,7 +413,7 @@ App.seasonMap = {
     
     // Marker laden (werden NICHT neu gesetzt, nur angezeigt)
     const teamId = App.helpers.getCurrentTeamId();
-    const allMarkers = App.helpers.safeJSONParse(`s918_seasonMapMarkers_${teamId}`, null);
+    const allMarkers = App.helpers.safeJSONParse(`seasonMapMarkers_${teamId}`, null);
     if (allMarkers) {
       allMarkers.forEach((markersForBox, idx) => {
         const box = boxes[idx];
@@ -712,7 +712,7 @@ App.seasonMap = {
     AppStorage.setItem(`seasonMapMarkers_${teamId}`, JSON.stringify(allMarkers));
     
     // Time data: OVERWRITE with current game data
-    const newTimeData = App.helpers.safeJSONParse(`s918_timeDataWithPlayers_${teamId}`, {});
+    const newTimeData = App.helpers.safeJSONParse(`timeDataWithPlayers_${teamId}`, {});
     AppStorage.setItem(`seasonMapTimeDataWithPlayers_${teamId}`, JSON.stringify(newTimeData));
     
     // Flache Zeitdaten für Momentum-Graph
@@ -848,7 +848,7 @@ App.seasonMap = {
         
         // Update time data with goalie assignment
         const teamId = App.helpers.getCurrentTeamId();
-        let timeDataWithPlayers = App.helpers.safeJSONParse(`s918_seasonMapTimeDataWithPlayers_${teamId}`, {});
+        let timeDataWithPlayers = App.helpers.safeJSONParse(`seasonMapTimeDataWithPlayers_${teamId}`, {});
         
         if (!timeDataWithPlayers[key]) {
           timeDataWithPlayers[key] = {};

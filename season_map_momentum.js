@@ -427,7 +427,7 @@
     goalieFilter = App.helpers.normalizeGoalieFilter(goalieFilter);
     
     // Load per-player data instead of aggregated totals
-    const timeDataWithPlayers = App.helpers.safeJSONParse(`s918_seasonMapTimeDataWithPlayers_${teamId}`, {});
+    const timeDataWithPlayers = App.helpers.safeJSONParse(`seasonMapTimeDataWithPlayers_${teamId}`, {});
     
     // Helper: Sum button value based on filter
     function sumButton(key, isBottomRow) {
