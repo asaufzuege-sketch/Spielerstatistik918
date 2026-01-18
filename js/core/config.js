@@ -323,8 +323,14 @@ const App = {
       this.data.statsData[playerName] = {};
     }
     
-    const category = eventType === 'goal' ? 'Goals' : 'Shot';
-    this.data.statsData[playerName][category] = (this.data.statsData[playerName][category] || 0) + 1;
+    if (eventType === 'goal') {
+      // For goals: increment both Goals AND Shot (every goal is also a shot)
+      this.data.statsData[playerName]['Goals'] = (this.data.statsData[playerName]['Goals'] || 0) + 1;
+      this.data.statsData[playerName]['Shot'] = (this.data.statsData[playerName]['Shot'] || 0) + 1;
+    } else if (eventType === 'shot') {
+      // For shots only: increment Shot
+      this.data.statsData[playerName]['Shot'] = (this.data.statsData[playerName]['Shot'] || 0) + 1;
+    }
     
     // Save to localStorage
     localStorage.setItem(`s918_goalMapData_${teamId}`, JSON.stringify(this.data.goalMapData));
