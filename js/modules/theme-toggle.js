@@ -1,6 +1,5 @@
 // theme-toggle.js
 
-
 // Function to update the theme button icon based on current theme
 function updateThemeButtonIcon() {
     const themeBtn = document.getElementById('themeToggleBtn');

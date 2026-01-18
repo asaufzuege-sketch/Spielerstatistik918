@@ -24,14 +24,11 @@
     console.log('[Storage Migration] Starting migration...');
     
     // Collect all keys that need migration (not starting with any app prefix)
-    const keysToMigrate = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      // Skip keys that already have an app prefix
-      if (key && !key.startsWith('s918_') && !key.startsWith('s1player_') && !key.startsWith('s1team_')) {
-        keysToMigrate.push(key);
-      }
-    }
+    // Get all keys first to avoid issues with modifying localStorage during iteration
+    const allKeys = Object.keys(localStorage);
+    const keysToMigrate = allKeys.filter(key => 
+      key && !key.startsWith('s918_') && !key.startsWith('s1player_') && !key.startsWith('s1team_')
+    );
     
     // Migrate all found keys
     let migratedCount = 0;

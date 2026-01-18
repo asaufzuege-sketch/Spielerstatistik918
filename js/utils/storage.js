@@ -1,6 +1,4 @@
 // LocalStorage Verwaltung with s918_ prefix
-
-
 App.storage = {
   load() {
     const teamId = App.helpers.getCurrentTeamId();

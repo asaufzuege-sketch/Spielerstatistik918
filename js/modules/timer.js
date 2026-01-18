@@ -1,6 +1,4 @@
 // Timer Modul
-
-
 App.timer = {
   seconds: 0,
   interval: null,
