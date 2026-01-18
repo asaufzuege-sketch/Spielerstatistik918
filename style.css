@@ -3299,3 +3299,141 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   }
 }
 
+/* ===== GOAL VALUE EXPORT MODAL - STAR RATING ===== */
+
+/* Input group styling for Goal Value Modal */
+#goalValueExportModal .input-group {
+  margin: 16px 0;
+}
+
+#goalValueExportModal .input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+#goalValueExportModal .input-group input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] #goalValueExportModal .input-group input[type="text"] {
+  border-color: #555;
+  background: #2a2a2a;
+}
+
+#goalValueExportModal .input-group input[type="text"]:focus {
+  outline: none;
+  border-color: #44bb91;
+  box-shadow: 0 0 0 2px rgba(68, 187, 145, 0.2);
+}
+
+/* Star Rating Container */
+.star-rating-group {
+  margin: 20px 0;
+}
+
+.star-rating-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.star-rating {
+  display: flex;
+  gap: 4px;
+  font-size: 28px;
+  cursor: pointer;
+  justify-content: center;
+  user-select: none;
+  margin-bottom: 8px;
+}
+
+.star-rating .star {
+  color: #ccc;
+  transition: color 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+
+.star-rating .star:hover {
+  transform: scale(1.15);
+}
+
+.star-rating .star.filled,
+.star-rating .star.hover {
+  color: #ffc107; /* Gold */
+}
+
+[data-theme="dark"] .star-rating .star {
+  color: #555;
+}
+
+[data-theme="dark"] .star-rating .star.filled,
+[data-theme="dark"] .star-rating .star.hover {
+  color: #ffd700; /* Brighter gold for dark mode */
+}
+
+/* Star Rating Value Display */
+#starRatingValue {
+  display: inline-block;
+  margin-left: 12px;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--text-color);
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Goal Value Export Modal specific button styling */
+#goalValueExportModal .modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+#goalValueExportModal .modal-buttons button {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+#goalValueExportConfirm {
+  background: #44bb91;
+  color: #fff;
+}
+
+#goalValueExportConfirm:hover {
+  background: #3a9d7a;
+}
+
+#goalValueExportCancel {
+  background: #3a3a3a;
+  color: #fff;
+}
+
+#goalValueExportCancel:hover {
+  background: #4a4a4a;
+}
+
+[data-theme="dark"] #goalValueExportCancel {
+  background: #4a4a4a;
+}
+
+[data-theme="dark"] #goalValueExportCancel:hover {
+  background: #5a5a5a;
+}
+

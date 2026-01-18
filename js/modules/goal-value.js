@@ -76,6 +76,20 @@ App.goalValue = {
     AppStorage.setItem(`goalValueBottom_${teamId}`, JSON.stringify(arr));
   },
   
+  getGameCounts() {
+    try {
+      const teamId = App.helpers.getCurrentTeamId();
+      const raw = AppStorage.getItem(`goalValueGameCounts_${teamId}`);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return this.getOpponents().map(() => 0);
+  },
+  
+  setGameCounts(arr) {
+    const teamId = App.helpers.getCurrentTeamId();
+    AppStorage.setItem(`goalValueGameCounts_${teamId}`, JSON.stringify(arr));
+  },
+  
   computeValueForPlayer(name) {
     const data = this.getData();
     const bottom = this.getBottom();
