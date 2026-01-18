@@ -143,9 +143,9 @@ App.teamSelection = (function() {
         document.querySelectorAll("#torbildPage .time-btn").forEach(btn => btn.textContent = "0");
         // Remove overlays
         document.querySelectorAll('.goalie-name-overlay, .goalie-name-goal, .player-name-overlay').forEach(el => el.remove());
-        // Reset timeTrackingInitialized flag
+        // Reset filters (but not timeTrackingInitialized - that should remain true once set)
+        // The event listeners will dynamically read the new team's data
         if (App.goalMap) {
-            App.goalMap.timeTrackingInitialized = false;
             App.goalMap.playerFilter = null;
         }
         

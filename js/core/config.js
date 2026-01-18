@@ -184,8 +184,9 @@ const App = {
           }
         }
         if (page === "torbild" && this.goalMap) {
-          // Reset timeTracking initialization flag to ensure buttons are re-initialized
-          this.goalMap.timeTrackingInitialized = false;
+          // Note: timeTrackingInitialized flag should remain true once set.
+          // It is only reset in the explicit reset() function to allow re-initialization.
+          // Resetting it here without calling initTimeTracking() would create an inconsistent state.
           
           // Nach dem Anzeigen der torbild-Seite, Marker wiederherstellen
           if (typeof this.goalMap.restoreMarkers === 'function') {
