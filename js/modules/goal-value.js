@@ -53,6 +53,13 @@ App.goalValue = {
           // Also reset bottom and gameCounts arrays
           this.setBottom(Array(MIN_COLUMNS).fill(0));
           this.setGameCounts(Array(MIN_COLUMNS).fill(0));
+          
+          // Reset player data to match new column count
+          const data = this.getData();
+          Object.keys(data).forEach(playerName => {
+            data[playerName] = Array(MIN_COLUMNS).fill(0);
+          });
+          this.setData(data);
         } else {
           // Find the last used column index
           let lastUsedIndex = -1;
@@ -82,6 +89,18 @@ App.goalValue = {
             const trimmedGameCounts = gameCounts.slice(0, targetColumns);
             while (trimmedGameCounts.length < targetColumns) trimmedGameCounts.push(0);
             this.setGameCounts(trimmedGameCounts);
+            
+            // Trim player data arrays to match new column count
+            const data = this.getData();
+            Object.keys(data).forEach(playerName => {
+              if (Array.isArray(data[playerName])) {
+                data[playerName] = data[playerName].slice(0, targetColumns);
+                while (data[playerName].length < targetColumns) {
+                  data[playerName].push(0);
+                }
+              }
+            });
+            this.setData(data);
           } else if (opponents.length < MIN_COLUMNS) {
             // Expand to MIN_COLUMNS
             needsSave = true;
