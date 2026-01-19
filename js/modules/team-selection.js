@@ -358,7 +358,7 @@ Gegner-Schüsse: In der Shot-Totals-Zelle (unten) per Klick/Doppelklick zählen.
 
 Download: Spieldaten werden als Excel heruntergeladen.
 
-Export Season: Spieldaten werden zu Saisonstatistiken addiert. Dabei werden Sie gebeten, einen Goal Value Wert einzugeben. Bsp: 1 Stern = sehr schwacher Gegner, einfach Tore zu erzielen, Gegner am untersten Tabellen Ende, Chance auf viele Schüsse. 10 Sterne = Sehr starker Gegner, Tabellen Leader, Schwer zu Chancen zu kommen, eher weniger Schüsse zugelassen.
+Export Season: Spieldaten werden zu Saisonstatistiken addiert. Dabei werden Sie gebeten, einen Goal Value Wert einzugeben. Bsp: 1 Stern = sehr schwacher Gegner, einfach Tore zu erzielen, Gegner am untersten Tabellen Ende, Chance auf viele Schüsse. 10 Sterne = Sehr starker Gegner, Tabellen Leader, Schwer Chancen zu bekommen, eher weniger Schüsse zugelassen.
 
 Mit Button (☀️/🌙) kann zwischen Light- und Dark Mode gewechselt werden.
 
@@ -410,7 +410,7 @@ ________________________________________
 Goal Value
 Dieser Wert wird für die Saisonstatistiken benötigt.
 Manuelle Eingabe der erzielten Tore gegen den jeweiligen Gegner möglich.
-Untere Skala (Bottom) gewichtet Gegnerstärke; Value = Summe (Wert × Gewicht). Dieser Wert zeigt ein Mittelwert aller exportierten Werte für diesen Gegner an, kann manuell angepasst werden.
+Untere Skala (Bottom) gewichtet Gegnerstärke; Value = Summe (Wert × Gewicht). Dieser Wert zeigt einen Mittelwert aller exportierten Werte für diesen Gegner an, kann manuell angepasst werden.
 Reset setzt alle Werte, Skalen und Gegnernamen zurück.
 
 ________________________________________
