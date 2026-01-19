@@ -14,7 +14,7 @@ App.goalValue = {
   },
   
   getOpponents() {
-    const MIN_COLUMNS = 15;  // GEÄNDERT von 19 auf 15
+    const MIN_COLUMNS = 15;  // CHANGED from 19 to 15
     
     try {
       const teamId = App.helpers.getCurrentTeamId();
@@ -32,21 +32,21 @@ App.goalValue = {
           return op;
         });
         
-        // Sicherstellen dass mindestens MIN_COLUMNS vorhanden sind
+        // Ensure at least MIN_COLUMNS are present
         while (opponents.length < MIN_COLUMNS) {
           opponents.push(`Opponent ${opponents.length + 1}`);
         }
         
-        // NEUE LOGIK: Prüfen ob alle Spalten gefüllt sind
+        // NEW LOGIC: Check if all columns are filled
         const bottom = this.getBottom();
         const allFilled = opponents.every((_, idx) => {
           return idx < bottom.length && Number(bottom[idx]) > 0;
         });
         
-        // Wenn alle gefüllt, eine neue leere Spalte hinzufügen
+        // If all filled, add a new empty column
         if (allFilled && opponents.length === bottom.length) {
           opponents.push(`Opponent ${opponents.length + 1}`);
-          // Bottom und gameCounts Array auch erweitern
+          // Also extend Bottom and gameCounts arrays
           const newBottom = [...bottom, 0];
           this.setBottom(newBottom);
           const gameCounts = this.getGameCounts();
@@ -63,7 +63,7 @@ App.goalValue = {
       console.error("[Goal Value] Error loading opponents:", e);
     }
     
-    // Default: 15 leere Spalten
+    // Default: 15 empty columns
     return Array.from({ length: MIN_COLUMNS }, (_, i) => `Opponent ${i + 1}`);
   },
   
@@ -395,8 +395,8 @@ App.goalValue = {
     
     console.log('Goal Value Table rendered with scroll wrapper and WORKING sticky columns');
     
-    // Am Ende der render() Funktion:
-    // Prüfen ob dynamische Erweiterung nötig ist
+    // At the end of render() function:
+    // Check if dynamic expansion is needed
     this.checkAndExpandColumns();
   },
   
@@ -404,26 +404,26 @@ App.goalValue = {
     const opponents = this.getOpponents();
     const bottom = this.getBottom();
     
-    // Prüfen ob ALLE Spalten einen Bottom-Wert > 0 haben
+    // Check if ALL columns have a Bottom value > 0
     const allFilled = opponents.every((_, idx) => {
       return idx < bottom.length && Number(bottom[idx]) > 0;
     });
     
     if (allFilled) {
-      // Neue Spalte hinzufügen
+      // Add new column
       const newOpponents = [...opponents, `Opponent ${opponents.length + 1}`];
       this.setOpponents(newOpponents);
       
-      // Bottom Array erweitern
+      // Extend Bottom array
       const newBottom = [...bottom, 0];
       this.setBottom(newBottom);
       
-      // GameCounts Array erweitern
+      // Extend GameCounts array
       const gameCounts = this.getGameCounts();
       gameCounts.push(0);
       this.setGameCounts(gameCounts);
       
-      // Data für alle Spieler erweitern
+      // Extend data for all players
       const data = this.getData();
       Object.keys(data).forEach(playerName => {
         if (Array.isArray(data[playerName])) {
@@ -434,8 +434,8 @@ App.goalValue = {
       
       console.log("[Goal Value] Added new column, total:", newOpponents.length);
       
-      // Tabelle neu rendern mit neuer Spalte
-      // Verwende setTimeout um Rekursion zu vermeiden
+      // Re-render table with new column
+      // Use setTimeout to avoid recursion
       setTimeout(() => this.render(), 0);
     }
   },

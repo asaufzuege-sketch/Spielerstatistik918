@@ -1091,7 +1091,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-width: none;
 }
 
-/* Goal Value Container zentrieren */
+/* Center Goal Value Container */
 #goalValueContainer {
   display: flex;
   justify-content: center;
@@ -1123,7 +1123,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Goal Value Wrapper zentrieren */
+/* Center Goal Value Wrapper */
 .goal-value-wrapper {
   margin: 0 auto;
 }
