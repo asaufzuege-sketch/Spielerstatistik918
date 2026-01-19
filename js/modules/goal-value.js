@@ -14,6 +14,8 @@ App.goalValue = {
   },
   
   getOpponents() {
+    const MIN_COLUMNS = 15;  // GEÄNDERT von 19 auf 15
+    
     try {
       const teamId = App.helpers.getCurrentTeamId();
       const raw = AppStorage.getItem(`goalValueOpponents_${teamId}`);
@@ -24,19 +26,45 @@ App.goalValue = {
         opponents = opponents.map((op, i) => {
           if (op && op.startsWith("Gegner")) {
             needsSave = true;
-            // Try to preserve original number from "Gegner X" format
             const match = op.match(/Gegner\s+(\d+)/);
             return match ? `Opponent ${match[1]}` : `Opponent ${i + 1}`;
           }
           return op;
         });
+        
+        // Sicherstellen dass mindestens MIN_COLUMNS vorhanden sind
+        while (opponents.length < MIN_COLUMNS) {
+          opponents.push(`Opponent ${opponents.length + 1}`);
+        }
+        
+        // NEUE LOGIK: Prüfen ob alle Spalten gefüllt sind
+        const bottom = this.getBottom();
+        const allFilled = opponents.every((_, idx) => {
+          return idx < bottom.length && Number(bottom[idx]) > 0;
+        });
+        
+        // Wenn alle gefüllt, eine neue leere Spalte hinzufügen
+        if (allFilled && opponents.length === bottom.length) {
+          opponents.push(`Opponent ${opponents.length + 1}`);
+          // Bottom und gameCounts Array auch erweitern
+          const newBottom = [...bottom, 0];
+          this.setBottom(newBottom);
+          const gameCounts = this.getGameCounts();
+          gameCounts.push(0);
+          this.setGameCounts(gameCounts);
+        }
+        
         if (needsSave) {
           this.setOpponents(opponents);
         }
         return opponents;
       }
-    } catch (e) {}
-    return Array.from({ length: 19 }, (_, i) => `Opponent ${i + 1}`);
+    } catch (e) {
+      console.error("[Goal Value] Error loading opponents:", e);
+    }
+    
+    // Default: 15 leere Spalten
+    return Array.from({ length: MIN_COLUMNS }, (_, i) => `Opponent ${i + 1}`);
   },
   
   setOpponents(arr) {
@@ -366,6 +394,50 @@ App.goalValue = {
     this.container.appendChild(wrapper);
     
     console.log('Goal Value Table rendered with scroll wrapper and WORKING sticky columns');
+    
+    // Am Ende der render() Funktion:
+    // Prüfen ob dynamische Erweiterung nötig ist
+    this.checkAndExpandColumns();
+  },
+  
+  checkAndExpandColumns() {
+    const opponents = this.getOpponents();
+    const bottom = this.getBottom();
+    
+    // Prüfen ob ALLE Spalten einen Bottom-Wert > 0 haben
+    const allFilled = opponents.every((_, idx) => {
+      return idx < bottom.length && Number(bottom[idx]) > 0;
+    });
+    
+    if (allFilled) {
+      // Neue Spalte hinzufügen
+      const newOpponents = [...opponents, `Opponent ${opponents.length + 1}`];
+      this.setOpponents(newOpponents);
+      
+      // Bottom Array erweitern
+      const newBottom = [...bottom, 0];
+      this.setBottom(newBottom);
+      
+      // GameCounts Array erweitern
+      const gameCounts = this.getGameCounts();
+      gameCounts.push(0);
+      this.setGameCounts(gameCounts);
+      
+      // Data für alle Spieler erweitern
+      const data = this.getData();
+      Object.keys(data).forEach(playerName => {
+        if (Array.isArray(data[playerName])) {
+          data[playerName].push(0);
+        }
+      });
+      this.setData(data);
+      
+      console.log("[Goal Value] Added new column, total:", newOpponents.length);
+      
+      // Tabelle neu rendern mit neuer Spalte
+      // Verwende setTimeout um Rekursion zu vermeiden
+      setTimeout(() => this.render(), 0);
+    }
   },
   
   updateValueCell(playerName, valueCellMap) {
