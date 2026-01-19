@@ -4,6 +4,7 @@ App.goalValue = {
   container: null,
   clickTimers: {},
   isUpdatingData: false,
+  isExpandingColumns: false,  // Flag to prevent infinite recursion
   
   init() {
     this.container = document.getElementById("goalValueContainer");
@@ -14,6 +15,8 @@ App.goalValue = {
   },
   
   getOpponents() {
+    const MIN_COLUMNS = 15;  // CHANGED from 19 to 15
+    
     try {
       const teamId = App.helpers.getCurrentTeamId();
       const raw = AppStorage.getItem(`goalValueOpponents_${teamId}`);
@@ -24,19 +27,28 @@ App.goalValue = {
         opponents = opponents.map((op, i) => {
           if (op && op.startsWith("Gegner")) {
             needsSave = true;
-            // Try to preserve original number from "Gegner X" format
             const match = op.match(/Gegner\s+(\d+)/);
             return match ? `Opponent ${match[1]}` : `Opponent ${i + 1}`;
           }
           return op;
         });
+        
+        // Ensure at least MIN_COLUMNS are present
+        while (opponents.length < MIN_COLUMNS) {
+          opponents.push(`Opponent ${opponents.length + 1}`);
+        }
+        
         if (needsSave) {
           this.setOpponents(opponents);
         }
         return opponents;
       }
-    } catch (e) {}
-    return Array.from({ length: 19 }, (_, i) => `Opponent ${i + 1}`);
+    } catch (e) {
+      console.error("[Goal Value] Error loading opponents:", e);
+    }
+    
+    // Default: 15 empty columns
+    return Array.from({ length: MIN_COLUMNS }, (_, i) => `Opponent ${i + 1}`);
   },
   
   setOpponents(arr) {
@@ -98,7 +110,7 @@ App.goalValue = {
   },
   
   formatValueNumber(v) {
-    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v. toFixed(1))); 
+    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v.toFixed(1))); 
   },
   
   ensureDataForSeason() {
@@ -113,7 +125,7 @@ App.goalValue = {
       const opponents = this.getOpponents();
       const all = this.getData();
       
-      Object.keys(App.data. seasonData).forEach(name => {
+      Object.keys(App.data.seasonData).forEach(name => {
         if (!all[name] || !Array.isArray(all[name])) {
           all[name] = opponents.map(() => 0);
         } else {
@@ -164,12 +176,14 @@ App.goalValue = {
       playersList = playersList.filter(name => !goalieNames.includes(name));
     }
     
-    // WICHTIG: Wrapper OHNE position:relative - das blockiert sticky! 
+    // Wrapper with centering
     const wrapper = document.createElement('div');
     wrapper.className = 'table-scroll';
     wrapper.style.width = '100%';
     wrapper.style.boxSizing = 'border-box';
-    // ENTFERNT: wrapper.style.position = 'relative'; - blockiert sticky columns! 
+    wrapper.style.display = 'flex';
+    wrapper.style.justifyContent = 'center';
+    // REMOVED: wrapper.style.position = 'relative'; - blocks sticky columns! 
     
     const table = document.createElement("table");
     table.className = "goalvalue-table gv-no-patch";
@@ -204,7 +218,7 @@ App.goalValue = {
         this.setOpponents(arr);
         this.render();
       });
-      th. appendChild(input);
+      th.appendChild(input);
       headerRow.appendChild(th);
     });
     
@@ -229,9 +243,9 @@ App.goalValue = {
       tdName.textContent = name;
       tdName.className = "gv-name-cell sticky-col";
       tdName.style.minWidth = "120px";
-      row. appendChild(tdName);
+      row.appendChild(tdName);
       
-      const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name]. slice() : opponents.map(() => 0);
+      const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
       while (vals.length < opponents.length) vals.push(0);
       
       opponents.forEach((_, i) => {
@@ -253,7 +267,7 @@ App.goalValue = {
           const oppIdx = Number(td.dataset.oppIdx);
           
           if (this.clickTimers[cellId]) {
-            clearTimeout(this. clickTimers[cellId]);
+            clearTimeout(this.clickTimers[cellId]);
             delete this.clickTimers[cellId];
             
             // DOPPELKLICK: -1
@@ -267,14 +281,14 @@ App.goalValue = {
             td.style.color = nv > 0 ?  colors.pos : nv < 0 ? colors.neg : colors.zero;
             td.style.fontWeight = nv !== 0 ? "700" : "400";
             
-            this. updateValueCell(playerName, valueCellMap);
+            this.updateValueCell(playerName, valueCellMap);
             
           } else {
             this.clickTimers[cellId] = setTimeout(() => {
               delete this.clickTimers[cellId];
               
               // EINZELKLICK: +1
-              const d = this. getData();
+              const d = this.getData();
               if (!d[playerName]) d[playerName] = opponents.map(() => 0);
               d[playerName][oppIdx] = Number(d[playerName][oppIdx] || 0) + 1;
               this.setData(d, true);
@@ -296,8 +310,8 @@ App.goalValue = {
       const val = this.computeValueForPlayer(name);
       valueTd.textContent = this.formatValueNumber(val);
       valueTd.className = "gv-value-cell";
-      valueTd.style. color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
-      valueTd.style.fontWeight = val !== 0 ?  "700" : "400";
+      valueTd.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
+      valueTd.style.fontWeight = val !== 0 ? "700" : "400";
       row.appendChild(valueTd);
       
       valueCellMap[name] = valueTd;
@@ -305,8 +319,8 @@ App.goalValue = {
     });
     
     // Bottom Scale Row
-    const bottomRow = document. createElement("tr");
-    bottomRow.className = (playersList.length % 2 === 0 ?  "even-row" : "odd-row");
+    const bottomRow = document.createElement("tr");
+    bottomRow.className = (playersList.length % 2 === 0 ? "even-row" : "odd-row");
     bottomRow.style.background = "rgba(0,0,0,0.03)";
     
     const labelTd = document.createElement("td");
@@ -320,7 +334,7 @@ App.goalValue = {
     
     const storedBottom = this.getBottom();
     while (storedBottom.length < opponents.length) storedBottom.push(0);
-    if (storedBottom.length > opponents.length) storedBottom. length = opponents.length;
+    if (storedBottom.length > opponents.length) storedBottom.length = opponents.length;
     this.setBottom(storedBottom);
     
     opponents.forEach((_, i) => {
@@ -346,7 +360,7 @@ App.goalValue = {
         arr[i] = newValue;
         this.setBottom(arr);
         
-        Object.keys(valueCellMap). forEach(pn => {
+        Object.keys(valueCellMap).forEach(pn => {
           this.updateValueCell(pn, valueCellMap);
         });
       });
@@ -366,6 +380,69 @@ App.goalValue = {
     this.container.appendChild(wrapper);
     
     console.log('Goal Value Table rendered with scroll wrapper and WORKING sticky columns');
+    
+    // At the end of render() function:
+    // Check if dynamic expansion is needed
+    this.checkAndExpandColumns();
+  },
+  
+  checkAndExpandColumns() {
+    // Prevent infinite recursion
+    if (this.isExpandingColumns) {
+      console.log("[Goal Value] Column expansion already in progress, skipping");
+      return;
+    }
+    
+    const opponents = this.getOpponents();
+    const bottom = this.getBottom();
+    
+    // Ensure bottom array matches opponents length
+    while (bottom.length < opponents.length) {
+      bottom.push(0);
+    }
+    if (bottom.length > opponents.length) {
+      bottom.length = opponents.length;
+    }
+    
+    // Check if ALL columns have a Bottom value > 0
+    const allFilled = opponents.every((_, idx) => {
+      return idx < bottom.length && Number(bottom[idx]) > 0;
+    });
+    
+    if (allFilled) {
+      this.isExpandingColumns = true;
+      
+      // Add new column
+      const newOpponents = [...opponents, `Opponent ${opponents.length + 1}`];
+      this.setOpponents(newOpponents);
+      
+      // Extend Bottom array
+      const newBottom = [...bottom, 0];
+      this.setBottom(newBottom);
+      
+      // Extend GameCounts array
+      const gameCounts = this.getGameCounts();
+      gameCounts.push(0);
+      this.setGameCounts(gameCounts);
+      
+      // Extend data for all players
+      const data = this.getData();
+      Object.keys(data).forEach(playerName => {
+        if (Array.isArray(data[playerName])) {
+          data[playerName].push(0);
+        }
+      });
+      this.setData(data);
+      
+      console.log("[Goal Value] Added new column, total:", newOpponents.length);
+      
+      // Re-render table with new column
+      // Use setTimeout to avoid recursion
+      setTimeout(() => {
+        this.isExpandingColumns = false;
+        this.render();
+      }, 0);
+    }
   },
   
   updateValueCell(playerName, valueCellMap) {
@@ -376,16 +453,16 @@ App.goalValue = {
     const val = this.computeValueForPlayer(playerName);
     vc.textContent = this.formatValueNumber(val);
     vc.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
-    vc. style.fontWeight = val !== 0 ? "700" : "400";
+    vc.style.fontWeight = val !== 0 ? "700" : "400";
   },
   
   reset() {
-    if (! confirm("Reset Goal Value?")) return;
+    if (!confirm("Reset Goal Value?")) return;
     
     const opponents = this.getOpponents();
-    let playersList = Object.keys(App. data.seasonData).length 
-      ? Object.keys(App. data.seasonData) 
-      : App.data. selectedPlayers.map(p => p.name);
+    let playersList = Object.keys(App.data.seasonData).length 
+      ? Object.keys(App.data.seasonData) 
+      : App.data.selectedPlayers.map(p => p.name);
     
     // Filter out goalies - same logic as render()
     const currentTeamId = App.helpers.getCurrentTeamId();
@@ -400,7 +477,7 @@ App.goalValue = {
       playersList = playersList.filter(name => !goalieNames.includes(name));
     } catch (e) {
       // Fallback: filter from selectedPlayers
-      const goalieNames = (App.data. selectedPlayers || [])
+      const goalieNames = (App.data.selectedPlayers || [])
         .filter(p => p.position === "G" || p.isGoalie)
         .map(p => p.name);
       playersList = playersList.filter(name => !goalieNames.includes(name));

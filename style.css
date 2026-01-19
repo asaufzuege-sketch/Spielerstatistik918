@@ -1091,6 +1091,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-width: none;
 }
 
+/* Center Goal Value Container */
 #goalValueContainer {
   width: 100% !important;
   max-width: 100% !important;
@@ -1118,6 +1119,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 #goalValueContainer {
   scrollbar-width: auto !important;
   scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Center Goal Value Wrapper */
+.goal-value-wrapper {
+  margin: 0 auto;
 }
 
 .goalvalue-table {
