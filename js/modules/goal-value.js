@@ -73,7 +73,8 @@ App.goalValue = {
           }
           
           // Calculate target column count: used columns + 1 empty, but at least MIN_COLUMNS
-          const targetColumns = Math.max(MIN_COLUMNS, lastUsedIndex + 2);  // +2 = +1 for index, +1 for empty column
+          // +2 = +1 to convert index to count + 1 for extra empty column
+          const targetColumns = Math.max(MIN_COLUMNS, lastUsedIndex + 2);
           
           // Adjust to target columns (reduce if too many empty at end, expand if needed)
           if (opponents.length > targetColumns) {
