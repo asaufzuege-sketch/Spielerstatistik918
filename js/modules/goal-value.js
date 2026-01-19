@@ -4,6 +4,7 @@ App.goalValue = {
   container: null,
   clickTimers: {},
   isUpdatingData: false,
+  isExpandingColumns: false,  // Flag to prevent infinite recursion
   
   init() {
     this.container = document.getElementById("goalValueContainer");
@@ -35,23 +36,6 @@ App.goalValue = {
         // Ensure at least MIN_COLUMNS are present
         while (opponents.length < MIN_COLUMNS) {
           opponents.push(`Opponent ${opponents.length + 1}`);
-        }
-        
-        // NEW LOGIC: Check if all columns are filled
-        const bottom = this.getBottom();
-        const allFilled = opponents.every((_, idx) => {
-          return idx < bottom.length && Number(bottom[idx]) > 0;
-        });
-        
-        // If all filled, add a new empty column
-        if (allFilled && opponents.length === bottom.length) {
-          opponents.push(`Opponent ${opponents.length + 1}`);
-          // Also extend Bottom and gameCounts arrays
-          const newBottom = [...bottom, 0];
-          this.setBottom(newBottom);
-          const gameCounts = this.getGameCounts();
-          gameCounts.push(0);
-          this.setGameCounts(gameCounts);
         }
         
         if (needsSave) {
@@ -192,12 +176,14 @@ App.goalValue = {
       playersList = playersList.filter(name => !goalieNames.includes(name));
     }
     
-    // WICHTIG: Wrapper OHNE position:relative - das blockiert sticky! 
+    // Wrapper with centering
     const wrapper = document.createElement('div');
     wrapper.className = 'table-scroll';
     wrapper.style.width = '100%';
     wrapper.style.boxSizing = 'border-box';
-    // ENTFERNT: wrapper.style.position = 'relative'; - blockiert sticky columns! 
+    wrapper.style.display = 'flex';
+    wrapper.style.justifyContent = 'center';
+    // REMOVED: wrapper.style.position = 'relative'; - blocks sticky columns! 
     
     const table = document.createElement("table");
     table.className = "goalvalue-table gv-no-patch";
@@ -401,8 +387,22 @@ App.goalValue = {
   },
   
   checkAndExpandColumns() {
+    // Prevent infinite recursion
+    if (this.isExpandingColumns) {
+      console.log("[Goal Value] Column expansion already in progress, skipping");
+      return;
+    }
+    
     const opponents = this.getOpponents();
     const bottom = this.getBottom();
+    
+    // Ensure bottom array matches opponents length
+    while (bottom.length < opponents.length) {
+      bottom.push(0);
+    }
+    if (bottom.length > opponents.length) {
+      bottom.length = opponents.length;
+    }
     
     // Check if ALL columns have a Bottom value > 0
     const allFilled = opponents.every((_, idx) => {
@@ -410,6 +410,8 @@ App.goalValue = {
     });
     
     if (allFilled) {
+      this.isExpandingColumns = true;
+      
       // Add new column
       const newOpponents = [...opponents, `Opponent ${opponents.length + 1}`];
       this.setOpponents(newOpponents);
@@ -436,7 +438,10 @@ App.goalValue = {
       
       // Re-render table with new column
       // Use setTimeout to avoid recursion
-      setTimeout(() => this.render(), 0);
+      setTimeout(() => {
+        this.isExpandingColumns = false;
+        this.render();
+      }, 0);
     }
   },
   
