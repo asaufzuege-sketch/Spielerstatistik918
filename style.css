@@ -3402,6 +3402,8 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
 
 #goalValueExportModal .modal-buttons button {
   flex: 1;
+  min-width: 120px;
+  max-width: 150px;
   padding: 12px 24px;
   font-size: 1rem;
   font-weight: 600;
@@ -3417,16 +3419,17 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
 }
 
 #goalValueExportConfirm:hover {
-  background: #3a9d7a;
+  background: #3aa07d;
 }
 
 #goalValueExportCancel {
-  background: #3a3a3a;
+  background: #444;
   color: #fff;
+  border: 1px solid #666;
 }
 
 #goalValueExportCancel:hover {
-  background: #4a4a4a;
+  background: #555;
 }
 
 [data-theme="dark"] #goalValueExportCancel {
