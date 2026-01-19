@@ -741,12 +741,12 @@ setStickyOffsets() {
       const starValue = selectedStars * 0.5;
       
       if (!opponentName) {
-        alert("Bitte Gegner-Name eingeben");
+        alert("Please enter opponent name");
         return;
       }
       
       if (selectedStars === 0) {
-        alert("Bitte Schwierigkeit auswählen (Sterne)");
+        alert("Please select difficulty (stars)");
         return;
       }
       
@@ -819,24 +819,43 @@ setStickyOffsets() {
     const opponents = App.goalValue.getOpponents();
     const existingIndex = opponents.findIndex(o => o.toLowerCase() === opponentName.toLowerCase());
     
-    if (existingIndex === -1) {
-      // New opponent - add to list
-      opponents.push(opponentName);
-      App.goalValue.setOpponents(opponents);
-    }
-    
-    // Get the final index (either existing or newly added)
-    const opponentIndex = opponents.findIndex(o => o.toLowerCase() === opponentName.toLowerCase());
-    
     // 2. Transfer player goals to Goal Value data
     const data = App.goalValue.getData();
     const gameCounts = App.goalValue.getGameCounts();
+    const bottom = App.goalValue.getBottom();
+    
+    let opponentIndex;
+    
+    if (existingIndex === -1) {
+      // New opponent - add to BEGINNING of list
+      opponents.unshift(opponentName);
+      App.goalValue.setOpponents(opponents);
+      
+      // Insert 0 at BEGINNING of all player arrays
+      Object.keys(data).forEach(playerName => {
+        data[playerName].unshift(0);
+      });
+      
+      // Insert 0 at BEGINNING of bottom and gameCounts
+      bottom.unshift(0);
+      gameCounts.unshift(0);
+      
+      // New opponent is now at index 0
+      opponentIndex = 0;
+    } else {
+      // Existing opponent - use existing index
+      opponentIndex = existingIndex;
+    }
     
     // Ensure arrays are correct length
     while (gameCounts.length < opponents.length) {
       gameCounts.push(0);
     }
+    while (bottom.length < opponents.length) {
+      bottom.push(0);
+    }
     
+    // Transfer player goals
     App.data.selectedPlayers.forEach(player => {
       const goals = Number(App.data.statsData[player.name]?.Goals || 0);
       
@@ -850,7 +869,7 @@ setStickyOffsets() {
       }
       
       if (existingIndex === -1) {
-        // New opponent: set goals directly
+        // New opponent: set goals directly at index 0
         data[player.name][opponentIndex] = goals;
       } else {
         // Existing opponent: add goals
@@ -859,13 +878,6 @@ setStickyOffsets() {
     });
     
     // 3. Update star value in bottom row with averaging
-    const bottom = App.goalValue.getBottom();
-    
-    // Ensure bottom array has correct length
-    while (bottom.length < opponents.length) {
-      bottom.push(0);
-    }
-    
     if (existingIndex === -1) {
       // New opponent: set value directly
       bottom[opponentIndex] = starValue;
