@@ -15,15 +15,17 @@ App.goalValue = {
   },
   
   getOpponents() {
-    const MIN_COLUMNS = 15;  // CHANGED from 19 to 15
+    const MIN_COLUMNS = 15;
+    const DEFAULT_OPPONENT_PATTERN = /^Opponent \d+$/;  // Matches "Opponent 1", "Opponent 2", etc.
     
     try {
       const teamId = App.helpers.getCurrentTeamId();
       const raw = AppStorage.getItem(`goalValueOpponents_${teamId}`);
       if (raw) {
         let opponents = JSON.parse(raw);
-        // Convert old German "Gegner" to English "Opponent"
         let needsSave = false;
+        
+        // Convert old German "Gegner" to English "Opponent"
         opponents = opponents.map((op, i) => {
           if (op && op.startsWith("Gegner")) {
             needsSave = true;
@@ -33,9 +35,60 @@ App.goalValue = {
           return op;
         });
         
-        // Ensure at least MIN_COLUMNS are present
-        while (opponents.length < MIN_COLUMNS) {
-          opponents.push(`Opponent ${opponents.length + 1}`);
+        // Get bottom values to check which columns are "used"
+        const bottom = this.getBottom();
+        
+        // Count how many columns have REAL opponent names (not default "Opponent X")
+        // OR have a bottom value > 0
+        const usedColumns = opponents.filter((op, idx) => {
+          const hasRealName = op && !DEFAULT_OPPONENT_PATTERN.test(op);
+          const hasBottomValue = idx < bottom.length && Number(bottom[idx]) > 0;
+          return hasRealName || hasBottomValue;
+        }).length;
+        
+        // If ALL columns are default/empty, reset to exactly MIN_COLUMNS
+        if (usedColumns === 0) {
+          needsSave = true;
+          opponents = Array.from({ length: MIN_COLUMNS }, (_, i) => `Opponent ${i + 1}`);
+          // Also reset bottom and gameCounts arrays
+          this.setBottom(Array(MIN_COLUMNS).fill(0));
+          this.setGameCounts(Array(MIN_COLUMNS).fill(0));
+        } else {
+          // Find the last used column index
+          let lastUsedIndex = -1;
+          for (let i = opponents.length - 1; i >= 0; i--) {
+            const hasRealName = opponents[i] && !DEFAULT_OPPONENT_PATTERN.test(opponents[i]);
+            const hasBottomValue = i < bottom.length && Number(bottom[i]) > 0;
+            if (hasRealName || hasBottomValue) {
+              lastUsedIndex = i;
+              break;
+            }
+          }
+          
+          // Calculate target column count: used columns + 1 empty, but at least MIN_COLUMNS
+          const targetColumns = Math.max(MIN_COLUMNS, lastUsedIndex + 2);  // +2 = +1 for index, +1 for empty column
+          
+          // Adjust to target columns (reduce if too many empty at end, expand if needed)
+          if (opponents.length > targetColumns) {
+            // Reduce to target (keeping all used columns + 1 empty)
+            needsSave = true;
+            opponents = opponents.slice(0, targetColumns);
+            // Also trim bottom and gameCounts
+            const trimmedBottom = bottom.slice(0, targetColumns);
+            while (trimmedBottom.length < targetColumns) trimmedBottom.push(0);
+            this.setBottom(trimmedBottom);
+            
+            const gameCounts = this.getGameCounts();
+            const trimmedGameCounts = gameCounts.slice(0, targetColumns);
+            while (trimmedGameCounts.length < targetColumns) trimmedGameCounts.push(0);
+            this.setGameCounts(trimmedGameCounts);
+          } else if (opponents.length < MIN_COLUMNS) {
+            // Expand to MIN_COLUMNS
+            needsSave = true;
+            while (opponents.length < MIN_COLUMNS) {
+              opponents.push(`Opponent ${opponents.length + 1}`);
+            }
+          }
         }
         
         if (needsSave) {
@@ -459,36 +512,19 @@ App.goalValue = {
   reset() {
     if (!confirm("Reset Goal Value?")) return;
     
-    const opponents = this.getOpponents();
-    let playersList = Object.keys(App.data.seasonData).length 
-      ? Object.keys(App.data.seasonData) 
-      : App.data.selectedPlayers.map(p => p.name);
+    const teamId = App.helpers.getCurrentTeamId();
+    const MIN_COLUMNS = 15;
     
-    // Filter out goalies - same logic as render()
-    const currentTeamId = App.helpers.getCurrentTeamId();
-    const savedPlayersKey = `playerSelectionData_${currentTeamId}`;
+    // Reset to exactly 15 columns
+    AppStorage.removeItem(`goalValueOpponents_${teamId}`);
+    AppStorage.removeItem(`goalValueData_${teamId}`);
+    AppStorage.removeItem(`goalValueBottom_${teamId}`);
+    AppStorage.removeItem(`goalValueGameCounts_${teamId}`);
     
-    try {
-      const savedPlayers = JSON.parse(AppStorage.getItem(savedPlayersKey) || "[]");
-      const goalieNames = savedPlayers
-        .filter(p => p.position === "G" || p.isGoalie)
-        .map(p => p.name);
-      
-      playersList = playersList.filter(name => !goalieNames.includes(name));
-    } catch (e) {
-      // Fallback: filter from selectedPlayers
-      const goalieNames = (App.data.selectedPlayers || [])
-        .filter(p => p.position === "G" || p.isGoalie)
-        .map(p => p.name);
-      playersList = playersList.filter(name => !goalieNames.includes(name));
-    }
-    
-    const newData = {};
-    playersList.forEach(n => newData[n] = opponents.map(() => 0));
-    this.setData(newData);
-    
-    this.setBottom(opponents.map(() => 0));
-    this.setOpponents(Array.from({ length: opponents.length }, (_, i) => `Opponent ${i + 1}`));
+    // Set fresh 15-column defaults
+    this.setOpponents(Array.from({ length: MIN_COLUMNS }, (_, i) => `Opponent ${i + 1}`));
+    this.setBottom(Array(MIN_COLUMNS).fill(0));
+    this.setGameCounts(Array(MIN_COLUMNS).fill(0));
     
     this.render();
     alert("Goal Value reset.");
