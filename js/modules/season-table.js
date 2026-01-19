@@ -883,12 +883,14 @@ setStickyOffsets() {
       bottom[opponentIndex] = starValue;
       gameCounts[opponentIndex] = 1;
     } else {
-      // Existing opponent: calculate average
+      // Existing opponent: calculate average and round to 0.5
       const oldCount = gameCounts[opponentIndex] || 0;
       const oldValue = bottom[opponentIndex] || 0;
       const newCount = oldCount + 1;
-      const newAverage = ((oldValue * oldCount) + starValue) / newCount;
-      bottom[opponentIndex] = Math.round(newAverage * 10) / 10; // Round to 1 decimal
+      const rawAverage = ((oldValue * oldCount) + starValue) / newCount;
+      // Auf 0.5 runden
+      const roundedAverage = Math.round(rawAverage * 2) / 2;
+      bottom[opponentIndex] = roundedAverage;
       gameCounts[opponentIndex] = newCount;
     }
     

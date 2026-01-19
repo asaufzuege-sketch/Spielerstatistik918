@@ -3401,16 +3401,19 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
 }
 
 #goalValueExportModal .modal-buttons button {
-  flex: 1;
-  min-width: 120px;
-  max-width: 150px;
-  padding: 12px 24px;
+  /* KRITISCH: Gleiche Breite für beide Buttons */
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  height: 44px;
+  padding: 12px 0;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
   border: none;
   transition: background 0.2s;
+  text-align: center;
 }
 
 #goalValueExportConfirm {
