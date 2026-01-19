@@ -110,7 +110,7 @@ App.goalValue = {
   },
   
   formatValueNumber(v) {
-    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v. toFixed(1))); 
+    return Math.abs(v - Math.round(v)) < 1e-4 ? String(Math.round(v)) : String(Number(v.toFixed(1))); 
   },
   
   ensureDataForSeason() {
@@ -125,7 +125,7 @@ App.goalValue = {
       const opponents = this.getOpponents();
       const all = this.getData();
       
-      Object.keys(App.data. seasonData).forEach(name => {
+      Object.keys(App.data.seasonData).forEach(name => {
         if (!all[name] || !Array.isArray(all[name])) {
           all[name] = opponents.map(() => 0);
         } else {
@@ -218,7 +218,7 @@ App.goalValue = {
         this.setOpponents(arr);
         this.render();
       });
-      th. appendChild(input);
+      th.appendChild(input);
       headerRow.appendChild(th);
     });
     
@@ -243,9 +243,9 @@ App.goalValue = {
       tdName.textContent = name;
       tdName.className = "gv-name-cell sticky-col";
       tdName.style.minWidth = "120px";
-      row. appendChild(tdName);
+      row.appendChild(tdName);
       
-      const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name]. slice() : opponents.map(() => 0);
+      const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
       while (vals.length < opponents.length) vals.push(0);
       
       opponents.forEach((_, i) => {
@@ -267,7 +267,7 @@ App.goalValue = {
           const oppIdx = Number(td.dataset.oppIdx);
           
           if (this.clickTimers[cellId]) {
-            clearTimeout(this. clickTimers[cellId]);
+            clearTimeout(this.clickTimers[cellId]);
             delete this.clickTimers[cellId];
             
             // DOPPELKLICK: -1
@@ -281,14 +281,14 @@ App.goalValue = {
             td.style.color = nv > 0 ?  colors.pos : nv < 0 ? colors.neg : colors.zero;
             td.style.fontWeight = nv !== 0 ? "700" : "400";
             
-            this. updateValueCell(playerName, valueCellMap);
+            this.updateValueCell(playerName, valueCellMap);
             
           } else {
             this.clickTimers[cellId] = setTimeout(() => {
               delete this.clickTimers[cellId];
               
               // EINZELKLICK: +1
-              const d = this. getData();
+              const d = this.getData();
               if (!d[playerName]) d[playerName] = opponents.map(() => 0);
               d[playerName][oppIdx] = Number(d[playerName][oppIdx] || 0) + 1;
               this.setData(d, true);
@@ -310,8 +310,8 @@ App.goalValue = {
       const val = this.computeValueForPlayer(name);
       valueTd.textContent = this.formatValueNumber(val);
       valueTd.className = "gv-value-cell";
-      valueTd.style. color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
-      valueTd.style.fontWeight = val !== 0 ?  "700" : "400";
+      valueTd.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
+      valueTd.style.fontWeight = val !== 0 ? "700" : "400";
       row.appendChild(valueTd);
       
       valueCellMap[name] = valueTd;
@@ -319,8 +319,8 @@ App.goalValue = {
     });
     
     // Bottom Scale Row
-    const bottomRow = document. createElement("tr");
-    bottomRow.className = (playersList.length % 2 === 0 ?  "even-row" : "odd-row");
+    const bottomRow = document.createElement("tr");
+    bottomRow.className = (playersList.length % 2 === 0 ? "even-row" : "odd-row");
     bottomRow.style.background = "rgba(0,0,0,0.03)";
     
     const labelTd = document.createElement("td");
@@ -334,7 +334,7 @@ App.goalValue = {
     
     const storedBottom = this.getBottom();
     while (storedBottom.length < opponents.length) storedBottom.push(0);
-    if (storedBottom.length > opponents.length) storedBottom. length = opponents.length;
+    if (storedBottom.length > opponents.length) storedBottom.length = opponents.length;
     this.setBottom(storedBottom);
     
     opponents.forEach((_, i) => {
@@ -360,7 +360,7 @@ App.goalValue = {
         arr[i] = newValue;
         this.setBottom(arr);
         
-        Object.keys(valueCellMap). forEach(pn => {
+        Object.keys(valueCellMap).forEach(pn => {
           this.updateValueCell(pn, valueCellMap);
         });
       });
@@ -453,16 +453,16 @@ App.goalValue = {
     const val = this.computeValueForPlayer(playerName);
     vc.textContent = this.formatValueNumber(val);
     vc.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
-    vc. style.fontWeight = val !== 0 ? "700" : "400";
+    vc.style.fontWeight = val !== 0 ? "700" : "400";
   },
   
   reset() {
-    if (! confirm("Reset Goal Value?")) return;
+    if (!confirm("Reset Goal Value?")) return;
     
     const opponents = this.getOpponents();
-    let playersList = Object.keys(App. data.seasonData).length 
-      ? Object.keys(App. data.seasonData) 
-      : App.data. selectedPlayers.map(p => p.name);
+    let playersList = Object.keys(App.data.seasonData).length 
+      ? Object.keys(App.data.seasonData) 
+      : App.data.selectedPlayers.map(p => p.name);
     
     // Filter out goalies - same logic as render()
     const currentTeamId = App.helpers.getCurrentTeamId();
@@ -477,7 +477,7 @@ App.goalValue = {
       playersList = playersList.filter(name => !goalieNames.includes(name));
     } catch (e) {
       // Fallback: filter from selectedPlayers
-      const goalieNames = (App.data. selectedPlayers || [])
+      const goalieNames = (App.data.selectedPlayers || [])
         .filter(p => p.position === "G" || p.isGoalie)
         .map(p => p.name);
       playersList = playersList.filter(name => !goalieNames.includes(name));
