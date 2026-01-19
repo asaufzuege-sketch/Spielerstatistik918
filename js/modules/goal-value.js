@@ -335,13 +335,15 @@ App.goalValue = {
         select.appendChild(option);
       });
       
-      // WICHTIG: Wert SOFORT setzen, nicht mit setTimeout
-      const currentValue = storedBottom[i] !== undefined ? storedBottom[i] : 0;
-      select.value = String(Number(currentValue).toFixed(1));
+      // KRITISCH: Gespeicherten Wert setzen (auf 0.5 gerundet)
+      const savedValue = storedBottom[i] || 0;
+      const roundedValue = Math.round(savedValue * 2) / 2; // Auf 0.5 runden
+      select.value = roundedValue.toFixed(1);
       
       select.addEventListener("change", () => {
+        const newValue = parseFloat(select.value);
         const arr = this.getBottom();
-        arr[i] = Number(select.value);
+        arr[i] = newValue;
         this.setBottom(arr);
         
         Object.keys(valueCellMap). forEach(pn => {
