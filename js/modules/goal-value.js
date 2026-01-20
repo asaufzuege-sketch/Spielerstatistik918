@@ -402,7 +402,7 @@ App.goalValue = {
     bottomRow.className = "bottom-row";
     
     const bottomLabelTd = document.createElement("td");
-    bottomLabelTd.textContent = "Bottom";
+    bottomLabelTd.textContent = "";  // Leer lassen
     bottomLabelTd.className = "sticky-col";
     bottomRow.appendChild(bottomLabelTd);
     
