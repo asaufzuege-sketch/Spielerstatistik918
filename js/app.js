@@ -35,26 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
   App.goalValue.init();
   App.lineUp.init();
   
-  // 6. Navigation Event Listeners
-  document.getElementById("selectPlayersBtn")?.addEventListener("click", () => {
-    App.showPage("selection");
-  });
+  // 6. Page-specific info system initialisieren
+  if (App.pageInfo) {
+    App.pageInfo.init();
+  }
   
+  // 7. Navigation Event Listeners
   document.getElementById("teamSelectionInfoBtn")?.addEventListener("click", () => {
     App.teamSelection?.showInfo();
   });
   
-  // Event listener for title info icons (e.g., in Player Selection)
-  document.querySelectorAll('.title-info-icon').forEach(icon => {
-    icon.addEventListener('click', (e) => {
-      e.stopPropagation(); // Prevent other click handlers
-      const section = icon.dataset.section;
-      
-      // Open the info modal with the specified section
-      if (App.teamSelection && App.teamSelection.showInfo) {
-        App.teamSelection.showInfo(section);
-      }
-    });
+  document.getElementById("selectPlayersBtn")?.addEventListener("click", () => {
+    App.showPage("selection");
   });
   
   document.getElementById("backToStatsBtn")?.addEventListener("click", () => {
@@ -97,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     App.showPage("lineUp");
   });
   
-  // 7. Delegierte Back-Button Handler
+  // 8. Delegierte Back-Button Handler
   document.addEventListener("click", (e) => {
     try {
       const btn = e.target.closest("button");
@@ -126,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, true);
   
-  // 8. Initiale Seite anzeigen
+  // 9. Initiale Seite anzeigen
   // NEU: benutze getCurrentTeamInfo() statt getCurrentTeam()
   const teamInfo = App.teamSelection.getCurrentTeamInfo();
   const currentTeam = teamInfo?.id; // z.B. "team1"
@@ -144,10 +136,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
   App.showPage(initialPage);
   
-  // 9. Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
+  // 10. Timer Persistenz - Laufende Timer aus LocalStorage wiederherstellen
   App.restoreActiveTimers();
   
-  // 10. Daten vor Seitenabschluss speichern
+  // 11. Daten vor Seitenabschluss speichern
   window.addEventListener("beforeunload", () => {
     try {
       App.storage.saveAll();
@@ -168,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   
-  // 11. Page Visibility API - Timer bei Tab-Wechsel beibehalten
+  // 12. Page Visibility API - Timer bei Tab-Wechsel beibehalten
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       App.saveActiveTimersState();
