@@ -1096,7 +1096,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: 100%;
   display: flex;
   justify-content: center;
-  background: #2a2a2a;  /* Fix 3: Same color as table */
+  background: var(--bg-color);  /* Match page background */
 }
 
 /* Wrapper for fixed + scrollable sections */
@@ -1108,13 +1108,15 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border: 1px solid #444;
   border-radius: 8px;
   overflow: hidden;
-  background: #2a2a2a;  /* Fix 3: Same color as table */
+  background: var(--header-bg);  /* FIX: Match Season table - same as total row */
+  max-height: 75vh;  /* FIX: Enable sticky headers */
+  overflow-y: auto;  /* FIX: Enable vertical scrolling for sticky */
 }
 
 /* Fixed Player column (left) */
 .goal-value-fixed {
   flex-shrink: 0;
-  background: #2a2a2a;  /* Fix 3: Same color as table */
+  background: var(--header-bg);  /* FIX: Match Season table total row color */
   z-index: 10;
   border-right: 2px solid #555;
   overflow-y: auto;
@@ -1146,7 +1148,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .goal-value-table-fixed th {
-  background: #2a2a2a;  /* Fix 1: Sticky header background */
+  background: var(--header-bg) !important;  /* FIX: Match Season table header */
   color: #fff !important;
   font-weight: 700;
   position: sticky;  /* Fix 1: Sticky header */
@@ -1165,7 +1167,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   flex: 1;
   overflow-x: auto;
   overflow-y: auto;
-  background: #2a2a2a;  /* Fix 3: Same color as table */
+  background: var(--bg-color);  /* FIX: Match page background */
 }
 
 .goal-value-table-scroll {
@@ -1188,7 +1190,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .goal-value-table-scroll th {
-  background: #2a2a2a;  /* Fix 1: Sticky header background */
+  background: var(--header-bg) !important;  /* FIX: Match Season table header */
   color: #fff !important;
   font-weight: 700;
   position: sticky;  /* Fix 1: Sticky header */
@@ -1214,9 +1216,11 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background-color: var(--row-odd);
 }
 
-/* Bottom row styling */
+/* Bottom row styling - FIX: Match Season table total row */
 .goal-value-table-fixed tbody tr:last-child td,
 .goal-value-table-scroll tbody tr:last-child td {
+  background: var(--header-bg) !important;  /* FIX: Match Season table total row */
+  color: #ffffff !important;  /* FIX: White text like Season table */
   border-top: 2px solid #555;
   font-weight: 700;
 }
