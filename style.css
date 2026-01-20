@@ -1212,6 +1212,83 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   scrollbar-color: #44bb91 #1a1a1a;
 }
 
+/* ============================================= */
+/* GOAL VALUE - NO LINES BETWEEN NAMES          */
+/* ============================================= */
+
+/* Table cells - NO borders */
+.goal-value-table td,
+.goal-value-table tbody td,
+.goal-value-table tbody tr td,
+.goal-value-table tbody td.sticky-col {
+  border: none !important;
+}
+
+/* Table rows - NO borders */
+.goal-value-table tr,
+.goal-value-table tbody tr {
+  border: none !important;
+}
+
+/* Also for .goalvalue-table if used */
+.goalvalue-table td,
+.goalvalue-table tbody td,
+.goalvalue-table tbody tr td {
+  border: none !important;
+}
+
+.goalvalue-table tr,
+.goalvalue-table tbody tr {
+  border: none !important;
+}
+
+/* Remove any box-shadow that looks like lines */
+.goal-value-table td,
+.goal-value-table tr,
+.goalvalue-table td,
+.goalvalue-table tr {
+  box-shadow: none !important;
+}
+
+/* Only header and bottom keep lines */
+.goal-value-table thead th {
+  border-bottom: 2px solid #333 !important;  /* Header keeps upper line */
+}
+
+.goal-value-table .bottom-row td {
+  border-top: 2px solid #555 !important;  /* Bottom keeps upper line */
+}
+
+.goalvalue-table thead th {
+  border-bottom: 2px solid #333 !important;  /* Header keeps upper line */
+}
+
+/* ============================================= */
+/* GOAL VALUE - FONT LIKE SEASON TABLE          */
+/* ============================================= */
+
+/* Font size like Season (0.95rem) */
+.goal-value-table,
+.goalvalue-table {
+  font-size: 0.95rem !important;
+}
+
+/* Player names BOLD */
+.goal-value-table tbody td.sticky-col,
+.goal-value-table tbody td:first-child,
+.goalvalue-table tbody td:first-child,
+.goalvalue-table tbody td.sticky-col {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}
+
+/* Headers also adjust */
+.goal-value-table thead th,
+.goalvalue-table thead th {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+}
+
 .goalvalue-table {
   width: auto !important;
   min-width: max-content !important;
