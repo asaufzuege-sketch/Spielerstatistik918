@@ -546,23 +546,23 @@ App.goalValue = {
     // Set flag to skip trimming during next render
     this.skipTrimming = true;
     
-    // 1. Opponents Array erweitern
+    // 1. Extend opponents array
     const opponents = this.getOpponents();
     const newOpponentName = `Opponent ${opponents.length + 1}`;
     opponents.push(newOpponentName);
     this.setOpponents(opponents);
     
-    // 2. Bottom Array erweitern
+    // 2. Extend bottom array
     const bottom = this.getBottom();
     bottom.push(0);
     this.setBottom(bottom);
     
-    // 3. GameCounts Array erweitern
+    // 3. Extend gameCounts array
     const gameCounts = this.getGameCounts();
     gameCounts.push(0);
     this.setGameCounts(gameCounts);
     
-    // 4. Data für jeden Spieler erweitern
+    // 4. Extend data for each player
     const data = this.getData();
     Object.keys(data).forEach(playerName => {
       if (Array.isArray(data[playerName])) {
@@ -573,7 +573,7 @@ App.goalValue = {
     
     console.log("[Goal Value] Added new opponent:", newOpponentName);
     
-    // 5. Tabelle neu rendern
+    // 5. Re-render table
     this.render();
     
     // Reset flag after render
