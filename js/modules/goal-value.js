@@ -12,6 +12,11 @@ App.goalValue = {
     document.getElementById("resetGoalValueBtn")?.addEventListener("click", () => {
       this.reset();
     });
+    
+    // NEU: Add Opponent Button
+    document.getElementById("addOpponentBtn")?.addEventListener("click", () => {
+      this.addOpponent();
+    });
   },
   
   getOpponents() {
@@ -34,6 +39,14 @@ App.goalValue = {
           }
           return op;
         });
+        
+        // Skip trimming logic if skipTrimming flag is set (e.g., when adding a new opponent)
+        if (this.skipTrimming) {
+          if (needsSave) {
+            this.setOpponents(opponents);
+          }
+          return opponents;
+        }
         
         // Get bottom values to check which columns are "used"
         const bottom = this.getBottom();
@@ -527,6 +540,44 @@ App.goalValue = {
     vc.textContent = this.formatValueNumber(val);
     vc.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
     vc.style.fontWeight = val !== 0 ? "700" : "400";
+  },
+  
+  addOpponent() {
+    // Set flag to skip trimming during next render
+    this.skipTrimming = true;
+    
+    // 1. Extend opponents array
+    const opponents = this.getOpponents();
+    const newOpponentName = `Opponent ${opponents.length + 1}`;
+    opponents.push(newOpponentName);
+    this.setOpponents(opponents);
+    
+    // 2. Extend bottom array
+    const bottom = this.getBottom();
+    bottom.push(0);
+    this.setBottom(bottom);
+    
+    // 3. Extend gameCounts array
+    const gameCounts = this.getGameCounts();
+    gameCounts.push(0);
+    this.setGameCounts(gameCounts);
+    
+    // 4. Extend data for each player
+    const data = this.getData();
+    Object.keys(data).forEach(playerName => {
+      if (Array.isArray(data[playerName])) {
+        data[playerName].push(0);
+      }
+    });
+    this.setData(data, true);  // forceWrite = true
+    
+    console.log("[Goal Value] Added new opponent:", newOpponentName);
+    
+    // 5. Re-render table
+    this.render();
+    
+    // Reset flag after render
+    this.skipTrimming = false;
   },
   
   reset() {
