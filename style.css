@@ -1111,12 +1111,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .goal-value-table {
   border-collapse: collapse;
   min-width: 100%;
+  font-size: 15px;  /* Einheitlich wie Season Tabelle */
 }
 
 .goal-value-table th,
 .goal-value-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid #333;
   white-space: nowrap;
   text-align: center;
 }
@@ -1139,6 +1139,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: var(--header-bg);
   color: #fff !important;
   font-weight: 700;
+  border-bottom: 2px solid #333;  /* Header behält Linie */
 }
 
 /* Player Header: sticky links UND oben */
@@ -1210,7 +1211,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-collapse: separate !important;
   border-spacing: 0 !important;
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 15px;  /* Einheitlich wie Season Tabelle */
   margin-top: 6px;
   margin-bottom: 10px;
   table-layout: fixed;
@@ -1233,7 +1234,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .goalvalue-table td {
   padding: 6px 4px !important;
   text-align: center;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: none;  /* Linien zwischen Spielernamen entfernen */
 }
 
 /* STICKY COLUMNS FOR GOAL VALUE TABLE */
