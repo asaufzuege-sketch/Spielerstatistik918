@@ -1096,6 +1096,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: 100%;
   display: flex;
   justify-content: center;
+  background: #2a2a2a;  /* Fix 3: Same color as table */
 }
 
 /* Wrapper for fixed + scrollable sections */
@@ -1107,12 +1108,13 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border: 1px solid #444;
   border-radius: 8px;
   overflow: hidden;
+  background: #2a2a2a;  /* Fix 3: Same color as table */
 }
 
 /* Fixed Player column (left) */
 .goal-value-fixed {
   flex-shrink: 0;
-  background: var(--bg-color, #1a1a1a);
+  background: #2a2a2a;  /* Fix 3: Same color as table */
   z-index: 10;
   border-right: 2px solid #555;
   overflow-y: auto;
@@ -1126,13 +1128,17 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .goal-value-table-fixed {
-  border-collapse: collapse;
+  border-collapse: collapse;  /* Fix 2: Ensure consistent borders */
+  border-spacing: 0;  /* Fix 2: No additional spacing */
   table-layout: fixed;
 }
 
 .goal-value-table-fixed th,
 .goal-value-table-fixed td {
-  padding: 8px 12px;
+  padding: 0 12px;  /* Fix 2: Consistent padding */
+  height: 36px;  /* Fix 2: Consistent height */
+  vertical-align: middle;  /* Fix 2: Center alignment */
+  box-sizing: border-box;  /* Fix 2: Include padding in height */
   white-space: nowrap;
   border-bottom: 1px solid #333;
   min-width: 140px;
@@ -1140,12 +1146,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .goal-value-table-fixed th {
-  background: var(--header-bg) !important;
+  background: #2a2a2a;  /* Fix 1: Sticky header background */
   color: #fff !important;
   font-weight: 700;
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: sticky;  /* Fix 1: Sticky header */
+  top: 0;  /* Fix 1: Stick to top */
+  z-index: 25;  /* Fix 1: Higher z-index for Player header */
 }
 
 .goal-value-table-fixed td {
@@ -1159,17 +1165,22 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   flex: 1;
   overflow-x: auto;
   overflow-y: auto;
+  background: #2a2a2a;  /* Fix 3: Same color as table */
 }
 
 .goal-value-table-scroll {
-  border-collapse: collapse;
+  border-collapse: collapse;  /* Fix 2: Ensure consistent borders */
+  border-spacing: 0;  /* Fix 2: No additional spacing */
   min-width: max-content;  /* IMPORTANT: Prevents columns from being compressed */
   table-layout: auto;
 }
 
 .goal-value-table-scroll th,
 .goal-value-table-scroll td {
-  padding: 8px 12px;
+  padding: 0 12px;  /* Fix 2: Consistent padding */
+  height: 36px;  /* Fix 2: Consistent height */
+  vertical-align: middle;  /* Fix 2: Center alignment */
+  box-sizing: border-box;  /* Fix 2: Include padding in height */
   white-space: nowrap;
   border-bottom: 1px solid #333;
   min-width: 60px;  /* Minimum width per column */
@@ -1177,18 +1188,19 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 .goal-value-table-scroll th {
-  background: var(--header-bg) !important;
+  background: #2a2a2a;  /* Fix 1: Sticky header background */
   color: #fff !important;
   font-weight: 700;
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: sticky;  /* Fix 1: Sticky header */
+  top: 0;  /* Fix 1: Stick to top */
+  z-index: 20;  /* Fix 1: Z-index for scrollable headers */
 }
 
 /* Synchronized row heights */
 .goal-value-table-fixed tr,
 .goal-value-table-scroll tr {
-  height: 40px;
+  height: 36px;  /* Fix 2: Consistent row height */
+  line-height: 36px;  /* Fix 2: Consistent line height */
 }
 
 /* Row colors for both tables */
@@ -1210,27 +1222,55 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 }
 
 /* Scrollbar Styling */
+/* Horizontal and vertical scrollbar for scrollable section */
 .goal-value-scroll::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: 10px;  /* Fix 4: Adjust height */
+  width: 10px;  /* Fix 4: Adjust width */
 }
 
 .goal-value-scroll::-webkit-scrollbar-track {
-  background: #2a2a2a;
+  background: #1a1a1a;  /* Fix 4: Darker track */
+  border-radius: 5px;  /* Fix 4: Rounded corners */
 }
 
 .goal-value-scroll::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 4px;
+  background: #44bb91;  /* Fix 4: GREEN scrollbar */
+  border-radius: 5px;  /* Fix 4: Rounded corners */
 }
 
 .goal-value-scroll::-webkit-scrollbar-thumb:hover {
-  background: #777;
+  background: #3aa07d;  /* Fix 4: Darker green on hover */
 }
 
+/* Firefox scrollbar */
 .goal-value-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #555 #2a2a2a;
+  scrollbar-color: #44bb91 #1a1a1a;  /* Fix 4: GREEN scrollbar for Firefox */
+}
+
+/* Vertical scrollbar for wrapper */
+.goal-value-wrapper::-webkit-scrollbar {
+  width: 10px;  /* Fix 4: Adjust width */
+}
+
+.goal-value-wrapper::-webkit-scrollbar-track {
+  background: #1a1a1a;  /* Fix 4: Darker track */
+  border-radius: 5px;  /* Fix 4: Rounded corners */
+}
+
+.goal-value-wrapper::-webkit-scrollbar-thumb {
+  background: #44bb91;  /* Fix 4: GREEN scrollbar */
+  border-radius: 5px;  /* Fix 4: Rounded corners */
+}
+
+.goal-value-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #3aa07d;  /* Fix 4: Darker green on hover */
+}
+
+/* Firefox scrollbar for wrapper */
+.goal-value-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #44bb91 #1a1a1a;  /* Fix 4: GREEN scrollbar for Firefox */
 }
 
 .goalvalue-table {
