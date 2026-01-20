@@ -40,6 +40,14 @@ App.goalValue = {
           return op;
         });
         
+        // Skip trimming logic if skipTrimming flag is set (e.g., when adding a new opponent)
+        if (this.skipTrimming) {
+          if (needsSave) {
+            this.setOpponents(opponents);
+          }
+          return opponents;
+        }
+        
         // Get bottom values to check which columns are "used"
         const bottom = this.getBottom();
         
@@ -535,6 +543,9 @@ App.goalValue = {
   },
   
   addOpponent() {
+    // Set flag to skip trimming during next render
+    this.skipTrimming = true;
+    
     // 1. Opponents Array erweitern
     const opponents = this.getOpponents();
     const newOpponentName = `Opponent ${opponents.length + 1}`;
@@ -564,6 +575,9 @@ App.goalValue = {
     
     // 5. Tabelle neu rendern
     this.render();
+    
+    // Reset flag after render
+    this.skipTrimming = false;
   },
   
   reset() {
