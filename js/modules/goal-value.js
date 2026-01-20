@@ -12,6 +12,11 @@ App.goalValue = {
     document.getElementById("resetGoalValueBtn")?.addEventListener("click", () => {
       this.reset();
     });
+    
+    // NEU: Add Opponent Button
+    document.getElementById("addOpponentBtn")?.addEventListener("click", () => {
+      this.addOpponent();
+    });
   },
   
   getOpponents() {
@@ -527,6 +532,38 @@ App.goalValue = {
     vc.textContent = this.formatValueNumber(val);
     vc.style.color = val > 0 ? colors.pos : val < 0 ? colors.neg : colors.zero;
     vc.style.fontWeight = val !== 0 ? "700" : "400";
+  },
+  
+  addOpponent() {
+    // 1. Opponents Array erweitern
+    const opponents = this.getOpponents();
+    const newOpponentName = `Opponent ${opponents.length + 1}`;
+    opponents.push(newOpponentName);
+    this.setOpponents(opponents);
+    
+    // 2. Bottom Array erweitern
+    const bottom = this.getBottom();
+    bottom.push(0);
+    this.setBottom(bottom);
+    
+    // 3. GameCounts Array erweitern
+    const gameCounts = this.getGameCounts();
+    gameCounts.push(0);
+    this.setGameCounts(gameCounts);
+    
+    // 4. Data für jeden Spieler erweitern
+    const data = this.getData();
+    Object.keys(data).forEach(playerName => {
+      if (Array.isArray(data[playerName])) {
+        data[playerName].push(0);
+      }
+    });
+    this.setData(data, true);  // forceWrite = true
+    
+    console.log("[Goal Value] Added new opponent:", newOpponentName);
+    
+    // 5. Tabelle neu rendern
+    this.render();
   },
   
   reset() {
