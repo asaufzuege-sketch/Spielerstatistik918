@@ -4,7 +4,7 @@
   width: 100%;
   border-collapse: collapse;
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 0.95rem;  /* EXAKT wie Season Tabelle */
   margin-top: 6px;
 }
 
@@ -17,7 +17,10 @@
 
 .goal-value-table td, .goal-value-table th {
   padding: 8px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: none !important;  /* KEINE schwarzen Linien zwischen Namen */
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
   text-align: center;
 }
 .goal-value-table tbody tr:hover { background: #eef6ff; }

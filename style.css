@@ -1212,6 +1212,90 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   scrollbar-color: #44bb91 #1a1a1a;
 }
 
+/* ============================================= */
+/* GOAL VALUE - KEINE LINIEN ZWISCHEN NAMEN     */
+/* ============================================= */
+
+/* Tabellen-Zellen - KEINE borders */
+.goal-value-table td,
+.goal-value-table tbody td,
+.goal-value-table tbody tr td,
+.goal-value-table tbody td.sticky-col {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* Tabellen-Zeilen - KEINE borders */
+.goal-value-table tr,
+.goal-value-table tbody tr {
+  border: none !important;
+  border-bottom: none !important;
+}
+
+/* Auch für .goalvalue-table falls verwendet */
+.goalvalue-table td,
+.goalvalue-table tbody td,
+.goalvalue-table tbody tr td {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+}
+
+.goalvalue-table tr,
+.goalvalue-table tbody tr {
+  border: none !important;
+}
+
+/* Falls es box-shadow gibt die wie Linien aussieht */
+.goal-value-table td,
+.goal-value-table tr,
+.goalvalue-table td,
+.goalvalue-table tr {
+  box-shadow: none !important;
+}
+
+/* Nur Header und Bottom behalten Linien */
+.goal-value-table thead th {
+  border-bottom: 2px solid #333 !important;  /* Header behält obere Linie */
+}
+
+.goal-value-table .bottom-row td {
+  border-top: 2px solid #555 !important;  /* Bottom behält obere Linie */
+}
+
+.goalvalue-table thead th {
+  border-bottom: 2px solid #333 !important;  /* Header behält obere Linie */
+}
+
+/* ============================================= */
+/* GOAL VALUE - SCHRIFT WIE SEASON TABELLE      */
+/* ============================================= */
+
+/* Schriftgrösse wie Season (0.95rem) */
+.goal-value-table,
+.goalvalue-table {
+  font-size: 0.95rem !important;
+}
+
+/* Spielernamen FETT */
+.goal-value-table tbody td.sticky-col,
+.goal-value-table tbody td:first-child,
+.goalvalue-table tbody td:first-child,
+.goalvalue-table tbody td.sticky-col {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}
+
+/* Header auch anpassen */
+.goal-value-table thead th,
+.goalvalue-table thead th {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+}
+
 .goalvalue-table {
   width: auto !important;
   min-width: max-content !important;
