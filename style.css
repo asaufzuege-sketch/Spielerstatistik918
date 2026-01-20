@@ -1096,185 +1096,111 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   width: 100%;
   display: flex;
   justify-content: center;
-  background: var(--bg-color);  /* Match page background */
+  background: var(--bg-color);
 }
 
-/* Wrapper for fixed + scrollable sections */
-.goal-value-wrapper {
-  display: flex;
-  flex-direction: row;
-  max-width: 95vw;
+/* Scroll-Wrapper für die gesamte Tabelle */
+.goal-value-scroll-wrapper {
   width: 100%;
-  border: 1px solid #444;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--header-bg);  /* FIX: Match Season table - same as total row */
-  max-height: 75vh;  /* FIX: Enable sticky headers */
-  overflow-y: auto;  /* FIX: Enable vertical scrolling for sticky */
+  max-height: 75vh;
+  overflow: auto;  /* Beide Richtungen */
+  background: var(--bg-color);
 }
 
-/* Fixed Player column (left) */
-.goal-value-fixed {
-  flex-shrink: 0;
-  background: var(--header-bg);  /* FIX: Match Season table total row color */
-  z-index: 10;
-  border-right: 2px solid #555;
-  overflow-y: auto;
-  scrollbar-width: none; /* Hide scrollbar for fixed column */
-  -ms-overflow-style: none;
+/* EINE Tabelle */
+.goal-value-table {
+  border-collapse: collapse;
+  min-width: 100%;
 }
 
-.goal-value-fixed::-webkit-scrollbar {
-  width: 0;
-  display: none;
-}
-
-.goal-value-table-fixed {
-  border-collapse: collapse;  /* Fix 2: Ensure consistent borders */
-  border-spacing: 0;  /* Fix 2: No additional spacing */
-  table-layout: fixed;
-}
-
-.goal-value-table-fixed th,
-.goal-value-table-fixed td {
-  padding: 0 12px;  /* Fix 2: Consistent padding */
-  height: 36px;  /* Fix 2: Consistent height */
-  vertical-align: middle;  /* Fix 2: Center alignment */
-  box-sizing: border-box;  /* Fix 2: Include padding in height */
-  white-space: nowrap;
+.goal-value-table th,
+.goal-value-table td {
+  padding: 8px 12px;
   border-bottom: 1px solid #333;
-  min-width: 140px;
-  width: 140px;
-}
-
-.goal-value-table-fixed th {
-  background: var(--header-bg) !important;  /* FIX: Match Season table header */
-  color: #fff !important;
-  font-weight: 700;
-  position: sticky;  /* Fix 1: Sticky header */
-  top: 0;  /* Fix 1: Stick to top */
-  z-index: 25;  /* Fix 1: Higher z-index for Player header */
-}
-
-.goal-value-table-fixed td {
-  text-align: left;
-  padding-left: 12px;
-  font-weight: 700;
-}
-
-/* Scrollable section (Opponents + Value) */
-.goal-value-scroll {
-  flex: 1;
-  overflow-x: auto;
-  overflow-y: auto;
-  background: var(--bg-color);  /* FIX: Match page background */
-}
-
-.goal-value-table-scroll {
-  border-collapse: collapse;  /* Fix 2: Ensure consistent borders */
-  border-spacing: 0;  /* Fix 2: No additional spacing */
-  min-width: max-content;  /* IMPORTANT: Prevents columns from being compressed */
-  table-layout: auto;
-}
-
-.goal-value-table-scroll th,
-.goal-value-table-scroll td {
-  padding: 0 12px;  /* Fix 2: Consistent padding */
-  height: 36px;  /* Fix 2: Consistent height */
-  vertical-align: middle;  /* Fix 2: Center alignment */
-  box-sizing: border-box;  /* Fix 2: Include padding in height */
   white-space: nowrap;
-  border-bottom: 1px solid #333;
-  min-width: 60px;  /* Minimum width per column */
   text-align: center;
 }
 
-.goal-value-table-scroll th {
-  background: var(--header-bg) !important;  /* FIX: Match Season table header */
+/* Sticky Player-Spalte (erste Spalte) */
+.goal-value-table .sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--bg-color);
+  text-align: left;
+  min-width: 150px;
+}
+
+/* Header sticky (oben) */
+.goal-value-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: var(--header-bg);
   color: #fff !important;
   font-weight: 700;
-  position: sticky;  /* Fix 1: Sticky header */
-  top: 0;  /* Fix 1: Stick to top */
-  z-index: 20;  /* Fix 1: Z-index for scrollable headers */
 }
 
-/* Synchronized row heights */
-.goal-value-table-fixed tr,
-.goal-value-table-scroll tr {
-  height: 36px;  /* Fix 2: Consistent row height */
-  line-height: 36px;  /* Fix 2: Consistent line height */
+/* Player Header: sticky links UND oben */
+.goal-value-table thead th.sticky-col {
+  z-index: 25;  /* Höchster z-index: links + oben sticky */
+  left: 0;
+  top: 0;
 }
 
-/* Row colors for both tables */
-.goal-value-table-fixed tbody tr.even-row,
-.goal-value-table-scroll tbody tr.even-row {
+/* Row colors */
+.goal-value-table tbody tr.even-row td {
   background-color: var(--row-even);
 }
 
-.goal-value-table-fixed tbody tr.odd-row,
-.goal-value-table-scroll tbody tr.odd-row {
+.goal-value-table tbody tr.odd-row td {
   background-color: var(--row-odd);
 }
 
-/* Bottom row styling - FIX: Match Season table total row */
-.goal-value-table-fixed tbody tr:last-child td,
-.goal-value-table-scroll tbody tr:last-child td {
-  background: var(--header-bg) !important;  /* FIX: Match Season table total row */
-  color: #ffffff !important;  /* FIX: White text like Season table */
-  border-top: 2px solid #555;
+/* Sticky column keeps row color */
+.goal-value-table tbody tr.even-row td.sticky-col {
+  background-color: var(--row-even);
+}
+
+.goal-value-table tbody tr.odd-row td.sticky-col {
+  background-color: var(--row-odd);
+}
+
+/* Bottom/Total Zeile */
+.goal-value-table .bottom-row td {
+  background: var(--header-bg) !important;
+  color: #ffffff !important;
   font-weight: 700;
+  border-top: 2px solid #555;
 }
 
-/* Scrollbar Styling */
-/* Horizontal and vertical scrollbar for scrollable section */
-.goal-value-scroll::-webkit-scrollbar {
-  height: 10px;  /* Fix 4: Adjust height */
-  width: 10px;  /* Fix 4: Adjust width */
+.goal-value-table .bottom-row td.sticky-col {
+  background: var(--header-bg) !important;
 }
 
-.goal-value-scroll::-webkit-scrollbar-track {
-  background: #1a1a1a;  /* Fix 4: Darker track */
-  border-radius: 5px;  /* Fix 4: Rounded corners */
+/* Scrollbar GRÜN */
+.goal-value-scroll-wrapper::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-.goal-value-scroll::-webkit-scrollbar-thumb {
-  background: #44bb91;  /* Fix 4: GREEN scrollbar */
-  border-radius: 5px;  /* Fix 4: Rounded corners */
+.goal-value-scroll-wrapper::-webkit-scrollbar-track {
+  background: #1a1a1a;
 }
 
-.goal-value-scroll::-webkit-scrollbar-thumb:hover {
-  background: #3aa07d;  /* Fix 4: Darker green on hover */
+.goal-value-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #44bb91;
+  border-radius: 5px;
 }
 
-/* Firefox scrollbar */
-.goal-value-scroll {
+.goal-value-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #3aa07d;
+}
+
+/* Firefox */
+.goal-value-scroll-wrapper {
   scrollbar-width: thin;
-  scrollbar-color: #44bb91 #1a1a1a;  /* Fix 4: GREEN scrollbar for Firefox */
-}
-
-/* Vertical scrollbar for wrapper */
-.goal-value-wrapper::-webkit-scrollbar {
-  width: 10px;  /* Fix 4: Adjust width */
-}
-
-.goal-value-wrapper::-webkit-scrollbar-track {
-  background: #1a1a1a;  /* Fix 4: Darker track */
-  border-radius: 5px;  /* Fix 4: Rounded corners */
-}
-
-.goal-value-wrapper::-webkit-scrollbar-thumb {
-  background: #44bb91;  /* Fix 4: GREEN scrollbar */
-  border-radius: 5px;  /* Fix 4: Rounded corners */
-}
-
-.goal-value-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #3aa07d;  /* Fix 4: Darker green on hover */
-}
-
-/* Firefox scrollbar for wrapper */
-.goal-value-wrapper {
-  scrollbar-width: thin;
-  scrollbar-color: #44bb91 #1a1a1a;  /* Fix 4: GREEN scrollbar for Firefox */
+  scrollbar-color: #44bb91 #1a1a1a;
 }
 
 .goalvalue-table {
