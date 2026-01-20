@@ -231,7 +231,7 @@ App.goalValue = {
   render() {
     if (!this.container) return;
     
-    // Container leer, Scroll liegt auf #goalValueContainer (wie bei Season)
+    // Container leer
     this.container.innerHTML = "";
     
     const opponents = this.getOpponents();
@@ -262,34 +262,67 @@ App.goalValue = {
       playersList = playersList.filter(name => !goalieNames.includes(name));
     }
     
-    // Wrapper with centering
-    const wrapper = document.createElement('div');
-    wrapper.className = 'table-scroll';
-    wrapper.style.width = '100%';
-    wrapper.style.boxSizing = 'border-box';
-    wrapper.style.display = 'flex';
-    wrapper.style.justifyContent = 'center';
-    // REMOVED: wrapper.style.position = 'relative'; - blocks sticky columns! 
+    const colors = App.helpers.getColorStyles();
+    const valueCellMap = {};
     
-    const table = document.createElement("table");
-    table.className = "goalvalue-table gv-no-patch";
-    table.style.width = "auto";
-    table.style.margin = "0";
-    table.style.borderCollapse = "separate";
-    table.style.borderSpacing = "0";
-    table.style.borderRadius = "8px";
-    // ENTFERNT: table.style.overflow = "hidden"; - kann sticky beeinflussen
-    table.style.tableLayout = "auto";
+    // WRAPPER: Container for fixed + scrollable parts
+    const wrapper = document.createElement("div");
+    wrapper.className = "goal-value-wrapper";
     
-    // Header
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
+    // ===== FIXED TABLE (Player column only) =====
+    const fixedContainer = document.createElement("div");
+    fixedContainer.className = "goal-value-fixed";
     
+    const fixedTable = document.createElement("table");
+    fixedTable.className = "goal-value-table-fixed";
+    
+    // Fixed table header
+    const fixedThead = document.createElement("thead");
+    const fixedHeaderRow = document.createElement("tr");
     const thPlayer = document.createElement("th");
     thPlayer.textContent = "Player";
-    thPlayer.className = "gv-name-header sticky-col";
-    thPlayer.style.minWidth = "120px";
-    headerRow.appendChild(thPlayer);
+    thPlayer.className = "gv-name-header";
+    fixedHeaderRow.appendChild(thPlayer);
+    fixedThead.appendChild(fixedHeaderRow);
+    fixedTable.appendChild(fixedThead);
+    
+    // Fixed table body
+    const fixedTbody = document.createElement("tbody");
+    
+    playersList.forEach((name, rowIdx) => {
+      const row = document.createElement("tr");
+      row.className = (rowIdx % 2 === 0 ? "even-row" : "odd-row");
+      
+      const tdName = document.createElement("td");
+      tdName.textContent = name;
+      tdName.className = "gv-name-cell";
+      row.appendChild(tdName);
+      
+      fixedTbody.appendChild(row);
+    });
+    
+    // Bottom row for fixed table
+    const fixedBottomRow = document.createElement("tr");
+    fixedBottomRow.className = (playersList.length % 2 === 0 ? "even-row" : "odd-row");
+    const labelTd = document.createElement("td");
+    labelTd.textContent = "";
+    labelTd.className = "gv-bottom-label";
+    fixedBottomRow.appendChild(labelTd);
+    fixedTbody.appendChild(fixedBottomRow);
+    
+    fixedTable.appendChild(fixedTbody);
+    fixedContainer.appendChild(fixedTable);
+    
+    // ===== SCROLLABLE TABLE (Opponents + Value) =====
+    const scrollContainer = document.createElement("div");
+    scrollContainer.className = "goal-value-scroll";
+    
+    const scrollTable = document.createElement("table");
+    scrollTable.className = "goal-value-table-scroll";
+    
+    // Scrollable table header
+    const scrollThead = document.createElement("thead");
+    const scrollHeaderRow = document.createElement("tr");
     
     opponents.forEach((op, idx) => {
       const th = document.createElement("th");
@@ -305,31 +338,22 @@ App.goalValue = {
         this.render();
       });
       th.appendChild(input);
-      headerRow.appendChild(th);
+      scrollHeaderRow.appendChild(th);
     });
     
     const thValue = document.createElement("th");
     thValue.textContent = "Value";
-    headerRow.appendChild(thValue);
+    scrollHeaderRow.appendChild(thValue);
     
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
+    scrollThead.appendChild(scrollHeaderRow);
+    scrollTable.appendChild(scrollThead);
     
-    // Body
-    const tbody = document.createElement("tbody");
-    const valueCellMap = {};
-    const colors = App.helpers.getColorStyles();
+    // Scrollable table body
+    const scrollTbody = document.createElement("tbody");
     
     playersList.forEach((name, rowIdx) => {
       const row = document.createElement("tr");
       row.className = (rowIdx % 2 === 0 ? "even-row" : "odd-row");
-      row.style.borderBottom = "1px solid #333";
-      
-      const tdName = document.createElement("td");
-      tdName.textContent = name;
-      tdName.className = "gv-name-cell sticky-col";
-      tdName.style.minWidth = "120px";
-      row.appendChild(tdName);
       
       const vals = (gData[name] && Array.isArray(gData[name])) ? gData[name].slice() : opponents.map(() => 0);
       while (vals.length < opponents.length) vals.push(0);
@@ -401,19 +425,12 @@ App.goalValue = {
       row.appendChild(valueTd);
       
       valueCellMap[name] = valueTd;
-      tbody.appendChild(row);
+      scrollTbody.appendChild(row);
     });
     
-    // Bottom Scale Row
+    // Bottom Scale Row for scrollable table
     const bottomRow = document.createElement("tr");
     bottomRow.className = (playersList.length % 2 === 0 ? "even-row" : "odd-row");
-    bottomRow.style.background = "rgba(0,0,0,0.03)";
-    
-    const labelTd = document.createElement("td");
-    labelTd.textContent = "";
-    labelTd.className = "sticky-col";
-    labelTd.style.minWidth = "120px";
-    bottomRow.appendChild(labelTd);
     
     const scaleOptions = [];
     for (let v = 0; v <= 10; v++) scaleOptions.push((v * 0.5).toFixed(1));
@@ -459,15 +476,22 @@ App.goalValue = {
     emptyTd.textContent = "";
     bottomRow.appendChild(emptyTd);
     
-    tbody.appendChild(bottomRow);
-    table.appendChild(tbody);
+    scrollTbody.appendChild(bottomRow);
+    scrollTable.appendChild(scrollTbody);
+    scrollContainer.appendChild(scrollTable);
     
-    wrapper.appendChild(table);
+    // Assemble everything
+    wrapper.appendChild(fixedContainer);
+    wrapper.appendChild(scrollContainer);
     this.container.appendChild(wrapper);
     
-    console.log('Goal Value Table rendered with scroll wrapper and WORKING sticky columns');
+    // Synchronize vertical scrolling between fixed and scrollable tables
+    scrollContainer.addEventListener('scroll', () => {
+      fixedContainer.scrollTop = scrollContainer.scrollTop;
+    });
     
-    // At the end of render() function:
+    console.log('Goal Value Table rendered with split layout (fixed + scrollable)');
+    
     // Check if dynamic expansion is needed
     this.checkAndExpandColumns();
   },

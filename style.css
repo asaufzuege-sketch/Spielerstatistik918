@@ -1091,39 +1091,146 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-width: none;
 }
 
-/* Center Goal Value Container */
+/* Goal Value Container */
 #goalValueContainer {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding-right: 20px !important;
-  padding-bottom: 20px !important;
-  box-sizing: border-box !important;
-  position: relative !important;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-#goalValueContainer::-webkit-scrollbar {
-  height: 18px !important;
-  background: rgba(0, 0, 0, 0.2) !important;
-}
-#goalValueContainer::-webkit-scrollbar-thumb {
-  background: #44bb91 !important;
-  border-radius: 10px !important;
-  border: 3px solid rgba(0, 0, 0, 0.1) !important;
-}
-#goalValueContainer::-webkit-scrollbar-thumb:hover {
-  background: #3a9d7a !important;
-}
-#goalValueContainer {
-  scrollbar-width: auto !important;
-  scrollbar-color: #44bb91 rgba(0, 0, 0, 0.2) !important;
-}
-
-/* Center Goal Value Wrapper */
+/* Wrapper für fixierte + scrollbare Bereiche */
 .goal-value-wrapper {
-  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  max-width: 95vw;
+  width: 100%;
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Fixierte Player-Spalte (links) */
+.goal-value-fixed {
+  flex-shrink: 0;
+  background: var(--bg-color, #1a1a1a);
+  z-index: 10;
+  border-right: 2px solid #555;
+  overflow-y: auto;
+  scrollbar-width: none; /* Hide scrollbar for fixed column */
+  -ms-overflow-style: none;
+}
+
+.goal-value-fixed::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+.goal-value-table-fixed {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.goal-value-table-fixed th,
+.goal-value-table-fixed td {
+  padding: 8px 12px;
+  white-space: nowrap;
+  border-bottom: 1px solid #333;
+  min-width: 140px;
+  width: 140px;
+}
+
+.goal-value-table-fixed th {
+  background: var(--header-bg) !important;
+  color: #fff !important;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.goal-value-table-fixed td {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 700;
+}
+
+/* Scrollbarer Bereich (Gegner + Value) */
+.goal-value-scroll {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.goal-value-table-scroll {
+  border-collapse: collapse;
+  min-width: max-content;  /* WICHTIG: Verhindert dass Spalten zusammengedrückt werden */
+  table-layout: auto;
+}
+
+.goal-value-table-scroll th,
+.goal-value-table-scroll td {
+  padding: 8px 12px;
+  white-space: nowrap;
+  border-bottom: 1px solid #333;
+  min-width: 60px;  /* Mindestbreite pro Spalte */
+  text-align: center;
+}
+
+.goal-value-table-scroll th {
+  background: var(--header-bg) !important;
+  color: #fff !important;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* Synchronisierte Zeilenhöhen */
+.goal-value-table-fixed tr,
+.goal-value-table-scroll tr {
+  height: 40px;
+}
+
+/* Zeilenfarben für beide Tabellen */
+.goal-value-table-fixed tbody tr.even-row,
+.goal-value-table-scroll tbody tr.even-row {
+  background-color: var(--row-even);
+}
+
+.goal-value-table-fixed tbody tr.odd-row,
+.goal-value-table-scroll tbody tr.odd-row {
+  background-color: var(--row-odd);
+}
+
+/* Bottom row styling */
+.goal-value-table-fixed tbody tr:last-child td,
+.goal-value-table-scroll tbody tr:last-child td {
+  border-top: 2px solid #555;
+  font-weight: 700;
+}
+
+/* Scrollbar Styling */
+.goal-value-scroll::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.goal-value-scroll::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+.goal-value-scroll::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.goal-value-scroll::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+.goal-value-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #555 #2a2a2a;
 }
 
 .goalvalue-table {
@@ -1231,10 +1338,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   font-weight: 700 !important;
-  border-bottom: none !important;
-  border-top: none !important;
-  border-left: none !important;
-  border-right: none !important;
 }
 .gv-name-header {
   text-align: left !important;
@@ -1243,13 +1346,30 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   color: #fff !important;
 }
 
+.gv-bottom-label {
+  text-align: left !important;
+  padding-left: 12px !important;
+  background: var(--bg-color) !important;
+  border-top: 2px solid #555 !important;
+}
+
 .gv-data-cell {
   cursor: pointer;
   user-select: none;
   font-weight: 600;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s, background 0.08s;
 }
-.gv-value-cell { font-weight: 700; }
+
+.gv-data-cell:active {
+  transform: scale(1.08);
+  background: rgba(68, 187, 145, 0.2);
+}
+
+.gv-value-cell { 
+  font-weight: 700;
+  min-width: 80px;
+}
 
 .goalvalue-title-input {
   background: var(--header-bg) !important;
