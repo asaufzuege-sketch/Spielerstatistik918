@@ -1146,6 +1146,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   z-index: 25;  /* Höchster z-index: links + oben sticky */
   left: 0;
   top: 0;
+  background: var(--header-bg);  /* Gleiche Farbe für ALLE Header */
 }
 
 /* Row colors */
@@ -1351,7 +1352,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   max-width: 100px !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  font-size: 0.85rem !important;
+  font-size: 0.8em !important;  /* Kleinere Schrift für Opponent-Header */
   font-weight: 600 !important;
 }
 .goalvalue-title-input:focus {
