@@ -1111,7 +1111,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .goal-value-table {
   border-collapse: collapse;
   min-width: 100%;
-  font-size: 15px;  /* Einheitlich wie Season Tabelle */
+  font-size: 0.95rem;  /* EXAKT wie Season Tabelle */
 }
 
 .goal-value-table th,
@@ -1119,6 +1119,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 8px 12px;
   white-space: nowrap;
   text-align: center;
+  border-bottom: none;  /* Keine Linien zwischen Zeilen */
+  border-top: none;  /* Keine oberen Linien */
 }
 
 /* Sticky Player-Spalte (erste Spalte) */
@@ -1139,6 +1141,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background: var(--header-bg);
   color: #fff !important;
   font-weight: 700;
+  font-size: 0.95rem;  /* EXAKT wie Season */
   border-bottom: 2px solid #333;  /* Header behält Linie */
 }
 
@@ -1148,6 +1151,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   left: 0;
   top: 0;
   background: var(--header-bg);  /* Gleiche Farbe für ALLE Header */
+  font-size: 0.95rem;  /* EXAKT wie Season */
+  font-weight: 700;
 }
 
 /* Row colors */
@@ -1162,10 +1167,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* Sticky column keeps row color */
 .goal-value-table tbody tr.even-row td.sticky-col {
   background-color: var(--row-even);
+  font-weight: 700;  /* Spielernamen FETT */
 }
 
 .goal-value-table tbody tr.odd-row td.sticky-col {
   background-color: var(--row-odd);
+  font-weight: 700;  /* Spielernamen FETT */
 }
 
 /* Bottom/Total Zeile */
@@ -1211,7 +1218,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-collapse: separate !important;
   border-spacing: 0 !important;
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  font-size: 15px;  /* Einheitlich wie Season Tabelle */
+  font-size: 0.95rem;  /* EXAKT wie Season Tabelle */
   margin-top: 6px;
   margin-bottom: 10px;
   table-layout: fixed;
@@ -1227,6 +1234,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   border-bottom: 2px solid #333;
   background: var(--header-bg) !important;
   color: #fff !important;
+  font-size: 0.95rem;  /* EXAKT wie Season */
+  font-weight: 700;
   position: sticky;
   top: 0;
   z-index: 30;
@@ -1235,6 +1244,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   padding: 6px 4px !important;
   text-align: center;
   border-bottom: none;  /* Linien zwischen Spielernamen entfernen */
+  border-top: none;  /* Keine oberen Linien */
 }
 
 /* STICKY COLUMNS FOR GOAL VALUE TABLE */
@@ -1252,6 +1262,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   z-index: 35 !important;
   background: var(--header-bg) !important;
   color: #fff !important;
+  font-size: 0.95rem;  /* EXAKT wie Season */
+  font-weight: 700;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15) !important;
 }
 
@@ -1260,16 +1272,19 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   left: 0 !important;
   z-index: 20 !important;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1) !important;
+  font-weight: 700;  /* Spielernamen FETT */
 }
 
 /* Gerade Zeilen (even) */
 .goalvalue-table tbody tr:nth-child(even) td.sticky-col {
   background: var(--row-even) !important;
+  font-weight: 700;  /* Spielernamen FETT */
 }
 
 /* Ungerade Zeilen (odd) */
 .goalvalue-table tbody tr:nth-child(odd) td.sticky-col {
   background: var(--row-odd) !important;
+  font-weight: 700;  /* Spielernamen FETT */
 }
 
 /* Bottom row (letzte Zeile mit Dropdowns) */
@@ -1886,6 +1901,8 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky !important;
   left: 0 !important;
   z-index: 100 !important;
+  font-size: 0.95rem !important;  /* EXAKT wie Season */
+  font-weight: 700 !important;
 }
 
 /* Spieler-Zellen links kleben */
@@ -1893,6 +1910,7 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   position: sticky !important;
   left: 0 !important;
   z-index: 90 !important;
+  font-weight: 700 !important;  /* Spielernamen FETT */
 }
 
 /* ========================================= */
@@ -1902,19 +1920,23 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 /* EXPLIZITE Hintergrundfarben für Goal Value Table Light Mode */
 .goalvalue-table tbody tr:nth-child(even) td.sticky-col {
   background-color: #f0f0f0 !important;
+  font-weight: 700 !important;  /* Spielernamen FETT */
 }
 
 .goalvalue-table tbody tr:nth-child(odd) td.sticky-col {
   background-color: #e0e0e0 !important;
+  font-weight: 700 !important;  /* Spielernamen FETT */
 }
 
 /* EXPLIZITE Hintergrundfarben für Goal Value Table Dark Mode */
 [data-theme="dark"] .goalvalue-table tbody tr:nth-child(even) td.sticky-col {
   background-color: #333333 !important;
+  font-weight: 700 !important;  /* Spielernamen FETT */
 }
 
 [data-theme="dark"] .goalvalue-table tbody tr:nth-child(odd) td.sticky-col {
   background-color: #4a4a4a !important;
+  font-weight: 700 !important;  /* Spielernamen FETT */
 }
 
 /* Bottom row (letzte Zeile mit Dropdowns) */
