@@ -6,6 +6,7 @@
 App.seasonMap = {
   timeTrackingBox: null,
   playerFilter: null,
+  timeTrackingInitialized: false, // Flag to prevent duplicate initialization
   // Vertical split threshold (Y-coordinate) that separates green zone (scored/upper) from red zone (conceded/lower)
   VERTICAL_SPLIT_THRESHOLD: 50,
   // Mobile breakpoint for responsive behavior
@@ -803,6 +804,13 @@ App.seasonMap = {
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
+    // Verhindere doppelte Initialisierung
+    if (this.timeTrackingInitialized) {
+      console.log("[Season Map] TimeTracking already initialized, skipping...");
+      return;
+    }
+    this.timeTrackingInitialized = true;
+    
     // Make bottom-row buttons (conceded goals) interactive for goalie assignment
     this.timeTrackingBox.querySelectorAll(".time-btn").forEach((btn, index) => {
       const period = btn.closest(".period");
@@ -1080,6 +1088,9 @@ App.seasonMap = {
     AppStorage.removeItem(`seasonMapMarkers_${teamId}`);
     AppStorage.removeItem(`seasonMapTimeData_${teamId}`);
     AppStorage.removeItem(`seasonMapTimeDataWithPlayers_${teamId}`);
+    
+    // Reset initialization flag to allow re-initialization
+    this.timeTrackingInitialized = false;
     
     // Momentum Container leeren (korrekter ID: seasonMapMomentum)
     const momentumContainer = document.getElementById("seasonMapMomentum");
