@@ -311,7 +311,9 @@ App.teamSelection = (function() {
     
     // Language content for Info Modal
     const infoContent = {
-        de: `Ablauf (Spiel)
+        de: `💡 Tipp: Alle Seiteninfos sind über Klick auf den jeweiligen Seitentitel abrufbar.
+
+Ablauf (Spiel)
 
 1. Team Selection: Team wählen oder bearbeiten 
 2. Player Selection: Spieler erfassen/aktivieren; bei Bedarf direkt zu Line Up oder Game Center. 
@@ -427,7 +429,9 @@ ________________________________________
 Reset (irreversibel)
 • Game Center: Jede Seite Kann/muss einzeln zurückgesetzt werden`,
         
-        en: `Workflow (Game)
+        en: `💡 Tip: All page infos are accessible by clicking on the page title.
+
+Workflow (Game)
 
 1. Team Selection: Choose or edit team.
 2. Player Selection: Add/activate players; go directly to Line Up or Game Center if needed.
@@ -545,7 +549,9 @@ ________________________________________
 Reset (irreversible)
 • Game Center: Each page can/must be reset individually`,
         
-        ru: `Порядок действий (Игра)
+        ru: `💡 Совет: Все информации о страницах доступны по клику на заголовок страницы.
+
+Порядок действий (Игра)
 
 1. Team Selection: Выбрать или редактировать команду.
 2. Player Selection: Добавить/активировать игроков; при необходимости перейти в Line Up или Game Center.
@@ -663,7 +669,9 @@ ________________________________________
 Reset (необратимо)
 • Game Center: Каждую страницу можно/нужно сбросить отдельно`,
         
-        sv: `Arbetsflöde (Match)
+        sv: `💡 Tips: All sidinformation är tillgänglig genom att klicka på sidtiteln.
+
+Arbetsflöde (Match)
 
 1. Team Selection: Välj eller redigera lag.
 2. Player Selection: Lägg till/aktivera spelare; gå direkt till Line Up eller Game Center vid behov.
@@ -781,7 +789,9 @@ ________________________________________
 Reset (oåterkallelig)
 • Game Center: Varje sida kan/måste återställas individuellt`,
         
-        fi: `Työnkulku (Peli)
+        fi: `💡 Vinkki: Kaikki sivutiedot ovat saatavilla napsauttamalla sivun otsikkoa.
+
+Työnkulku (Peli)
 
 1. Team Selection: Valitse tai muokkaa joukkuetta.
 2. Player Selection: Lisää/aktivoi pelaajia; siirry tarvittaessa suoraan Line Up tai Game Center.
