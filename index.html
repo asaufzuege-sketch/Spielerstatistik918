@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="SmartHockey Tracking 918 - Hockey Spielerstatistik App für Teams. Verfolge Spielerleistungen, Tore, Assists und mehr.">
   <title>Player Statistics</title>
   
   <!-- PWA Manifest -->
@@ -551,7 +552,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
+        navigator.serviceWorker.register('./service-worker.js')
           .then(reg => console.log('Service Worker registered:', reg.scope))
           .catch(err => console.log('Service Worker registration failed:', err));
       });

@@ -1,32 +1,41 @@
-const CACHE_NAME = 'smarthockey-918-v1';
+const CACHE_NAME = 'smarthockey-918-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/season_table_styles.css',
-  '/season_map_momentum.css',
-  '/js/app.js',
-  '/js/core/config.js',
-  '/js/core/helpers.js',
-  '/js/utils/storage.js',
-  '/js/utils/marker-handler.js',
-  '/js/modules/team-selection.js',
-  '/js/modules/player-selection.js',
-  '/js/modules/stats-table.js',
-  '/js/modules/season-table.js',
-  '/js/modules/goal-map.js',
-  '/js/modules/season-map.js',
-  '/js/modules/goal-value.js',
-  '/js/modules/line-up.js',
-  '/js/modules/csv-handler.js',
-  '/js/modules/timer.js',
-  '/js/modules/page-info.js',
-  '/js/modules/theme-toggle.js',
-  '/season_table_ui_patch.js',
-  '/season_map_momentum.js',
-  '/enhancements-wakelock.js'
-  // Note: Icons are not cached here as they need to be generated first
-  // See icons/README.md for instructions
+  './',
+  './index.html',
+  './style.css',
+  './season_table_styles.css',
+  './season_map_momentum.css',
+  './js/app.js',
+  './js/core/config.js',
+  './js/core/helpers.js',
+  './js/utils/storage.js',
+  './js/utils/marker-handler.js',
+  './js/modules/team-selection.js',
+  './js/modules/player-selection.js',
+  './js/modules/stats-table.js',
+  './js/modules/season-table.js',
+  './js/modules/goal-map.js',
+  './js/modules/season-map.js',
+  './js/modules/goal-value.js',
+  './js/modules/line-up.js',
+  './js/modules/csv-handler.js',
+  './js/modules/timer.js',
+  './js/modules/page-info.js',
+  './js/modules/theme-toggle.js',
+  './season_table_ui_patch.js',
+  './season_map_momentum.js',
+  './enhancements-wakelock.js',
+  './Spielfeld Overlay.png',
+  './Tor Grün.png',
+  './Tor Rot.png',
+  './icons/icon-72.png',
+  './icons/icon-96.png',
+  './icons/icon-128.png',
+  './icons/icon-144.png',
+  './icons/icon-152.png',
+  './icons/icon-192.png',
+  './icons/icon-384.png',
+  './icons/icon-512.png'
 ];
 
 // Install event
@@ -55,7 +64,7 @@ self.addEventListener('fetch', event => {
       .catch(() => {
         // Offline fallback
         if (event.request.destination === 'document') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       })
   );
