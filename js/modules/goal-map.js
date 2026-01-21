@@ -1036,8 +1036,10 @@ App.goalMap = {
         btn.parentNode.replaceChild(newBtn, btn);
         
         // Jetzt neuen Listener auf den NEUEN Button
-        let lastTap = 0;
+        let lastClickTime = 0;
         let clickTimeout = null;
+        const DOUBLE_CLICK_DELAY = 300;
+        const MIN_CLICK_INTERVAL = 50;
         
         const updateValue = (delta) => {
           // CRITICAL: Read teamId and data dynamically at click time to ensure data persistence across team switches.
@@ -1134,7 +1136,17 @@ App.goalMap = {
           }
         };
         
-        newBtn.addEventListener("click", () => {
+        newBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Debounce: Ignoriere Klicks die zu schnell hintereinander kommen
+          const now = Date.now();
+          if (now - lastClickTime < MIN_CLICK_INTERVAL) {
+            return;
+          }
+          lastClickTime = now;
+          
           // Shot-Workflow: KEINE Timebox-Buttons erlaubt
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'shot') {
             console.log('[Shot Workflow] Timebox buttons not allowed during shot workflow');
@@ -1196,23 +1208,25 @@ App.goalMap = {
             }
           }
           
-          // Normale Klick-Logik (außerhalb Workflow)
-          const now = Date.now();
-          const diff = now - lastTap;
-          if (diff < 300) {
-            if (clickTimeout) {
-              clearTimeout(clickTimeout);
-              clickTimeout = null;
-            }
-            updateValue(-1);
-            lastTap = 0;
-          } else {
-            clickTimeout = setTimeout(() => {
-              updateValue(+1);
-              clickTimeout = null;
-            }, 300);
-            lastTap = now;
+          // Normale Klick-Logik (außerhalb Workflow) - NEUE saubere Doppelklick-Logik
+          // Wenn bereits ein Timeout läuft, ist dies ein Doppelklick
+          if (clickTimeout) {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
+            updateValue(-1);  // Doppelklick: -1
+            return;
           }
+          
+          // Starte Timeout für Single-Click
+          clickTimeout = setTimeout(() => {
+            updateValue(+1);  // Single-Click: +1
+            clickTimeout = null;
+          }, DOUBLE_CLICK_DELAY);
+        });
+        
+        // Zusätzlich: Verhindere doppelte Events durch Touch
+        newBtn.addEventListener("touchend", (e) => {
+          e.preventDefault();
         });
       });
     });
