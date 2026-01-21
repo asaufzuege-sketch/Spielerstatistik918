@@ -3177,7 +3177,8 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   color: #44bb91 !important;
   margin-top: 20px;
   margin-bottom: 10px;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.1em !important;
   text-align: left;
 }
 
@@ -3187,10 +3188,13 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   color: #44bb91 !important;
 }
 
-.info-content h3 {
+.info-content h3,
+h3.info-title {
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   color: #44bb91;
+  font-size: 1.1em !important;
+  font-weight: 700;
 }
 
 .info-content ol,
