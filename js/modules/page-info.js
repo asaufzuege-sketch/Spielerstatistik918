@@ -99,6 +99,62 @@ Ici tu sélectionnes ton équipe ou crées une nouvelle équipe.
 • Boutons: "Line Up" → vers la formation; "Game Center" → directement à l'enregistrement du jeu.`
         },
         
+        'line-up': {
+            de: `📋 Line Up
+
+Modi (umschaltbar per Modus-Button):
+
+• Balanced: Ausgeglichenes Line Up. Vorgabe durch AI-Logik und Formeln.
+• Power: Stärkstes Line Up, Spezial-Setup für entscheidende Szenen. Vorgabe durch AI-Logik und Formeln.
+• Manuell: Frei erstellbares Line Up per Klick auf Position belegen.
+• „Player Out": Spieler als OUT markieren (Bei Penalty-Strafe). Line Up wird automatisch angepasst.`,
+            
+            en: `📋 Line Up
+
+Modes (switchable via Mode button):
+
+• Balanced: Balanced Line Up. Preset by AI logic and formulas.
+• Power: Strongest Line Up, special setup for decisive scenes. Preset by AI logic and formulas.
+• Manual: Freely creatable Line Up by clicking on position to assign.
+• "Player Out": Mark player as OUT (for penalty). Line Up is automatically adjusted.`,
+            
+            ru: `📋 Line Up
+
+Режимы (переключаемые кнопкой режима):
+
+• Balanced: Сбалансированный состав. Предустановка через AI-логику и формулы.
+• Power: Сильнейший состав, специальная расстановка для решающих моментов. Предустановка через AI-логику и формулы.
+• Manuell: Свободно создаваемый состав, назначение по клику на позицию.
+• „Player Out": Отметить игрока как OUT (при удалении). Состав автоматически корректируется.`,
+            
+            sv: `📋 Line Up
+
+Lägen (växlingsbart via Lägesknapp):
+
+• Balanced: Balanserad Line Up. Förinställd av AI-logik och formler.
+• Power: Starkaste Line Up, specialuppställning för avgörande scener. Förinställd av AI-logik och formler.
+• Manuell: Fritt skapbar Line Up genom att klicka på position för att tilldela.
+• "Player Out": Markera spelare som OUT (vid utvisning). Line Up justeras automatiskt.`,
+            
+            fi: `📋 Line Up
+
+Tilat (vaihdettavissa Tila-painikkeella):
+
+• Balanced: Tasapainoinen kokoonpano. AI-logiikan ja kaavojen esiasetus.
+• Power: Vahvin kokoonpano, erikoisasettelu ratkaiseviin tilanteisiin. AI-logiikan ja kaavojen esiasetus.
+• Manuell: Vapaasti luotava kokoonpano klikkaamalla paikkaa.
+• "Player Out": Merkitse pelaaja OUT (rangaistuksessa). Kokoonpano mukautuu automaattisesti.`,
+            
+            fr: `📋 Line Up
+
+Modes (commutables via le bouton Mode):
+
+• Balanced: Line Up équilibré. Prédéfini par la logique AI et les formules.
+• Power: Line Up le plus fort, configuration spéciale pour les scènes décisives. Prédéfini par la logique AI et les formules.
+• Manuell: Line Up librement créable en cliquant sur la position à attribuer.
+• "Player Out": Marquer le joueur comme OUT (en cas de pénalité). Le Line Up est automatiquement ajusté.`
+        },
+        
         'season': {
             de: `📊 Season Table
 
@@ -573,6 +629,7 @@ Graphique Momentum:
             const pageId = pageContainer.id;
             if (pageId === 'teamSelectionPage') return 'team-selection';
             if (pageId === 'playerSelectionPage') return 'player-selection';
+            if (pageId === 'lineUpPage') return 'line-up';
             if (pageId === 'seasonPage') return 'season';
             if (pageId === 'statsPage') return 'game-center';
             if (pageId === 'goalValuePage') return 'goal-value';
