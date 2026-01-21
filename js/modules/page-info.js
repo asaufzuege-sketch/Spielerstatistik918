@@ -64,359 +64,259 @@ Ici tu sélectionnes ton équipe ou crées une nouvelle équipe.
         'player-selection': {
             de: `👥 Player Selection
 
-Hier wählst du die Spieler für dein Team aus.
-
-• Spieler erfassen/bearbeiten: Nummer, Name, Position (G = Goalie, W = Wing, C = Center, D = Defense)
-• Aktivieren (Checkbox) = Spieler ist für Line Up / Game Center verfügbar
-• Buttons: "Line Up" → zur Aufstellung; "Game Center" → direkt zur Spiel-Erfassung`,
+• Spieler erfassen/bearbeiten: Nummer, Name, Position (G = Goalie, W = Wing, C = Center, D = Defense).
+• Aktivieren (Checkbox) = Spieler ist für Line Up / Game Center verfügbar.
+• Buttons: „Line Up" → zur Aufstellung; „Game Center" → direkt zur Spiel-Erfassung.`,
             
             en: `👥 Player Selection
 
-Here you select the players for your team.
-
-• Add/edit players: Number, Name, Position (G = Goalie, W = Wing, C = Center, D = Defense)
-• Activate (checkbox) = Player available for Line Up / Game Center
-• Buttons: "Line Up" → to lineup; "Game Center" → directly to game recording`,
+• Add/edit players: Number, Name, Position (G = Goalie, W = Wing, C = Center, D = Defense).
+• Activate (checkbox) = Player available for Line Up / Game Center.
+• Buttons: "Line Up" → to lineup; "Game Center" → directly to game recording.`,
             
             ru: `👥 Player Selection
 
-Здесь вы выбираете игроков для своей команды.
-
-• Добавить/редактировать игроков: Номер, Имя, Позиция (G = Вратарь, W = Крайний, C = Центр, D = Защитник)
-• Активировать (чекбокс) = Игрок доступен для Line Up / Game Center
-• Кнопки: "Line Up" → к составу; "Game Center" → сразу к записи игры`,
+• Добавить/редактировать игроков: Номер, Имя, Позиция (G = Вратарь, W = Крайний, C = Центр, D = Защитник).
+• Активировать (чекбокс) = Игрок доступен для Line Up / Game Center.
+• Кнопки: «Line Up» → к составу; «Game Center» → сразу к записи игры.`,
             
             sv: `👥 Player Selection
 
-Här väljer du spelarna för ditt lag.
-
-• Lägg till/redigera spelare: Nummer, Namn, Position (G = Målvakt, W = Wing, C = Center, D = Back)
-• Aktivera (kryssruta) = Spelare tillgänglig för Line Up / Game Center
-• Knappar: "Line Up" → till uppställning; "Game Center" → direkt till matchregistrering`,
+• Lägg till/redigera spelare: Nummer, Namn, Position (G = Målvakt, W = Wing, C = Center, D = Back).
+• Aktivera (kryssruta) = Spelare tillgänglig för Line Up / Game Center.
+• Knappar: "Line Up" → till uppställning; "Game Center" → direkt till matchregistrering.`,
             
             fi: `👥 Player Selection
 
-Täällä valitset pelaajat joukkueellesi.
-
-• Lisää/muokkaa pelaajia: Numero, Nimi, Pelipaikka (G = Maalivahti, W = Laitahyökkääjä, C = Keskushyökkääjä, D = Puolustaja)
-• Aktivoi (valintaruutu) = Pelaaja käytettävissä Line Up / Game Center
-• Painikkeet: "Line Up" → kokoonpanoon; "Game Center" → suoraan pelin tallennukseen`,
+• Lisää/muokkaa pelaajia: Numero, Nimi, Pelipaikka (G = Maalivahti, W = Laitahyökkääjä, C = Keskushyökkääjä, D = Puolustaja).
+• Aktivoi (valintaruutu) = Pelaaja käytettävissä Line Up / Game Center.
+• Painikkeet: "Line Up" → kokoonpanoon; "Game Center" → suoraan pelin tallennukseen.`,
             
             fr: `👥 Player Selection
 
-Ici tu sélectionnes les joueurs pour ton équipe.
-
-• Ajouter/modifier des joueurs: Numéro, Nom, Position (G = Gardien, W = Ailier, C = Centre, D = Défense)
-• Activer (case à cocher) = Joueur disponible pour Line Up / Game Center
-• Boutons: "Line Up" → vers la formation; "Game Center" → directement à l'enregistrement du jeu`
+• Ajouter/modifier des joueurs: Numéro, Nom, Position (G = Gardien, W = Ailier, C = Centre, D = Défense).
+• Activer (case à cocher) = Joueur disponible pour Line Up / Game Center.
+• Boutons: "Line Up" → vers la formation; "Game Center" → directement à l'enregistrement du jeu.`
         },
         
         'season': {
             de: `📊 Season Table
 
-Übersicht aller Spielerstatistiken der Saison.
-
-• Feldspieler-Saisonwerte (Goalies ausgeblendet)
-• Klick/Doppelklick auf Werte: +1/–1 (bei +/- auch negativ)
-• Long-Press auf Time-Zelle: Zusätzliche Zeit kann manuell eingegeben werden
-• Positionsfilter (Dropdown "Pos.")
-• MVP Points/MVP = Wertvollster Spieler gemäss analysierter Statistik (AI-Formel)
-• Download: Saisondaten werden als Excel heruntergeladen`,
+• Feldspieler-Saisonwerte (Goalies ausgeblendet).
+• Klick/Doppelklick auf Werte: +1/–1 (bei +/- auch negativ).
+• Long-Press auf Time-Zelle: Zusätzliche Zeit kann manuell eingegeben werden.
+• Positionsfilter (Dropdown „Pos.").
+• MVP Points/MVP = Wertvollster Spieler gemäss analysierter Statistik (AI-Formel)`,
             
             en: `📊 Season Table
 
-Overview of all player statistics for the season.
-
-• Field player season values (goalies hidden)
-• Click/double-click on values: +1/–1 (+/- can be negative)
-• Long-press on time cell: Additional time can be entered manually
-• Position filter (dropdown "Pos.")
-• MVP Points/MVP = Most Valuable Player based on analyzed statistics (AI formula)
-• Download: Season data is downloaded as Excel`,
+• Field player season values (goalies hidden).
+• Click/double-click on values: +1/–1 (+/- can be negative).
+• Long-press on time cell: Additional time can be entered manually.
+• Position filter (dropdown "Pos.").
+• MVP Points/MVP = Most Valuable Player based on analyzed statistics (AI formula)`,
             
             ru: `📊 Season Table
 
-Обзор всех игровых статистик сезона.
-
-• Сезонные показатели полевых игроков (вратари скрыты)
-• Клик/двойной клик по значениям: +1/–1 (+/- может быть отрицательным)
-• Долгое нажатие на ячейку времени: Дополнительное время можно ввести вручную
-• Фильтр позиции (выпадающий "Pos.")
-• MVP Points/MVP = Самый ценный игрок по анализу статистики (AI-формула)
-• Download: Данные сезона загружаются как Excel`,
+• Сезонные показатели полевых игроков (вратари скрыты).
+• Клик/двойной клик по значениям: +1/–1 (+/- может быть отрицательным).
+• Долгое нажатие на ячейку времени: Дополнительное время можно ввести вручную.
+• Фильтр позиции (выпадающий «Pos.»).
+• MVP Points/MVP = Самый ценный игрок по анализу статистики (AI-формула)`,
             
             sv: `📊 Season Table
 
-Översikt över all spelarstatistik för säsongen.
-
-• Utespelares säsongsvärden (målvakter dolda)
-• Klick/dubbelklick på värden: +1/–1 (+/- kan vara negativt)
-• Långtryck på tidcell: Extra tid kan matas in manuellt
-• Positionsfilter (dropdown "Pos.")
-• MVP Points/MVP = Mest värdefulla spelaren baserat på analyserad statistik (AI-formel)
-• Download: Säsongsdata laddas ner som Excel`,
+• Utespelares säsongsvärden (målvakter dolda).
+• Klick/dubbelklick på värden: +1/–1 (+/- kan vara negativt).
+• Långtryck på tidcell: Extra tid kan matas in manuellt.
+• Positionsfilter (dropdown "Pos.").
+• MVP Points/MVP = Mest värdefulla spelaren baserat på analyserad statistik (AI-formel)`,
             
             fi: `📊 Season Table
 
-Yleiskatsaus kaikista pelaajatilastoista kaudelta.
-
-• Kenttäpelaajien kausivärdet (maalivahdit piilotettu)
-• Klikkaus/tuplaklikkaus arvoilla: +1/–1 (+/- voi olla negatiivinen)
-• Pitkä painallus aikasolussa: Lisäaika voidaan syöttää manuaalisesti
-• Paikkasuodatin (pudotusvalikko "Pos.")
-• MVP Points/MVP = Arvokkain pelaaja analysoidun tilastojen perusteella (AI-kaava)
-• Download: Kauden tiedot ladataan Excelinä`,
+• Kenttäpelaajien kauden arvot (maalivahdit piilotettu).
+• Klikkaus/tuplaklikkaus arvoihin: +1/–1 (+/- voi olla negatiivinen).
+• Pitkä painallus aikasoluun: Lisäaika voidaan syöttää manuaalisesti.
+• Pelipaikkassuodatin (pudotusvalikko "Pos.").
+• MVP Points/MVP = Arvokkain pelaaja analysoidun tilaston perusteella (tekoälykaava)`,
             
             fr: `📊 Season Table
 
-Aperçu de toutes les statistiques des joueurs de la saison.
-
-• Valeurs saisonnières des joueurs de champ (gardiens cachés)
-• Clic/double-clic sur les valeurs: +1/–1 (+/- peut être négatif)
-• Pression longue sur la cellule de temps: Le temps supplémentaire peut être saisi manuellement
-• Filtre de position (menu déroulant "Pos.")
-• MVP Points/MVP = Joueur le plus précieux selon les statistiques analysées (formule AI)
-• Download: Les données de la saison sont téléchargées en tant qu'Excel`
+• Valeurs saisonnières des joueurs de champ (gardiens cachés).
+• Clic/double-clic sur les valeurs: +1/–1 (+/- peut être négatif).
+• Pression longue sur la cellule de temps: Le temps supplémentaire peut être saisi manuellement.
+• Filtre de position (menu déroulant "Pos.").
+• MVP Points/MVP = Joueur le plus précieux selon les statistiques analysées (formule IA)`
         },
         
         'game-center': {
             de: `🏒 Game Center
 
-Erfasse Spielereignisse live während des Spiels.
-
 Spielerzeile:
-• Klick auf Namen (nicht auf ⋮⋮): Timer Start/Stop für jeden Spieler
-• Die 5 Spieler mit grünen Werten haben die längste Eiszeit
-• Die 5 Spieler mit roten Werten haben die niedrigste Eiszeit
-• Klick auf Zeit: +10 s; Doppelklick: –10 s
+• Klick auf Namen (nicht auf ⋮⋮): Timer Start/Stop für jeden Spieler. Die 5 Spieler mit grünen Werten haben die längste Eiszeit, die 5 Spieler mit roten Werten haben die niedrigste Eiszeit.
+• Klick auf Zeit: +10 s; Doppelklick: –10 s.
 • Langer Druck auf ⋮⋮ → Drag & Drop für Reihenfolge
 
 Statistikzellen (z. B. Goals, Shot):
-• Klick: +1, Doppelklick: –1
-• Bei +1 auf Goals/Shot startet je nach Ereignis der Goal- bzw. Shot-Workflow in der Goal Map
+• Klick: +1, Doppelklick: –1.
+• Bei +1 auf Goals/Shot startet je nach Ereignis der Goal- bzw. Shot-Workflow in der Goal Map.
+• Gegner-Schüsse: In der Shot-Totals-Zelle (unten) per Klick/Doppelklick zählen.
 
-Gegner-Schüsse:
-• In der Shot-Totals-Zelle (unten) per Klick/Doppelklick zählen
+Download: Spieldaten werden als Excel heruntergeladen.
 
-Download:
-• Spieldaten werden als Excel heruntergeladen
+Export Season: Spieldaten werden zu Saisonstatistiken addiert. Dabei werden Sie gebeten, einen Goal Value Wert einzugeben. Bsp: 1 Stern = sehr schwacher Gegner, einfach Tore zu erzielen, Gegner am untersten Tabellen Ende, Chance auf viele Schüsse. 10 Sterne = Sehr starker Gegner, Tabellen Leader, Schwer Chancen zu bekommen, eher weniger Schüsse zugelassen.
 
-Export Season:
-• Spieldaten werden zu Saisonstatistiken addiert
-• Dabei wird ein Goal Value Wert eingegeben (1 Stern = sehr schwacher Gegner, 10 Sterne = sehr starker Gegner)`,
+Mit Button (☀️/🌙) kann zwischen Light- und Dark Mode gewechselt werden.`,
             
             en: `🏒 Game Center
 
-Record game events live during the match.
-
 Player Row:
-• Click on name (not on ⋮⋮): Timer Start/Stop for each player
-• The 5 players with green values have the longest ice time
-• The 5 players with red values have the shortest ice time
-• Click on time: +10 s; Double-click: –10 s
+• Click on name (not on ⋮⋮): Timer Start/Stop for each player. The 5 players with green values have the longest ice time, the 5 players with red values have the lowest ice time.
+• Click on time: +10 s; Double-click: –10 s.
 • Long press on ⋮⋮ → Drag & Drop for order
 
-Stat Cells (e.g., Goals, Shot):
-• Click: +1, Double-click: –1
-• +1 on Goals/Shot triggers corresponding Goal or Shot workflow in Goal Map
+Statistic Cells (e.g. Goals, Shot):
+• Click: +1, Double-click: –1.
+• When +1 on Goals/Shot, the Goal or Shot workflow starts in the Goal Map depending on the event.
+• Opponent shots: Count in the Shot-Totals cell (bottom) via click/double-click.
 
-Opponent Shots:
-• Count in Shot-Totals cell (bottom) via click/double-click
+Download: Game data is downloaded as Excel.
 
-Download:
-• Game data is downloaded as Excel
+Export Season: Game data is added to season statistics. You will be asked to enter a Goal Value. Example: 1 star = very weak opponent, easy to score goals, opponent at the bottom of the table, chance for many shots. 10 stars = Very strong opponent, table leader, hard to get chances, fewer shots allowed.
 
-Export Season:
-• Game data is added to season statistics
-• A Goal Value must be entered (1 star = very weak opponent, 10 stars = very strong opponent)`,
+With button (☀️/🌙) you can switch between Light and Dark Mode.`,
             
             ru: `🏒 Game Center
 
-Записывайте игровые события в прямом эфире во время матча.
-
 Строка игрока:
-• Клик по имени (не по ⋮⋮): Таймер Старт/Стоп для каждого игрока
-• 5 игроков с зелёными значениями имеют самое длинное ледовое время
-• 5 игроков с красными значениями имеют самое короткое ледовое время
-• Клик по времени: +10 с; Двойной клик: –10 с
-• Долгое нажатие на ⋮⋮ → Drag & Drop для порядка
+• Клик по имени (не по ⋮⋮): Старт/Стоп таймера для каждого игрока. 5 игроков с зелёными значениями имеют наибольшее время на льду, 5 игроков с красными значениями — наименьшее.
+• Клик по времени: +10 с; Двойной клик: –10 с.
+• Долгое нажатие на ⋮⋮ → Перетаскивание для изменения порядка
 
-Ячейки статистики (например, Goals, Shot):
-• Клик: +1, Двойной клик: –1
-• +1 на Goals/Shot запускает соответствующий Goal- или Shot-процесс в Goal Map
+Ячейки статистики (напр. Goals, Shot):
+• Клик: +1, Двойной клик: –1.
+• При +1 на Goals/Shot запускается соответствующий процесс в Goal Map.
+• Броски соперника: Считать в ячейке Shot-Totals (внизу) кликом/двойным кликом.
 
-Броски соперника:
-• Считать в ячейке Shot-Totals (внизу) кликом/двойным кликом
+Download: Данные игры скачиваются в Excel.
 
-Download:
-• Игровые данные загружаются как Excel
+Export Season: Данные игры добавляются к сезонной статистике. Вас попросят ввести Goal Value. Пример: 1 звезда = очень слабый соперник, 10 звёзд = очень сильный соперник.
 
-Export Season:
-• Игровые данные добавляются к сезонной статистике
-• Необходимо ввести значение Goal Value (1 звезда = очень слабый соперник, 10 звёзд = очень сильный соперник)`,
+Кнопкой (☀️/🌙) можно переключаться между светлым и тёмным режимом.`,
             
             sv: `🏒 Game Center
 
-Registrera matchhändelser live under matchen.
-
 Spelarrad:
-• Klicka på namn (inte på ⋮⋮): Timer Start/Stop för varje spelare
-• De 5 spelarna med gröna värden har längst istid
-• De 5 spelarna med röda värden har kortast istid
-• Klicka på tid: +10 s; Dubbelklicka: –10 s
-• Långtryck på ⋮⋮ → Drag & Drop för ordning
+• Klick på namn (inte på ⋮⋮): Timer Start/Stopp för varje spelare. De 5 spelarna med gröna värden har längst istid, de 5 spelarna med röda värden har lägst istid.
+• Klick på tid: +10 s; Dubbelklick: –10 s.
+• Långt tryck på ⋮⋮ → Drag & Drop för ordning
 
 Statistikceller (t.ex. Goals, Shot):
-• Klick: +1, Dubbelklick: –1
-• +1 på Goals/Shot startar motsvarande Goal- eller Shot-arbetsflöde i Goal Map
+• Klick: +1, Dubbelklick: –1.
+• Vid +1 på Goals/Shot startar Goal- eller Shot-arbetsflödet i Goal Map.
+• Motståndarskott: Räkna i Shot-Totals-cellen (nere) via klick/dubbelklick.
 
-Motståndarskott:
-• Räkna i Shot-Totals-cellen (nederst) via klick/dubbelklick
+Download: Speldata laddas ner som Excel.
 
-Download:
-• Matchdata laddas ner som Excel
+Export Season: Speldata läggs till säsongsstatistik. Du kommer att bli ombedd att ange ett Goal Value. Exempel: 1 stjärna = mycket svag motståndare, 10 stjärnor = mycket stark motståndare.
 
-Export Season:
-• Matchdata läggs till säsongsstatistik
-• Ett Goal Value måste anges (1 stjärna = mycket svag motståndare, 10 stjärnor = mycket stark motståndare)`,
+Med knappen (☀️/🌙) kan du växla mellan ljust och mörkt läge.`,
             
             fi: `🏒 Game Center
 
-Tallenna pelin tapahtumat livenä ottelun aikana.
-
 Pelaajarivi:
-• Klikkaa nimeä (ei ⋮⋮): Ajastin Käynnistä/Pysäytä jokaiselle pelaajalle
-• 5 pelaajaa, joilla on vihreät arvot, ovat pelanneet pisimpään jäällä
-• 5 pelaajaa, joilla on punaiset arvot, ovat pelanneet lyhimmän ajan jäällä
-• Klikkaa aikaa: +10 s; Tuplaklikkaa: –10 s
-• Pitkä painallus ⋮⋮ → Vedä ja pudota järjestykseen
+• Klikkaa nimeä (ei ⋮⋮): Ajastin Start/Stop jokaiselle pelaajalle. 5 pelaajaa vihreillä arvoilla ovat eniten jäällä, 5 pelaajaa punaisilla arvoilla vähiten.
+• Klikkaa aikaa: +10 s; Tuplaklikkaus: –10 s.
+• Pitkä painallus ⋮⋮ → Vedä ja pudota järjestyksen muuttamiseksi
 
 Tilastosolut (esim. Goals, Shot):
-• Klikkaus: +1, Tuplaklikkaus: –1
-• +1 Goals/Shot käynnistää vastaavan Goal- tai Shot-työnkulun Goal Mapissa
+• Klikkaus: +1, Tuplaklikkaus: –1.
+• +1 Goals/Shot käynnistää Goal- tai Shot-työnkulun Goal Mapissa.
+• Vastustajan laukaukset: Laske Shot-Totals-solussa (alhaalla) klikkauksella/tuplaklikkauksella.
 
-Vastustajan laukaukset:
-• Laske Shot-Totals-solussa (alhaalla) klikkauksella/tuplaklikkauksella
+Download: Pelitiedot ladataan Excelinä.
 
-Download:
-• Pelitiedot ladataan Excelinä
+Export Season: Pelitiedot lisätään kauden tilastoihin. Sinua pyydetään syöttämään Goal Value. Esimerkki: 1 tähti = erittäin heikko vastustaja, 10 tähteä = erittäin vahva vastustaja.
 
-Export Season:
-• Pelitiedot lisätään kauden tilastoihin
-• Goal Value on syötettävä (1 tähti = erittäin heikko vastustaja, 10 tähteä = erittäin vahva vastustaja)`,
+Painikkeella (☀️/🌙) voit vaihtaa vaalean ja tumman tilan välillä.`,
             
             fr: `🏒 Game Center
 
-Enregistre les événements du match en direct.
+Ligne du joueur:
+• Clic sur le nom (pas sur ⋮⋮): Démarrer/Arrêter le chrono pour chaque joueur. Les 5 joueurs avec des valeurs vertes ont le plus de temps de glace, les 5 joueurs avec des valeurs rouges ont le moins.
+• Clic sur le temps: +10 s; Double-clic: –10 s.
+• Appui long sur ⋮⋮ → Glisser-déposer pour l'ordre
 
-Ligne joueur:
-• Clique sur le nom (pas sur ⋮⋮): Timer Démarrer/Arrêter pour chaque joueur
-• Les 5 joueurs avec des valeurs vertes ont le temps de glace le plus long
-• Les 5 joueurs avec des valeurs rouges ont le temps de glace le plus court
-• Clic sur le temps: +10 s; Double-clic: –10 s
-• Pression longue sur ⋮⋮ → Drag & Drop pour l'ordre
+Cellules statistiques (p.ex. Goals, Shot):
+• Clic: +1, Double-clic: –1.
+• Lors de +1 sur Goals/Shot, le workflow Goal ou Shot démarre dans Goal Map.
+• Tirs adverses: Compter dans la cellule Shot-Totals (en bas) via clic/double-clic.
 
-Cellules de statistiques (par ex. Goals, Shot):
-• Clic: +1, Double-clic: –1
-• +1 sur Goals/Shot déclenche le flux de travail Goal ou Shot correspondant dans Goal Map
+Download: Les données du match sont téléchargées en Excel.
 
-Tirs adverses:
-• Compter dans la cellule Shot-Totals (en bas) via clic/double-clic
+Export Season: Les données du match sont ajoutées aux statistiques de saison. On vous demandera d'entrer une valeur Goal Value. Ex: 1 étoile = adversaire très faible, 10 étoiles = adversaire très fort.
 
-Download:
-• Les données du match sont téléchargées en tant qu'Excel
-
-Export Season:
-• Les données du match sont ajoutées aux statistiques de la saison
-• Une Goal Value doit être saisie (1 étoile = adversaire très faible, 10 étoiles = adversaire très fort)`
+Avec le bouton (☀️/🌙) vous pouvez basculer entre le mode clair et sombre.`
         },
         
         'goal-value': {
             de: `📈 Goal Value
 
-Bewerte die Leistung deiner Spieler gegen verschiedene Gegner.
-
-• Dieser Wert wird für die Saisonstatistiken benötigt
-• Manuelle Eingabe der erzielten Tore gegen den jeweiligen Gegner möglich
-• Untere Skala (Bottom) gewichtet Gegnerstärke
-• Value = Summe (Wert × Gewicht)
-• Dieser Wert zeigt einen Mittelwert aller exportierten Werte für diesen Gegner an
-• Reset setzt alle Werte, Skalen und Gegnernamen zurück`,
+Dieser Wert wird für die Saisonstatistiken benötigt.
+Manuelle Eingabe der erzielten Tore gegen den jeweiligen Gegner möglich.
+Untere Skala (Bottom) gewichtet Gegnerstärke; Value = Summe (Wert × Gewicht). Dieser Wert zeigt einen Mittelwert aller exportierten Werte für diesen Gegner an, kann manuell angepasst werden.
+Reset setzt alle Werte, Skalen und Gegnernamen zurück.`,
             
             en: `📈 Goal Value
 
-Rate your players' performance against different opponents.
-
 • This value is required for season statistics
 • Manual entry of goals scored against each opponent
-• Bottom scale weights opponent strength
-• Value = Sum (value × weight)
-• This value shows an average of all exported values for this opponent
-• Reset clears all values, scales, and opponent names`,
+• Bottom scale weights opponent strength; Value = Sum (value × weight).
+• Reset clears all values, scales, and opponent names.`,
             
             ru: `📈 Goal Value
 
-Оцените производительность ваших игроков против разных соперников.
-
 • Это значение необходимо для сезонной статистики
 • Ручной ввод забитых голов против каждого соперника
-• Нижняя шкала (Bottom) весит силу соперника
-• Value = Сумма (значение × вес)
-• Это значение показывает среднее всех экспортированных значений для этого соперника
-• Reset сбрасывает все значения, шкалы и имена соперников`,
+• Нижняя шкала (Bottom) весит силу соперника; Value = Сумма (значение × вес).
+• Reset сбрасывает все значения, шкалы и имена соперников.`,
             
             sv: `📈 Goal Value
 
-Bedöm dina spelares prestation mot olika motståndare.
-
 • Detta värde behövs för säsongsstatistik
 • Manuell inmatning av gjorda mål mot varje motståndare
-• Nedre skala (Bottom) viktar motståndares styrka
-• Value = Summa (värde × vikt)
-• Detta värde visar ett medelvärde av alla exporterade värden för denna motståndare
-• Reset återställer alla värden, skalor och motståndarnamn`,
+• Nedre skala (Bottom) viktar motståndares styrka; Value = Summa (värde × vikt).
+• Reset återställer alla värden, skalor och motståndarnamn.`,
             
             fi: `📈 Goal Value
 
-Arvioi pelaajesi suoritus eri vastustajia vastaan.
-
 • Tämä arvo tarvitaan kauden tilastoihin
 • Manuaalinen syöttö tehdyistä maaleista kutakin vastustajaa vastaan
-• Alaskala (Bottom) painottaa vastustajan vahvuutta
-• Value = Summa (arvo × paino)
-• Tämä arvo näyttää keskiarvon kaikista viedyistä arvoista tälle vastustajalle
+• Alaskala (Bottom) painottaa vastustajan vahvuutta; Value = Summa (arvo × paino).
 • Reset nollaa kaikki arvot, asteikot ja vastustajien nimet`,
             
             fr: `📈 Goal Value
 
-Évalue la performance de tes joueurs contre différents adversaires.
-
-• Cette valeur est nécessaire pour les statistiques de la saison
-• Saisie manuelle des buts marqués contre chaque adversaire
-• L'échelle inférieure pèse la force de l'adversaire
-• Value = Somme (valeur × poids)
-• Cette valeur montre une moyenne de toutes les valeurs exportées pour cet adversaire
-• Reset efface toutes les valeurs, les échelles et les noms des adversaires`
+Cette valeur est nécessaire pour les statistiques de la saison.
+Saisie manuelle des buts marqués contre chaque adversaire.
+L'échelle inférieure (Bottom) pèse la force de l'adversaire; Value = Somme (valeur × poids). Cette valeur montre une moyenne de toutes les valeurs exportées pour cet adversaire, peut être ajustée manuellement.
+Reset efface toutes les valeurs, les échelles et les noms des adversaires.`
         },
         
         'goal-map': {
             de: `🎯 Goal Map / Torbild
 
-Visualisiere wo die Tore gefallen sind.
-
-Feldhälften:
-• Grün/Oben = scored (Tore erzielt)
-• Rot/Unten = conceded (Gegentore)
+Feldhälften: Grün/Oben = scored / Rot/Unten = conceded
 
 Goal-Workflow (Beginnt mit Klick auf Goal in Game Center):
 • 1. Grauen Punkt in grüne Spielhälfte setzen
 • 2. Punkt in grünes Tor setzen
 • 3. Zeit bestimmen in grünen Time-Buttons
-• Danach Auto-Return zu Game Center
+• Danach Auto-Return zu Game Center.
 
 Shot-Workflow (Beginnt mit Klick auf Shot in Game Center):
 • 1. Grünen Punkt in grüne Spielhälfte setzen
-• Danach Auto-Return zu Game Center
+• Danach Auto-Return zu Game Center.
 
 Goal erhalten (es muss ein Goalie oben ausgewählt werden):
 • 1. Grauen Punkt in rote Spielhälfte setzen
@@ -427,27 +327,24 @@ Time Buttons:
 • Klick: +1, Doppelklick: -1
 • WICHTIG: +1/-1 gilt nur für den aktuell ausgewählten Spieler im Filter
 • Ohne Filter wird "anonymous" verwendet
+• Der angezeigte Wert ist die SUMME aller Spieler
+• Um einen bestimmten Spieler zu korrigieren, wähle ihn zuerst im Filter aus und korrigiere per Klick auf Punkt (im Spielfeld und Tor) oder per Doppelklick (Time Buttons)
 
-Export Season Map:
-• Punkte werden zu Season Map addiert`,
+Export Season Map: Punkte werden zu Season Map addiert`,
             
             en: `🎯 Goal Map
 
-Visualize where the goals were scored.
-
-Field Halves:
-• Green/Top = scored (goals scored)
-• Red/Bottom = conceded (goals against)
+Field Halves: Green/Top = scored / Red/Bottom = conceded
 
 Goal Workflow (Starts with click on Goal in Game Center):
 • 1. Place gray dot in green field half
 • 2. Place dot in green goal
 • 3. Determine time in green Time Buttons
-• Then auto-return to Game Center
+• Then auto-return to Game Center.
 
 Shot Workflow (Starts with click on Shot in Game Center):
 • 1. Place green dot in green field half
-• Then auto-return to Game Center
+• Then auto-return to Game Center.
 
 Goal conceded (a goalie must be selected at the top):
 • 1. Place gray dot in red field half
@@ -458,27 +355,24 @@ Time Buttons:
 • Click: +1, Double-click: -1
 • IMPORTANT: +1/-1 applies only to the currently selected player in the filter
 • Without filter "anonymous" is used
+• The displayed value is the SUM of all players
+• To correct a specific player, first select them in the filter and correct by clicking on dots (in field and goal) or by double-clicking (Time Buttons)
 
-Export Season Map:
-• Dots are added to Season Map`,
+Export Season Map: Dots are added to Season Map`,
             
             ru: `🎯 Goal Map
 
-Визуализируйте, где были забиты голы.
-
-Половины поля:
-• Зелёный/Верх = забито (забитые голы)
-• Красный/Низ = пропущено (пропущенные голы)
+Половины поля: Зелёный/Верх = забито / Красный/Низ = пропущено
 
 Goal-Workflow (Начинается с клика на Goal в Game Center):
 • 1. Поставить серую точку в зелёную половину поля
 • 2. Поставить точку в зелёные ворота
 • 3. Определить время в зелёных Time-Buttons
-• Затем авто-возврат в Game Center
+• Затем авто-возврат в Game Center.
 
 Shot-Workflow (Начинается с клика на Shot в Game Center):
 • 1. Поставить зелёную точку в зелёную половину поля
-• Затем авто-возврат в Game Center
+• Затем авто-возврат в Game Center.
 
 Пропущенный гол (вратарь должен быть выбран вверху):
 • 1. Поставить серую точку в красную половину поля
@@ -489,27 +383,24 @@ Time Buttons:
 • Клик: +1, Двойной клик: -1
 • ВАЖНО: +1/-1 применяется только к выбранному игроку в фильтре
 • Без фильтра используется "anonymous"
+• Отображаемое значение - это СУММА всех игроков
+• Чтобы исправить конкретного игрока, сначала выберите его в фильтре и исправьте кликом на точку (на поле и в воротах) или двойным кликом (Time Buttons)
 
-Export Season Map:
-• Точки добавляются к Season Map`,
+Export Season Map: Точки добавляются к Season Map`,
             
             sv: `🎯 Goal Map
 
-Visualisera var målen gjordes.
-
-Fälthalvor:
-• Grön/Övre = gjorda (gjorda mål)
-• Röd/Nedre = insläppta (insläppta mål)
+Fälthalvor: Grön/Övre = gjorda / Röd/Nedre = insläppta
 
 Goal-Workflow (Börjar med klick på Goal i Game Center):
 • 1. Placera grå punkt i grön fälthälft
 • 2. Placera punkt i grönt mål
 • 3. Bestäm tid i gröna Time-Buttons
-• Sedan auto-återgång till Game Center
+• Sedan auto-återgång till Game Center.
 
 Shot-Workflow (Börjar med klick på Shot i Game Center):
 • 1. Placera grön punkt i grön fälthälft
-• Sedan auto-återgång till Game Center
+• Sedan auto-återgång till Game Center.
 
 Insläppt mål (en målvakt måste väljas överst):
 • 1. Placera grå punkt i röd fälthälft
@@ -520,27 +411,24 @@ Time Buttons:
 • Klick: +1, Dubbelklick: -1
 • VIKTIGT: +1/-1 gäller endast för den valda spelaren i filtret
 • Utan filter används "anonymous"
+• Det visade värdet är SUMMAN av alla spelare
+• För att korrigera en specifik spelare, välj dem först i filtret och korrigera genom att klicka på punkt (i fält och mål) eller genom dubbelklick (Time Buttons)
 
-Export Season Map:
-• Punkter läggs till Season Map`,
+Export Season Map: Punkter läggs till Season Map`,
             
             fi: `🎯 Goal Map
 
-Visualisoi missä maalit tehtiin.
-
-Kenttäpuoliskot:
-• Vihreä/Ylä = tehty (tehdyt maalit)
-• Punainen/Ala = päästetty (päästetyt maalit)
+Kenttäpuoliskot: Vihreä/Ylä = tehty / Punainen/Ala = päästetty
 
 Goal-Workflow (Alkaa klikkauksella Goal Game Centerissä):
 • 1. Aseta harmaa piste vihreälle kenttäpuoliskolle
 • 2. Aseta piste vihreään maaliin
 • 3. Määritä aika vihreissä Time-Buttons
-• Sitten automaattinen paluu Game Centeriin
+• Sitten automaattinen paluu Game Centeriin.
 
 Shot-Workflow (Alkaa klikkauksella Shot Game Centerissä):
 • 1. Aseta vihreä piste vihreälle kenttäpuoliskolle
-• Sitten automaattinen paluu Game Centeriin
+• Sitten automaattinen paluu Game Centeriin.
 
 Päästetty maali (maalivahti on valittava yläosasta):
 • 1. Aseta harmaa piste punaiselle kenttäpuoliskolle
@@ -551,162 +439,118 @@ Time Buttons:
 • Klikkaus: +1, Tuplaklikkaus: -1
 • TÄRKEÄÄ: +1/-1 koskee vain suodattimessa valittua pelaajaa
 • Ilman suodatinta käytetään "anonymous"
+• Näytetty arvo on SUMMA kaikista pelaajista
+• Korjataksesi tiettyä pelaajaa, valitse heidät ensin suodattimesta ja korjaa klikkaamalla pistettä (kentällä ja maalissa) tai tuplaklikkaamalla (Time Buttons)
 
-Export Season Map:
-• Pisteet lisätään Season Mapiin`,
+Export Season Map: Pisteet lisätään Season Mapiin`,
             
             fr: `🎯 Goal Map
 
-Visualise où les buts ont été marqués.
-
-Moitiés de terrain:
-• Vert/Haut = marqués (buts marqués)
-• Rouge/Bas = encaissés (buts contre)
+Moitiés de terrain: Vert/Haut = marqués / Rouge/Bas = encaissés
 
 Flux Goal (Commence avec clic sur Goal dans Game Center):
 • 1. Placer le point gris dans la moitié de terrain verte
 • 2. Placer le point dans le but vert
-• 3. Déterminer le temps dans les Time Buttons verts
-• Puis retour automatique à Game Center
+• 3. Déterminer le temps dans les boutons Time verts
+• Puis retour automatique à Game Center.
 
 Flux Shot (Commence avec clic sur Shot dans Game Center):
 • 1. Placer le point vert dans la moitié de terrain verte
-• Puis retour automatique à Game Center
+• Puis retour automatique à Game Center.
 
 But encaissé (un gardien doit être sélectionné en haut):
 • 1. Placer le point gris dans la moitié de terrain rouge
 • 2. Placer le point dans le but rouge
-• 3. Déterminer le temps dans les Time Buttons rouges
+• 3. Déterminer le temps dans les boutons Time rouges
 
-Time Buttons:
+Boutons Time:
 • Clic: +1, Double-clic: -1
 • IMPORTANT: +1/-1 s'applique uniquement au joueur actuellement sélectionné dans le filtre
 • Sans filtre "anonymous" est utilisé
+• La valeur affichée est la SOMME de tous les joueurs
+• Pour corriger un joueur spécifique, sélectionnez-le d'abord dans le filtre et corrigez en cliquant sur les points (sur le terrain et le but) ou en double-cliquant (boutons Time)
 
-Export Season Map:
-• Les points sont ajoutés à Season Map`
+Export Season Map: Les points sont ajoutés à Season Map`
         },
         
         'season-map': {
             de: `🗺️ Season Map
 
-Saisonübersicht aller Tore auf der Karte.
-
-• Nur lesbar (Read only)
-• Alle Tore der Saison visualisiert
-• Heatmap-Darstellung der Torpositionen
+• Only read
 
 Filter:
-• Player-Filter: Zeigt/aggregiert grüne (scored) Werte nur für diesen Spieler
-• Goalie-Filter: Zeigt/aggregiert rote (conceded) Werte nur für diesen Goalie
+• Player-Filter: Zeigt/aggregiert grüne (scored) Werte nur für diesen Spieler.
+• Goalie-Filter: Zeigt/aggregiert rote (conceded) Werte nur für diesen Goalie.
 
 Momentum-Grafik:
-• Mit Player-Filter: grüne Werte nur dieses Spielers
-• Mit Goalie-Filter: rote Werte nur dieses Goalies
-• Ohne Filter: Gesamtwerte
-
-Download:
-• Season Map Daten werden als Excel heruntergeladen`,
+• Mit Player-Filter: grüne Werte nur dieses Spielers.
+• Mit Goalie-Filter: rote Werte nur dieses Goalies.
+• Ohne Filter: Gesamtwerte.`,
             
             en: `🗺️ Season Map
 
-Season overview of all goals on the map.
-
 • Read only
-• All season goals visualized
-• Heatmap display of goal positions
 
 Filters:
-• Player Filter: Shows/aggregates green (scored) values for this player only
-• Goalie Filter: Shows/aggregates red (conceded) values for this goalie only
+• Player Filter: Shows/aggregates green (scored) values for this player only.
+• Goalie Filter: Shows/aggregates red (conceded) values for this goalie only.
 
 Momentum Chart:
-• With Player Filter: green values of this player only
-• With Goalie Filter: red values of this goalie only
-• Without filter: Total values
-
-Download:
-• Season Map data is downloaded as Excel`,
+• With Player Filter: green values of this player only.
+• With Goalie Filter: red values of this goalie only.
+• Without filter: Total values.`,
             
             ru: `🗺️ Season Map
 
-Обзор всех голов сезона на карте.
-
 • Только просмотр
-• Все голы сезона визуализированы
-• Отображение тепловой карты позиций голов
 
 Фильтры:
-• Player Filter: Показывает/суммирует зелёные (забитые) значения только для этого игрока
-• Goalie Filter: Показывает/суммирует красные (пропущенные) значения только для этого вратаря
+• Player Filter: Показывает/суммирует зелёные (забитые) значения только для этого игрока.
+• Goalie Filter: Показывает/суммирует красные (пропущенные) значения только для этого вратаря.
 
 Momentum-график:
-• С Player Filter: зелёные значения только этого игрока
-• С Goalie Filter: красные значения только этого вратаря
-• Без фильтра: Общие значения
-
-Download:
-• Данные Season Map загружаются как Excel`,
+• С Player Filter: зелёные значения только этого игрока.
+• С Goalie Filter: красные значения только этого вратаря.
+• Без фильтра: Общие значения.`,
             
             sv: `🗺️ Season Map
 
-Säsongsöversikt av alla mål på kartan.
-
 • Endast läsning
-• Alla säsongsmål visualiserade
-• Heatmap-visning av målpositioner
 
 Filter:
-• Player Filter: Visar/aggregerar gröna (gjorda) värden endast för denna spelare
-• Goalie Filter: Visar/aggregerar röda (insläppta) värden endast för denna målvakt
+• Player Filter: Visar/aggregerar gröna (gjorda) värden endast för denna spelare.
+• Goalie Filter: Visar/aggregerar röda (insläppta) värden endast för denna målvakt.
 
 Momentum-graf:
-• Med Player Filter: gröna värden endast för denna spelare
-• Med Goalie Filter: röda värden endast för denna målvakt
-• Utan filter: Totalvärden
-
-Download:
-• Season Map-data laddas ner som Excel`,
+• Med Player Filter: gröna värden endast för denna spelare.
+• Med Goalie Filter: röda värden endast för denna målvakt.
+• Utan filter: Totalvärden.`,
             
             fi: `🗺️ Season Map
 
-Kauden yhteenveto kaikista maaleista kartalla.
-
 • Vain luku
-• Kaikki kauden maalit visualisoitu
-• Heatmap-näyttö maalien sijainneista
 
 Suodattimet:
-• Player Filter: Näyttää/kokoaa vihreät (tehdyt) arvot vain tälle pelaajalle
-• Goalie Filter: Näyttää/kokoaa punaiset (päästetyt) arvot vain tälle maalivahdille
+• Player Filter: Näyttää/kokoaa vihreät (tehdyt) arvot vain tälle pelaajalle.
+• Goalie Filter: Näyttää/kokoaa punaiset (päästetyt) arvot vain tälle maalivahdille.
 
 Momentum-kaavio:
-• Player Filterin kanssa: vihreät arvot vain tämän pelaajan
-• Goalie Filterin kanssa: punaiset arvot vain tämän maalivahdin
-• Ilman suodatinta: Kokonaisarvot
-
-Download:
-• Season Map -tiedot ladataan Excelinä`,
+• Player Filterin kanssa: vihreät arvot vain tämän pelaajan.
+• Goalie Filterin kanssa: punaiset arvot vain tämän maalivahdin.
+• Ilman suodatinta: Kokonaisarvot.`,
             
             fr: `🗺️ Season Map
 
-Aperçu saisonnier de tous les buts sur la carte.
-
-• Lecture seule (Read only)
-• Tous les buts de la saison visualisés
-• Affichage heatmap des positions des buts
+• Lecture seule
 
 Filtres:
-• Player Filter: Affiche/agrège les valeurs vertes (marqués) uniquement pour ce joueur
-• Goalie Filter: Affiche/agrège les valeurs rouges (encaissés) uniquement pour ce gardien
+• Player Filter: Affiche/agrège les valeurs vertes (marqués) uniquement pour ce joueur.
+• Goalie Filter: Affiche/agrège les valeurs rouges (encaissés) uniquement pour ce gardien.
 
 Graphique Momentum:
-• Avec Player Filter: valeurs vertes uniquement de ce joueur
-• Avec Goalie Filter: valeurs rouges uniquement de ce gardien
-• Sans filtre: Valeurs totales
-
-Download:
-• Les données de Season Map sont téléchargées en tant qu'Excel`
+• Avec Player Filter: valeurs vertes uniquement de ce joueur.
+• Avec Goalie Filter: valeurs rouges uniquement de ce gardien.
+• Sans filtre: Valeurs totales.`
         }
     };
     
