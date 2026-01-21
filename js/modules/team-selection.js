@@ -1093,7 +1093,7 @@ Reset (irréversible)
                     sectionHtml += `<span class="info-tip">${line}</span>`;
                 }
                 // Check if line is workflow title (contains "Ablauf" or "Workflow" or similar)
-                else if (line.match(/^(Ablauf|Workflow|Порядок действий|Arbetsflöde|Työnkulku|Ablauf)/i) && line.includes('(')) {
+                else if (line.match(/^(Ablauf|Workflow|Порядок действий|Arbetsflöde|Työnkulku)/i) && line.includes('(')) {
                     sectionHtml += `<h2 class="info-workflow-title">${line}</h2>`;
                 }
                 // Check if line looks like a section title (first line of a section, not containing : or starting with number)
