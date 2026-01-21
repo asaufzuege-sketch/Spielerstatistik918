@@ -907,7 +907,127 @@ Season
 ________________________________________
 
 Reset (peruuttamaton)
-• Game Center: Jokainen sivu voidaan/täytyy nollata erikseen`
+• Game Center: Jokainen sivu voidaan/täytyy nollata erikseen`,
+        
+        fr: `💡 Astuce: Toutes les infos des pages sont accessibles en cliquant sur le titre.
+
+Ablauf (Jeu)
+
+1. Team Selection: Choisir ou modifier l'équipe.
+2. Player Selection: Ajouter/activer des joueurs; passer directement à Line Up ou Game Center si nécessaire.
+3. Line Up: Définir la formation (Manuel, Balanced + Power prédéfini par IA)
+4. Game Center: Enregistrer les données du match
+5. Goal Map: Placer des points sur le terrain/but/temps, retourner à Game Center.
+6. Après le match: Évaluer Goal Value par adversaire (difficulté).
+7. Download: Exporter Game → Season et Season Map pour analyser la saison.
+
+________________________________________
+
+Team Selection
+• Choisir ou modifier l'équipe
+
+________________________________________
+
+Player Selection
+• Ajouter/modifier des joueurs: Numéro, Nom, Position (G = Gardien, W = Ailier, C = Centre, D = Défense).
+• Activer (case à cocher) = Joueur disponible pour Line Up / Game Center.
+• Boutons: "Line Up" → vers la formation; "Game Center" → directement à l'enregistrement du jeu.
+
+________________________________________
+
+Line Up
+Modes (commutables via bouton de mode):
+• Balanced: Formation équilibrée. Prédéfini par logique IA et formules.
+• Power: Formation la plus forte, configuration spéciale pour les moments décisifs. Prédéfini par logique IA et formules.
+• Manuel: Formation librement personnalisable en cliquant sur les positions.
+• "Player Out": Marquer le joueur comme OUT (pénalité). La formation s'ajuste automatiquement.
+
+________________________________________
+
+Game Center
+Ligne joueur:
+• Cliquer sur le nom (pas sur ⋮⋮): Timer Démarrer/Arrêter pour chaque joueur. Les 5 joueurs avec des valeurs vertes ont le temps de glace le plus long, les 5 joueurs avec des valeurs rouges ont le temps de glace le plus court.
+• Cliquer sur le temps: +10 s; Double-clic: –10 s.
+• Pression longue sur ⋮⋮ → Glisser-déposer pour l'ordre
+
+Cellules de statistiques (par ex. Goals, Shot):
+• Clic: +1, Double-clic: –1.
+• +1 sur Goals/Shot déclenche le flux de travail Goal ou Shot correspondant dans Goal Map.
+
+Tirs adverses: Compter dans la cellule Shot-Totals (en bas) via clic/double-clic.
+
+Download: Les données du match sont téléchargées en tant qu'Excel.
+
+Export Season: Les données du match sont ajoutées aux statistiques de la saison.
+
+Après chaque match, une valeur doit être saisie dans Goal Value.
+
+Utiliser le bouton (☀️/🌙) pour basculer entre le mode clair et sombre.
+
+________________________________________
+
+Goal Map
+Moitiés de terrain: Vert/Haut = marqués / Rouge/Bas = encaissés
+
+Flux Goal (Commence avec clic sur Goal dans Game Center):
+• 1. Placer le point gris dans la moitié de terrain verte
+• 2. Placer le point dans le but vert
+• 3. Déterminer le temps dans les boutons Time verts
+• Puis retour automatique à Game Center.
+
+Flux Shot (Commence avec clic sur Shot dans Game Center):
+• 1. Placer le point vert dans la moitié de terrain verte
+• Puis retour automatique à Game Center.
+
+But encaissé (un gardien doit être sélectionné en haut):
+• 1. Placer le point gris dans la moitié de terrain rouge
+• 2. Placer le point dans le but rouge
+• 3. Déterminer le temps dans les boutons Time rouges
+
+Boutons Time:
+• Clic: +1, Double-clic: -1
+• IMPORTANT: +1/-1 s'applique uniquement au joueur actuellement sélectionné dans le filtre
+• Sans filtre "anonymous" est utilisé
+• La valeur affichée est la SOMME de tous les joueurs
+• Pour corriger un joueur spécifique, sélectionnez-le d'abord dans le filtre et corrigez en cliquant sur les points (sur le terrain et le but) ou en double-cliquant (boutons Time)
+
+Export Season Map: Les points sont ajoutés à Season Map
+
+________________________________________
+
+Season Map
+• Lecture seule
+
+Filtres:
+• Player Filter: Affiche/agrège les valeurs vertes (marqués) uniquement pour ce joueur.
+• Goalie Filter: Affiche/agrège les valeurs rouges (encaissés) uniquement pour ce gardien.
+
+Graphique Momentum:
+• Avec Player Filter: valeurs vertes uniquement de ce joueur.
+• Avec Goalie Filter: valeurs rouges uniquement de ce gardien.
+• Sans filtre: Valeurs totales.
+
+________________________________________
+
+Goal Value
+Cette valeur est nécessaire pour les statistiques de la saison.
+Saisie manuelle des buts marqués contre chaque adversaire.
+L'échelle inférieure (Bottom) pèse la force de l'adversaire; Value = Somme (valeur × poids). Cette valeur montre une moyenne de toutes les valeurs exportées pour cet adversaire, peut être ajustée manuellement.
+Reset efface toutes les valeurs, les échelles et les noms des adversaires.
+
+________________________________________
+
+Season
+• Valeurs saisonnières des joueurs de champ (gardiens cachés).
+• Clic/double-clic sur les valeurs: +1/–1 (+/- peut être négatif).
+• Pression longue sur la cellule de temps: Le temps supplémentaire peut être saisi manuellement.
+• Filtre de position (menu déroulant "Pos.").
+• MVP Points/MVP = Joueur le plus précieux selon les statistiques analysées (formule IA)
+
+________________________________________
+
+Reset (irréversible)
+• Game Center: Chaque page peut/doit être réinitialisée individuellement`
     };
     
     const closeButtonText = {
@@ -915,7 +1035,8 @@ Reset (peruuttamaton)
         en: 'Close',
         ru: 'Закрыть',
         sv: 'Stäng',
-        fi: 'Sulje'
+        fi: 'Sulje',
+        fr: 'Fermer'
     };
     
     function convertMarkdownToHTML(markdown) {
@@ -967,8 +1088,16 @@ Reset (peruuttamaton)
                     listType = null;
                 }
                 
+                // Check if line is a tip (starts with 💡)
+                if (line.startsWith('💡')) {
+                    sectionHtml += `<span class="info-tip">${line}</span>`;
+                }
+                // Check if line is workflow title (contains "Ablauf" or "Workflow" or similar)
+                else if (line.match(/^(Ablauf|Workflow|Порядок действий|Arbetsflöde|Työnkulku)/i) && line.includes('(')) {
+                    sectionHtml += `<h2 class="info-workflow-title">${line}</h2>`;
+                }
                 // Check if line looks like a section title (first line of a section, not containing : or starting with number)
-                if (i === 0 && !line.includes(':') && !line.match(/^\d+\./)) {
+                else if (i === 0 && !line.includes(':') && !line.match(/^\d+\./)) {
                     sectionHtml += `<h2 class="info-section-title">${line}</h2>`;
                 } else {
                     // Regular paragraph
@@ -1035,9 +1164,10 @@ Reset (peruuttamaton)
                         <option value="ru">&#x1F1F7;&#x1F1FA; Русский</option>
                         <option value="sv">&#x1F1F8;&#x1F1EA; Svenska</option>
                         <option value="fi">&#x1F1EB;&#x1F1EE; Suomi</option>
+                        <option value="fr">&#x1F1EB;&#x1F1F7; Français</option>
                     </select>
                 </div>
-                <button id="infoCloseBtn">${closeButtonText[savedLanguage]}</button>
+                <button id="infoCloseBtn" class="info-close-btn">${closeButtonText[savedLanguage]}</button>
             </div>
         `;
         

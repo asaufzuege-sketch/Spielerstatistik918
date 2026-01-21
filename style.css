@@ -3274,6 +3274,47 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   border-color: #444;
 }
 
+/* Close button styles for info modals */
+.info-close-btn,
+.page-info-close-btn {
+  background: #44bb91;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  min-width: 150px;
+}
+
+.info-close-btn:hover,
+.page-info-close-btn:hover {
+  background: #3a9d7a;
+}
+
+/* Tip styling in main info */
+.info-tip {
+  color: #FFD700; /* Gold/Yellow */
+  font-weight: 700; /* Bold */
+  font-size: 0.85em; /* Smaller so it fits on one line */
+  white-space: nowrap; /* One line */
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* Workflow title styling */
+.info-workflow-title {
+  color: #44bb91;
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-top: 15px;
+  margin-bottom: 8px;
+}
+
 /* ===== GOAL MAP LAYOUT FIX - OVERRIDES ===== */
 /* These must be at the END of the file to have highest specificity */
 
