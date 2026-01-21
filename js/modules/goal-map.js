@@ -1069,12 +1069,14 @@ App.goalMap = {
           // FIX: If playerName doesn't exist in timeDataWithPlayers,
           // use the current button display value as starting point (migration from old format)
           if (typeof currentTimeDataWithPlayers[key][playerName] === 'undefined') {
-            // Read the currently displayed value from the button
-            const currentDisplayValue = parseInt(newBtn.textContent, 10) || 0;
-            
-            // Use the button value as the starting point for this player
-            // This handles migration from old timeData format automatically
-            currentTimeDataWithPlayers[key][playerName] = currentDisplayValue;
+            if (App.goalMapWorkflow?.active) {
+              // Im Workflow: Neuer Spieler startet IMMER bei 0
+              currentTimeDataWithPlayers[key][playerName] = 0;
+            } else {
+              // Manueller Modus: Vom Button-Text übernehmen
+              const currentDisplayValue = parseInt(newBtn.textContent, 10) || 0;
+              currentTimeDataWithPlayers[key][playerName] = currentDisplayValue;
+            }
           }
           
           const current = Number(currentTimeDataWithPlayers[key][playerName]);
