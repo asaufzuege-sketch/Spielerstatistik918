@@ -2,7 +2,7 @@
   "name": "SmartHockey Tracking 918",
   "short_name": "SmartHockey",
   "description": "Hockey Spielerstatistik Tracking App",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1a1a2e",

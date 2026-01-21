@@ -24,9 +24,9 @@ const urlsToCache = [
   '/js/modules/theme-toggle.js',
   '/season_table_ui_patch.js',
   '/season_map_momentum.js',
-  '/enhancements-wakelock.js',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/enhancements-wakelock.js'
+  // Note: Icons are not cached here as they need to be generated first
+  // See icons/README.md for instructions
 ];
 
 // Install event
