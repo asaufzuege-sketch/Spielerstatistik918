@@ -1276,7 +1276,7 @@ App.goalMap = {
           
           // Outside workflow: Support double-tap for -1
           // If this is within DOUBLE_TAP_DELAY of last touch, it's a double-tap
-          if (touchTimeout && (now - lastTouchTime < DOUBLE_TAP_DELAY)) {
+          if (lastTouchTime > 0 && (now - lastTouchTime < DOUBLE_TAP_DELAY)) {
             clearTimeout(touchTimeout);
             touchTimeout = null;
             lastTouchTime = 0;
