@@ -1041,6 +1041,63 @@ App.goalMap = {
         const DOUBLE_CLICK_DELAY = 300;
         const MIN_CLICK_INTERVAL = 50;
         
+        // Touch handling for mobile
+        let lastTouchTime = 0;
+        let touchTimeout = null;
+        const DOUBLE_TAP_DELAY = 300;
+        
+        // Helper to check if button action is allowed based on workflow constraints
+        const isButtonActionAllowed = () => {
+          // Determine button row
+          const isTopRow = newBtn.closest('.period-buttons')?.classList.contains('top-row');
+          const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
+          
+          // Shot-Workflow: KEINE Timebox-Buttons erlaubt
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'shot') {
+            console.log('[Shot Workflow] Timebox buttons not allowed during shot workflow');
+            return false;
+          }
+          
+          // Im Goal-Workflow: Strikte Button-Kontrolle
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
+            const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
+            const workflowType = App.goalMapWorkflow?.workflowType;
+            
+            // Nur im Schritt 2 (nach Feld + Tor) sind Timeboxen erlaubt
+            if (currentStep !== App.goalMap.WORKFLOW_STEP_TIME) {
+              console.log('[Goal Workflow] Timebox only after field and goal');
+              return false;
+            }
+            
+            // GRÜNER Workflow (scored): NUR obere Reihe (grüne Buttons) erlaubt
+            if (workflowType === 'scored') {
+              if (!isTopRow) {
+                console.log('[Goal Workflow] Only GREEN time buttons (top row) allowed for scored goals');
+                return false;
+              }
+            }
+            
+            // ROTER Workflow (conceded): NUR untere Reihe (rote Buttons) erlaubt
+            if (workflowType === 'conceded') {
+              if (!isBottomRow) {
+                console.log('[Goal Workflow] Only RED time buttons (bottom row) allowed for conceded goals');
+                return false;
+              }
+            }
+          }
+          
+          // ROTE BUTTONS ohne Workflow: Goalie muss ausgewählt sein
+          if (!App.goalMapWorkflow?.active && isBottomRow) {
+            const activeGoalie = App.goalMap.getActiveGoalie();
+            if (!activeGoalie) {
+              alert('Please select a goalie first');
+              return false;
+            }
+          }
+          
+          return true;
+        };
+        
         const updateValue = (delta) => {
           // CRITICAL: Read teamId and data dynamically at click time to ensure data persistence across team switches.
           // This prevents closure capture of stale team data when switching teams.
@@ -1149,47 +1206,18 @@ App.goalMap = {
           }
           lastClickTime = now;
           
-          // Shot-Workflow: KEINE Timebox-Buttons erlaubt
-          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'shot') {
-            console.log('[Shot Workflow] Timebox buttons not allowed during shot workflow');
-            return; // Blockiere ALLE Buttons
+          // Check if button action is allowed based on workflow constraints
+          if (!isButtonActionAllowed()) {
+            return;
           }
           
-          // Am Anfang des click handlers - ROTE BUTTONS blockieren
-          const isTopRow = newBtn.closest('.period-buttons')?.classList.contains('top-row');
-          const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
-          
-          // Im Goal-Workflow: Strikte Button-Kontrolle
+          // In Goal-Workflow: Immediate action without double-click detection
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
-            const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
-            const workflowType = App.goalMapWorkflow?.workflowType;
-            
-            // Nur im Schritt 2 (nach Feld + Tor) sind Timeboxen erlaubt
-            if (currentStep !== App.goalMap.WORKFLOW_STEP_TIME) {
-              console.log('[Goal Workflow] Timebox only after field and goal');
-              return;
-            }
-            
-            // GRÜNER Workflow (scored): NUR obere Reihe (grüne Buttons) erlaubt
-            if (workflowType === 'scored') {
-              if (!isTopRow) {
-                console.log('[Goal Workflow] Only GREEN time buttons (top row) allowed for scored goals');
-                return; // Blockiere rote Buttons komplett
-              }
-            }
-            
-            // ROTER Workflow (conceded): NUR untere Reihe (rote Buttons) erlaubt
-            if (workflowType === 'conceded') {
-              if (!isBottomRow) {
-                console.log('[Goal Workflow] Only RED time buttons (bottom row) allowed for conceded goals');
-                return; // Blockiere grüne Buttons komplett
-              }
-            }
-            
             // Record time button click
             updateValue(1);
             
             // Nach grünem Workflow: Zurück zu Game Center
+            const workflowType = App.goalMapWorkflow?.workflowType;
             if (workflowType === 'scored') {
               setTimeout(() => {
                 if (typeof App.showPage === 'function') {
@@ -1199,15 +1227,6 @@ App.goalMap = {
             }
             
             return; // Workflow-Klick verarbeitet, keine weitere Logik
-          }
-          
-          // ROTE BUTTONS ohne Workflow: Goalie muss ausgewählt sein
-          if (isBottomRow) {
-            const activeGoalie = App.goalMap.getActiveGoalie();
-            if (!activeGoalie) {
-              alert('Please select a goalie first');
-              return;
-            }
           }
           
           // Normale Klick-Logik (außerhalb Workflow) - NEUE saubere Doppelklick-Logik
@@ -1226,9 +1245,52 @@ App.goalMap = {
           }, DOUBLE_CLICK_DELAY);
         });
         
-        // Zusätzlich: Verhindere doppelte Events durch Touch
+        // Touch handling for mobile: Single tap (+1) and double tap (-1)
         newBtn.addEventListener("touchend", (e) => {
-          e.preventDefault();
+          e.preventDefault(); // Prevent default to avoid triggering click event as well
+          e.stopPropagation();
+          
+          const now = Date.now();
+          
+          // Check if button action is allowed based on workflow constraints
+          if (!isButtonActionAllowed()) {
+            return;
+          }
+          
+          // In Goal-Workflow: Single tap only (immediate action)
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
+            updateValue(1);
+            
+            // Nach grünem Workflow: Zurück zu Game Center
+            const workflowType = App.goalMapWorkflow?.workflowType;
+            if (workflowType === 'scored') {
+              setTimeout(() => {
+                if (typeof App.showPage === 'function') {
+                  App.showPage('stats');
+                }
+              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
+            }
+            
+            return;
+          }
+          
+          // Outside workflow: Support double-tap for -1
+          // If this is within DOUBLE_TAP_DELAY of last touch, it's a double-tap
+          if (touchTimeout && (now - lastTouchTime < DOUBLE_TAP_DELAY)) {
+            clearTimeout(touchTimeout);
+            touchTimeout = null;
+            lastTouchTime = 0;
+            updateValue(-1);  // Double-tap: -1
+            return;
+          }
+          
+          // Single tap: Wait for potential double-tap
+          lastTouchTime = now;
+          touchTimeout = setTimeout(() => {
+            updateValue(+1);  // Single-tap: +1
+            touchTimeout = null;
+            lastTouchTime = 0;
+          }, DOUBLE_TAP_DELAY);
         });
       });
     });

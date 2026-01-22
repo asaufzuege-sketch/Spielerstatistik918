@@ -2899,6 +2899,33 @@ tr[data-player].dragging {
     font-size: 0.85rem !important;
     padding: 8px 12px !important;
   }
+  
+  /* Mobile: Time Tracking Box - Constrain width and center to prevent shifting */
+  #seasonMapPage .time-tracking-box,
+  #torbildPage .time-tracking-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Mobile: Period buttons - ensure 4-column grid is maintained with proper sizing */
+  .period {
+    grid-template-columns: repeat(4, 1fr) !important;
+    padding: 6px 8px !important;
+  }
+  
+  /* Mobile: Time buttons - reasonable height and font size */
+  .time-btn {
+    height: 28px !important;
+    font-size: 13px !important;
+    min-height: 28px !important;
+  }
+  
+  /* Mobile: Period title - slightly smaller for mobile */
+  .period-title {
+    font-size: 0.8rem !important;
+  }
 }
 
 /* ==================== */
