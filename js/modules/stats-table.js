@@ -384,9 +384,9 @@ App.statsTable = {
   },
   
   attachTimeClickHandlers(timeTd, playerName) {
-    // KRITISCH: Prüfe ob Handler bereits attached sind
+    // KRITISCH: Prüfe ob Handler bereits attached sind - wenn ja, entfernen für Re-Attach
     if (timeTd.dataset.handlersAttached === 'true') {
-      return; // Überspringe, Handler existieren bereits
+      delete timeTd.dataset.handlersAttached;
     }
     timeTd.dataset.handlersAttached = 'true';
     
@@ -484,9 +484,9 @@ App.statsTable = {
   
   attachValueClickHandlers() {
     this.container.querySelectorAll("td[data-player][data-cat]").forEach(td => {
-      // KRITISCH: Prüfe ob Handler bereits attached sind
+      // KRITISCH: Prüfe ob Handler bereits attached sind - wenn ja, entfernen für Re-Attach
       if (td.dataset.handlersAttached === 'true') {
-        return; // Überspringe, Handler existieren bereits
+        delete td.dataset.handlersAttached;
       }
       td.dataset.handlersAttached = 'true';
       
