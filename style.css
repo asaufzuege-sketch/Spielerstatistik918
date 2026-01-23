@@ -3230,15 +3230,15 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   cursor: not-allowed !important;
 }
 
-/* ===== ROTE BEREICHE PERMANENT GESPERRT ===== */
-/* Rotes Tor permanent gesperrt */
+/* ===== RED AREAS PERMANENTLY LOCKED ===== */
+/* Red goal permanently locked */
 #goalRedBox {
   opacity: 0.5 !important;
   filter: grayscale(70%) !important;
   cursor: not-allowed !important;
 }
 
-/* Rote Zone des Spielfelds (untere Hälfte) visuell gesperrt */
+/* Red zone of field (bottom half) visually locked */
 #fieldBox::after {
   content: '';
   position: absolute;
@@ -3251,7 +3251,7 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   z-index: 10;
 }
 
-/* Rote Buttons (bottom-row) permanent gesperrt */
+/* Red buttons (bottom-row) permanently locked */
 .period-buttons.bottom-row .time-btn {
   opacity: 0.5 !important;
   filter: grayscale(70%) !important;
