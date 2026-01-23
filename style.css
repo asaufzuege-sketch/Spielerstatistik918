@@ -671,6 +671,21 @@ button,
 .player-row {
   touch-action: manipulation !important;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Touch-Action für alle interaktiven Zellen */
+.stats-table td[data-player][data-cat],
+.season-table td[data-player][data-cat],
+.ice-time-cell,
+.goalvalue-table td,
+.goalvalue-table .gv-data-cell,
+.season-time-cell {
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Kein Scale-Effekt beim Klicken auf Feld/Tor */
@@ -680,7 +695,7 @@ button,
   transition: none;
 }
 
-/* Timebox-Container */
+/* Timebox-Container Layout Fix */
 .time-tracking-box {
   display: flex;
   flex-direction: column;
@@ -692,16 +707,22 @@ button,
   padding: 10px 14px;
   color: var(--time-box-text);
   font-size: 0.95rem;
+  overflow: hidden !important;
   height: auto !important;
   min-height: 100%;
   gap: 10px;
   box-sizing: border-box;
-  overflow: hidden !important;
   position: relative;
 }
 
 /* Period-Panel */
 .period {
+  flex-shrink: 0 !important;
+  position: relative !important;
+  width: 100% !important;
+  margin: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto minmax(1.4em, auto) auto;
