@@ -340,10 +340,9 @@ App.goalValue = {
         td.style.color = v > 0 ? colors.pos : v < 0 ? colors.neg : colors.zero;
         td.style.fontWeight = v !== 0 ? "700" : "400";
         
-        // KRITISCH: Prüfe ob Handler bereits attached sind
+        // KRITISCH: Prüfe ob Handler bereits attached sind - wenn ja, entfernen für Re-Attach
         if (td.dataset.handlersAttached === 'true') {
-          row.appendChild(td);
-          return; // Überspringe, Handler existieren bereits
+          delete td.dataset.handlersAttached;
         }
         td.dataset.handlersAttached = 'true';
         

@@ -1039,15 +1039,13 @@ App.goalMap = {
         // Note: These buttons are only managed by this module, so removing all listeners is safe.
         const newBtn = btn.cloneNode(true);
         newBtn.textContent = displayValue;
+        
+        // KRITISCH: handlersAttached VOR dem replace entfernen!
+        delete newBtn.dataset.handlersAttached;
+        
         btn.parentNode.replaceChild(newBtn, btn);
         
-        // KRITISCH: Prüfe ob Handler bereits attached sind
-        if (newBtn.dataset.handlersAttached === 'true') {
-          return; // Überspringe, Handler existieren bereits
-        }
-        newBtn.dataset.handlersAttached = 'true';
-        
-        // State auf Element speichern (nicht in Closure!)
+        // Jetzt State initialisieren
         if (!newBtn._tapState) {
           newBtn._tapState = {
             lastTapTime: 0,
@@ -1057,6 +1055,9 @@ App.goalMap = {
           };
         }
         const state = newBtn._tapState;
+        
+        // Handler attached setzen NACH der Initialisierung
+        newBtn.dataset.handlersAttached = 'true';
         
         const DOUBLE_CLICK_DELAY = 300;
         const DOUBLE_TAP_DELAY = 300;
@@ -1113,6 +1114,20 @@ App.goalMap = {
           return true;
         };
         
+        // Helper function to check if workflow is complete and navigate
+        const checkWorkflowCompletion = () => {
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
+            const isComplete = App.goalMapWorkflow?.collectedPoints?.length >= App.goalMapWorkflow?.requiredPoints;
+            if (isComplete) {
+              setTimeout(() => {
+                if (typeof App.showPage === 'function') {
+                  App.showPage('stats');
+                }
+              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
+            }
+          }
+        };
+        
         const updateValue = (delta) => {
           // CRITICAL: Read teamId and data dynamically at click time to ensure data persistence across team switches.
           // This prevents closure capture of stale team data when switching teams.
@@ -1123,16 +1138,17 @@ App.goalMap = {
           // Determine if this is a bottom-row (red) button
           const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
           
+          // KRITISCH: Im Workflow IMMER den Workflow-Spieler verwenden, NIEMALS den Filter!
           let playerName;
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName) {
-            // In workflow: use workflow player
+            // Im Workflow: NUR den Workflow-Spieler verwenden
             playerName = App.goalMapWorkflow.playerName;
           } else if (isBottomRow) {
-            // Bottom row (red buttons): use active goalie
+            // Außerhalb Workflow, rote Buttons: Goalie
             const activeGoalie = this.getActiveGoalie();
             playerName = activeGoalie ? activeGoalie.name : '_anonymous';
           } else {
-            // Top row (green buttons): use player filter or anonymous
+            // Außerhalb Workflow, grüne Buttons: Filter oder anonymous
             playerName = this.playerFilter || '_anonymous';
           }
           
@@ -1171,8 +1187,13 @@ App.goalMap = {
           
           // Calculate display value based on button row and filters
           let displayVal = 0;
-          if (isBottomRow) {
-            // Bottom row: show goalie filter values
+          
+          // KRITISCH: Im Workflow IMMER den Workflow-Spieler-Wert anzeigen, nicht den Filter-Wert!
+          if (App.goalMapWorkflow?.active) {
+            // Im Workflow: Zeige den Wert für den Workflow-Spieler
+            displayVal = (currentTimeDataWithPlayers[key] && currentTimeDataWithPlayers[key][playerName]) || 0;
+          } else if (isBottomRow) {
+            // Außerhalb Workflow, Bottom row: show goalie filter values
             const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
             const selectedGoalie = goalieFilterSelect ? goalieFilterSelect.value : '';
             
@@ -1187,7 +1208,7 @@ App.goalMap = {
               });
             }
           } else {
-            // Top row: show player filter values
+            // Außerhalb Workflow, Top row: show player filter values
             if (this.playerFilter) {
               displayVal = (currentTimeDataWithPlayers[key] && currentTimeDataWithPlayers[key][this.playerFilter]) || 0;
             } else {
@@ -1232,15 +1253,8 @@ App.goalMap = {
             // Record time button click
             updateValue(1);
             
-            // Nach grünem Workflow: Zurück zu Game Center
-            const workflowType = App.goalMapWorkflow?.workflowType;
-            if (workflowType === 'scored') {
-              setTimeout(() => {
-                if (typeof App.showPage === 'function') {
-                  App.showPage('stats');
-                }
-              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
-            }
+            // KRITISCH: Prüfe ob Workflow komplett ist und navigiere zurück
+            checkWorkflowCompletion();
             
             return; // Workflow-Klick verarbeitet, keine weitere Logik
           }
@@ -1277,15 +1291,8 @@ App.goalMap = {
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
             updateValue(1);
             
-            // Nach grünem Workflow: Zurück zu Game Center
-            const workflowType = App.goalMapWorkflow?.workflowType;
-            if (workflowType === 'scored') {
-              setTimeout(() => {
-                if (typeof App.showPage === 'function') {
-                  App.showPage('stats');
-                }
-              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
-            }
+            // KRITISCH: Prüfe ob Workflow komplett ist und navigiere zurück
+            checkWorkflowCompletion();
             
             return;
           }

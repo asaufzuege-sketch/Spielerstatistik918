@@ -1172,9 +1172,9 @@ setStickyOffsets() {
     // Cursor style for clickable cells
     statCell.style.cursor = 'pointer';
     
-    // KRITISCH: Prüfe ob Handler bereits attached sind
+    // KRITISCH: Prüfe ob Handler bereits attached sind - wenn ja, entfernen für Re-Attach
     if (statCell.dataset.handlersAttached === 'true') {
-      return; // Überspringe, Handler existieren bereits
+      delete statCell.dataset.handlersAttached;
     }
     statCell.dataset.handlersAttached = 'true';
     
