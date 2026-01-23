@@ -1041,13 +1041,17 @@ App.goalMap = {
         newBtn.textContent = displayValue;
         btn.parentNode.replaceChild(newBtn, btn);
         
-        // Store state directly on button element to avoid closure issues
-        newBtn._clickState = {
-          lastClickTime: 0,
-          clickTimeout: null,
-          lastTouchTime: 0,
-          touchTimeout: null
-        };
+        // NEU: Speichere Click-State direkt auf dem Button-Element
+        // Dies verhindert Closure-Probleme bei Re-Initialisierung
+        if (!newBtn._clickState) {
+          newBtn._clickState = {
+            lastClickTime: 0,
+            clickTimeout: null,
+            lastTouchTime: 0,
+            touchTimeout: null
+          };
+        }
+        const state = newBtn._clickState;
         
         const DOUBLE_CLICK_DELAY = 300;
         const MIN_CLICK_INTERVAL = 50;
@@ -1208,10 +1212,10 @@ App.goalMap = {
           
           // Debounce: Ignoriere Klicks die zu schnell hintereinander kommen
           const now = Date.now();
-          if (now - newBtn._clickState.lastClickTime < MIN_CLICK_INTERVAL) {
+          if (now - state.lastClickTime < MIN_CLICK_INTERVAL) {
             return;
           }
-          newBtn._clickState.lastClickTime = now;
+          state.lastClickTime = now;
           
           // Check if button action is allowed based on workflow constraints
           if (!isButtonActionAllowed()) {
@@ -1238,17 +1242,17 @@ App.goalMap = {
           
           // Normale Klick-Logik (außerhalb Workflow) - NEUE saubere Doppelklick-Logik
           // Wenn bereits ein Timeout läuft, ist dies ein Doppelklick
-          if (newBtn._clickState.clickTimeout) {
-            clearTimeout(newBtn._clickState.clickTimeout);
-            newBtn._clickState.clickTimeout = null;
+          if (state.clickTimeout) {
+            clearTimeout(state.clickTimeout);
+            state.clickTimeout = null;
             updateValue(-1);  // Doppelklick: -1
             return;
           }
           
           // Starte Timeout für Single-Click
-          newBtn._clickState.clickTimeout = setTimeout(() => {
+          state.clickTimeout = setTimeout(() => {
             updateValue(+1);  // Single-Click: +1
-            newBtn._clickState.clickTimeout = null;
+            state.clickTimeout = null;
           }, DOUBLE_CLICK_DELAY);
         });
         
@@ -1283,20 +1287,20 @@ App.goalMap = {
           
           // Outside workflow: Support double-tap for -1
           // If this is within DOUBLE_TAP_DELAY of last touch, it's a double-tap
-          if (newBtn._clickState.lastTouchTime > 0 && (now - newBtn._clickState.lastTouchTime < DOUBLE_TAP_DELAY)) {
-            clearTimeout(newBtn._clickState.touchTimeout);
-            newBtn._clickState.touchTimeout = null;
-            newBtn._clickState.lastTouchTime = 0;
+          if (state.lastTouchTime > 0 && (now - state.lastTouchTime < DOUBLE_TAP_DELAY)) {
+            clearTimeout(state.touchTimeout);
+            state.touchTimeout = null;
+            state.lastTouchTime = 0;
             updateValue(-1);  // Double-tap: -1
             return;
           }
           
           // Single tap: Wait for potential double-tap
-          newBtn._clickState.lastTouchTime = now;
-          newBtn._clickState.touchTimeout = setTimeout(() => {
+          state.lastTouchTime = now;
+          state.touchTimeout = setTimeout(() => {
             updateValue(+1);  // Single-tap: +1
-            newBtn._clickState.touchTimeout = null;
-            newBtn._clickState.lastTouchTime = 0;
+            state.touchTimeout = null;
+            state.lastTouchTime = 0;
           }, DOUBLE_TAP_DELAY);
         });
       });
