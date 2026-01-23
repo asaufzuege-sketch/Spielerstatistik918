@@ -1328,55 +1328,6 @@ setStickyOffsets() {
       }
     });
   },
-        App.storage.saveSeasonData();
-        this.render();
-        
-        // Position Filter wiederherstellen
-        if (this.positionFilter) {
-          this.filterByPosition(this.positionFilter);
-        }
-      }, 250);
-      
-      this.clickTimers.set(statCell, timer);
-    });
-    
-    // Desktop: Double click
-    statCell.addEventListener('dblclick', (e) => {
-      e.preventDefault();
-      const clickTimer = this.clickTimers.get(statCell);
-      if (clickTimer) {
-        clearTimeout(clickTimer);
-        this.clickTimers.delete(statCell);
-      }
-      
-      // -1 vom Wert (bei +/- auch negativ erlaubt)
-      const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
-      let newValue;
-      
-      if (statKey === 'plusMinus') {
-        // +/- kann negativ werden
-        newValue = currentValue - 1;
-      } else {
-        // Andere Werte minimum 0
-        newValue = Math.max(0, currentValue - 1);
-      }
-      
-      // Wert speichern
-      if (!App.data.seasonData[playerName]) {
-        App.data.seasonData[playerName] = {};
-      }
-      App.data.seasonData[playerName][statKey] = newValue;
-      
-      // Speichern und UI aktualisieren
-      App.storage.saveSeasonData();
-      this.render();
-      
-      // Position Filter wiederherstellen
-      if (this.positionFilter) {
-        this.filterByPosition(this.positionFilter);
-      }
-    });
-  },
   
   attachLongPressHandler(timeCell, playerName, currentTimeSeconds) {
     let pressTimer = null;
