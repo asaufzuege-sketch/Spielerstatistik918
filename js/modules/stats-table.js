@@ -381,9 +381,62 @@ App.statsTable = {
   },
   
   attachTimeClickHandlers(timeTd, playerName) {
-    let clickTimer = null;
+    // KRITISCH: Prüfe ob Handler bereits attached sind
+    if (timeTd.dataset.handlersAttached === 'true') {
+      return; // Überspringe, Handler existieren bereits
+    }
+    timeTd.dataset.handlersAttached = 'true';
     
-    // Single Click: +10 seconds
+    // State auf Element speichern (nicht in Closure!)
+    timeTd._tapState = timeTd._tapState || {
+      lastTapTime: 0,
+      tapTimeout: null
+    };
+    const state = timeTd._tapState;
+    
+    // Touch handling for mobile: Single tap (+10s) and double tap (-10s)
+    timeTd.addEventListener('touchend', (e) => {
+      // Prevent time change during drag
+      if (this.dragState.isDragging) {
+        e.preventDefault();
+        return;
+      }
+      
+      e.preventDefault();
+      const now = Date.now();
+      
+      if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+        // Double-tap detected: -10 seconds
+        clearTimeout(state.tapTimeout);
+        state.tapTimeout = null;
+        state.lastTapTime = 0;
+        
+        const currentTime = App.data.playerTimes[playerName] || 0;
+        const newTime = Math.max(0, currentTime - 10);
+        App.data.playerTimes[playerName] = newTime;
+        timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
+        this.saveToStorage();
+        this.updateIceTimeColors();
+        this.updateTotals();
+        return;
+      }
+      
+      state.lastTapTime = now;
+      state.tapTimeout = setTimeout(() => {
+        // Single tap: +10 seconds
+        const currentTime = App.data.playerTimes[playerName] || 0;
+        const newTime = currentTime + 10;
+        App.data.playerTimes[playerName] = newTime;
+        timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
+        this.saveToStorage();
+        this.updateIceTimeColors();
+        this.updateTotals();
+        state.tapTimeout = null;
+        state.lastTapTime = 0;
+      }, 300);
+    }, { passive: false });
+    
+    // Desktop: Single Click: +10 seconds
     timeTd.addEventListener("click", (e) => {
       // Prevent time change during drag
       if (this.dragState.isDragging) {
@@ -391,12 +444,12 @@ App.statsTable = {
         return;
       }
       
-      if (clickTimer) {
+      if (state.tapTimeout) {
         // Double click will be handled by dblclick handler
         return;
       }
       
-      clickTimer = setTimeout(() => {
+      state.tapTimeout = setTimeout(() => {
         // Single click: +10 seconds
         const currentTime = App.data.playerTimes[playerName] || 0;
         const newTime = currentTime + 10;
@@ -412,20 +465,20 @@ App.statsTable = {
         // Update totals
         this.updateTotals();
         
-        clickTimer = null;
+        state.tapTimeout = null;
       }, 250); // 250ms delay to detect double click
     });
     
-    // Double Click: -10 seconds
+    // Desktop: Double Click: -10 seconds
     timeTd.addEventListener("dblclick", (e) => {
       e.preventDefault();
       
       // Prevent time change during drag
       if (this.dragState.isDragging) return;
       
-      if (clickTimer) {
-        clearTimeout(clickTimer);
-        clickTimer = null;
+      if (state.tapTimeout) {
+        clearTimeout(state.tapTimeout);
+        state.tapTimeout = null;
       }
       
       // Double click: -10 seconds (minimum 0)
@@ -450,9 +503,50 @@ App.statsTable = {
   
   attachValueClickHandlers() {
     this.container.querySelectorAll("td[data-player][data-cat]").forEach(td => {
-      let clickTimeout = null;
+      // KRITISCH: Prüfe ob Handler bereits attached sind
+      if (td.dataset.handlersAttached === 'true') {
+        return; // Überspringe, Handler existieren bereits
+      }
+      td.dataset.handlersAttached = 'true';
       
-      // Single Click: +1
+      // State auf Element speichern (nicht in Closure!)
+      td._tapState = td._tapState || {
+        lastTapTime: 0,
+        tapTimeout: null
+      };
+      const state = td._tapState;
+      
+      // Touch handling for mobile: Single tap (+1) and double tap (-1)
+      td.addEventListener('touchend', (e) => {
+        // Prevent value change during drag
+        if (this.dragState.isDragging) {
+          e.preventDefault();
+          return;
+        }
+        
+        e.preventDefault();
+        const now = Date.now();
+        
+        if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+          // Double-tap detected
+          clearTimeout(state.tapTimeout);
+          state.tapTimeout = null;
+          state.lastTapTime = 0;
+          // DO MINUS ACTION
+          this.changeValue(td, -1);
+          return;
+        }
+        
+        state.lastTapTime = now;
+        state.tapTimeout = setTimeout(() => {
+          // DO PLUS ACTION
+          this.changeValue(td, 1);
+          state.tapTimeout = null;
+          state.lastTapTime = 0;
+        }, 300);
+      }, { passive: false });
+      
+      // Desktop: Single Click: +1
       td.addEventListener("click", (e) => {
         // Prevent value change during drag
         if (this.dragState.isDragging) {
@@ -460,23 +554,23 @@ App.statsTable = {
           return;
         }
         
-        if (clickTimeout) clearTimeout(clickTimeout);
-        clickTimeout = setTimeout(() => {
+        if (state.tapTimeout) clearTimeout(state.tapTimeout);
+        state.tapTimeout = setTimeout(() => {
           this.changeValue(td, 1);
-          clickTimeout = null;
+          state.tapTimeout = null;
         }, 200);
       });
       
-      // Double Click: -1
+      // Desktop: Double Click: -1
       td.addEventListener("dblclick", (e) => {
         e.preventDefault();
         
         // Prevent value change during drag
         if (this.dragState.isDragging) return;
         
-        if (clickTimeout) {
-          clearTimeout(clickTimeout);
-          clickTimeout = null;
+        if (state.tapTimeout) {
+          clearTimeout(state.tapTimeout);
+          state.tapTimeout = null;
         }
         this.changeValue(td, -1);
       });

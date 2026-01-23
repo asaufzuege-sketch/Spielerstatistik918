@@ -1169,6 +1169,85 @@ setStickyOffsets() {
     // Cursor style for clickable cells
     statCell.style.cursor = 'pointer';
     
+    // KRITISCH: Prüfe ob Handler bereits attached sind
+    if (statCell.dataset.handlersAttached === 'true') {
+      return; // Überspringe, Handler existieren bereits
+    }
+    statCell.dataset.handlersAttached = 'true';
+    
+    // State auf Element speichern (nicht in Closure!)
+    statCell._tapState = statCell._tapState || {
+      lastTapTime: 0,
+      tapTimeout: null
+    };
+    const state = statCell._tapState;
+    
+    // Touch handling for mobile: Single tap (+1) and double tap (-1)
+    statCell.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      const now = Date.now();
+      
+      if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+        // Double-tap detected: -1
+        clearTimeout(state.tapTimeout);
+        state.tapTimeout = null;
+        state.lastTapTime = 0;
+        
+        const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
+        let newValue;
+        
+        if (statKey === 'plusMinus') {
+          // +/- kann negativ werden
+          newValue = currentValue - 1;
+        } else {
+          // Andere Werte minimum 0
+          newValue = Math.max(0, currentValue - 1);
+        }
+        
+        // Wert speichern
+        if (!App.data.seasonData[playerName]) {
+          App.data.seasonData[playerName] = {};
+        }
+        App.data.seasonData[playerName][statKey] = newValue;
+        
+        // Speichern und UI aktualisieren
+        App.storage.saveSeasonData();
+        this.render();
+        
+        // Position Filter wiederherstellen
+        if (this.positionFilter) {
+          this.filterByPosition(this.positionFilter);
+        }
+        return;
+      }
+      
+      state.lastTapTime = now;
+      state.tapTimeout = setTimeout(() => {
+        // Single tap: +1
+        const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
+        const newValue = currentValue + 1;
+        
+        // Wert speichern
+        if (!App.data.seasonData[playerName]) {
+          App.data.seasonData[playerName] = {};
+        }
+        App.data.seasonData[playerName][statKey] = newValue;
+        
+        // Speichern und UI aktualisieren
+        App.storage.saveSeasonData();
+        this.render();
+        
+        // Position Filter wiederherstellen
+        if (this.positionFilter) {
+          this.filterByPosition(this.positionFilter);
+        }
+        
+        state.tapTimeout = null;
+        state.lastTapTime = 0;
+      }, 300);
+    }, { passive: false });
+    
+    // Desktop: Single click
     statCell.addEventListener('click', (e) => {
       const clickTimer = this.clickTimers.get(statCell);
       if (clickTimer) return;
@@ -1199,6 +1278,7 @@ setStickyOffsets() {
       this.clickTimers.set(statCell, timer);
     });
     
+    // Desktop: Double click
     statCell.addEventListener('dblclick', (e) => {
       e.preventDefault();
       const clickTimer = this.clickTimers.get(statCell);
