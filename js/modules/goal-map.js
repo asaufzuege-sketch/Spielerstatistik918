@@ -185,6 +185,18 @@ App.goalMap = {
           const isGreenGoal = box.id === "goalGreenBox";
           const isRedGoal = box.id === "goalRedBox";
           
+          // CRITICAL BUG 2 FIX: In scored workflow, do NOT allow clicks in red zone
+          if (isFieldBox && isScoredWorkflow && pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD) {
+            console.log('[Goal Workflow] Red zone not allowed in scored workflow - click in green zone');
+            return;
+          }
+          
+          // In conceded workflow, do NOT allow clicks in green zone
+          if (isFieldBox && isConcededWorkflow && pos.yPctImage < this.VERTICAL_SPLIT_THRESHOLD) {
+            console.log('[Goal Workflow] Green zone not allowed in conceded workflow - click in red zone');
+            return;
+          }
+          
           // Schritt 0: NUR Spielfeld erlaubt
           if (currentStep === this.WORKFLOW_STEP_FIELD) {
             if (!isFieldBox) {
@@ -1233,8 +1245,21 @@ App.goalMap = {
             
             App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
             
-            // KRITISCH BUG 2 FIX: Auto-Navigation nach komplettem Workflow
-            // Kurze Verzögerung damit der Workflow abgeschlossen werden kann
+            // CRITICAL BUG 1 FIX: Cancel all pending timers in stats-table
+            // These timers would otherwise trigger changeValue(+1) and start a new workflow
+            if (App.statsTable && App.statsTable.container) {
+              App.statsTable.container.querySelectorAll('td[data-player][data-cat]').forEach(td => {
+                if (td._tapState) {
+                  if (td._tapState.tapTimeout) {
+                    clearTimeout(td._tapState.tapTimeout);
+                    td._tapState.tapTimeout = null;
+                  }
+                  td._tapState.lastTapTime = 0;
+                }
+              });
+            }
+            
+            // Auto-Navigation nach komplettem Workflow
             setTimeout(() => {
               if (typeof App.showPage === 'function') {
                 App.showPage('stats');
