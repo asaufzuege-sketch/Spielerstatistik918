@@ -174,12 +174,15 @@ function initializeApp() {
 }
 
 // Initialize on window.load to ensure CSS is fully loaded (fixes button compression bug)
-// Fallback to DOMContentLoaded if window.load already fired
 if (document.readyState === 'complete') {
-  // Page already loaded, initialize immediately
+  // Page already fully loaded, initialize immediately
   initializeApp();
+} else if (document.readyState === 'loading') {
+  // Still loading, wait for full load
+  window.addEventListener('load', initializeApp);
 } else {
-  // Wait for window.load to ensure CSS is fully loaded
+  // Interactive state - DOM ready but resources loading
+  // Wait for full load to ensure CSS is applied
   window.addEventListener('load', initializeApp);
 }
 

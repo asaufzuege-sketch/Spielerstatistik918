@@ -1033,7 +1033,9 @@ App.goalMap = {
           }
         }
         
-        // KRITISCH: Button komplett ersetzen um ALLE alten Listener zu entfernen
+        // CRITICAL: Replace button completely to remove ALL old event listeners
+        // This prevents duplicate listeners when initTimeTracking() is called multiple times
+        // (e.g., on page navigation). cloneNode(true) creates a fresh button without any listeners.
         const newBtn = btn.cloneNode(true);
         newBtn.textContent = displayValue;
         btn.parentNode.replaceChild(newBtn, btn);

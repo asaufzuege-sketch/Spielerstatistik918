@@ -820,12 +820,15 @@ App.seasonMap = {
       
       if (isBottomRow) {
         // Bottom-row buttons (conceded goals) are interactive
-        btn.disabled = false;
-        btn.classList.remove("disabled-readonly");
+        // Clone button to remove any existing event listeners (prevents duplicates on re-initialization)
+        const newBtn = btn.cloneNode(true);
+        newBtn.disabled = false;
+        newBtn.classList.remove("disabled-readonly");
+        btn.parentNode.replaceChild(newBtn, btn);
         
-        // Add click handler for goalie selection
-        btn.addEventListener("click", () => {
-          this.handleConcededGoalClick(btn, period);
+        // Add click handler for goalie selection on the new button
+        newBtn.addEventListener("click", () => {
+          this.handleConcededGoalClick(newBtn, period);
         });
       } else {
         // Top-row buttons (scored goals) remain read-only
