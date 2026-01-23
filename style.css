@@ -3214,14 +3214,6 @@ tr[data-player].dragging {
 
 
 /* ===== WORKFLOW TIMEBOX BLOCKING ===== */
-/* Während grünem Workflow (scored): Rote Buttons ausgegraut und blockiert */
-body.workflow-scored .period-buttons.bottom-row .time-btn {
-  opacity: 0.3 !important;
-  filter: grayscale(100%) !important;
-  pointer-events: none !important;
-  cursor: not-allowed !important;
-}
-
 /* Während rotem Workflow (conceded): Grüne Buttons ausgegraut und blockiert */
 body.workflow-conceded .period-buttons.top-row .time-btn {
   opacity: 0.3 !important;
@@ -3230,16 +3222,16 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   cursor: not-allowed !important;
 }
 
-/* ===== RED AREAS PERMANENTLY LOCKED ===== */
-/* Red goal permanently locked */
-#goalRedBox {
-  opacity: 0.5 !important;
-  filter: grayscale(70%) !important;
+/* ===== WORKFLOW-SPECIFIC RED ZONE BLOCKING ===== */
+/* During scored workflow (green): Red goal, red field zone, and red buttons are locked */
+body.workflow-scored #goalRedBox {
+  opacity: 0.3 !important;
+  pointer-events: none !important;
   cursor: not-allowed !important;
 }
 
-/* Red zone of field (bottom half) visually locked */
-#fieldBox::after {
+/* During scored workflow: Red zone of field (bottom half) visually locked */
+body.workflow-scored #fieldBox::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -3251,10 +3243,11 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   z-index: 10;
 }
 
-/* Red buttons (bottom-row) permanently locked */
-.period-buttons.bottom-row .time-btn {
-  opacity: 0.5 !important;
-  filter: grayscale(70%) !important;
+/* During scored workflow: Red buttons (bottom-row) locked */
+body.workflow-scored .period-buttons.bottom-row .time-btn {
+  opacity: 0.3 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: none !important;
   cursor: not-allowed !important;
 }
 

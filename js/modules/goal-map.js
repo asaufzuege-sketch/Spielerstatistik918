@@ -237,19 +237,21 @@ App.goalMap = {
           }
         }
         
-        // ROTES TOR: Nur mit Workflow und im richtigen Schritt
+        // ROTES TOR: Nur mit Goalie
         if (box.id === "goalRedBox") {
           const activeGoalie = this.getActiveGoalie();
           if (!activeGoalie) {
             alert('Please select a goalie first');
             return;
           }
-          // Ohne Workflow: Kein Punkt im roten Tor
-          if (!workflowActive) {
+          // Während scored workflow: gesperrt
+          if (workflowActive && isScoredWorkflow) {
+            console.log('[Goal Map] Red goal blocked during scored workflow');
             return;
           }
+          // Ohne Workflow oder mit conceded workflow: erlaubt wenn Goalie ausgewählt
           // Im Workflow: Nur in Schritt 1 (nach Feldpunkt) und im conceded workflow erlaubt
-          if (!isConcededWorkflow || currentStep !== this.WORKFLOW_STEP_GOAL) {
+          if (workflowActive && (!isConcededWorkflow || currentStep !== this.WORKFLOW_STEP_GOAL)) {
             return;
           }
         }
@@ -309,10 +311,21 @@ App.goalMap = {
           
           const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
           
-          // ROTE ZONE - Komplett gesperrt (nicht anklickbar)
-          if (!workflowActive && isRedZone) {
-            console.log('[Goal Map] Red zone is locked - not clickable');
+          // ROTE ZONE - Nur während grünem Workflow (scored) gesperrt
+          if (workflowActive && isScoredWorkflow && isRedZone) {
+            console.log('[Goal Map] Red zone blocked during scored workflow');
             return;
+          }
+          
+          // ROTE ZONE - Ohne Workflow: Goalie-Check erforderlich
+          if (!workflowActive && isRedZone) {
+            const activeGoalie = this.getActiveGoalie();
+            if (!activeGoalie) {
+              alert('Please select a goalie first');
+              return;
+            }
+            // Erlaubt wenn Goalie ausgewählt
+            console.log('[Goal Map] Red zone allowed - goalie selected');
           }
           
           let color = null;
