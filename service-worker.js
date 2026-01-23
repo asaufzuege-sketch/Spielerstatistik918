@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smarthockey-918-v2-fix-' + Date.now();
+const CACHE_NAME = 'smarthockey-918-v3-redzone-fix-' + Date.now();
 const urlsToCache = [
   './',
   './index.html',
