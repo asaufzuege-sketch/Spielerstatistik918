@@ -9,6 +9,9 @@ App.seasonTable = {
   scrollListeners: { fixed: null, scroll: null }, // Track scroll event listeners
   isSyncing: false, // Prevent infinite scroll loops
   rowColors: null, // Cached row colors from CSS
+  
+  // Constants for double-tap detection
+  DOUBLE_TAP_DELAY: 300,
 
   init() {
     this.container = document.getElementById("seasonContainer");
@@ -1187,7 +1190,7 @@ setStickyOffsets() {
       e.preventDefault();
       const now = Date.now();
       
-      if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+      if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
         // Double-tap detected: -1
         clearTimeout(state.tapTimeout);
         state.tapTimeout = null;
@@ -1244,7 +1247,7 @@ setStickyOffsets() {
         
         state.tapTimeout = null;
         state.lastTapTime = 0;
-      }, 300);
+      }, this.DOUBLE_TAP_DELAY);
     }, { passive: false });
     
     // Desktop: Single click

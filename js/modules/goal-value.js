@@ -6,6 +6,9 @@ App.goalValue = {
   isUpdatingData: false,
   isExpandingColumns: false,  // Flag to prevent infinite recursion
   
+  // Constants for double-tap detection
+  DOUBLE_TAP_DELAY: 300,
+  
   init() {
     this.container = document.getElementById("goalValueContainer");
     
@@ -358,7 +361,7 @@ App.goalValue = {
           const playerName = td.dataset.player;
           const oppIdx = Number(td.dataset.oppIdx);
           
-          if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+          if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
             // Double-tap detected: -1
             clearTimeout(state.tapTimeout);
             state.tapTimeout = null;
@@ -395,7 +398,7 @@ App.goalValue = {
             
             state.tapTimeout = null;
             state.lastTapTime = 0;
-          }, 300);
+          }, this.DOUBLE_TAP_DELAY);
         }, { passive: false });
         
         // Desktop: Click handler for double-click detection
@@ -439,7 +442,7 @@ App.goalValue = {
               td.style.fontWeight = nv !== 0 ? "700" : "400";
               
               this.updateValueCell(playerName, valueCellMap);
-            }, 300);
+            }, this.DOUBLE_TAP_DELAY);
           }
         });
         

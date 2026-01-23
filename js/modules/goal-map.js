@@ -1055,7 +1055,6 @@ App.goalMap = {
         const state = newBtn._tapState;
         
         const DOUBLE_CLICK_DELAY = 300;
-        const MIN_CLICK_INTERVAL = 50;
         const DOUBLE_TAP_DELAY = 300;
         
         // Helper to check if button action is allowed based on workflow constraints

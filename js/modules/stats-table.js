@@ -16,6 +16,9 @@ App.statsTable = {
   // Store references to document-level event handlers for cleanup
   documentHandlersAttached: false,
   
+  // Constants for double-tap detection
+  DOUBLE_TAP_DELAY: 300,
+  
   init() {
     this.container = document.getElementById("statsContainer");
     
@@ -405,7 +408,7 @@ App.statsTable = {
       e.preventDefault();
       const now = Date.now();
       
-      if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+      if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
         // Double-tap detected: -10 seconds
         clearTimeout(state.tapTimeout);
         state.tapTimeout = null;
@@ -433,7 +436,7 @@ App.statsTable = {
         this.updateTotals();
         state.tapTimeout = null;
         state.lastTapTime = 0;
-      }, 300);
+      }, this.DOUBLE_TAP_DELAY);
     }, { passive: false });
     
     // Desktop: Single Click: +10 seconds
@@ -527,7 +530,7 @@ App.statsTable = {
         e.preventDefault();
         const now = Date.now();
         
-        if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+        if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
           // Double-tap detected
           clearTimeout(state.tapTimeout);
           state.tapTimeout = null;
@@ -543,7 +546,7 @@ App.statsTable = {
           this.changeValue(td, 1);
           state.tapTimeout = null;
           state.lastTapTime = 0;
-        }, 300);
+        }, this.DOUBLE_TAP_DELAY);
       }, { passive: false });
       
       // Desktop: Single Click: +1

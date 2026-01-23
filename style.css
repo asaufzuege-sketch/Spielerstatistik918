@@ -657,11 +657,6 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   background-color: #444444;
 }
 
-/* Mobile: Doppeltipp-Zoom auf interaktiven Elementen unterdrücken */
-.stats-table td,
-.season-table td,
-.goalvalue-table td,
-.time-btn,
 /* Verhindere Browser-Zoom bei Doppelklick auf interaktive Elemente */
 .goalvalue-table td,
 .goalvalue-table button,
