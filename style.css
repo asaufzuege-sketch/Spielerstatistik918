@@ -3222,7 +3222,40 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   cursor: not-allowed !important;
 }
 
-/* ===== WORKFLOW-SPECIFIC RED ZONE BLOCKING ===== */
+/* ===== GOAL WORKFLOW: ROTE BEREICHE SOFORT SPERREN ===== */
+/* Wenn Goal-Workflow aktiv ist (body hat workflow-goal Klasse) */
+
+/* Rotes Tor während goal workflow (bevor Typ bestimmt ist) */
+body.workflow-goal:not(.workflow-conceded) #goalRedBox {
+  opacity: 0.3 !important;
+  filter: grayscale(70%) !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Rote Feldhälfte: Overlay während goal workflow (bevor Typ bestimmt ist) */
+body.workflow-goal:not(.workflow-conceded) #fieldBox::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: rgba(128, 128, 128, 0.5);
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Rote Buttons während goal workflow (bevor Typ bestimmt ist) */
+body.workflow-goal:not(.workflow-conceded) .period-buttons.bottom-row .time-btn {
+  opacity: 0.3 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* ===== WORKFLOW-SPECIFIC RED ZONE BLOCKING (LEGACY - kept for backwards compatibility) ===== */
 /* During scored workflow (green): Red goal, red field zone, and red buttons are locked */
 body.workflow-scored #goalRedBox {
   opacity: 0.3 !important;
@@ -3252,6 +3285,7 @@ body.workflow-scored .period-buttons.bottom-row .time-btn {
   pointer-events: none !important;
   cursor: not-allowed !important;
 }
+
 
 /* ===== FILTER BUTTON PULSIERUNG ===== */
 /* Green pulsing animation for player button */
