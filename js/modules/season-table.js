@@ -1178,14 +1178,16 @@ setStickyOffsets() {
     }
     statCell.dataset.handlersAttached = 'true';
     
-    // State auf Element speichern (nicht in Closure!)
-    if (!statCell._tapState) {
-      statCell._tapState = {
-        lastTapTime: 0,
-        tapTimeout: null
-      };
-    }
+    // KRITISCH BUG 4 FIX: Handler-State zurücksetzen
+    delete statCell.dataset.handlersAttached;
+    statCell._tapState = null;
+    
+    statCell._tapState = {
+      lastTapTime: 0,
+      tapTimeout: null
+    };
     const state = statCell._tapState;
+    statCell.dataset.handlersAttached = 'true';
     
     // MOBILE: Touch-Handler mit preventDefault/stopPropagation
     statCell.addEventListener('touchend', (e) => {
@@ -1196,10 +1198,8 @@ setStickyOffsets() {
       
       // Double-Tap Detection
       if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
-        if (state.tapTimeout) {
-          clearTimeout(state.tapTimeout);
-          state.tapTimeout = null;
-        }
+        clearTimeout(state.tapTimeout);
+        state.tapTimeout = null;
         state.lastTapTime = 0;
         
         const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);

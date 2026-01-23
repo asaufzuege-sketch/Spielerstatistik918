@@ -60,17 +60,17 @@ function initializeApp() {
   // 4. Daten aus LocalStorage laden (benötigt teamSelection.getCurrentTeamInfo())
   App.storage.load();
   
-  // NEU: Force Re-Render nach Storage-Load für korrekte Namen
+  // KRITISCH BUG 6 FIX: Re-Render nach Storage-Load für korrekte Namen
+  // Double nested requestAnimationFrame ensures CSS is fully loaded
   requestAnimationFrame(() => {
-    if (App.playerSelection && typeof App.playerSelection.render === 'function') {
-      App.playerSelection.render();
-    }
-    if (App.statsTable && typeof App.statsTable.render === 'function') {
-      App.statsTable.render();
-    }
-    if (App.seasonTable && typeof App.seasonTable.render === 'function') {
-      App.seasonTable.render();
-    }
+    requestAnimationFrame(() => {
+      if (App.statsTable && typeof App.statsTable.render === 'function') {
+        App.statsTable.render();
+      }
+      if (App.seasonTable && typeof App.seasonTable.render === 'function') {
+        App.seasonTable.render();
+      }
+    });
   });
   
   // 5. Alle anderen Module initialisieren

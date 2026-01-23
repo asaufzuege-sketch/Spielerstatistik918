@@ -340,20 +340,16 @@ App.goalValue = {
         td.style.color = v > 0 ? colors.pos : v < 0 ? colors.neg : colors.zero;
         td.style.fontWeight = v !== 0 ? "700" : "400";
         
-        // KRITISCH: Prüfe ob Handler bereits attached sind - wenn ja, entfernen für Re-Attach
-        if (td.dataset.handlersAttached === 'true') {
-          delete td.dataset.handlersAttached;
-        }
-        td.dataset.handlersAttached = 'true';
+        // KRITISCH BUG 9 FIX: Handler-State zurücksetzen
+        delete td.dataset.handlersAttached;
+        td._tapState = null;
         
-        // State auf Element speichern (nicht in Closure!)
-        if (!td._tapState) {
-          td._tapState = {
-            lastTapTime: 0,
-            tapTimeout: null
-          };
-        }
+        td._tapState = {
+          lastTapTime: 0,
+          tapTimeout: null
+        };
         const state = td._tapState;
+        td.dataset.handlersAttached = 'true';
         
         // MOBILE: Touch-Handler mit preventDefault/stopPropagation
         td.addEventListener('touchend', (e) => {
@@ -366,10 +362,8 @@ App.goalValue = {
           
           // Double-Tap Detection
           if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
-            if (state.tapTimeout) {
-              clearTimeout(state.tapTimeout);
-              state.tapTimeout = null;
-            }
+            clearTimeout(state.tapTimeout);
+            state.tapTimeout = null;
             state.lastTapTime = 0;
             
             const d = this.getData();

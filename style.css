@@ -681,7 +681,12 @@ button,
 .ice-time-cell,
 .goalvalue-table td,
 .goalvalue-table .gv-data-cell,
-.season-time-cell {
+.season-time-cell,
+.goalvalue-table,
+.goalvalue-table th,
+.stats-table td,
+.season-table td,
+.time-btn {
   touch-action: manipulation !important;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
