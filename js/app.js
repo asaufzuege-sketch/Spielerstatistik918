@@ -177,12 +177,9 @@ function initializeApp() {
 if (document.readyState === 'complete') {
   // Page already fully loaded, initialize immediately
   initializeApp();
-} else if (document.readyState === 'loading') {
-  // Still loading, wait for full load
-  window.addEventListener('load', initializeApp);
 } else {
-  // Interactive state - DOM ready but resources loading
-  // Wait for full load to ensure CSS is applied
+  // In 'loading' or 'interactive' state - wait for full load to ensure CSS is applied
+  // Both states require waiting because CSS may still be loading even after DOM is ready
   window.addEventListener('load', initializeApp);
 }
 

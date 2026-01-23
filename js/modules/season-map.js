@@ -821,6 +821,7 @@ App.seasonMap = {
       if (isBottomRow) {
         // Bottom-row buttons (conceded goals) are interactive
         // Clone button to remove any existing event listeners (prevents duplicates on re-initialization)
+        // Note: These buttons are only managed by this module, so removing all listeners is safe.
         const newBtn = btn.cloneNode(true);
         newBtn.disabled = false;
         newBtn.classList.remove("disabled-readonly");
