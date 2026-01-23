@@ -185,13 +185,13 @@ App.goalMap = {
           const isGreenGoal = box.id === "goalGreenBox";
           const isRedGoal = box.id === "goalRedBox";
           
-          // KRITISCH BUG 2 FIX: Im scored Workflow darf NICHT in der roten Zone geklickt werden
+          // CRITICAL BUG 2 FIX: In scored workflow, do NOT allow clicks in red zone
           if (isFieldBox && isScoredWorkflow && pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD) {
             console.log('[Goal Workflow] Red zone not allowed in scored workflow - click in green zone');
             return;
           }
           
-          // Im conceded Workflow darf NICHT in der grünen Zone geklickt werden
+          // In conceded workflow, do NOT allow clicks in green zone
           if (isFieldBox && isConcededWorkflow && pos.yPctImage < this.VERTICAL_SPLIT_THRESHOLD) {
             console.log('[Goal Workflow] Green zone not allowed in conceded workflow - click in red zone');
             return;
@@ -1245,18 +1245,14 @@ App.goalMap = {
             
             App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
             
-            // KRITISCH BUG 1 FIX: Alle pending Timers in stats-table abbrechen
-            // Diese Timer würden sonst changeValue(+1) triggern und einen neuen Workflow starten
+            // CRITICAL BUG 1 FIX: Cancel all pending timers in stats-table
+            // These timers would otherwise trigger changeValue(+1) and start a new workflow
             if (App.statsTable && App.statsTable.container) {
               App.statsTable.container.querySelectorAll('td[data-player][data-cat]').forEach(td => {
                 if (td._tapState) {
                   if (td._tapState.tapTimeout) {
                     clearTimeout(td._tapState.tapTimeout);
                     td._tapState.tapTimeout = null;
-                  }
-                  if (td._tapState.clickTimeout) {
-                    clearTimeout(td._tapState.clickTimeout);
-                    td._tapState.clickTimeout = null;
                   }
                   td._tapState.lastTapTime = 0;
                 }
