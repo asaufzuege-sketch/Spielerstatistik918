@@ -3226,6 +3226,7 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
 /* During scored workflow (green): Red goal, red field zone, and red buttons are locked */
 body.workflow-scored #goalRedBox {
   opacity: 0.3 !important;
+  filter: grayscale(70%) !important;
   pointer-events: none !important;
   cursor: not-allowed !important;
 }
@@ -3238,9 +3239,10 @@ body.workflow-scored #fieldBox::after {
   left: 0;
   right: 0;
   height: 50%;
-  background: rgba(128, 128, 128, 0.4);
+  background: rgba(128, 128, 128, 0.5);
   pointer-events: none;
   z-index: 10;
+  border-radius: 0 0 8px 8px;
 }
 
 /* During scored workflow: Red buttons (bottom-row) locked */
