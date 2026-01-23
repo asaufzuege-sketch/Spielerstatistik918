@@ -676,15 +676,20 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
 .time-tracking-box {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start !important;
+  align-items: stretch;
   background: var(--time-box-bg);
   border: 2px solid #333;
   border-radius: 10px;
   padding: 10px 14px;
   color: var(--time-box-text);
   font-size: 0.95rem;
-  height: 100%;
+  height: auto !important;
+  min-height: 100%;
   gap: 10px;
+  box-sizing: border-box;
+  overflow: hidden !important;
+  position: relative;
 }
 
 /* Period-Panel */
@@ -735,19 +740,12 @@ th .sort-arrow { font-size: 0.7rem; color: #ddd }
   filter: brightness(0.95);
 }
 
-/* FIX: Stelle sicher dass period container nicht aus dem parent rutschen */
-.time-tracking-box {
-  position: relative !important;
-  overflow: visible;
-  contain: layout;
-}
-
+/* Period Container - explizit positionieren */
 .time-tracking-box .period {
+  flex-shrink: 0 !important;
   position: relative !important;
   width: 100% !important;
-  box-sizing: border-box !important;
-  left: 0 !important;
-  margin-left: 0 !important;
+  margin: 0 !important;
   transform: none !important;
 }
 
