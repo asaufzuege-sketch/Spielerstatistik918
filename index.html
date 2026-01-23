@@ -22,6 +22,18 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="season_table_styles.css" />
   <link rel="stylesheet" href="season_map_momentum.css" />
+  
+  <!-- Force CSS to be parsed before continuing -->
+  <script>
+  // Force CSS to be parsed before continuing
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    if (!link.sheet) {
+      link.media = 'print';
+      link.onload = function() { this.media = 'all'; };
+    }
+  });
+  </script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
   <!-- Storage Migration Script - Must run BEFORE any other scripts -->

@@ -1,3 +1,38 @@
+// Wait for CSS to be fully loaded before initializing app
+function waitForCSSLoad() {
+  return new Promise((resolve) => {
+    // Check if stylesheets are already loaded
+    const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+    let loaded = 0;
+    const total = stylesheets.length;
+    
+    if (total === 0) {
+      resolve();
+      return;
+    }
+    
+    const checkAllLoaded = () => {
+      loaded++;
+      if (loaded >= total) {
+        resolve();
+      }
+    };
+    
+    stylesheets.forEach(link => {
+      if (link.sheet) {
+        // Already loaded
+        checkAllLoaded();
+      } else {
+        link.addEventListener('load', checkAllLoaded);
+        link.addEventListener('error', checkAllLoaded);
+      }
+    });
+    
+    // Fallback timeout
+    setTimeout(resolve, 1000);
+  });
+}
+
 // Haupt-App Initialisierung
 // Wait for both DOM content and CSS to be fully loaded to prevent timing issues
 function initializeApp() {
@@ -173,14 +208,19 @@ function initializeApp() {
   console.log("✅ App loaded successfully!");
 }
 
-// Initialize on window.load to ensure CSS is fully loaded (fixes button compression bug)
-if (document.readyState === 'complete') {
-  // Page already fully loaded, initialize immediately
-  initializeApp();
+// Initialize with robust CSS loading to prevent timing issues
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', async () => {
+    await waitForCSSLoad();
+    // Force layout recalculation
+    document.body.offsetHeight;
+    initializeApp();
+  });
 } else {
-  // In 'loading' or 'interactive' state - wait for full load to ensure CSS is applied
-  // Both states require waiting because CSS may still be loading even after DOM is ready
-  window.addEventListener('load', initializeApp);
+  waitForCSSLoad().then(() => {
+    document.body.offsetHeight;
+    initializeApp();
+  });
 }
 
 // Timer Persistenz Funktionen
