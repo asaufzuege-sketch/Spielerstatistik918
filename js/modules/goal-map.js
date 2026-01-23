@@ -1048,10 +1048,14 @@ App.goalMap = {
         newBtn.dataset.handlersAttached = 'true';
         
         // State auf Element speichern (nicht in Closure!)
-        newBtn._tapState = newBtn._tapState || {
-          lastTapTime: 0,
-          tapTimeout: null
-        };
+        if (!newBtn._tapState) {
+          newBtn._tapState = {
+            lastTapTime: 0,
+            tapTimeout: null,
+            lastClickTime: 0,
+            clickTimeout: null
+          };
+        }
         const state = newBtn._tapState;
         
         const DOUBLE_CLICK_DELAY = 300;
@@ -1210,6 +1214,14 @@ App.goalMap = {
           e.preventDefault();
           e.stopPropagation();
           
+          const now = Date.now();
+          
+          // Ignoriere wenn Touch gerade aktiv war
+          if (state.lastTapTime > 0 && now - state.lastTapTime < 500) return;
+          
+          if (now - state.lastClickTime < 50) return;
+          state.lastClickTime = now;
+          
           // Check if button action is allowed based on workflow constraints
           if (!isButtonActionAllowed()) {
             return;
@@ -1235,17 +1247,17 @@ App.goalMap = {
           
           // Normale Klick-Logik (außerhalb Workflow) - NEUE saubere Doppelklick-Logik
           // Wenn bereits ein Timeout läuft, ist dies ein Doppelklick
-          if (state.tapTimeout) {
-            clearTimeout(state.tapTimeout);
-            state.tapTimeout = null;
+          if (state.clickTimeout) {
+            clearTimeout(state.clickTimeout);
+            state.clickTimeout = null;
             updateValue(-1);  // Doppelklick: -1
             return;
           }
           
           // Starte Timeout für Single-Click
-          state.tapTimeout = setTimeout(() => {
+          state.clickTimeout = setTimeout(() => {
             updateValue(+1);  // Single-Click: +1
-            state.tapTimeout = null;
+            state.clickTimeout = null;
           }, DOUBLE_CLICK_DELAY);
         });
         

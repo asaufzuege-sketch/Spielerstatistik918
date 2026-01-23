@@ -1179,21 +1179,27 @@ setStickyOffsets() {
     statCell.dataset.handlersAttached = 'true';
     
     // State auf Element speichern (nicht in Closure!)
-    statCell._tapState = statCell._tapState || {
-      lastTapTime: 0,
-      tapTimeout: null
-    };
+    if (!statCell._tapState) {
+      statCell._tapState = {
+        lastTapTime: 0,
+        tapTimeout: null
+      };
+    }
     const state = statCell._tapState;
     
-    // Touch handling for mobile: Single tap (+1) and double tap (-1)
+    // MOBILE: Touch-Handler mit preventDefault/stopPropagation
     statCell.addEventListener('touchend', (e) => {
       e.preventDefault();
+      e.stopPropagation();
+      
       const now = Date.now();
       
-      if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
-        // Double-tap detected: -1
-        clearTimeout(state.tapTimeout);
-        state.tapTimeout = null;
+      // Double-Tap Detection
+      if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+        if (state.tapTimeout) {
+          clearTimeout(state.tapTimeout);
+          state.tapTimeout = null;
+        }
         state.lastTapTime = 0;
         
         const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
@@ -1226,7 +1232,6 @@ setStickyOffsets() {
       
       state.lastTapTime = now;
       state.tapTimeout = setTimeout(() => {
-        // Single tap: +1
         const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
         const newValue = currentValue + 1;
         
@@ -1247,11 +1252,14 @@ setStickyOffsets() {
         
         state.tapTimeout = null;
         state.lastTapTime = 0;
-      }, this.DOUBLE_TAP_DELAY);
+      }, 300);
     }, { passive: false });
     
-    // Desktop: Single click
+    // DESKTOP: click für +1
     statCell.addEventListener('click', (e) => {
+      // Ignoriere wenn Touch-Handler gerade aktiv war
+      if (state.lastTapTime > 0 && Date.now() - state.lastTapTime < 500) return;
+      
       const clickTimer = this.clickTimers.get(statCell);
       if (clickTimer) return;
       
@@ -1276,21 +1284,23 @@ setStickyOffsets() {
         if (this.positionFilter) {
           this.filterByPosition(this.positionFilter);
         }
-      }, 250);
+      }, 200);
       
       this.clickTimers.set(statCell, timer);
     });
     
-    // Desktop: Double click
+    // DESKTOP: dblclick für -1
     statCell.addEventListener('dblclick', (e) => {
       e.preventDefault();
+      
+      // Clear any pending single click
       const clickTimer = this.clickTimers.get(statCell);
       if (clickTimer) {
         clearTimeout(clickTimer);
         this.clickTimers.delete(statCell);
       }
       
-      // -1 vom Wert (bei +/- auch negativ erlaubt)
+      // -1 vom Wert
       const currentValue = Number(App.data.seasonData[playerName]?.[statKey] || 0);
       let newValue;
       

@@ -348,23 +348,29 @@ App.goalValue = {
         td.dataset.handlersAttached = 'true';
         
         // State auf Element speichern (nicht in Closure!)
-        td._tapState = td._tapState || {
-          lastTapTime: 0,
-          tapTimeout: null
-        };
+        if (!td._tapState) {
+          td._tapState = {
+            lastTapTime: 0,
+            tapTimeout: null
+          };
+        }
         const state = td._tapState;
         
-        // Touch handling for mobile: Single tap (+1) and double tap (-1)
+        // MOBILE: Touch-Handler mit preventDefault/stopPropagation
         td.addEventListener('touchend', (e) => {
           e.preventDefault();
+          e.stopPropagation();
+          
           const now = Date.now();
           const playerName = td.dataset.player;
           const oppIdx = Number(td.dataset.oppIdx);
           
-          if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
-            // Double-tap detected: -1
-            clearTimeout(state.tapTimeout);
-            state.tapTimeout = null;
+          // Double-Tap Detection
+          if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+            if (state.tapTimeout) {
+              clearTimeout(state.tapTimeout);
+              state.tapTimeout = null;
+            }
             state.lastTapTime = 0;
             
             const d = this.getData();
@@ -383,7 +389,6 @@ App.goalValue = {
           
           state.lastTapTime = now;
           state.tapTimeout = setTimeout(() => {
-            // Single tap: +1
             const d = this.getData();
             if (!d[playerName]) d[playerName] = opponents.map(() => 0);
             d[playerName][oppIdx] = Number(d[playerName][oppIdx] || 0) + 1;
@@ -398,12 +403,15 @@ App.goalValue = {
             
             state.tapTimeout = null;
             state.lastTapTime = 0;
-          }, this.DOUBLE_TAP_DELAY);
+          }, 300);
         }, { passive: false });
         
-        // Desktop: Click handler for double-click detection
+        // DESKTOP: Click handler
         td.addEventListener("click", (e) => {
           e.preventDefault();
+          
+          // Ignoriere wenn Touch-Handler gerade aktiv war
+          if (state.lastTapTime > 0 && Date.now() - state.lastTapTime < 500) return;
           
           const cellId = `${name}-${i}`;
           const playerName = td.dataset.player;
@@ -442,7 +450,7 @@ App.goalValue = {
               td.style.fontWeight = nv !== 0 ? "700" : "400";
               
               this.updateValueCell(playerName, valueCellMap);
-            }, this.DOUBLE_TAP_DELAY);
+            }, 300);
           }
         });
         

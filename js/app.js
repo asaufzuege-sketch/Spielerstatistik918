@@ -60,6 +60,19 @@ function initializeApp() {
   // 4. Daten aus LocalStorage laden (benötigt teamSelection.getCurrentTeamInfo())
   App.storage.load();
   
+  // NEU: Re-Render nach Storage-Load um Namen-Glitch zu beheben
+  setTimeout(() => {
+    if (App.playerSelection && typeof App.playerSelection.render === 'function') {
+      App.playerSelection.render();
+    }
+    if (App.statsTable && typeof App.statsTable.render === 'function') {
+      App.statsTable.render();
+    }
+    if (App.seasonTable && typeof App.seasonTable.render === 'function') {
+      App.seasonTable.render();
+    }
+  }, 0);
+  
   // 5. Alle anderen Module initialisieren
   App.timer.init();
   App.csvHandler.init();

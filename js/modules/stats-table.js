@@ -391,27 +391,29 @@ App.statsTable = {
     timeTd.dataset.handlersAttached = 'true';
     
     // State auf Element speichern (nicht in Closure!)
-    timeTd._tapState = timeTd._tapState || {
-      lastTapTime: 0,
-      tapTimeout: null
-    };
+    if (!timeTd._tapState) {
+      timeTd._tapState = {
+        lastTapTime: 0,
+        tapTimeout: null
+      };
+    }
     const state = timeTd._tapState;
     
-    // Touch handling for mobile: Single tap (+10s) and double tap (-10s)
+    // MOBILE: Touch-Handler mit preventDefault/stopPropagation
     timeTd.addEventListener('touchend', (e) => {
-      // Prevent time change during drag
-      if (this.dragState.isDragging) {
-        e.preventDefault();
-        return;
-      }
-      
       e.preventDefault();
+      e.stopPropagation();
+      
+      if (this.dragState.isDragging) return;
+      
       const now = Date.now();
       
-      if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
-        // Double-tap detected: -10 seconds
-        clearTimeout(state.tapTimeout);
-        state.tapTimeout = null;
+      // Double-Tap Detection
+      if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+        if (state.tapTimeout) {
+          clearTimeout(state.tapTimeout);
+          state.tapTimeout = null;
+        }
         state.lastTapTime = 0;
         
         const currentTime = App.data.playerTimes[playerName] || 0;
@@ -426,7 +428,6 @@ App.statsTable = {
       
       state.lastTapTime = now;
       state.tapTimeout = setTimeout(() => {
-        // Single tap: +10 seconds
         const currentTime = App.data.playerTimes[playerName] || 0;
         const newTime = currentTime + 10;
         App.data.playerTimes[playerName] = newTime;
@@ -436,47 +437,31 @@ App.statsTable = {
         this.updateTotals();
         state.tapTimeout = null;
         state.lastTapTime = 0;
-      }, this.DOUBLE_TAP_DELAY);
+      }, 300);
     }, { passive: false });
     
-    // Desktop: Single Click: +10 seconds
+    // DESKTOP: click für +10
     timeTd.addEventListener("click", (e) => {
-      // Prevent time change during drag
-      if (this.dragState.isDragging) {
-        e.preventDefault();
-        return;
-      }
+      if (this.dragState.isDragging) return;
+      // Ignoriere wenn Touch-Handler gerade aktiv war
+      if (state.lastTapTime > 0 && Date.now() - state.lastTapTime < 500) return;
       
-      if (state.tapTimeout) {
-        // Double click will be handled by dblclick handler
-        return;
-      }
-      
+      if (state.tapTimeout) clearTimeout(state.tapTimeout);
       state.tapTimeout = setTimeout(() => {
-        // Single click: +10 seconds
         const currentTime = App.data.playerTimes[playerName] || 0;
         const newTime = currentTime + 10;
         App.data.playerTimes[playerName] = newTime;
         timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
-        
-        // Save to storage
         this.saveToStorage();
-        
-        // Update ice time colors
         this.updateIceTimeColors();
-        
-        // Update totals
         this.updateTotals();
-        
         state.tapTimeout = null;
-      }, 250); // 250ms delay to detect double click
+      }, 200);
     });
     
-    // Desktop: Double Click: -10 seconds
+    // DESKTOP: dblclick für -10
     timeTd.addEventListener("dblclick", (e) => {
       e.preventDefault();
-      
-      // Prevent time change during drag
       if (this.dragState.isDragging) return;
       
       if (state.tapTimeout) {
@@ -484,19 +469,12 @@ App.statsTable = {
         state.tapTimeout = null;
       }
       
-      // Double click: -10 seconds (minimum 0)
       const currentTime = App.data.playerTimes[playerName] || 0;
       const newTime = Math.max(0, currentTime - 10);
       App.data.playerTimes[playerName] = newTime;
       timeTd.textContent = App.helpers.formatTimeMMSS(newTime);
-      
-      // Save to storage
       this.saveToStorage();
-      
-      // Update ice time colors
       this.updateIceTimeColors();
-      
-      // Update totals
       this.updateTotals();
     });
     
@@ -513,49 +491,47 @@ App.statsTable = {
       td.dataset.handlersAttached = 'true';
       
       // State auf Element speichern (nicht in Closure!)
-      td._tapState = td._tapState || {
-        lastTapTime: 0,
-        tapTimeout: null
-      };
+      if (!td._tapState) {
+        td._tapState = {
+          lastTapTime: 0,
+          tapTimeout: null
+        };
+      }
       const state = td._tapState;
       
-      // Touch handling for mobile: Single tap (+1) and double tap (-1)
+      // MOBILE: Touch-Handler mit preventDefault/stopPropagation
       td.addEventListener('touchend', (e) => {
-        // Prevent value change during drag
-        if (this.dragState.isDragging) {
-          e.preventDefault();
-          return;
-        }
-        
         e.preventDefault();
+        e.stopPropagation();
+        
+        if (this.dragState.isDragging) return;
+        
         const now = Date.now();
         
-        if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
-          // Double-tap detected
-          clearTimeout(state.tapTimeout);
-          state.tapTimeout = null;
+        // Double-Tap Detection
+        if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
+          if (state.tapTimeout) {
+            clearTimeout(state.tapTimeout);
+            state.tapTimeout = null;
+          }
           state.lastTapTime = 0;
-          // DO MINUS ACTION
-          this.changeValue(td, -1);
+          this.changeValue(td, -1);  // MINUS
           return;
         }
         
         state.lastTapTime = now;
         state.tapTimeout = setTimeout(() => {
-          // DO PLUS ACTION
-          this.changeValue(td, 1);
+          this.changeValue(td, 1);  // PLUS
           state.tapTimeout = null;
           state.lastTapTime = 0;
-        }, this.DOUBLE_TAP_DELAY);
+        }, 300);
       }, { passive: false });
       
-      // Desktop: Single Click: +1
+      // DESKTOP: click für +1
       td.addEventListener("click", (e) => {
-        // Prevent value change during drag
-        if (this.dragState.isDragging) {
-          e.preventDefault();
-          return;
-        }
+        if (this.dragState.isDragging) return;
+        // Ignoriere wenn Touch-Handler gerade aktiv war
+        if (state.lastTapTime > 0 && Date.now() - state.lastTapTime < 500) return;
         
         if (state.tapTimeout) clearTimeout(state.tapTimeout);
         state.tapTimeout = setTimeout(() => {
@@ -564,11 +540,9 @@ App.statsTable = {
         }, 200);
       });
       
-      // Desktop: Double Click: -1
+      // DESKTOP: dblclick für -1
       td.addEventListener("dblclick", (e) => {
         e.preventDefault();
-        
-        // Prevent value change during drag
         if (this.dragState.isDragging) return;
         
         if (state.tapTimeout) {
