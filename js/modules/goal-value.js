@@ -6,6 +6,9 @@ App.goalValue = {
   isUpdatingData: false,
   isExpandingColumns: false,  // Flag to prevent infinite recursion
   
+  // Constants for double-tap detection
+  DOUBLE_TAP_DELAY: 300,
+  
   init() {
     this.container = document.getElementById("goalValueContainer");
     
@@ -337,6 +340,68 @@ App.goalValue = {
         td.style.color = v > 0 ? colors.pos : v < 0 ? colors.neg : colors.zero;
         td.style.fontWeight = v !== 0 ? "700" : "400";
         
+        // KRITISCH: Prüfe ob Handler bereits attached sind
+        if (td.dataset.handlersAttached === 'true') {
+          row.appendChild(td);
+          return; // Überspringe, Handler existieren bereits
+        }
+        td.dataset.handlersAttached = 'true';
+        
+        // State auf Element speichern (nicht in Closure!)
+        td._tapState = td._tapState || {
+          lastTapTime: 0,
+          tapTimeout: null
+        };
+        const state = td._tapState;
+        
+        // Touch handling for mobile: Single tap (+1) and double tap (-1)
+        td.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          const now = Date.now();
+          const playerName = td.dataset.player;
+          const oppIdx = Number(td.dataset.oppIdx);
+          
+          if (state.lastTapTime > 0 && (now - state.lastTapTime < this.DOUBLE_TAP_DELAY)) {
+            // Double-tap detected: -1
+            clearTimeout(state.tapTimeout);
+            state.tapTimeout = null;
+            state.lastTapTime = 0;
+            
+            const d = this.getData();
+            if (!d[playerName]) d[playerName] = opponents.map(() => 0);
+            d[playerName][oppIdx] = Math.max(0, Number(d[playerName][oppIdx] || 0) - 1);
+            this.setData(d, true);
+            
+            const nv = d[playerName][oppIdx];
+            td.textContent = String(nv);
+            td.style.color = nv > 0 ? colors.pos : nv < 0 ? colors.neg : colors.zero;
+            td.style.fontWeight = nv !== 0 ? "700" : "400";
+            
+            this.updateValueCell(playerName, valueCellMap);
+            return;
+          }
+          
+          state.lastTapTime = now;
+          state.tapTimeout = setTimeout(() => {
+            // Single tap: +1
+            const d = this.getData();
+            if (!d[playerName]) d[playerName] = opponents.map(() => 0);
+            d[playerName][oppIdx] = Number(d[playerName][oppIdx] || 0) + 1;
+            this.setData(d, true);
+            
+            const nv = d[playerName][oppIdx];
+            td.textContent = String(nv);
+            td.style.color = nv > 0 ? colors.pos : nv < 0 ? colors.neg : colors.zero;
+            td.style.fontWeight = nv !== 0 ? "700" : "400";
+            
+            this.updateValueCell(playerName, valueCellMap);
+            
+            state.tapTimeout = null;
+            state.lastTapTime = 0;
+          }, this.DOUBLE_TAP_DELAY);
+        }, { passive: false });
+        
+        // Desktop: Click handler for double-click detection
         td.addEventListener("click", (e) => {
           e.preventDefault();
           
@@ -377,7 +442,7 @@ App.goalValue = {
               td.style.fontWeight = nv !== 0 ? "700" : "400";
               
               this.updateValueCell(playerName, valueCellMap);
-            }, 300);
+            }, this.DOUBLE_TAP_DELAY);
           }
         });
         
