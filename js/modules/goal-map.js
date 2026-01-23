@@ -170,26 +170,37 @@ App.goalMap = {
         
         if (!pos.insideImage) return;
         
-        // ========== KRITISCHER FIX: GRÜNER WORKFLOW BLOCKIERT ROTE ZONE ==========
-        // MUSS ganz am Anfang geprüft werden, VOR allen anderen Prüfungen!
+        // ============================================================
+        // KRITISCHER FIX: ROTE ZONE SOFORT BEI GOAL-WORKFLOW SPERREN
+        // ============================================================
+        // 
+        // Wenn Goal-Workflow aktiv ist:
+        // - workflowType ist noch null → Rote Zone sperren (User muss erst grün wählen)
+        // - workflowType ist 'scored' → Rote Zone sperren (grüner Workflow)
+        // - workflowType ist 'conceded' → Rote Zone erlaubt (roter Workflow)
+        //
         const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
         
-        // Für FELD-BOX: Rote Zone während grünem Workflow KOMPLETT sperren
-        if (box.classList.contains("field-box")) {
-          if (workflowActive && isScoredWorkflow && isRedZone) {
-            console.log('[Goal Map] RED ZONE BLOCKED - scored workflow active');
-            return; // BLOCKIEREN - kein Marker setzen!
+        if (isGoalWorkflow) {
+          // Workflow-Typ noch nicht bestimmt ODER scored (grün) → Rot sperren
+          if (!workflowType || workflowType === 'scored') {
+            
+            // Rote FELD-Zone sperren
+            if (box.classList.contains("field-box") && isRedZone) {
+              console.log('[Goal Map] RED ZONE BLOCKED - goal workflow active, waiting for green zone click');
+              return; // BLOCKIEREN!
+            }
+            
+            // Rotes TOR sperren
+            if (box.id === "goalRedBox") {
+              console.log('[Goal Map] RED GOAL BLOCKED - goal workflow active');
+              return; // BLOCKIEREN!
+            }
           }
         }
-        
-        // Für ROTES TOR: Während grünem Workflow KOMPLETT sperren
-        if (box.id === "goalRedBox") {
-          if (workflowActive && isScoredWorkflow) {
-            console.log('[Goal Map] RED GOAL BLOCKED - scored workflow active');
-            return; // BLOCKIEREN!
-          }
-        }
-        // ========== ENDE KRITISCHER FIX ==========
+        // ============================================================
+        // ENDE KRITISCHER FIX
+        // ============================================================
         
         // Shot Workflow: Only allow clicks in field box (will be handled below)
         if (isShotWorkflow) {
@@ -1045,7 +1056,7 @@ App.goalMap = {
             return false;
           }
           
-          // Im Goal-Workflow: Strikte Button-Kontrolle
+          // Goal-Workflow: Rote Buttons sperren wenn Typ noch nicht bestimmt oder scored
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
             const currentStep = App.goalMapWorkflow.collectedPoints?.length || 0;
             const workflowType = App.goalMapWorkflow?.workflowType;
@@ -1056,18 +1067,18 @@ App.goalMap = {
               return false;
             }
             
-            // GRÜNER Workflow (scored): NUR obere Reihe (grüne Buttons) erlaubt
-            if (workflowType === 'scored') {
-              if (!isTopRow) {
-                console.log('[Goal Workflow] Only GREEN time buttons (top row) allowed for scored goals');
+            // Workflow-Typ noch nicht bestimmt ODER scored → Rote Buttons sperren
+            if (!workflowType || workflowType === 'scored') {
+              if (isBottomRow) {
+                console.log('[Goal Workflow] RED buttons BLOCKED - workflow type not determined or scored');
                 return false;
               }
             }
             
-            // ROTER Workflow (conceded): NUR untere Reihe (rote Buttons) erlaubt
+            // Conceded workflow → Grüne Buttons sperren
             if (workflowType === 'conceded') {
-              if (!isBottomRow) {
-                console.log('[Goal Workflow] Only RED time buttons (bottom row) allowed for conceded goals');
+              if (isTopRow) {
+                console.log('[Goal Workflow] GREEN buttons blocked during conceded workflow');
                 return false;
               }
             }
@@ -1561,10 +1572,22 @@ App.goalMap = {
     const textEl = document.getElementById("workflowStatusText");
     if (!indicator || !textEl) return;
     
-    // Body-Klassen für CSS-Styling (für Timebox-Button-Blocking)
-    document.body.classList.remove('workflow-scored', 'workflow-conceded');
-    if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.workflowType) {
-      document.body.classList.add('workflow-' + App.goalMapWorkflow.workflowType);
+    // Body-Klassen für CSS-Styling
+    document.body.classList.remove('workflow-goal', 'workflow-shot', 'workflow-scored', 'workflow-conceded');
+    
+    if (App.goalMapWorkflow?.active) {
+      // NEUE Klasse: workflow-goal für generelle Goal-Workflow-Sperrung
+      if (App.goalMapWorkflow.eventType === 'goal') {
+        document.body.classList.add('workflow-goal');
+      }
+      if (App.goalMapWorkflow.eventType === 'shot') {
+        document.body.classList.add('workflow-shot');
+      }
+      
+      // Spezifische Klasse wenn Typ bestimmt ist
+      if (App.goalMapWorkflow.workflowType) {
+        document.body.classList.add('workflow-' + App.goalMapWorkflow.workflowType);
+      }
     }
     
     if (App.goalMapWorkflow?.active) {
