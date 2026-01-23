@@ -979,10 +979,13 @@ App.goalMap = {
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
-    // Verhindere doppelte Initialisierung
+    // Allow re-initialization to fix event listener attachment after page refresh/navigation
+    // The flag is now used only to track if we've initialized once, but we allow re-runs
     if (this.timeTrackingInitialized) {
-      console.log("[Goal Map] TimeTracking already initialized, skipping...");
-      return;
+      console.log("[Goal Map] Re-initializing TimeTracking to refresh event listeners...");
+      // Continue with re-initialization instead of returning
+    } else {
+      console.log("[Goal Map] First-time TimeTracking initialization...");
     }
     this.timeTrackingInitialized = true;
     
@@ -1030,7 +1033,10 @@ App.goalMap = {
           }
         }
         
-        // KRITISCH: Button komplett ersetzen um ALLE alten Listener zu entfernen
+        // CRITICAL: Replace button completely to remove ALL old event listeners
+        // This prevents duplicate listeners when initTimeTracking() is called multiple times
+        // (e.g., on page navigation). cloneNode(true) creates a fresh button without any listeners.
+        // Note: These buttons are only managed by this module, so removing all listeners is safe.
         const newBtn = btn.cloneNode(true);
         newBtn.textContent = displayValue;
         btn.parentNode.replaceChild(newBtn, btn);

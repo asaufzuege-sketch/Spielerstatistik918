@@ -1,5 +1,6 @@
 // Haupt-App Initialisierung
-document.addEventListener("DOMContentLoaded", () => {
+// Wait for both DOM content and CSS to be fully loaded to prevent timing issues
+function initializeApp() {
   console.log(`Player Statistics App v${App.version} loading...`);
   
   // 1. Theme & Styles initialisieren
@@ -170,7 +171,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
   console.log("✅ App loaded successfully!");
-});
+}
+
+// Initialize on window.load to ensure CSS is fully loaded (fixes button compression bug)
+if (document.readyState === 'complete') {
+  // Page already fully loaded, initialize immediately
+  initializeApp();
+} else {
+  // In 'loading' or 'interactive' state - wait for full load to ensure CSS is applied
+  // Both states require waiting because CSS may still be loading even after DOM is ready
+  window.addEventListener('load', initializeApp);
+}
 
 // Timer Persistenz Funktionen
 App.saveActiveTimersState = function() {
