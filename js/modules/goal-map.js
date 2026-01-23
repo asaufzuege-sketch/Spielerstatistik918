@@ -170,6 +170,27 @@ App.goalMap = {
         
         if (!pos.insideImage) return;
         
+        // ========== KRITISCHER FIX: GRÜNER WORKFLOW BLOCKIERT ROTE ZONE ==========
+        // MUSS ganz am Anfang geprüft werden, VOR allen anderen Prüfungen!
+        const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
+        
+        // Für FELD-BOX: Rote Zone während grünem Workflow KOMPLETT sperren
+        if (box.classList.contains("field-box")) {
+          if (workflowActive && isScoredWorkflow && isRedZone) {
+            console.log('[Goal Map] RED ZONE BLOCKED - scored workflow active');
+            return; // BLOCKIEREN - kein Marker setzen!
+          }
+        }
+        
+        // Für ROTES TOR: Während grünem Workflow KOMPLETT sperren
+        if (box.id === "goalRedBox") {
+          if (workflowActive && isScoredWorkflow) {
+            console.log('[Goal Map] RED GOAL BLOCKED - scored workflow active');
+            return; // BLOCKIEREN!
+          }
+        }
+        // ========== ENDE KRITISCHER FIX ==========
+        
         // Shot Workflow: Only allow clicks in field box (will be handled below)
         if (isShotWorkflow) {
           const isFieldBox = box.classList.contains("field-box");
@@ -184,12 +205,6 @@ App.goalMap = {
           const isFieldBox = box.classList.contains("field-box");
           const isGreenGoal = box.id === "goalGreenBox";
           const isRedGoal = box.id === "goalRedBox";
-          
-          // CRITICAL BUG 2 FIX: In scored workflow, do NOT allow clicks in red zone
-          if (isFieldBox && isScoredWorkflow && pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD) {
-            console.log('[Goal Workflow] Red zone not allowed in scored workflow - click in green zone');
-            return;
-          }
           
           // In conceded workflow, do NOT allow clicks in green zone
           if (isFieldBox && isConcededWorkflow && pos.yPctImage < this.VERTICAL_SPLIT_THRESHOLD) {
@@ -242,11 +257,6 @@ App.goalMap = {
           const activeGoalie = this.getActiveGoalie();
           if (!activeGoalie) {
             alert('Please select a goalie first');
-            return;
-          }
-          // Während scored workflow: gesperrt
-          if (workflowActive && isScoredWorkflow) {
-            console.log('[Goal Map] Red goal blocked during scored workflow');
             return;
           }
           // Ohne Workflow oder mit conceded workflow: erlaubt wenn Goalie ausgewählt
@@ -307,14 +317,6 @@ App.goalMap = {
               console.log('[Field Box] Click blocked: not on green/red area (black corner/edge)');
               return; // Block clicks on black areas
             }
-          }
-          
-          const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
-          
-          // ROTE ZONE - Nur während grünem Workflow (scored) gesperrt
-          if (workflowActive && isScoredWorkflow && isRedZone) {
-            console.log('[Goal Map] Red zone blocked during scored workflow');
-            return;
           }
           
           // ROTE ZONE - Ohne Workflow: Goalie-Check erforderlich
