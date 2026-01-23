@@ -164,6 +164,11 @@ const App = {
           this.goalValue.render();
         }
         if (page === "seasonMap" && this.seasonMap && typeof this.seasonMap.render === 'function') {
+          // CRITICAL FIX: Re-initialize time tracking buttons to re-attach event listeners
+          if (typeof this.seasonMap.initTimeTracking === 'function') {
+            this.seasonMap.initTimeTracking();
+          }
+          
           // Check if markers are missing in DOM but exist in localStorage
           const markersInDOM = document.querySelectorAll("#seasonMapPage .marker-dot").length;
           const teamId = App.helpers.getCurrentTeamId();
@@ -184,9 +189,11 @@ const App = {
           }
         }
         if (page === "torbild" && this.goalMap) {
-          // Note: timeTrackingInitialized flag should remain true once set.
-          // It is only reset in the explicit reset() function to allow re-initialization.
-          // Resetting it here without calling initTimeTracking() would create an inconsistent state.
+          // CRITICAL FIX: Re-initialize time tracking buttons to re-attach event listeners
+          // This fixes bugs where buttons don't respond after refresh/navigation
+          if (typeof this.goalMap.initTimeTracking === 'function') {
+            this.goalMap.initTimeTracking();
+          }
           
           // Nach dem Anzeigen der torbild-Seite, Marker wiederherstellen
           if (typeof this.goalMap.restoreMarkers === 'function') {

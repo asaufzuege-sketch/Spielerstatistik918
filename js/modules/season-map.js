@@ -804,10 +804,12 @@ App.seasonMap = {
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
-    // Verhindere doppelte Initialisierung
+    // Allow re-initialization to fix event listener attachment after page refresh/navigation
     if (this.timeTrackingInitialized) {
-      console.log("[Season Map] TimeTracking already initialized, skipping...");
-      return;
+      console.log("[Season Map] Re-initializing TimeTracking to refresh event listeners...");
+      // Continue with re-initialization instead of returning
+    } else {
+      console.log("[Season Map] First-time TimeTracking initialization...");
     }
     this.timeTrackingInitialized = true;
     

@@ -979,10 +979,13 @@ App.goalMap = {
   initTimeTracking() {
     if (!this.timeTrackingBox) return;
     
-    // Verhindere doppelte Initialisierung
+    // Allow re-initialization to fix event listener attachment after page refresh/navigation
+    // The flag is now used only to track if we've initialized once, but we allow re-runs
     if (this.timeTrackingInitialized) {
-      console.log("[Goal Map] TimeTracking already initialized, skipping...");
-      return;
+      console.log("[Goal Map] Re-initializing TimeTracking to refresh event listeners...");
+      // Continue with re-initialization instead of returning
+    } else {
+      console.log("[Goal Map] First-time TimeTracking initialization...");
     }
     this.timeTrackingInitialized = true;
     
