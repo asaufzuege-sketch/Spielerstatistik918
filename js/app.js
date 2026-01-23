@@ -212,12 +212,13 @@ function initializeApp() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', async () => {
     await waitForCSSLoad();
-    // Force layout recalculation
+    // Force layout recalculation to ensure CSS is fully applied
     document.body.offsetHeight;
     initializeApp();
   });
 } else {
   waitForCSSLoad().then(() => {
+    // Force layout recalculation to ensure CSS is fully applied
     document.body.offsetHeight;
     initializeApp();
   });
