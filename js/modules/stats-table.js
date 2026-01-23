@@ -484,22 +484,18 @@ App.statsTable = {
   
   attachValueClickHandlers() {
     this.container.querySelectorAll("td[data-player][data-cat]").forEach(td => {
-      // KRITISCH: Prüfe ob Handler bereits attached sind - wenn ja, entfernen für Re-Attach
-      if (td.dataset.handlersAttached === 'true') {
-        delete td.dataset.handlersAttached;
-      }
+      // KRITISCH BUG 4 FIX: Handler-State zurücksetzen
+      delete td.dataset.handlersAttached;
+      td._tapState = null;
+      
+      td._tapState = {
+        lastTapTime: 0,
+        tapTimeout: null
+      };
+      const state = td._tapState;
       td.dataset.handlersAttached = 'true';
       
-      // State auf Element speichern (nicht in Closure!)
-      if (!td._tapState) {
-        td._tapState = {
-          lastTapTime: 0,
-          tapTimeout: null
-        };
-      }
-      const state = td._tapState;
-      
-      // MOBILE: Touch-Handler mit preventDefault/stopPropagation
+      // MOBILE Touch-Handler
       td.addEventListener('touchend', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -508,20 +504,17 @@ App.statsTable = {
         
         const now = Date.now();
         
-        // Double-Tap Detection
         if (state.lastTapTime > 0 && (now - state.lastTapTime < 300)) {
-          if (state.tapTimeout) {
-            clearTimeout(state.tapTimeout);
-            state.tapTimeout = null;
-          }
+          clearTimeout(state.tapTimeout);
+          state.tapTimeout = null;
           state.lastTapTime = 0;
-          this.changeValue(td, -1);  // MINUS
+          this.changeValue(td, -1);
           return;
         }
         
         state.lastTapTime = now;
         state.tapTimeout = setTimeout(() => {
-          this.changeValue(td, 1);  // PLUS
+          this.changeValue(td, 1);
           state.tapTimeout = null;
           state.lastTapTime = 0;
         }, 300);

@@ -1040,20 +1040,20 @@ App.goalMap = {
         const newBtn = btn.cloneNode(true);
         newBtn.textContent = displayValue;
         
-        // KRITISCH: handlersAttached VOR dem replace entfernen!
+        // KRITISCH BUG 3 FIX: Handler-State komplett zurücksetzen VOR replaceChild
         delete newBtn.dataset.handlersAttached;
+        newBtn._tapState = null;
+        newBtn._clickState = null;
         
         btn.parentNode.replaceChild(newBtn, btn);
         
-        // Jetzt State initialisieren
-        if (!newBtn._tapState) {
-          newBtn._tapState = {
-            lastTapTime: 0,
-            tapTimeout: null,
-            lastClickTime: 0,
-            clickTimeout: null
-          };
-        }
+        // JETZT State initialisieren
+        newBtn._tapState = {
+          lastTapTime: 0,
+          tapTimeout: null,
+          lastClickTime: 0,
+          clickTimeout: null
+        };
         const state = newBtn._tapState;
         
         // Handler attached setzen NACH der Initialisierung
@@ -1138,11 +1138,16 @@ App.goalMap = {
           // Determine if this is a bottom-row (red) button
           const isBottomRow = newBtn.closest('.period-buttons')?.classList.contains('bottom-row');
           
-          // KRITISCH: Im Workflow IMMER den Workflow-Spieler verwenden, NIEMALS den Filter!
+          // KRITISCH FIX BUG 1: Workflow-Spieler ZUERST speichern, BEVOR der Workflow enden könnte
+          // Der Workflow könnte durch addGoalMapPoint() beendet werden
+          const workflowPlayerName = App.goalMapWorkflow?.active ? App.goalMapWorkflow.playerName : null;
+          const wasWorkflowActive = App.goalMapWorkflow?.active;
+          
           let playerName;
-          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName) {
-            // Im Workflow: NUR den Workflow-Spieler verwenden
-            playerName = App.goalMapWorkflow.playerName;
+          if (wasWorkflowActive && workflowPlayerName) {
+            // Im Workflow: NUR den Workflow-Spieler verwenden, NIEMALS den Filter!
+            playerName = workflowPlayerName;
+            console.log('[Timebox] Using WORKFLOW player ONLY:', playerName);
           } else if (isBottomRow) {
             // Außerhalb Workflow, rote Buttons: Goalie
             const activeGoalie = this.getActiveGoalie();
@@ -1154,10 +1159,9 @@ App.goalMap = {
           
           if (!currentTimeDataWithPlayers[key]) currentTimeDataWithPlayers[key] = {};
           
-          // FIX: If playerName doesn't exist in timeDataWithPlayers,
-          // use the current button display value as starting point (migration from old format)
+          // Im Workflow: Spieler startet IMMER bei 0
           if (typeof currentTimeDataWithPlayers[key][playerName] === 'undefined') {
-            if (App.goalMapWorkflow?.active) {
+            if (wasWorkflowActive) {
               // Im Workflow: Neuer Spieler startet IMMER bei 0
               currentTimeDataWithPlayers[key][playerName] = 0;
             } else {
@@ -1188,10 +1192,10 @@ App.goalMap = {
           // Calculate display value based on button row and filters
           let displayVal = 0;
           
-          // KRITISCH: Im Workflow IMMER den Workflow-Spieler-Wert anzeigen, nicht den Filter-Wert!
-          if (App.goalMapWorkflow?.active) {
+          // KRITISCH BUG 1 FIX: Im Workflow IMMER den Workflow-Spieler-Wert anzeigen
+          if (wasWorkflowActive && workflowPlayerName) {
             // Im Workflow: Zeige den Wert für den Workflow-Spieler
-            displayVal = (currentTimeDataWithPlayers[key] && currentTimeDataWithPlayers[key][playerName]) || 0;
+            displayVal = newVal;
           } else if (isBottomRow) {
             // Außerhalb Workflow, Bottom row: show goalie filter values
             const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
@@ -1221,13 +1225,21 @@ App.goalMap = {
           currentTimeData[periodNum][idx] = displayVal;
           AppStorage.setItem(`timeData_${currentTeamId}`, JSON.stringify(currentTimeData));
           
-          if (delta > 0 && App.goalMapWorkflow?.active) {
+          if (delta > 0 && wasWorkflowActive) {
             const btnRect = newBtn.getBoundingClientRect();
             const boxRect = this.timeTrackingBox.getBoundingClientRect();
             const xPct = ((btnRect.left + btnRect.width / 2 - boxRect.left) / boxRect.width) * 100;
             const yPct = ((btnRect.top + btnRect.height / 2 - boxRect.top) / boxRect.height) * 100;
             
             App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
+            
+            // KRITISCH BUG 2 FIX: Auto-Navigation nach komplettem Workflow
+            // Kurze Verzögerung damit der Workflow abgeschlossen werden kann
+            setTimeout(() => {
+              if (typeof App.showPage === 'function') {
+                App.showPage('stats');
+              }
+            }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
           }
         };
         
