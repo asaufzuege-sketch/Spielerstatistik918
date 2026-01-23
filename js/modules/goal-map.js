@@ -185,6 +185,18 @@ App.goalMap = {
           const isGreenGoal = box.id === "goalGreenBox";
           const isRedGoal = box.id === "goalRedBox";
           
+          // KRITISCH BUG 2 FIX: Im scored Workflow darf NICHT in der roten Zone geklickt werden
+          if (isFieldBox && isScoredWorkflow && pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD) {
+            console.log('[Goal Workflow] Red zone not allowed in scored workflow - click in green zone');
+            return;
+          }
+          
+          // Im conceded Workflow darf NICHT in der grünen Zone geklickt werden
+          if (isFieldBox && isConcededWorkflow && pos.yPctImage < this.VERTICAL_SPLIT_THRESHOLD) {
+            console.log('[Goal Workflow] Green zone not allowed in conceded workflow - click in red zone');
+            return;
+          }
+          
           // Schritt 0: NUR Spielfeld erlaubt
           if (currentStep === this.WORKFLOW_STEP_FIELD) {
             if (!isFieldBox) {
@@ -1233,8 +1245,25 @@ App.goalMap = {
             
             App.addGoalMapPoint('time', xPct, yPct, '#444444', 'timeTrackingBox');
             
-            // KRITISCH BUG 2 FIX: Auto-Navigation nach komplettem Workflow
-            // Kurze Verzögerung damit der Workflow abgeschlossen werden kann
+            // KRITISCH BUG 1 FIX: Alle pending Timers in stats-table abbrechen
+            // Diese Timer würden sonst changeValue(+1) triggern und einen neuen Workflow starten
+            if (App.statsTable && App.statsTable.container) {
+              App.statsTable.container.querySelectorAll('td[data-player][data-cat]').forEach(td => {
+                if (td._tapState) {
+                  if (td._tapState.tapTimeout) {
+                    clearTimeout(td._tapState.tapTimeout);
+                    td._tapState.tapTimeout = null;
+                  }
+                  if (td._tapState.clickTimeout) {
+                    clearTimeout(td._tapState.clickTimeout);
+                    td._tapState.clickTimeout = null;
+                  }
+                  td._tapState.lastTapTime = 0;
+                }
+              });
+            }
+            
+            // Auto-Navigation nach komplettem Workflow
             setTimeout(() => {
               if (typeof App.showPage === 'function') {
                 App.showPage('stats');
