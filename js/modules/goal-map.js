@@ -1114,6 +1114,20 @@ App.goalMap = {
           return true;
         };
         
+        // Helper function to check if workflow is complete and navigate
+        const checkWorkflowCompletion = () => {
+          if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.eventType === 'goal') {
+            const isComplete = App.goalMapWorkflow?.collectedPoints?.length >= App.goalMapWorkflow?.requiredPoints;
+            if (isComplete) {
+              setTimeout(() => {
+                if (typeof App.showPage === 'function') {
+                  App.showPage('stats');
+                }
+              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
+            }
+          }
+        };
+        
         const updateValue = (delta) => {
           // CRITICAL: Read teamId and data dynamically at click time to ensure data persistence across team switches.
           // This prevents closure capture of stale team data when switching teams.
@@ -1129,7 +1143,6 @@ App.goalMap = {
           if (App.goalMapWorkflow?.active && App.goalMapWorkflow?.playerName) {
             // Im Workflow: NUR den Workflow-Spieler verwenden
             playerName = App.goalMapWorkflow.playerName;
-            console.log('[Timebox] Using WORKFLOW player:', playerName);
           } else if (isBottomRow) {
             // Außerhalb Workflow, rote Buttons: Goalie
             const activeGoalie = this.getActiveGoalie();
@@ -1241,14 +1254,7 @@ App.goalMap = {
             updateValue(1);
             
             // KRITISCH: Prüfe ob Workflow komplett ist und navigiere zurück
-            const isComplete = App.goalMapWorkflow?.collectedPoints?.length >= App.goalMapWorkflow?.requiredPoints;
-            if (isComplete) {
-              setTimeout(() => {
-                if (typeof App.showPage === 'function') {
-                  App.showPage('stats');
-                }
-              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
-            }
+            checkWorkflowCompletion();
             
             return; // Workflow-Klick verarbeitet, keine weitere Logik
           }
@@ -1286,14 +1292,7 @@ App.goalMap = {
             updateValue(1);
             
             // KRITISCH: Prüfe ob Workflow komplett ist und navigiere zurück
-            const isComplete = App.goalMapWorkflow?.collectedPoints?.length >= App.goalMapWorkflow?.requiredPoints;
-            if (isComplete) {
-              setTimeout(() => {
-                if (typeof App.showPage === 'function') {
-                  App.showPage('stats');
-                }
-              }, App.goalMap.AUTO_NAVIGATION_DELAY_MS);
-            }
+            checkWorkflowCompletion();
             
             return;
           }
