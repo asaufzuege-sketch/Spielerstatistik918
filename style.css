@@ -3230,6 +3230,34 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   cursor: not-allowed !important;
 }
 
+/* ===== RED AREAS PERMANENTLY LOCKED ===== */
+/* Red goal permanently locked */
+#goalRedBox {
+  opacity: 0.5 !important;
+  filter: grayscale(70%) !important;
+  cursor: not-allowed !important;
+}
+
+/* Red zone of field (bottom half) visually locked */
+#fieldBox::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: rgba(128, 128, 128, 0.4);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Red buttons (bottom-row) permanently locked */
+.period-buttons.bottom-row .time-btn {
+  opacity: 0.5 !important;
+  filter: grayscale(70%) !important;
+  cursor: not-allowed !important;
+}
+
 /* ===== FILTER BUTTON PULSIERUNG ===== */
 /* Green pulsing animation for player button */
 @keyframes neon-pulse-green {

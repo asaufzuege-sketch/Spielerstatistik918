@@ -309,66 +309,10 @@ App.goalMap = {
           
           const isRedZone = pos.yPctImage >= this.VERTICAL_SPLIT_THRESHOLD;
           
-          // ROTE ZONE - Goalie muss ausgewählt sein
+          // ROTE ZONE - Komplett gesperrt (nicht anklickbar)
           if (!workflowActive && isRedZone) {
-            const activeGoalie = this.getActiveGoalie();
-            
-            if (!activeGoalie) {
-              alert('Please select a goalie first');
-              return;
-            }
-            
-            // Kurzer Klick = Roter Punkt (Shot) - NUR bei kurzem Klick!
-            if (!long) {
-              App.markerHandler.createMarkerPercent(
-                pos.xPctImage, pos.yPctImage,
-                "#ff0000", box, true,
-                activeGoalie.name, null, 'conceded'
-              );
-              
-              // Set data-zone attribute for red zone shot
-              setMarkerZone(box, 'red');
-              
-              this.saveMarkers();
-              
-              // Auto-Navigation entfernt - killt Workflow-Kontext
-              
-              return; // WICHTIG: Hier beenden, kein Workflow
-            }
-            
-            // Langer Klick = DIREKT Workflow starten mit grauem Punkt
-            // KEIN roter Punkt hier!
-            if (long) {
-              App.goalMapWorkflow.active = true;
-              App.goalMapWorkflow.eventType = 'goal';
-              App.goalMapWorkflow.workflowType = 'conceded';
-              App.goalMapWorkflow.playerName = activeGoalie.name;
-              App.goalMapWorkflow.requiredPoints = 3;
-              App.goalMapWorkflow.pointTypes = ['field', 'goal', 'time'];
-              App.goalMapWorkflow.collectedPoints = [];
-              App.goalMapWorkflow.sessionId = 'wf_' + Date.now();
-              
-              // Update workflow indicator
-              if (App.goalMap && typeof App.goalMap.updateWorkflowIndicator === 'function') {
-                App.goalMap.updateWorkflowIndicator();
-              }
-              
-              // KRITISCH: Lokale Variablen aktualisieren damit der graue Punkt erstellt wird
-              // Diese Variablen wurden am Anfang von placeMarker gelesen, müssen jetzt aktualisiert werden
-              workflowActive = true;
-              eventType = 'goal';
-              workflowType = 'conceded';
-              isGoalWorkflow = true;
-              isScoredWorkflow = false;
-              isConcededWorkflow = true;
-              currentStep = 0;
-              
-              // KRITISCH: pointPlayer neu setzen damit der Marker den Goalie-Namen bekommt
-              pointPlayer = activeGoalie.name;
-              
-              // GRAUER Punkt wird unten in der field-box Sektion erstellt
-              // (weil isGoalWorkflow jetzt true ist, wird dort neutralGrey verwendet)
-            }
+            console.log('[Goal Map] Red zone is locked - not clickable');
+            return;
           }
           
           let color = null;
