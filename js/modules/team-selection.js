@@ -65,22 +65,15 @@ App.teamSelection = (function() {
             const teamTitle = document.createElement('h3');
             teamTitle.textContent = teamData.name;
             
-            // For Team 1, show count of available players from App.data.players
-            // For Team 2 & 3, show count of players from playerSelectionData
-            let playersWithNames = 0;
-            if (teamDef.id === 'team1') {
-                // Count players with names from App.data.players
-                playersWithNames = App.data.players ? App.data.players.filter(p => p.name && p.name.trim() !== '').length : 0;
-            } else {
-                // Count players with names from playerSelectionData for Team 2 & 3
-                const savedPlayersKey = `playerSelectionData_${teamDef.id}`;
-                try {
-                    const savedPlayers = JSON.parse(AppStorage.getItem(savedPlayersKey) || '[]');
-                    playersWithNames = savedPlayers.filter(p => p.name && p.name.trim() !== '').length;
-                } catch (e) {
-                    playersWithNames = 0;
-                }
+            // Count players with names from playerSelectionData for ALL teams
+            const savedPlayersKey = `playerSelectionData_${teamDef.id}`;
+            let savedPlayers = [];
+            try {
+                savedPlayers = JSON.parse(AppStorage.getItem(savedPlayersKey) || '[]');
+            } catch (e) {
+                savedPlayers = [];
             }
+            let playersWithNames = savedPlayers.filter(p => p.name && p.name.trim() !== '').length;
             const teamInfo = document.createElement('p');
             teamInfo.className = 'team-name';
             teamInfo.textContent = `${playersWithNames} Players`;
