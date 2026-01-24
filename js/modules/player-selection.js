@@ -97,6 +97,9 @@ App.playerSelection = {
       savedPlayers = [];
     }
     
+    // Für Team 1: Wenn keine gespeicherten Daten existieren, verwende die Default-Spieler aus App.data.players
+    const useDefaults = currentTeamId === 'team1' && savedPlayers.length === 0 && App.data.players && App.data.players.length > 0;
+    
     const players = [];
     
     // Add 5 goalie slots at the top
@@ -111,12 +114,19 @@ App.playerSelection = {
       });
     }
     
-    // All teams (Team 1, 2, and 3): 40 regular player slots after 5 goalie slots
+    // 40 regular player slots after 5 goalie slots
     for (let i = 0; i < 40; i++) {
       const saved = savedPlayers[5 + i];
+      
+      // Für Team 1: Default-Spieler aus App.data.players verwenden wenn keine gespeicherten Daten
+      let defaultPlayer = null;
+      if (useDefaults && i < App.data.players.length) {
+        defaultPlayer = App.data.players[i];
+      }
+      
       players.push({
-        number: saved?.number || "",
-        name: saved?.name || "",
+        number: saved?.number || (defaultPlayer ? String(defaultPlayer.num || "") : ""),
+        name: saved?.name || (defaultPlayer ? defaultPlayer.name : ""),
         position: saved?.position || "",
         active: saved?.active || false,
         isGoalie: false
