@@ -347,11 +347,19 @@ App.goalMap = {
           if (isGoalWorkflow) {
             color = neutralGrey;
           }
-          // Longpress in green zone or erzwungen grau (z.B. Doppelklick)
-          else if ((long && !isRedZone) || forceGrey) {
+          // Longpress in ROTER Zone (ohne Workflow) → Grauer Punkt (Goal/Gegentor)
+          else if (long && isRedZone) {
+            color = neutralGrey;  // GRAU für Gegentor
+          }
+          // Longpress in GRÜNER Zone → Grauer Punkt
+          else if (long && !isRedZone) {
             color = neutralGrey;
           }
-          // Normaler manueller Klick: oben grün, unten rot
+          // Doppelklick (forceGrey) → Grauer Punkt
+          else if (forceGrey) {
+            color = neutralGrey;
+          }
+          // Normaler Klick: oben grün, unten rot
           else {
             color = pos.yPctImage > this.VERTICAL_SPLIT_THRESHOLD ? "#ff0000" : "#00ff66";
           }
