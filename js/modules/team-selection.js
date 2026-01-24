@@ -74,6 +74,14 @@ App.teamSelection = (function() {
                 savedPlayers = [];
             }
             let playersWithNames = savedPlayers.filter(p => p.name && p.name.trim() !== '').length;
+            
+            // Für Team 1: Falls keine gespeicherten Spieler, zähle die Default-Spieler aus App.data.players
+            if (teamDef.id === 'team1' && playersWithNames === 0) {
+                if (App.data && App.data.players && App.data.players.length > 0) {
+                    playersWithNames = App.data.players.filter(p => p.name && p.name.trim() !== '').length;
+                }
+            }
+            
             const teamInfo = document.createElement('p');
             teamInfo.className = 'team-name';
             teamInfo.textContent = `${playersWithNames} Players`;
