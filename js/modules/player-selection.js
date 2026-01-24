@@ -111,50 +111,18 @@ App.playerSelection = {
       });
     }
     
-    // Team 1 gets predefined players, other teams get empty slots
-    if (currentTeamId === 'team1') {
-      // Convert existing player data to new format
-      const regularPlayers = App.data.players.map((p, idx) => {
-        const saved = savedPlayers.find(sp => sp.name === p.name);
-        const isSelected = App.data.selectedPlayers.some(sp => sp.name === p.name);
-        return {
-          number: saved?.number || (p.num !== "" && p.num !== null && p.num !== undefined ? String(p.num) : ""),
-          name: p.name,
-          position: saved?.position || "",
-          active: saved?.active !== undefined ? saved.active : isSelected,
-          isGoalie: false
-        };
+    // All teams (Team 1, 2, and 3): 40 regular player slots after 5 goalie slots
+    for (let i = 0; i < 40; i++) {
+      const saved = savedPlayers[5 + i];
+      players.push({
+        number: saved?.number || "",
+        name: saved?.name || "",
+        position: saved?.position || "",
+        active: saved?.active || false,
+        isGoalie: false
       });
-      
-      players.push(...regularPlayers);
-      
-      // Add 13 additional slots (40 players total)
-      for (let i = 0; i < 13; i++) {
-        const saved = savedPlayers[5 + App.data.players.length + i];
-        players.push({
-          number: saved?.number || "",
-          name: saved?.name || "",
-          position: saved?.position || "",
-          active: saved?.active || false,
-          isGoalie: false
-        });
-      }
-      
-      return players;
-    } else {
-      // Team 2 and 3: 40 regular player slots after 5 goalie slots
-      for (let i = 0; i < 40; i++) {
-        const saved = savedPlayers[5 + i];
-        players.push({
-          number: saved?.number || "",
-          name: saved?.name || "",
-          position: saved?.position || "",
-          active: saved?.active || false,
-          isGoalie: false
-        });
-      }
-      return players;
     }
+    return players;
   },
   
   render() {
