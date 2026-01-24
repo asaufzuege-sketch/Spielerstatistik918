@@ -671,6 +671,42 @@ App.statsTable = {
             updateOpponentShots(newOpp);
           });
           
+          // ========== MOBILE: Touch-Handler mit manueller Doppel-Tap-Erkennung ==========
+          let lastTapTime = 0;
+          let tapTimeout = null;
+          
+          tc.addEventListener('touchend', (e) => {
+            e.preventDefault();  // KRITISCH: Verhindert Browser-Zoom!
+            e.stopPropagation();
+            
+            const now = Date.now();
+            
+            // Doppel-Tap Detection (innerhalb 300ms)
+            if (lastTapTime > 0 && (now - lastTapTime < 300)) {
+              // DOPPEL-TAP: -1 (minimum 0)
+              if (tapTimeout) {
+                clearTimeout(tapTimeout);
+                tapTimeout = null;
+              }
+              lastTapTime = 0;
+              
+              const currentOpp = Number(tc.dataset.opp || 0);
+              const newOpp = Math.max(0, currentOpp - 1);
+              updateOpponentShots(newOpp);
+              return;
+            }
+            
+            lastTapTime = now;
+            tapTimeout = setTimeout(() => {
+              // EINZEL-TAP: +1
+              const newOpp = Number(tc.dataset.opp || 0) + 1;
+              updateOpponentShots(newOpp);
+              tapTimeout = null;
+              lastTapTime = 0;
+            }, 300);
+          }, { passive: false });  // passive: false erlaubt preventDefault()
+          // ========== ENDE MOBILE TOUCH HANDLER ==========
+          
           // Add visual feedback for clickability
           tc.style.cursor = "pointer";
         }
