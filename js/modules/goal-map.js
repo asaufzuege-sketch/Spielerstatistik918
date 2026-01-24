@@ -197,6 +197,24 @@ App.goalMap = {
               return; // BLOCKIEREN!
             }
           }
+          
+          // ============================================================
+          // CONCEDED WORKFLOW: GRÜNE BEREICHE SPERREN
+          // ============================================================
+          // Während CONCEDED Workflow: Grüne Zone sperren
+          if (workflowType === 'conceded') {
+            // Grüne FELD-Zone sperren
+            if (box.classList.contains("field-box") && !isRedZone) {
+              console.log('[Goal Map] GREEN ZONE BLOCKED - conceded workflow active');
+              return;
+            }
+            
+            // Grünes TOR sperren
+            if (box.id === "goalGreenBox") {
+              console.log('[Goal Map] GREEN GOAL BLOCKED - conceded workflow active');
+              return;
+            }
+          }
         }
         // ============================================================
         // ENDE KRITISCHER FIX
@@ -347,7 +365,58 @@ App.goalMap = {
           if (isGoalWorkflow) {
             color = neutralGrey;
           }
-          // Longpress in ROTER Zone (ohne Workflow) → Grauer Punkt (Goal/Gegentor)
+          // ========== NEU: MANUELLER CONCEDED WORKFLOW ==========
+          // Longpress in ROTER Zone (ohne aktiven Workflow) → Starte manuellen conceded Workflow
+          else if (long && isRedZone && !workflowActive) {
+            // Prüfe ob Goalie ausgewählt
+            const activeGoalie = this.getActiveGoalie();
+            if (!activeGoalie) {
+              alert('Please select a goalie first');
+              return;
+            }
+            
+            color = neutralGrey;  // Grauer Punkt für Gegentor
+            
+            // Setze den Punkt ZUERST
+            App.markerHandler.createMarkerPercent(
+              pos.xPctImage,
+              pos.yPctImage,
+              color,
+              box,
+              true,
+              activeGoalie.name  // Goalie als Spieler zuordnen
+            );
+            
+            // Set data-zone attribute
+            setMarkerZone(box, 'red');
+            
+            this.saveMarkers();
+            
+            // STARTE MANUELLEN CONCEDED WORKFLOW
+            App.goalMapWorkflow = {
+              active: true,
+              eventType: 'goal',
+              workflowType: 'conceded',  // Direkt als conceded setzen!
+              playerName: activeGoalie.name,
+              collectedPoints: [{
+                type: 'field',
+                xPct: pos.xPctImage,
+                yPct: pos.yPctImage,
+                color: color,
+                boxId: box.id
+              }],
+              requiredPoints: 3  // Field, Goal, Time
+            };
+            
+            // Update UI - Grün sperren
+            this.updateWorkflowIndicator();
+            
+            console.log('[Goal Map] Started MANUAL conceded workflow');
+            return;  // Wichtig: Return hier, Punkt wurde bereits gesetzt
+          }
+          // ========== ENDE NEU ==========
+          
+          // Longpress in ROTER Zone (mit Workflow aktiv) → Grauer Punkt
           else if (long && isRedZone) {
             color = neutralGrey;  // GRAU für Gegentor
           }
