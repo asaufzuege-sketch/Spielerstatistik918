@@ -3222,6 +3222,30 @@ body.workflow-conceded .period-buttons.top-row .time-btn {
   cursor: not-allowed !important;
 }
 
+/* ===== CONCEDED WORKFLOW: GRÜNE BEREICHE SPERREN ===== */
+
+/* Grünes Tor während conceded workflow gesperrt */
+body.workflow-conceded #goalGreenBox {
+  opacity: 0.3 !important;
+  filter: grayscale(70%) !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Grüne Feldhälfte: Overlay während conceded workflow */
+body.workflow-conceded #fieldBox::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: rgba(128, 128, 128, 0.5);
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 8px 8px 0 0;
+}
+
 /* ===== GOAL WORKFLOW: ROTE BEREICHE SOFORT SPERREN ===== */
 /* Wenn Goal-Workflow aktiv ist (body hat workflow-goal Klasse) */
 
