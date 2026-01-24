@@ -1,5 +1,5 @@
 // KRITISCH: Feste Version, die bei JEDER Änderung erhöht werden muss!
-const CACHE_VERSION = 'v3.2.1';
+const CACHE_VERSION = 'v3.2.2';
 const CACHE_NAME = 'smarthockey-' + CACHE_VERSION;
 
 const urlsToCache = [

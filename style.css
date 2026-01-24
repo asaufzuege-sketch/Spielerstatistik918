@@ -693,6 +693,14 @@ button,
   -webkit-user-select: none;
 }
 
+/* SOG Total-Zelle: Verhindere Browser-Zoom bei Doppel-Tap */
+.total-cell[data-cat="Shot"] {
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* Kein Scale-Effekt beim Klicken auf Feld/Tor */
 .field-box:active,
 #field:active {
