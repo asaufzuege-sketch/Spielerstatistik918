@@ -3886,4 +3886,6 @@ h3.info-title {
 #splash-screen img {
   width: 200px;
   height: 200px;
+  max-width: 40vmin;
+  max-height: 40vmin;
 }
