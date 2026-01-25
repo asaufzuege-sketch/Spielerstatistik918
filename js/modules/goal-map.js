@@ -476,13 +476,22 @@ App.goalMap = {
             return;
           }
           
+          // Für rote Zone ohne Workflow: Goalie-Name zuordnen
+          let playerToAssign = pointPlayer;
+          if (!playerToAssign && isRedZone) {
+            const activeGoalie = this.getActiveGoalie();
+            if (activeGoalie) {
+              playerToAssign = activeGoalie.name;
+            }
+          }
+          
           App.markerHandler.createMarkerPercent(
             pos.xPctImage,
             pos.yPctImage,
             color,
             box,
             true,
-            pointPlayer
+            playerToAssign
           );
           
           // Set data-zone attribute for normal field point
