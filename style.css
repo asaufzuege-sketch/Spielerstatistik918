@@ -93,6 +93,7 @@
 #splash-screen img {
   width: 200px;
   height: 200px;
+  border-radius: 50%;
 }
 
 /* Global für alle Seiten - Verhindere Browser-Zoom bei Doppelklick */
