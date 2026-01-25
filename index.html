@@ -81,6 +81,11 @@
 </head>
 <body>
 
+  <!-- SPLASH SCREEN -->
+  <div id="splash-screen" aria-hidden="true">
+    <img src="icons/splash-icon.png" alt="SmartHockey Logo">
+  </div>
+
   <!-- TEAMAUSWAHL SEITE (NEUE ERSTE SEITE) -->
   <div id="teamSelectionPage" class="page">
     <div class="page-top">
@@ -590,6 +595,19 @@
         window.location.reload();
       });
     }
+  </script>
+  
+  <!-- Splash Screen Fade-Out Script -->
+  <script>
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.classList.add('fade-out');
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 1500);
+    });
   </script>
 </body>
 </html>
