@@ -49,14 +49,13 @@ App.goalMap = {
     this.applyPlayerFilter();  // Filter green zone
     
     // Apply goalie filter for red zone
-    const goalieFilterSelect = document.getElementById("goalMapGoalieFilter");
     const teamId = App.helpers.getCurrentTeamId();
     const savedGoalie = AppStorage.getItem(`goalMapActiveGoalie_${teamId}`);
-    if (savedGoalie && goalieFilterSelect && goalieFilterSelect.value === savedGoalie) {
-      // Specific goalie is selected, filter red zone
+    if (savedGoalie) {
+      // Specific goalie is saved, filter red zone by that goalie
       this.filterByGoalies([savedGoalie]);
-    } else if (goalieFilterSelect) {
-      // "All Goalies" or no goalie - show all red zone markers
+    } else {
+      // "All Goalies" or no goalie saved - show all red zone markers
       const allGoalies = (App.data.selectedPlayers || []).filter(p => p.position === "G");
       const goalieNames = allGoalies.map(g => g.name);
       this.filterByGoalies(goalieNames);
