@@ -54,7 +54,8 @@
     // Get all keys first to avoid issues with modifying localStorage during iteration
     const allKeys = Object.keys(localStorage);
     const keysToMigrate = allKeys.filter(key => 
-      key && !key.startsWith('s918_') && !key.startsWith('s1player_') && !key.startsWith('s1team_')
+      key && !key.startsWith('s918_') && !key.startsWith('s1player_') && !key.startsWith('s1team_') &&
+      !key.startsWith('sLight_') && !key.startsWith('sInline_')
     );
     
     // Migrate all found keys
@@ -66,7 +67,6 @@
         // Only migrate if new key doesn't exist yet
         if (localStorage.getItem(newKey) === null) {
           localStorage.setItem(newKey, oldData);
-          localStorage.removeItem(key);
           migratedCount++;
           console.log(`[Storage Migration] Migrated: ${key} → ${newKey}`);
         }
